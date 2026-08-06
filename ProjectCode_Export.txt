@@ -1,7 +1,7 @@
 ﻿================================================================================
 PROJECT CODE EXPORT
-Generated: 2026-08-07 00:26:23
-Total Files: 52
+Generated: 2026-08-07 01:52:30
+Total Files: 67
 ================================================================================
 
 
@@ -159,6 +159,18 @@ export function middleware(request: NextRequest) {
 export const config = {
   matcher: ["/((?!_next/static|_next/image|favicon.ico).*)"]
 };
+
+
+
+================================================================================
+FILE: apps\admin\next-env.d.ts
+================================================================================
+/// <reference types="next" />
+/// <reference types="next/image-types/global" />
+/// <reference path="./.next/types/routes.d.ts" />
+
+// NOTE: This file should not be edited
+// see https://nextjs.org/docs/app/api-reference/config/typescript for more information.
 
 
 
@@ -642,6 +654,165 @@ export default function RegisterPage() {
 
 
 ================================================================================
+FILE: apps\web\app\(marketing)\courses\[slug]\page.tsx
+================================================================================
+!! ERROR reading file: A parameter cannot be found that matches parameter name 'Raw'.
+
+
+================================================================================
+FILE: apps\web\app\(marketing)\courses\page.tsx
+================================================================================
+"use client";
+
+import { useMemo, useState } from "react";
+import { Search } from "lucide-react";
+import { useCourseList } from "@saachi/api-client";
+import { Input, Select, EmptyState, SkeletonCard, CourseCard, FilterSidebar } from "@saachi/ui";
+import type { FilterSidebarValue } from "@saachi/ui";
+
+const CATEGORY_OPTIONS = [
+  { label: "AI Fundamentals & Prompt Engineering", value: "ai-fundamentals" },
+  { label: "AI for Marketing & Sales", value: "ai-marketing" },
+  { label: "AI Automation & Workflow Tools", value: "ai-automation" },
+  { label: "AI Customer Support & Communication", value: "ai-support" },
+  { label: "AI Website & App Development", value: "ai-dev" },
+  { label: "AI Integration for Developers", value: "ai-integration" }
+];
+
+const LEVEL_OPTIONS = [
+  { label: "Beginner", value: "beginner" },
+  { label: "Intermediate", value: "intermediate" },
+  { label: "Advanced", value: "advanced" }
+];
+
+const LANGUAGE_OPTIONS = [
+  { label: "English", value: "en" },
+  { label: "Urdu", value: "ur" }
+];
+
+const SORT_OPTIONS = [
+  { label: "Most popular", value: "popular" },
+  { label: "Newest", value: "newest" },
+  { label: "Price: Low to High", value: "price_asc" },
+  { label: "Price: High to Low", value: "price_desc" },
+  { label: "Highest rated", value: "rating" }
+];
+
+export default function CourseMarketplacePage() {
+  const [search, setSearch] = useState("");
+  const [sort, setSort] = useState("popular");
+  const [filters, setFilters] = useState<FilterSidebarValue>({
+    categories: [],
+    level: undefined,
+    language: undefined
+  });
+
+  const queryFilters = useMemo(
+    () => ({
+      search: search || undefined,
+      category: filters.categories[0],
+      level: filters.level,
+      language: filters.language,
+      sort
+    }),
+    [search, filters, sort]
+  );
+
+  const { data, isLoading, isError } = useCourseList(queryFilters);
+
+  const courses = data?.items ?? [];
+
+  return (
+    <main className="mx-auto max-w-[1120px] px-6 py-16">
+      <div className="mb-10">
+        <h1 className="text-[32px] font-bold text-[var(--text-primary,#0F172A)]">
+          Explore courses
+        </h1>
+        <p className="mt-2 text-[15px] text-[var(--text-secondary,#475569)]">
+          Practical AI skills, taught by practitioners who use them every day.
+        </p>
+      </div>
+
+      <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-center">
+        <div className="relative flex-1">
+          <Search
+            size={18}
+            className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-[var(--text-muted,#94A3B8)]"
+          />
+          <Input
+            placeholder="Search courses, e.g. 'n8n automation'"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            className="pl-10"
+          />
+        </div>
+        <div className="sm:w-[240px]">
+          <Select
+            options={SORT_OPTIONS}
+            value={sort}
+            onChange={(e) => setSort(e.target.value)}
+          />
+        </div>
+      </div>
+
+      <div className="grid grid-cols-1 gap-8 lg:grid-cols-[260px_1fr]">
+        <FilterSidebar
+          categoryOptions={CATEGORY_OPTIONS}
+          levelOptions={LEVEL_OPTIONS}
+          languageOptions={LANGUAGE_OPTIONS}
+          value={filters}
+          onChange={setFilters}
+        />
+
+        <section>
+          {isLoading && (
+            <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 xl:grid-cols-3">
+              {Array.from({ length: 6 }).map((_, i) => (
+                <SkeletonCard key={i} />
+              ))}
+            </div>
+          )}
+
+          {isError && (
+            <EmptyState
+              title="Couldn't load courses"
+              description="Something went wrong while fetching the course list. Please try again."
+            />
+          )}
+
+          {!isLoading && !isError && courses.length === 0 && (
+            <EmptyState
+              title="No courses found"
+              description="Try adjusting your filters or search terms."
+            />
+          )}
+
+          {!isLoading && !isError && courses.length > 0 && (
+            <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 xl:grid-cols-3">
+              {courses.map((course) => (
+                <CourseCard
+                  key={course.id}
+                  slug={course.slug}
+                  title={course.title}
+                  thumbnailUrl={course.thumbnailUrl}
+                  instructorName={course.instructor.fullName}
+                  price={course.price}
+                  currency={course.currency}
+                  rating={course.rating}
+                  ratingCount={course.ratingCount}
+                />
+              ))}
+            </div>
+          )}
+        </section>
+      </div>
+    </main>
+  );
+}
+
+
+
+================================================================================
 FILE: apps\web\app\(marketing)\page.tsx
 ================================================================================
 import Link from "next/link";
@@ -846,6 +1017,18 @@ export const config = {
 
 
 ================================================================================
+FILE: apps\web\next-env.d.ts
+================================================================================
+/// <reference types="next" />
+/// <reference types="next/image-types/global" />
+/// <reference path="./.next/types/routes.d.ts" />
+
+// NOTE: This file should not be edited
+// see https://nextjs.org/docs/app/api-reference/config/typescript for more information.
+
+
+
+================================================================================
 FILE: apps\web\next.config.js
 ================================================================================
 /** @type {import("next").NextConfig} */
@@ -1031,7 +1214,7 @@ FILE: packages\api-client\src\hooks\useCourses.ts
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { apiRequest } from "../http-client";
 import { courseKeys } from "../query-keys";
-import type { Course, Paginated } from "../types";
+import type { Course, CourseDetail, Paginated } from "../types";
 
 export type CourseListFilters = {
   category?: string;
@@ -1055,7 +1238,7 @@ export function useCourseList(filters: CourseListFilters = {}) {
 export function useCourseDetail(idOrSlug: string) {
   return useQuery({
     queryKey: courseKeys.detail(idOrSlug),
-    queryFn: () => apiRequest<Course>(`/courses/${idOrSlug}`),
+    queryFn: () => apiRequest<CourseDetail>(`/courses/${idOrSlug}`),
     enabled: Boolean(idOrSlug)
   });
 }
@@ -1114,6 +1297,57 @@ export type Course = {
     avatarUrl?: string;
   };
   status: "draft" | "pending_review" | "published" | "rejected" | "archived";
+};
+
+export type CourseLesson = {
+  id: string;
+  title: string;
+  type: "video" | "text" | "quiz" | "resource";
+  durationSeconds?: number;
+  isPreview?: boolean;
+};
+
+export type CourseModule = {
+  id: string;
+  title: string;
+  lessons: CourseLesson[];
+};
+
+export type RatingBreakdown = {
+  5: number;
+  4: number;
+  3: number;
+  2: number;
+  1: number;
+};
+
+export type CourseReview = {
+  id: string;
+  authorName: string;
+  authorAvatarUrl?: string;
+  rating: number;
+  comment: string;
+  createdAt: string;
+  verifiedPurchase?: boolean;
+};
+
+export type CourseFaqItem = {
+  id: string;
+  question: string;
+  answer: string;
+};
+
+export type CourseDetail = Course & {
+  description?: string;
+  previewVideoUrl?: string;
+  instructorBio?: string;
+  instructorCourseCount?: number;
+  instructorStudentCount?: number;
+  curriculum?: CourseModule[];
+  ratingBreakdown?: RatingBreakdown;
+  reviews?: CourseReview[];
+  faq?: CourseFaqItem[];
+  relatedCourses?: Course[];
 };
 
 export type Paginated<T> = {
@@ -1334,6 +1568,84 @@ FILE: packages\config\tsconfig.base.json
 
 
 ================================================================================
+FILE: packages\ui\src\components\Accordion.tsx
+================================================================================
+"use client";
+
+import { useState, type ReactNode } from "react";
+import { ChevronDown } from "lucide-react";
+import { cn } from "../cn";
+
+export type AccordionItemData = {
+  id: string;
+  title: ReactNode;
+  content: ReactNode;
+  meta?: ReactNode;
+};
+
+export type AccordionProps = {
+  items: AccordionItemData[];
+  defaultOpenId?: string;
+  className?: string;
+};
+
+export function Accordion({ items, defaultOpenId, className }: AccordionProps) {
+  const [openId, setOpenId] = useState<string | null>(defaultOpenId ?? null);
+
+  return (
+    <div
+      className={cn(
+        "flex flex-col overflow-hidden rounded-2xl border border-[var(--border-hairline,rgba(15,23,42,0.08))]",
+        "divide-y divide-[var(--border-hairline,rgba(15,23,42,0.08))]",
+        className
+      )}
+    >
+      {items.map((item) => {
+        const isOpen = openId === item.id;
+        return (
+          <div key={item.id} className="bg-[var(--surface-card,#FFFFFF)]">
+            <button
+              type="button"
+              onClick={() => setOpenId(isOpen ? null : item.id)}
+              className="flex w-full items-center justify-between gap-4 px-5 py-4 text-left"
+              aria-expanded={isOpen}
+            >
+              <div className="flex flex-1 items-center gap-3">
+                <span className="text-[15px] font-semibold text-[var(--text-primary,#0F172A)]">
+                  {item.title}
+                </span>
+                {item.meta}
+              </div>
+              <ChevronDown
+                size={18}
+                className={cn(
+                  "shrink-0 text-[var(--text-secondary,#475569)] transition-transform duration-200 ease-out",
+                  isOpen && "rotate-180 text-[var(--blue-600,#2563EB)]"
+                )}
+              />
+            </button>
+            <div
+              className={cn(
+                "grid transition-all duration-200 ease-out",
+                isOpen ? "grid-rows-[1fr] opacity-100" : "grid-rows-[0fr] opacity-0"
+              )}
+            >
+              <div className="overflow-hidden">
+                <div className="px-5 pb-4 text-[14px] leading-relaxed text-[var(--text-secondary,#475569)]">
+                  {item.content}
+                </div>
+              </div>
+            </div>
+          </div>
+        );
+      })}
+    </div>
+  );
+}
+
+
+
+================================================================================
 FILE: packages\ui\src\components\Badge.tsx
 ================================================================================
 import type { HTMLAttributes } from "react";
@@ -1465,6 +1777,665 @@ Card.displayName = "Card";
 
 
 ================================================================================
+FILE: packages\ui\src\components\Checkbox.tsx
+================================================================================
+import { forwardRef, type InputHTMLAttributes } from "react";
+import { Check } from "lucide-react";
+import { cn } from "../cn";
+
+export type CheckboxProps = Omit<InputHTMLAttributes<HTMLInputElement>, "type"> & {
+  label?: string;
+};
+
+export const Checkbox = forwardRef<HTMLInputElement, CheckboxProps>(
+  ({ className, label, id, ...props }, ref) => {
+    const checkboxId = id ?? props.name;
+
+    return (
+      <label
+        htmlFor={checkboxId}
+        className="inline-flex cursor-pointer items-center gap-2.5 select-none"
+      >
+        <span className="relative inline-flex h-[18px] w-[18px] shrink-0 items-center justify-center">
+          <input
+            ref={ref}
+            type="checkbox"
+            id={checkboxId}
+            className={cn("peer absolute inset-0 h-full w-full cursor-pointer opacity-0", className)}
+            {...props}
+          />
+          <span
+            className={cn(
+              "flex h-[18px] w-[18px] items-center justify-center rounded-[5px] border transition-all duration-150 ease-out",
+              "border-[var(--border-hairline-strong,rgba(15,23,42,0.14))] bg-[var(--surface-card,#FFFFFF)]",
+              "peer-checked:border-transparent peer-checked:[background:var(--gradient-primary,linear-gradient(135deg,#2563EB_0%,#0EA5E9_50%,#22D3EE_100%))]",
+              "peer-focus-visible:shadow-[0_0_0_2px_rgba(59,130,246,0.35)]"
+            )}
+          >
+            <Check size={13} strokeWidth={3} className="text-white opacity-0 peer-checked:opacity-100" />
+          </span>
+        </span>
+        {label && (
+          <span className="text-[14px] text-[var(--text-primary,#0F172A)]">{label}</span>
+        )}
+      </label>
+    );
+  }
+);
+Checkbox.displayName = "Checkbox";
+
+
+
+================================================================================
+FILE: packages\ui\src\components\CourseCard.tsx
+================================================================================
+import Link from "next/link";
+import { Star } from "lucide-react";
+import { cn } from "../cn";
+
+export type CourseCardProps = {
+  slug: string;
+  title: string;
+  thumbnailUrl?: string;
+  instructorName: string;
+  price: number;
+  currency?: string;
+  rating: number;
+  ratingCount: number;
+  className?: string;
+};
+
+export function CourseCard({
+  slug,
+  title,
+  thumbnailUrl,
+  instructorName,
+  price,
+  currency = "USD",
+  rating,
+  ratingCount,
+  className
+}: CourseCardProps) {
+  const formattedPrice = new Intl.NumberFormat("en-US", {
+    style: "currency",
+    currency,
+    minimumFractionDigits: price % 1 === 0 ? 0 : 2
+  }).format(price);
+
+  return (
+    <Link
+      href={`/courses/${slug}`}
+      className={cn(
+        "group flex flex-col overflow-hidden rounded-2xl border bg-[var(--surface-card,#FFFFFF)]",
+        "border-[var(--border-hairline,rgba(15,23,42,0.08))] shadow-[0_2px_8px_rgba(30,64,175,0.06)]",
+        "transition-all duration-200 ease-out hover:-translate-y-0.5 hover:shadow-[0_4px_20px_rgba(30,64,175,0.10)] hover:border-[rgba(59,130,246,0.35)]",
+        className
+      )}
+    >
+      <div className="relative aspect-video w-full overflow-hidden bg-[var(--surface-elevated,#F1F5F9)]">
+        {thumbnailUrl ? (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img
+            src={thumbnailUrl}
+            alt={title}
+            className="h-full w-full object-cover transition-transform duration-300 ease-out group-hover:scale-[1.02]"
+          />
+        ) : (
+          <div className="flex h-full w-full items-center justify-center text-[13px] text-[var(--text-muted,#94A3B8)]">
+            No preview
+          </div>
+        )}
+      </div>
+
+      <div className="flex flex-1 flex-col gap-2 p-4">
+        <h3 className="line-clamp-2 text-[15px] font-semibold leading-snug text-[var(--text-primary,#0F172A)]">
+          {title}
+        </h3>
+        <p className="text-[13px] text-[var(--text-secondary,#475569)]">{instructorName}</p>
+
+        <div className="flex items-center gap-1.5 text-[13px]">
+          <Star size={14} className="fill-[var(--blue-500,#3B82F6)] text-[var(--blue-500,#3B82F6)]" />
+          <span className="font-semibold text-[var(--text-primary,#0F172A)]">{rating.toFixed(1)}</span>
+          <span className="text-[var(--text-muted,#94A3B8)]">({ratingCount.toLocaleString()})</span>
+        </div>
+
+        <div className="mt-auto pt-2 text-[17px] font-bold text-[var(--text-primary,#0F172A)]">
+          {formattedPrice}
+        </div>
+      </div>
+    </Link>
+  );
+}
+
+
+
+================================================================================
+FILE: packages\ui\src\components\EmptyState.tsx
+================================================================================
+import type { ReactNode } from "react";
+import { Inbox } from "lucide-react";
+import { cn } from "../cn";
+
+export type EmptyStateProps = {
+  icon?: ReactNode;
+  title: string;
+  description?: string;
+  action?: ReactNode;
+  className?: string;
+};
+
+export function EmptyState({ icon, title, description, action, className }: EmptyStateProps) {
+  return (
+    <div
+      className={cn(
+        "flex flex-col items-center justify-center gap-3 rounded-2xl border border-dashed",
+        "border-[var(--border-hairline-strong,rgba(15,23,42,0.14))] px-8 py-16 text-center",
+        className
+      )}
+    >
+      <div className="flex h-12 w-12 items-center justify-center rounded-full bg-[var(--blue-50,#EFF6FF)] text-[var(--blue-500,#3B82F6)]">
+        {icon ?? <Inbox size={22} />}
+      </div>
+      <h3 className="text-[18px] font-semibold text-[var(--text-primary,#0F172A)]">{title}</h3>
+      {description && (
+        <p className="max-w-[420px] text-[14px] text-[var(--text-secondary,#475569)]">
+          {description}
+        </p>
+      )}
+      {action && <div className="mt-2">{action}</div>}
+    </div>
+  );
+}
+
+
+
+================================================================================
+FILE: packages\ui\src\components\FilterSidebar.tsx
+================================================================================
+"use client";
+
+import { Checkbox } from "./Checkbox";
+import { Select } from "./Select";
+import { cn } from "../cn";
+
+export type FilterSidebarValue = {
+  categories: string[];
+  level?: string;
+  language?: string;
+};
+
+export type FilterSidebarProps = {
+  categoryOptions: { label: string; value: string }[];
+  levelOptions: { label: string; value: string }[];
+  languageOptions: { label: string; value: string }[];
+  value: FilterSidebarValue;
+  onChange: (next: FilterSidebarValue) => void;
+  className?: string;
+};
+
+export function FilterSidebar({
+  categoryOptions,
+  levelOptions,
+  languageOptions,
+  value,
+  onChange,
+  className
+}: FilterSidebarProps) {
+  const toggleCategory = (cat: string) => {
+    const isActive = value.categories.includes(cat);
+    const nextCategories = isActive
+      ? value.categories.filter((c) => c !== cat)
+      : [...value.categories, cat];
+    onChange({ ...value, categories: nextCategories });
+  };
+
+  return (
+    <aside
+      className={cn(
+        "flex w-full flex-col gap-8 rounded-2xl border border-[var(--border-hairline,rgba(15,23,42,0.08))]",
+        "bg-[var(--surface-card,#FFFFFF)] p-6",
+        className
+      )}
+    >
+      <div>
+        <h4 className="mb-3 text-[13px] font-semibold uppercase tracking-[0.06em] text-[var(--text-muted,#94A3B8)]">
+          Category
+        </h4>
+        <div className="flex flex-col gap-2.5">
+          {categoryOptions.map((opt) => (
+            <Checkbox
+              key={opt.value}
+              label={opt.label}
+              checked={value.categories.includes(opt.value)}
+              onChange={() => toggleCategory(opt.value)}
+            />
+          ))}
+        </div>
+      </div>
+
+      <div>
+        <Select
+          label="Skill level"
+          placeholder="All levels"
+          options={levelOptions}
+          value={value.level ?? ""}
+          onChange={(e) => onChange({ ...value, level: e.target.value || undefined })}
+        />
+      </div>
+
+      <div>
+        <Select
+          label="Language"
+          placeholder="All languages"
+          options={languageOptions}
+          value={value.language ?? ""}
+          onChange={(e) => onChange({ ...value, language: e.target.value || undefined })}
+        />
+      </div>
+
+      <button
+        type="button"
+        onClick={() => onChange({ categories: [], level: undefined, language: undefined })}
+        className="text-left text-[13px] font-medium text-[var(--blue-600,#2563EB)] hover:underline"
+      >
+        Clear all filters
+      </button>
+    </aside>
+  );
+}
+
+
+
+================================================================================
+FILE: packages\ui\src\components\Input.tsx
+================================================================================
+import { forwardRef, type InputHTMLAttributes } from "react";
+import { cn } from "../cn";
+
+export type InputProps = InputHTMLAttributes<HTMLInputElement> & {
+  label?: string;
+  error?: string;
+  helperText?: string;
+};
+
+export const Input = forwardRef<HTMLInputElement, InputProps>(
+  ({ className, label, error, helperText, id, ...props }, ref) => {
+    const inputId = id ?? props.name;
+
+    return (
+      <div className="flex flex-col gap-1.5">
+        {label && (
+          <label
+            htmlFor={inputId}
+            className="text-[13px] font-semibold text-[var(--text-primary,#0F172A)]"
+          >
+            {label}
+          </label>
+        )}
+        <input
+          ref={ref}
+          id={inputId}
+          className={cn(
+            "h-11 w-full rounded-[10px] border bg-[var(--surface-card,#FFFFFF)] px-3.5 text-[15px]",
+            "border-[var(--border-hairline-strong,rgba(15,23,42,0.14))]",
+            "text-[var(--text-primary,#0F172A)] placeholder:text-[var(--text-muted,#94A3B8)]",
+            "outline-none transition-all duration-150 ease-out",
+            "focus:border-[var(--blue-500,#3B82F6)] focus:shadow-[0_0_16px_rgba(59,130,246,0.25)]",
+            error && "border-[#EF4444] focus:border-[#EF4444] focus:shadow-none",
+            className
+          )}
+          aria-invalid={Boolean(error)}
+          {...props}
+        />
+        {error ? (
+          <p className="text-[13px] text-[#EF4444]">{error}</p>
+        ) : helperText ? (
+          <p className="text-[13px] text-[var(--text-secondary,#475569)]">{helperText}</p>
+        ) : null}
+      </div>
+    );
+  }
+);
+Input.displayName = "Input";
+
+
+
+================================================================================
+FILE: packages\ui\src\components\Modal.tsx
+================================================================================
+"use client";
+
+import { type ReactNode, useEffect } from "react";
+import { X } from "lucide-react";
+import { cn } from "../cn";
+
+export type ModalProps = {
+  open: boolean;
+  onClose: () => void;
+  title?: string;
+  children: ReactNode;
+  footer?: ReactNode;
+  size?: "md" | "lg";
+};
+
+export function Modal({ open, onClose, title, children, footer, size = "md" }: ModalProps) {
+  useEffect(() => {
+    if (!open) return;
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") onClose();
+    };
+    document.addEventListener("keydown", onKeyDown);
+    return () => document.removeEventListener("keydown", onKeyDown);
+  }, [open, onClose]);
+
+  if (!open) return null;
+
+  return (
+    <div
+      className="fixed inset-0 z-50 flex items-center justify-center p-4"
+      role="dialog"
+      aria-modal="true"
+    >
+      <div
+        className="absolute inset-0 bg-[rgba(11,17,32,0.5)] backdrop-blur-[4px]"
+        onClick={onClose}
+      />
+      <div
+        className={cn(
+          "relative w-full rounded-[24px] bg-[var(--surface-overlay,var(--surface-card,#FFFFFF))] p-6 shadow-[0_24px_64px_rgba(30,64,175,0.18)]",
+          "animate-[modal-in_220ms_cubic-bezier(0.16,1,0.3,1)]",
+          size === "lg" ? "max-w-[720px]" : "max-w-[520px]"
+        )}
+      >
+        {title && (
+          <div className="mb-4 flex items-center justify-between">
+            <h2 className="text-[20px] font-semibold text-[var(--text-primary,#0F172A)]">{title}</h2>
+            <button
+              onClick={onClose}
+              aria-label="Close"
+              className="flex h-9 w-9 items-center justify-center rounded-full text-[var(--text-secondary,#475569)] transition-colors hover:bg-[var(--surface-elevated,#F1F5F9)]"
+            >
+              <X size={18} />
+            </button>
+          </div>
+        )}
+        <div>{children}</div>
+        {footer && (
+          <div className="mt-6 flex justify-end gap-3">{footer}</div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+
+
+================================================================================
+FILE: packages\ui\src\components\ReviewCard.tsx
+================================================================================
+import { Star, BadgeCheck } from "lucide-react";
+import { cn } from "../cn";
+
+export type ReviewCardProps = {
+  authorName: string;
+  authorAvatarUrl?: string;
+  rating: number;
+  comment: string;
+  createdAt: string;
+  verifiedPurchase?: boolean;
+  className?: string;
+};
+
+export function ReviewCard({
+  authorName,
+  authorAvatarUrl,
+  rating,
+  comment,
+  createdAt,
+  verifiedPurchase,
+  className
+}: ReviewCardProps) {
+  const formattedDate = new Intl.DateTimeFormat("en-US", {
+    year: "numeric",
+    month: "short",
+    day: "numeric"
+  }).format(new Date(createdAt));
+
+  return (
+    <div
+      className={cn(
+        "rounded-2xl border border-[var(--border-hairline,rgba(15,23,42,0.08))] bg-[var(--surface-card,#FFFFFF)] p-6",
+        className
+      )}
+    >
+      <div className="mb-3 flex items-center gap-1">
+        {Array.from({ length: 5 }).map((_, i) => (
+          <Star
+            key={i}
+            size={15}
+            className={
+              i < Math.round(rating)
+                ? "fill-[var(--blue-500,#3B82F6)] text-[var(--blue-500,#3B82F6)]"
+                : "text-[var(--border-hairline-strong,rgba(15,23,42,0.14))]"
+            }
+          />
+        ))}
+      </div>
+
+      <p className="mb-4 text-[15px] leading-relaxed text-[var(--text-primary,#0F172A)]">
+        {comment}
+      </p>
+
+      <div className="flex items-center gap-3">
+        <div className="flex h-9 w-9 items-center justify-center overflow-hidden rounded-full bg-[var(--blue-50,#EFF6FF)] text-[13px] font-semibold text-[var(--blue-600,#2563EB)]">
+          {authorAvatarUrl ? (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img src={authorAvatarUrl} alt={authorName} className="h-full w-full object-cover" />
+          ) : (
+            authorName.charAt(0).toUpperCase()
+          )}
+        </div>
+        <div>
+          <div className="flex items-center gap-1.5">
+            <span className="text-[13px] font-semibold text-[var(--text-primary,#0F172A)]">
+              {authorName}
+            </span>
+            {verifiedPurchase && (
+              <BadgeCheck size={14} className="text-[var(--success,#14B8A6)]" />
+            )}
+          </div>
+          <span className="text-[12px] text-[var(--text-muted,#94A3B8)]">{formattedDate}</span>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+
+
+================================================================================
+FILE: packages\ui\src\components\Select.tsx
+================================================================================
+import { forwardRef, type SelectHTMLAttributes } from "react";
+import { ChevronDown } from "lucide-react";
+import { cn } from "../cn";
+
+export type SelectOption = {
+  label: string;
+  value: string;
+};
+
+export type SelectProps = SelectHTMLAttributes<HTMLSelectElement> & {
+  label?: string;
+  error?: string;
+  helperText?: string;
+  options: SelectOption[];
+  placeholder?: string;
+};
+
+export const Select = forwardRef<HTMLSelectElement, SelectProps>(
+  ({ className, label, error, helperText, options, placeholder, id, ...props }, ref) => {
+    const selectId = id ?? props.name;
+
+    return (
+      <div className="flex flex-col gap-1.5">
+        {label && (
+          <label
+            htmlFor={selectId}
+            className="text-[13px] font-semibold text-[var(--text-primary,#0F172A)]"
+          >
+            {label}
+          </label>
+        )}
+        <div className="relative">
+          <select
+            ref={ref}
+            id={selectId}
+            className={cn(
+              "h-11 w-full appearance-none rounded-[10px] border bg-[var(--surface-card,#FFFFFF)] px-3.5 pr-10 text-[15px]",
+              "border-[var(--border-hairline-strong,rgba(15,23,42,0.14))]",
+              "text-[var(--text-primary,#0F172A)]",
+              "outline-none transition-all duration-150 ease-out",
+              "focus:border-[var(--blue-500,#3B82F6)] focus:shadow-[0_0_16px_rgba(59,130,246,0.25)]",
+              error && "border-[#EF4444] focus:border-[#EF4444] focus:shadow-none",
+              className
+            )}
+            aria-invalid={Boolean(error)}
+            {...props}
+          >
+            {placeholder && (
+              <option value="" disabled>
+                {placeholder}
+              </option>
+            )}
+            {options.map((opt) => (
+              <option key={opt.value} value={opt.value}>
+                {opt.label}
+              </option>
+            ))}
+          </select>
+          <ChevronDown
+            size={18}
+            className="pointer-events-none absolute right-3.5 top-1/2 -translate-y-1/2 text-[var(--text-secondary,#475569)]"
+          />
+        </div>
+        {error ? (
+          <p className="text-[13px] text-[#EF4444]">{error}</p>
+        ) : helperText ? (
+          <p className="text-[13px] text-[var(--text-secondary,#475569)]">{helperText}</p>
+        ) : null}
+      </div>
+    );
+  }
+);
+Select.displayName = "Select";
+
+
+
+================================================================================
+FILE: packages\ui\src\components\Skeleton.tsx
+================================================================================
+import type { HTMLAttributes } from "react";
+import { cn } from "../cn";
+
+export type SkeletonProps = HTMLAttributes<HTMLDivElement>;
+
+export function Skeleton({ className, ...props }: SkeletonProps) {
+  return (
+    <div
+      className={cn(
+        "animate-pulse rounded-[10px] bg-[var(--surface-elevated,#F1F5F9)]",
+        "bg-[linear-gradient(90deg,var(--surface-elevated,#F1F5F9)_0%,rgba(96,165,250,0.12)_50%,var(--surface-elevated,#F1F5F9)_100%)]",
+        "bg-[length:200%_100%]",
+        className
+      )}
+      {...props}
+    />
+  );
+}
+
+export function SkeletonText({ lines = 3 }: { lines?: number }) {
+  return (
+    <div className="flex flex-col gap-2">
+      {Array.from({ length: lines }).map((_, i) => (
+        <Skeleton
+          key={i}
+          className="h-4"
+          style={{ width: i === lines - 1 ? "60%" : "100%" }}
+        />
+      ))}
+    </div>
+  );
+}
+
+export function SkeletonCard() {
+  return (
+    <div className="rounded-2xl border border-[var(--border-hairline,rgba(15,23,42,0.08))] p-6">
+      <Skeleton className="mb-4 h-40 w-full" />
+      <Skeleton className="mb-2 h-5 w-3/4" />
+      <SkeletonText lines={2} />
+    </div>
+  );
+}
+
+
+
+================================================================================
+FILE: packages\ui\src\components\Textarea.tsx
+================================================================================
+import { forwardRef, type TextareaHTMLAttributes } from "react";
+import { cn } from "../cn";
+
+export type TextareaProps = TextareaHTMLAttributes<HTMLTextAreaElement> & {
+  label?: string;
+  error?: string;
+  helperText?: string;
+};
+
+export const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
+  ({ className, label, error, helperText, id, rows = 4, ...props }, ref) => {
+    const textareaId = id ?? props.name;
+
+    return (
+      <div className="flex flex-col gap-1.5">
+        {label && (
+          <label
+            htmlFor={textareaId}
+            className="text-[13px] font-semibold text-[var(--text-primary,#0F172A)]"
+          >
+            {label}
+          </label>
+        )}
+        <textarea
+          ref={ref}
+          id={textareaId}
+          rows={rows}
+          className={cn(
+            "w-full resize-y rounded-[10px] border bg-[var(--surface-card,#FFFFFF)] px-3.5 py-3 text-[15px] leading-[1.55]",
+            "border-[var(--border-hairline-strong,rgba(15,23,42,0.14))]",
+            "text-[var(--text-primary,#0F172A)] placeholder:text-[var(--text-muted,#94A3B8)]",
+            "outline-none transition-all duration-150 ease-out",
+            "focus:border-[var(--blue-500,#3B82F6)] focus:shadow-[0_0_16px_rgba(59,130,246,0.25)]",
+            error && "border-[#EF4444] focus:border-[#EF4444] focus:shadow-none",
+            className
+          )}
+          aria-invalid={Boolean(error)}
+          {...props}
+        />
+        {error ? (
+          <p className="text-[13px] text-[#EF4444]">{error}</p>
+        ) : helperText ? (
+          <p className="text-[13px] text-[var(--text-secondary,#475569)]">{helperText}</p>
+        ) : null}
+      </div>
+    );
+  }
+);
+Textarea.displayName = "Textarea";
+
+
+
+================================================================================
 FILE: packages\ui\src\cn.ts
 ================================================================================
 import { clsx, type ClassValue } from "clsx";
@@ -1483,6 +2454,17 @@ export * from "./cn";
 export * from "./components/Button";
 export * from "./components/Card";
 export * from "./components/Badge";
+export * from "./components/Input";
+export * from "./components/Textarea";
+export * from "./components/Select";
+export * from "./components/Checkbox";
+export * from "./components/Skeleton";
+export * from "./components/EmptyState";
+export * from "./components/Modal";
+export * from "./components/CourseCard";
+export * from "./components/FilterSidebar";
+export * from "./components/Accordion";
+export * from "./components/ReviewCard";
 
 
 

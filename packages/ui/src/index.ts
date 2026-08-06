@@ -9,3 +9,7 @@ export * from "./components/Checkbox";
 export * from "./components/Skeleton";
 export * from "./components/EmptyState";
 export * from "./components/Modal";
+export * from "./components/CourseCard";
+export * from "./components/FilterSidebar";
+export * from "./components/Accordion";
+export * from "./components/ReviewCard";

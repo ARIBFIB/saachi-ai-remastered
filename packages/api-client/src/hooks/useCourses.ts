@@ -1,7 +1,7 @@
-﻿import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { apiRequest } from "../http-client";
 import { courseKeys } from "../query-keys";
-import type { Course, Paginated } from "../types";
+import type { Course, CourseDetail, Paginated } from "../types";
 
 export type CourseListFilters = {
   category?: string;
@@ -25,7 +25,7 @@ export function useCourseList(filters: CourseListFilters = {}) {
 export function useCourseDetail(idOrSlug: string) {
   return useQuery({
     queryKey: courseKeys.detail(idOrSlug),
-    queryFn: () => apiRequest<Course>(`/courses/${idOrSlug}`),
+    queryFn: () => apiRequest<CourseDetail>(`/courses/${idOrSlug}`),
     enabled: Boolean(idOrSlug)
   });
 }
