@@ -1,0 +1,1838 @@
+﻿================================================================================
+PROJECT CODE EXPORT
+Generated: 2026-08-07 00:26:23
+Total Files: 52
+================================================================================
+
+
+================================================================================
+FILE: apps\admin\app\dashboard\page.tsx
+================================================================================
+export default function AdminDashboardPage() {
+  return (
+    <main style={{ padding: "32px" }}>
+      <h1 style={{ fontSize: "24px", fontWeight: 700 }}>Admin Dashboard</h1>
+      <p style={{ color: "var(--text-secondary)", marginTop: "8px" }}>
+        KPI cards, moderation queue, and finance widgets will be wired here.
+      </p>
+    </main>
+  );
+}
+
+
+
+================================================================================
+FILE: apps\admin\app\login\page.tsx
+================================================================================
+export default function AdminLoginPage() {
+  return (
+    <main
+      style={{
+        minHeight: "100vh",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        background: "var(--surface-bg)"
+      }}
+    >
+      <div
+        style={{
+          background: "var(--surface-card)",
+          padding: "40px",
+          borderRadius: "16px",
+          boxShadow: "0 4px 20px rgba(30,64,175,0.10)",
+          width: "360px"
+        }}
+      >
+        <h1 style={{ fontSize: "22px", fontWeight: 600, marginBottom: "8px" }}>
+          Saachi AI - Admin
+        </h1>
+        <p style={{ color: "var(--text-secondary)", fontSize: "14px", marginBottom: "24px" }}>
+          Internal staff access only. 2FA required.
+        </p>
+        {/* Login form + 2FA step to be wired in a later step */}
+      </div>
+    </main>
+  );
+}
+
+
+
+================================================================================
+FILE: apps\admin\app\globals.css
+================================================================================
+@import "tailwindcss";
+
+:root {
+  --blue-50:  #EFF6FF;
+  --blue-500: #3B82F6;
+  --blue-600: #2563EB;
+  --cyan-400: #22D3EE;
+
+  --surface-bg:      #F8FAFC;
+  --surface-card:    #FFFFFF;
+  --surface-elevated: #F1F5F9;
+  --text-primary:    #0F172A;
+  --text-secondary:  #475569;
+
+  --gradient-primary: linear-gradient(135deg, #2563EB 0%, #0EA5E9 50%, #22D3EE 100%);
+}
+
+[data-theme="dark"] {
+  --surface-bg:   #0B1120;
+  --surface-card: #0F172A;
+  --surface-elevated: #131C31;
+  --text-primary: #F1F5F9;
+  --text-secondary: #94A3B8;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  background: var(--surface-bg);
+  color: var(--text-primary);
+  font-family: "Inter", -apple-system, "Segoe UI", Roboto, sans-serif;
+}
+
+
+
+================================================================================
+FILE: apps\admin\app\providers.tsx
+================================================================================
+"use client";
+
+import { useState } from "react";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+
+export function Providers({ children }: { children: React.ReactNode }) {
+  const [queryClient] = useState(
+    () =>
+      new QueryClient({
+        defaultOptions: {
+          queries: {
+            staleTime: 30 * 1000,
+            refetchOnWindowFocus: true,
+            retry: 1
+          }
+        }
+      })
+  );
+
+  return <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>;
+}
+
+
+
+================================================================================
+FILE: apps\admin\.eslintrc.json
+================================================================================
+{
+  "extends": "next/core-web-vitals"
+}
+
+
+
+================================================================================
+FILE: apps\admin\middleware.ts
+================================================================================
+import { NextResponse } from "next/server";
+import type { NextRequest } from "next/server";
+
+const PUBLIC_PATHS = ["/login"];
+
+export function middleware(request: NextRequest) {
+  const { pathname } = request.nextUrl;
+  const adminSession = request.cookies.get("saachi_admin_session");
+
+  const isPublic = PUBLIC_PATHS.some((p) => pathname.startsWith(p));
+
+  if (!isPublic && !adminSession) {
+    const loginUrl = new URL("/login", request.url);
+    return NextResponse.redirect(loginUrl);
+  }
+
+  return NextResponse.next();
+}
+
+export const config = {
+  matcher: ["/((?!_next/static|_next/image|favicon.ico).*)"]
+};
+
+
+
+================================================================================
+FILE: apps\admin\next.config.js
+================================================================================
+/** @type {import("next").NextConfig} */
+const nextConfig = {
+  reactStrictMode: true,
+  transpilePackages: ["@saachi/ui", "@saachi/api-client", "@saachi/utils"],
+  async rewrites() {
+    return [
+      {
+        source: "/api/proxy/:path*",
+        destination: `${process.env.NEXT_PUBLIC_API_URL}/admin/:path*`
+      }
+    ];
+  }
+};
+
+module.exports = nextConfig;
+
+
+
+================================================================================
+FILE: apps\admin\package.json
+================================================================================
+{
+  "name": "admin",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev -p 3001",
+    "build": "next build",
+    "start": "next start -p 3001",
+    "lint": "next lint",
+    "type-check": "tsc --noEmit"
+  },
+  "dependencies": {
+    "next": "^15.0.0",
+    "react": "^18.3.0",
+    "react-dom": "^18.3.0",
+    "@tanstack/react-query": "^5.56.0",
+    "@tanstack/react-table": "^8.20.0",
+    "zustand": "^4.5.0",
+    "react-hook-form": "^7.53.0",
+    "@hookform/resolvers": "^3.9.0",
+    "zod": "^3.23.0",
+    "recharts": "^2.12.0",
+    "lucide-react": "^0.445.0",
+    "clsx": "^2.1.0",
+    "tailwind-merge": "^2.5.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.5.0",
+    "@types/react": "^18.3.0",
+    "@types/react-dom": "^18.3.0",
+    "typescript": "^5.5.0",
+    "tailwindcss": "^4.0.0",
+    "@tailwindcss/postcss": "^4.0.0",
+    "postcss": "^8.4.0",
+    "eslint": "^9.9.0",
+    "eslint-config-next": "^15.0.0"
+  }
+}
+
+
+
+================================================================================
+FILE: apps\admin\postcss.config.mjs
+================================================================================
+export default {
+  plugins: {
+    "@tailwindcss/postcss": {}
+  }
+};
+
+
+
+================================================================================
+FILE: apps\admin\README.md
+================================================================================
+# saachi-ai-remastered
+
+
+
+================================================================================
+FILE: apps\admin\tsconfig.json
+================================================================================
+{
+  "compilerOptions": {
+    "target": "ES2020",
+    "lib": ["dom", "dom.iterable", "esnext"],
+    "allowJs": false,
+    "skipLibCheck": true,
+    "strict": true,
+    "noEmit": true,
+    "esModuleInterop": true,
+    "module": "esnext",
+    "moduleResolution": "bundler",
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "jsx": "preserve",
+    "incremental": true,
+    "plugins": [{ "name": "next" }],
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["./*"],
+      "@saachi/ui": ["../../packages/ui/src"],
+      "@saachi/ui/*": ["../../packages/ui/src/*"],
+      "@saachi/api-client": ["../../packages/api-client/src"],
+      "@saachi/api-client/*": ["../../packages/api-client/src/*"],
+      "@saachi/utils": ["../../packages/utils/src"],
+      "@saachi/utils/*": ["../../packages/utils/src/*"]
+    }
+  },
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
+  "exclude": ["node_modules"]
+}
+
+
+
+================================================================================
+FILE: apps\web\app\(auth)\forgot-password\page.tsx
+================================================================================
+"use client";
+
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useState } from "react";
+import Link from "next/link";
+import { forgotPasswordSchema, type ForgotPasswordInput } from "@saachi/utils";
+import { apiRequest } from "@saachi/api-client";
+import { Button, Card } from "@saachi/ui";
+
+export default function ForgotPasswordPage() {
+  const [sent, setSent] = useState(false);
+  const [serverError, setServerError] = useState<string | null>(null);
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting }
+  } = useForm<ForgotPasswordInput>({
+    resolver: zodResolver(forgotPasswordSchema)
+  });
+
+  const onSubmit = async (data: ForgotPasswordInput) => {
+    setServerError(null);
+    try {
+      await apiRequest("/auth/forgot-password", { method: "POST", body: data });
+      setSent(true);
+    } catch (err: any) {
+      setServerError(err?.message ?? "Something went wrong. Please try again.");
+    }
+  };
+
+  if (sent) {
+    return (
+      <Card>
+        <h1 style={{ fontSize: "22px", fontWeight: 700, marginBottom: "8px" }}>Check your email</h1>
+        <p style={{ color: "var(--text-secondary)", fontSize: "14px" }}>
+          If an account exists for that email, we&apos;ve sent a password reset link.
+        </p>
+        <div style={{ marginTop: "20px" }}>
+          <Link href="/login">Back to login</Link>
+        </div>
+      </Card>
+    );
+  }
+
+  return (
+    <Card>
+      <h1 style={{ fontSize: "22px", fontWeight: 700, marginBottom: "4px" }}>Reset your password</h1>
+      <p style={{ color: "var(--text-secondary)", fontSize: "14px", marginBottom: "24px" }}>
+        Enter your email and we&apos;ll send you a reset link.
+      </p>
+
+      <form onSubmit={handleSubmit(onSubmit)} style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
+        <div>
+          <label style={{ display: "block", fontSize: "13px", fontWeight: 600, marginBottom: "6px" }}>
+            Email
+          </label>
+          <input
+            type="email"
+            {...register("email")}
+            style={{
+              width: "100%",
+              height: "44px",
+              padding: "0 14px",
+              borderRadius: "10px",
+              border: "1px solid rgba(15,23,42,0.14)",
+              fontSize: "15px"
+            }}
+            placeholder="you@example.com"
+          />
+          {errors.email && (
+            <p style={{ color: "#EF4444", fontSize: "13px", marginTop: "4px" }}>{errors.email.message}</p>
+          )}
+        </div>
+
+        {serverError && <p style={{ color: "#EF4444", fontSize: "13px" }}>{serverError}</p>}
+
+        <Button type="submit" size="lg" disabled={isSubmitting}>
+          {isSubmitting ? "Sending..." : "Send Reset Link"}
+        </Button>
+      </form>
+
+      <div style={{ marginTop: "20px", fontSize: "14px", textAlign: "center", color: "var(--text-secondary)" }}>
+        <Link href="/login">Back to login</Link>
+      </div>
+    </Card>
+  );
+}
+
+
+
+================================================================================
+FILE: apps\web\app\(auth)\login\page.tsx
+================================================================================
+"use client";
+
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
+import Link from "next/link";
+import { loginSchema, type LoginInput } from "@saachi/utils";
+import { useLogin } from "@saachi/api-client";
+import { Button, Card } from "@saachi/ui";
+
+export default function LoginPage() {
+  const router = useRouter();
+  const loginMutation = useLogin();
+  const [serverError, setServerError] = useState<string | null>(null);
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting }
+  } = useForm<LoginInput>({
+    resolver: zodResolver(loginSchema)
+  });
+
+  const onSubmit = async (data: LoginInput) => {
+    setServerError(null);
+    try {
+      const result = await loginMutation.mutateAsync(data);
+      if ("requires2fa" in result && result.requires2fa) {
+        router.push("/login/2fa");
+        return;
+      }
+      router.push("/dashboard");
+    } catch (err: any) {
+      setServerError(err?.message ?? "Login failed. Please try again.");
+    }
+  };
+
+  return (
+    <Card>
+      <h1 style={{ fontSize: "24px", fontWeight: 700, marginBottom: "4px" }}>Welcome back</h1>
+      <p style={{ color: "var(--text-secondary)", fontSize: "14px", marginBottom: "24px" }}>
+        Log in to continue learning or teaching on Saachi AI.
+      </p>
+
+      <form onSubmit={handleSubmit(onSubmit)} style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
+        <div>
+          <label style={{ display: "block", fontSize: "13px", fontWeight: 600, marginBottom: "6px" }}>
+            Email
+          </label>
+          <input
+            type="email"
+            {...register("email")}
+            style={{
+              width: "100%",
+              height: "44px",
+              padding: "0 14px",
+              borderRadius: "10px",
+              border: "1px solid rgba(15,23,42,0.14)",
+              fontSize: "15px"
+            }}
+            placeholder="you@example.com"
+          />
+          {errors.email && (
+            <p style={{ color: "#EF4444", fontSize: "13px", marginTop: "4px" }}>{errors.email.message}</p>
+          )}
+        </div>
+
+        <div>
+          <label style={{ display: "block", fontSize: "13px", fontWeight: 600, marginBottom: "6px" }}>
+            Password
+          </label>
+          <input
+            type="password"
+            {...register("password")}
+            style={{
+              width: "100%",
+              height: "44px",
+              padding: "0 14px",
+              borderRadius: "10px",
+              border: "1px solid rgba(15,23,42,0.14)",
+              fontSize: "15px"
+            }}
+            placeholder="********"
+          />
+          {errors.password && (
+            <p style={{ color: "#EF4444", fontSize: "13px", marginTop: "4px" }}>{errors.password.message}</p>
+          )}
+        </div>
+
+        {serverError && (
+          <p style={{ color: "#EF4444", fontSize: "13px" }}>{serverError}</p>
+        )}
+
+        <Button type="submit" size="lg" disabled={isSubmitting || loginMutation.isPending}>
+          {isSubmitting || loginMutation.isPending ? "Logging in..." : "Log In"}
+        </Button>
+      </form>
+
+      <div style={{ marginTop: "20px", fontSize: "14px", textAlign: "center", color: "var(--text-secondary)" }}>
+        <Link href="/forgot-password">Forgot password?</Link>
+        <span style={{ margin: "0 8px" }}>&middot;</span>
+        <Link href="/register">Create an account</Link>
+      </div>
+    </Card>
+  );
+}
+
+
+
+================================================================================
+FILE: apps\web\app\(auth)\register\page.tsx
+================================================================================
+"use client";
+
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
+import Link from "next/link";
+import { registerSchema, type RegisterInput } from "@saachi/utils";
+import { useRegister } from "@saachi/api-client";
+import { Button, Card } from "@saachi/ui";
+
+export default function RegisterPage() {
+  const router = useRouter();
+  const registerMutation = useRegister();
+  const [serverError, setServerError] = useState<string | null>(null);
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting }
+  } = useForm<RegisterInput>({
+    resolver: zodResolver(registerSchema),
+    defaultValues: { role: "learner" }
+  });
+
+  const onSubmit = async (data: RegisterInput) => {
+    setServerError(null);
+    try {
+      await registerMutation.mutateAsync(data);
+      router.push("/dashboard");
+    } catch (err: any) {
+      setServerError(err?.message ?? "Registration failed. Please try again.");
+    }
+  };
+
+  return (
+    <Card>
+      <h1 style={{ fontSize: "24px", fontWeight: 700, marginBottom: "4px" }}>Create your account</h1>
+      <p style={{ color: "var(--text-secondary)", fontSize: "14px", marginBottom: "24px" }}>
+        Join Saachi AI as a learner. You can apply to become an instructor later.
+      </p>
+
+      <form onSubmit={handleSubmit(onSubmit)} style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
+        <div>
+          <label style={{ display: "block", fontSize: "13px", fontWeight: 600, marginBottom: "6px" }}>
+            Full name
+          </label>
+          <input
+            type="text"
+            {...register("fullName")}
+            style={{
+              width: "100%",
+              height: "44px",
+              padding: "0 14px",
+              borderRadius: "10px",
+              border: "1px solid rgba(15,23,42,0.14)",
+              fontSize: "15px"
+            }}
+            placeholder="Your name"
+          />
+          {errors.fullName && (
+            <p style={{ color: "#EF4444", fontSize: "13px", marginTop: "4px" }}>{errors.fullName.message}</p>
+          )}
+        </div>
+
+        <div>
+          <label style={{ display: "block", fontSize: "13px", fontWeight: 600, marginBottom: "6px" }}>
+            Email
+          </label>
+          <input
+            type="email"
+            {...register("email")}
+            style={{
+              width: "100%",
+              height: "44px",
+              padding: "0 14px",
+              borderRadius: "10px",
+              border: "1px solid rgba(15,23,42,0.14)",
+              fontSize: "15px"
+            }}
+            placeholder="you@example.com"
+          />
+          {errors.email && (
+            <p style={{ color: "#EF4444", fontSize: "13px", marginTop: "4px" }}>{errors.email.message}</p>
+          )}
+        </div>
+
+        <div>
+          <label style={{ display: "block", fontSize: "13px", fontWeight: 600, marginBottom: "6px" }}>
+            Password
+          </label>
+          <input
+            type="password"
+            {...register("password")}
+            style={{
+              width: "100%",
+              height: "44px",
+              padding: "0 14px",
+              borderRadius: "10px",
+              border: "1px solid rgba(15,23,42,0.14)",
+              fontSize: "15px"
+            }}
+            placeholder="At least 8 characters"
+          />
+          {errors.password && (
+            <p style={{ color: "#EF4444", fontSize: "13px", marginTop: "4px" }}>{errors.password.message}</p>
+          )}
+        </div>
+
+        <div>
+          <label style={{ display: "block", fontSize: "13px", fontWeight: 600, marginBottom: "6px" }}>
+            Confirm password
+          </label>
+          <input
+            type="password"
+            {...register("confirmPassword")}
+            style={{
+              width: "100%",
+              height: "44px",
+              padding: "0 14px",
+              borderRadius: "10px",
+              border: "1px solid rgba(15,23,42,0.14)",
+              fontSize: "15px"
+            }}
+            placeholder="Repeat your password"
+          />
+          {errors.confirmPassword && (
+            <p style={{ color: "#EF4444", fontSize: "13px", marginTop: "4px" }}>
+              {errors.confirmPassword.message}
+            </p>
+          )}
+        </div>
+
+        {serverError && <p style={{ color: "#EF4444", fontSize: "13px" }}>{serverError}</p>}
+
+        <Button type="submit" size="lg" disabled={isSubmitting || registerMutation.isPending}>
+          {isSubmitting || registerMutation.isPending ? "Creating account..." : "Create Account"}
+        </Button>
+      </form>
+
+      <div style={{ marginTop: "20px", fontSize: "14px", textAlign: "center", color: "var(--text-secondary)" }}>
+        Already have an account? <Link href="/login">Log in</Link>
+      </div>
+    </Card>
+  );
+}
+
+
+
+================================================================================
+FILE: apps\web\app\(marketing)\page.tsx
+================================================================================
+import Link from "next/link";
+import { Button, Card, Badge } from "@saachi/ui";
+
+const categories = [
+  { title: "AI Automation & Workflow Tools", desc: "n8n, Zapier, Make.com" },
+  { title: "AI for Marketing & Sales", desc: "Ad copy, lead gen, campaigns" },
+  { title: "AI Website & App Development", desc: "Build with AI-assisted tools" },
+  { title: "AI Integration for Developers", desc: "OpenAI, Claude, Gemini APIs" }
+];
+
+export default function HomePage() {
+  return (
+    <main>
+      {/* Hero */}
+      <section
+        style={{
+          textAlign: "center",
+          padding: "96px 24px 64px",
+          background:
+            "radial-gradient(ellipse 60% 50% at 50% 0%, rgba(59,130,246,0.12), transparent 70%)"
+        }}
+      >
+        <Badge variant="info">Now in early access</Badge>
+        <h1
+          style={{
+            fontSize: "48px",
+            fontWeight: 700,
+            lineHeight: 1.12,
+            marginTop: "20px",
+            maxWidth: "760px",
+            marginLeft: "auto",
+            marginRight: "auto"
+          }}
+        >
+          Learn practical{" "}
+          <span
+            style={{
+              background: "linear-gradient(90deg, #60A5FA 0%, #22D3EE 50%, #818CF8 100%)",
+              WebkitBackgroundClip: "text",
+              backgroundClip: "text",
+              color: "transparent"
+            }}
+          >
+            AI skills
+          </span>
+          . Build real things. Get paid to teach.
+        </h1>
+        <p
+          style={{
+            color: "var(--text-secondary)",
+            fontSize: "18px",
+            maxWidth: "600px",
+            margin: "24px auto 32px"
+          }}
+        >
+          Saachi AI is a skills-first marketplace where practitioners teach and learners build,
+          not just watch.
+        </p>
+        <div style={{ display: "flex", gap: "16px", justifyContent: "center" }}>
+          <Link href="/register">
+            <Button size="lg">Get Started</Button>
+          </Link>
+          <Link href="/courses">
+            <Button size="lg" variant="secondary">
+              Browse Courses
+            </Button>
+          </Link>
+        </div>
+      </section>
+
+      {/* Category grid */}
+      <section style={{ padding: "64px 24px", maxWidth: "1120px", margin: "0 auto" }}>
+        <h2 style={{ fontSize: "28px", fontWeight: 700, textAlign: "center", marginBottom: "40px" }}>
+          Explore top categories
+        </h2>
+        <div
+          style={{
+            display: "grid",
+            gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))",
+            gap: "24px"
+          }}
+        >
+          {categories.map((c) => (
+            <Card key={c.title}>
+              <h3 style={{ fontSize: "18px", fontWeight: 600, marginBottom: "8px" }}>{c.title}</h3>
+              <p style={{ color: "var(--text-secondary)", fontSize: "14px" }}>{c.desc}</p>
+            </Card>
+          ))}
+        </div>
+      </section>
+    </main>
+  );
+}
+
+
+
+================================================================================
+FILE: apps\web\app\globals.css
+================================================================================
+@import "tailwindcss";
+
+:root {
+  --blue-50:  #EFF6FF;
+  --blue-500: #3B82F6;
+  --blue-600: #2563EB;
+  --cyan-400: #22D3EE;
+
+  --surface-bg:      #F8FAFC;
+  --surface-card:    #FFFFFF;
+  --text-primary:    #0F172A;
+  --text-secondary:  #475569;
+
+  --gradient-primary: linear-gradient(135deg, #2563EB 0%, #0EA5E9 50%, #22D3EE 100%);
+}
+
+[data-theme="dark"] {
+  --surface-bg:   #0B1120;
+  --surface-card: #0F172A;
+  --text-primary: #F1F5F9;
+  --text-secondary: #94A3B8;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  background: var(--surface-bg);
+  color: var(--text-primary);
+  font-family: "Inter", -apple-system, "Segoe UI", Roboto, sans-serif;
+}
+
+
+
+================================================================================
+FILE: apps\web\app\providers.tsx
+================================================================================
+"use client";
+
+import { useState } from "react";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+
+export function Providers({ children }: { children: React.ReactNode }) {
+  const [queryClient] = useState(
+    () =>
+      new QueryClient({
+        defaultOptions: {
+          queries: {
+            staleTime: 30 * 1000,
+            refetchOnWindowFocus: true,
+            retry: 1
+          }
+        }
+      })
+  );
+
+  return <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>;
+}
+
+
+
+================================================================================
+FILE: apps\web\.eslintrc.json
+================================================================================
+{
+  "extends": "next/core-web-vitals"
+}
+
+
+
+================================================================================
+FILE: apps\web\middleware.ts
+================================================================================
+import { NextResponse } from "next/server";
+import type { NextRequest } from "next/server";
+
+const LEARNER_PREFIX = "/dashboard";
+const INSTRUCTOR_PREFIX = "/instructor";
+
+export function middleware(request: NextRequest) {
+  const { pathname } = request.nextUrl;
+  const sessionCookie = request.cookies.get("saachi_session");
+
+  const isProtected =
+    pathname.startsWith(LEARNER_PREFIX) || pathname.startsWith(INSTRUCTOR_PREFIX);
+
+  if (isProtected && !sessionCookie) {
+    const loginUrl = new URL("/login", request.url);
+    loginUrl.searchParams.set("redirect", pathname);
+    return NextResponse.redirect(loginUrl);
+  }
+
+  return NextResponse.next();
+}
+
+export const config = {
+  matcher: ["/dashboard/:path*", "/instructor/:path*"]
+};
+
+
+
+================================================================================
+FILE: apps\web\next.config.js
+================================================================================
+/** @type {import("next").NextConfig} */
+const nextConfig = {
+  reactStrictMode: true,
+  transpilePackages: ["@saachi/ui", "@saachi/api-client", "@saachi/utils"],
+  images: {
+    remotePatterns: [
+      { protocol: "https", hostname: "**.cloudfront.net" },
+      { protocol: "https", hostname: "res.cloudinary.com" }
+    ]
+  },
+  async rewrites() {
+    return [
+      {
+        source: "/api/proxy/:path*",
+        destination: `${process.env.NEXT_PUBLIC_API_URL}/:path*`
+      }
+    ];
+  }
+};
+
+module.exports = nextConfig;
+
+
+
+================================================================================
+FILE: apps\web\package.json
+================================================================================
+{
+  "name": "web",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev -p 3000",
+    "build": "next build",
+    "start": "next start -p 3000",
+    "lint": "next lint",
+    "type-check": "tsc --noEmit"
+  },
+  "dependencies": {
+    "next": "^15.0.0",
+    "react": "^18.3.0",
+    "react-dom": "^18.3.0",
+    "@tanstack/react-query": "^5.56.0",
+    "@tanstack/react-table": "^8.20.0",
+    "zustand": "^4.5.0",
+    "react-hook-form": "^7.53.0",
+    "@hookform/resolvers": "^3.9.0",
+    "zod": "^3.23.0",
+    "framer-motion": "^11.5.0",
+    "recharts": "^2.12.0",
+    "lucide-react": "^0.445.0",
+    "next-intl": "^3.19.0",
+    "clsx": "^2.1.0",
+    "tailwind-merge": "^2.5.0",
+    "@tiptap/react": "^2.7.0",
+    "@tiptap/starter-kit": "^2.7.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.5.0",
+    "@types/react": "^18.3.0",
+    "@types/react-dom": "^18.3.0",
+    "typescript": "^5.5.0",
+    "tailwindcss": "^4.0.0",
+    "@tailwindcss/postcss": "^4.0.0",
+    "postcss": "^8.4.0",
+    "eslint": "^9.9.0",
+    "eslint-config-next": "^15.0.0",
+    "vitest": "^2.0.0",
+    "@testing-library/react": "^16.0.0",
+    "playwright": "^1.47.0"
+  }
+}
+
+
+
+================================================================================
+FILE: apps\web\postcss.config.mjs
+================================================================================
+export default {
+  plugins: {
+    "@tailwindcss/postcss": {}
+  }
+};
+
+
+
+================================================================================
+FILE: apps\web\tsconfig.json
+================================================================================
+{
+  "compilerOptions": {
+    "target": "ES2020",
+    "lib": ["dom", "dom.iterable", "esnext"],
+    "allowJs": false,
+    "skipLibCheck": true,
+    "strict": true,
+    "noEmit": true,
+    "esModuleInterop": true,
+    "module": "esnext",
+    "moduleResolution": "bundler",
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "jsx": "preserve",
+    "incremental": true,
+    "plugins": [{ "name": "next" }],
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["./*"],
+      "@saachi/ui": ["../../packages/ui/src"],
+      "@saachi/ui/*": ["../../packages/ui/src/*"],
+      "@saachi/api-client": ["../../packages/api-client/src"],
+      "@saachi/api-client/*": ["../../packages/api-client/src/*"],
+      "@saachi/utils": ["../../packages/utils/src"],
+      "@saachi/utils/*": ["../../packages/utils/src/*"]
+    }
+  },
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
+  "exclude": ["node_modules"]
+}
+
+
+
+================================================================================
+FILE: packages\api-client\src\hooks\useAuth.ts
+================================================================================
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { apiRequest } from "../http-client";
+import { authKeys } from "../query-keys";
+import type { Session } from "../types";
+import type { LoginInput, RegisterInput } from "@saachi/utils";
+
+export function useSession() {
+  return useQuery({
+    queryKey: authKeys.session,
+    queryFn: () => apiRequest<Session>("/auth/session"),
+    retry: false,
+    staleTime: 60 * 1000
+  });
+}
+
+export function useLogin() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (input: LoginInput) =>
+      apiRequest<Session | { requires2fa: true }>("/auth/login", {
+        method: "POST",
+        body: input
+      }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: authKeys.session });
+    }
+  });
+}
+
+export function useRegister() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (input: RegisterInput) =>
+      apiRequest<Session>("/auth/register", { method: "POST", body: input }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: authKeys.session });
+    }
+  });
+}
+
+export function useLogout() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: () => apiRequest<void>("/auth/logout", { method: "POST" }),
+    onSuccess: () => {
+      queryClient.clear();
+    }
+  });
+}
+
+
+
+================================================================================
+FILE: packages\api-client\src\hooks\useCourses.ts
+================================================================================
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { apiRequest } from "../http-client";
+import { courseKeys } from "../query-keys";
+import type { Course, Paginated } from "../types";
+
+export type CourseListFilters = {
+  category?: string;
+  search?: string;
+  priceMin?: number;
+  priceMax?: number;
+  level?: string;
+  language?: string;
+  sort?: string;
+  page?: number;
+};
+
+export function useCourseList(filters: CourseListFilters = {}) {
+  return useQuery({
+    queryKey: courseKeys.list(filters),
+    queryFn: () =>
+      apiRequest<Paginated<Course>>("/courses", { params: filters as Record<string, any> })
+  });
+}
+
+export function useCourseDetail(idOrSlug: string) {
+  return useQuery({
+    queryKey: courseKeys.detail(idOrSlug),
+    queryFn: () => apiRequest<Course>(`/courses/${idOrSlug}`),
+    enabled: Boolean(idOrSlug)
+  });
+}
+
+export function useCreateCourse() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (input: Partial<Course>) =>
+      apiRequest<Course>("/courses", { method: "POST", body: input }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: courseKeys.all });
+    }
+  });
+}
+
+export function useUpdateCourse(id: string) {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (input: Partial<Course>) =>
+      apiRequest<Course>(`/courses/${id}`, { method: "PATCH", body: input }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: courseKeys.detail(id) });
+      queryClient.invalidateQueries({ queryKey: courseKeys.all });
+    }
+  });
+}
+
+
+
+================================================================================
+FILE: packages\api-client\src\types\index.ts
+================================================================================
+export type UserRole = "learner" | "instructor" | "admin" | "super_admin";
+
+export type Session = {
+  id: string;
+  fullName: string;
+  email: string;
+  role: UserRole;
+  avatarUrl?: string;
+};
+
+export type Course = {
+  id: string;
+  slug: string;
+  title: string;
+  subtitle?: string;
+  thumbnailUrl?: string;
+  price: number;
+  currency: string;
+  rating: number;
+  ratingCount: number;
+  instructor: {
+    id: string;
+    fullName: string;
+    avatarUrl?: string;
+  };
+  status: "draft" | "pending_review" | "published" | "rejected" | "archived";
+};
+
+export type Paginated<T> = {
+  items: T[];
+  total: number;
+  page: number;
+  pageSize: number;
+};
+
+
+
+================================================================================
+FILE: packages\api-client\src\http-client.ts
+================================================================================
+export type ApiError = {
+  code: string;
+  message: string;
+  fieldErrors?: Record<string, string[]>;
+};
+
+export class ApiRequestError extends Error {
+  code: string;
+  fieldErrors?: Record<string, string[]>;
+  status: number;
+
+  constructor(status: number, error: ApiError) {
+    super(error.message);
+    this.name = "ApiRequestError";
+    this.status = status;
+    this.code = error.code;
+    this.fieldErrors = error.fieldErrors;
+  }
+}
+
+type RequestOptions = {
+  method?: "GET" | "POST" | "PATCH" | "PUT" | "DELETE";
+  body?: unknown;
+  params?: Record<string, string | number | boolean | undefined>;
+  signal?: AbortSignal;
+};
+
+function buildUrl(path: string, params?: RequestOptions["params"]): string {
+  const base = process.env.NEXT_PUBLIC_API_URL ?? "";
+  const url = new URL(path.replace(/^\//, ""), base.endsWith("/") ? base : `${base}/`);
+  if (params) {
+    Object.entries(params).forEach(([key, value]) => {
+      if (value !== undefined) url.searchParams.set(key, String(value));
+    });
+  }
+  return url.toString();
+}
+
+export async function apiRequest<TResponse>(
+  path: string,
+  options: RequestOptions = {}
+): Promise<TResponse> {
+  const { method = "GET", body, params, signal } = options;
+
+  const response = await fetch(buildUrl(path, params), {
+    method,
+    credentials: "include",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: body ? JSON.stringify(body) : undefined,
+    signal
+  });
+
+  if (!response.ok) {
+    let errorPayload: ApiError = { code: "unknown_error", message: "Something went wrong" };
+    try {
+      errorPayload = await response.json();
+    } catch {
+      // response had no JSON body
+    }
+    throw new ApiRequestError(response.status, errorPayload);
+  }
+
+  if (response.status === 204) return undefined as TResponse;
+  return response.json() as Promise<TResponse>;
+}
+
+
+
+================================================================================
+FILE: packages\api-client\src\index.ts
+================================================================================
+export * from "./http-client";
+export * from "./query-keys";
+export * from "./types";
+export * from "./hooks/useAuth";
+export * from "./hooks/useCourses";
+
+
+
+================================================================================
+FILE: packages\api-client\src\query-keys.ts
+================================================================================
+export const courseKeys = {
+  all: ["courses"] as const,
+  list: (filters?: Record<string, unknown>) => ["courses", "list", filters] as const,
+  detail: (id: string) => ["courses", "detail", id] as const,
+  curriculum: (id: string) => ["courses", "curriculum", id] as const
+};
+
+export const authKeys = {
+  session: ["auth", "session"] as const
+};
+
+export const cartKeys = {
+  current: ["cart"] as const
+};
+
+export const enrollmentKeys = {
+  myCourses: ["enrollments", "my-courses"] as const,
+  progress: (courseId: string) => ["enrollments", "progress", courseId] as const
+};
+
+export const instructorKeys = {
+  analytics: (instructorId: string) => ["instructor", "analytics", instructorId] as const,
+  earnings: (instructorId: string) => ["instructor", "earnings", instructorId] as const,
+  payouts: (instructorId: string) => ["instructor", "payouts", instructorId] as const
+};
+
+export const adminKeys = {
+  users: (filters?: Record<string, unknown>) => ["admin", "users", filters] as const,
+  moderationQueue: ["admin", "moderation-queue"] as const,
+  transactions: (filters?: Record<string, unknown>) => ["admin", "transactions", filters] as const
+};
+
+export const notificationKeys = {
+  list: ["notifications"] as const
+};
+
+
+
+================================================================================
+FILE: packages\api-client\package.json
+================================================================================
+{
+  "name": "@saachi/api-client",
+  "version": "0.1.0",
+  "private": true,
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "dependencies": {
+    "@tanstack/react-query": "^5.56.0",
+    "@saachi/utils": "workspace:*"
+  },
+  "devDependencies": {
+    "typescript": "^5.5.0",
+    "@types/react": "^18.3.0"
+  }
+}
+
+
+
+================================================================================
+FILE: packages\api-client\tsconfig.json
+================================================================================
+{
+  "compilerOptions": {
+    "target": "ES2020",
+    "lib": ["dom", "ES2020"],
+    "module": "esnext",
+    "moduleResolution": "bundler",
+    "strict": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "declaration": true,
+    "jsx": "react-jsx"
+  },
+  "include": ["src"]
+}
+
+
+
+================================================================================
+FILE: packages\config\eslint-preset.json
+================================================================================
+{
+  "extends": ["next/core-web-vitals"],
+  "rules": {
+    "@typescript-eslint/no-unused-vars": "warn"
+  }
+}
+
+
+
+================================================================================
+FILE: packages\config\package.json
+================================================================================
+{
+  "name": "@saachi/config",
+  "version": "0.1.0",
+  "private": true
+}
+
+
+
+================================================================================
+FILE: packages\config\tsconfig.base.json
+================================================================================
+{
+  "compilerOptions": {
+    "target": "ES2020",
+    "lib": ["dom", "dom.iterable", "esnext"],
+    "strict": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "moduleResolution": "bundler",
+    "resolveJsonModule": true,
+    "isolatedModules": true
+  }
+}
+
+
+
+================================================================================
+FILE: packages\ui\src\components\Badge.tsx
+================================================================================
+import type { HTMLAttributes } from "react";
+import { cn } from "../cn";
+
+type BadgeVariant = "default" | "success" | "warning" | "error" | "info";
+
+export type BadgeProps = HTMLAttributes<HTMLSpanElement> & {
+  variant?: BadgeVariant;
+};
+
+const variantStyles: Record<BadgeVariant, string> = {
+  default: "bg-slate-100 text-slate-700",
+  success: "bg-teal-50 text-teal-700",
+  warning: "bg-amber-50 text-amber-700",
+  error: "bg-red-50 text-red-700",
+  info: "bg-blue-50 text-blue-700"
+};
+
+export function Badge({ className, variant = "default", children, ...props }: BadgeProps) {
+  return (
+    <span
+      className={cn(
+        "inline-flex items-center rounded-full px-3 py-1 text-xs font-medium",
+        variantStyles[variant],
+        className
+      )}
+      {...props}
+    >
+      {children}
+    </span>
+  );
+}
+
+
+
+================================================================================
+FILE: packages\ui\src\components\Button.tsx
+================================================================================
+import { forwardRef, type ButtonHTMLAttributes } from "react";
+import { cn } from "../cn";
+
+type ButtonVariant = "primary" | "secondary" | "ghost" | "danger";
+type ButtonSize = "sm" | "md" | "lg";
+
+export type ButtonProps = ButtonHTMLAttributes<HTMLButtonElement> & {
+  variant?: ButtonVariant;
+  size?: ButtonSize;
+  loading?: boolean;
+};
+
+const variantStyles: Record<ButtonVariant, string> = {
+  primary:
+    "text-white shadow-[0_4px_20px_rgba(30,64,175,0.10)] hover:shadow-[0_0_32px_rgba(59,130,246,0.35)]",
+  secondary:
+    "border border-[var(--border-hairline,rgba(15,23,42,0.14))] bg-transparent hover:border-blue-400",
+  ghost: "bg-transparent text-[var(--text-secondary,#475569)] hover:bg-[var(--surface-elevated,#F1F5F9)]",
+  danger: "bg-red-500 text-white hover:bg-red-600"
+};
+
+const sizeStyles: Record<ButtonSize, string> = {
+  sm: "h-9 px-4 text-sm",
+  md: "h-11 px-5 text-[15px]",
+  lg: "h-13 px-6 text-[17px]"
+};
+
+export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
+  ({ className, variant = "primary", size = "md", loading, disabled, children, style, ...props }, ref) => {
+    const isPrimary = variant === "primary";
+    return (
+      <button
+        ref={ref}
+        disabled={disabled || loading}
+        className={cn(
+          "inline-flex items-center justify-center rounded-full font-medium transition-all duration-200 ease-out disabled:opacity-60 disabled:pointer-events-none",
+          variantStyles[variant],
+          sizeStyles[size],
+          className
+        )}
+        style={
+          isPrimary
+            ? {
+                background:
+                  "linear-gradient(135deg, #2563EB 0%, #0EA5E9 50%, #22D3EE 100%)",
+                ...style
+              }
+            : style
+        }
+        {...props}
+      >
+        {loading ? "..." : children}
+      </button>
+    );
+  }
+);
+Button.displayName = "Button";
+
+
+
+================================================================================
+FILE: packages\ui\src\components\Card.tsx
+================================================================================
+import { forwardRef, type HTMLAttributes } from "react";
+import { cn } from "../cn";
+
+export type CardProps = HTMLAttributes<HTMLDivElement> & {
+  featured?: boolean;
+};
+
+export const Card = forwardRef<HTMLDivElement, CardProps>(
+  ({ className, featured, children, ...props }, ref) => {
+    return (
+      <div
+        ref={ref}
+        className={cn(
+          "rounded-2xl border border-[var(--border-hairline,rgba(15,23,42,0.08))] bg-[var(--surface-card,#FFFFFF)] p-6 shadow-[0_2px_8px_rgba(30,64,175,0.06)] transition-all duration-200 ease-out hover:-translate-y-0.5 hover:shadow-[0_4px_20px_rgba(30,64,175,0.10)]",
+          featured && "bg-gradient-to-br from-white to-blue-50",
+          className
+        )}
+        {...props}
+      >
+        {children}
+      </div>
+    );
+  }
+);
+Card.displayName = "Card";
+
+
+
+================================================================================
+FILE: packages\ui\src\cn.ts
+================================================================================
+import { clsx, type ClassValue } from "clsx";
+import { twMerge } from "tailwind-merge";
+
+export function cn(...inputs: ClassValue[]) {
+  return twMerge(clsx(inputs));
+}
+
+
+
+================================================================================
+FILE: packages\ui\src\index.ts
+================================================================================
+export * from "./cn";
+export * from "./components/Button";
+export * from "./components/Card";
+export * from "./components/Badge";
+
+
+
+================================================================================
+FILE: packages\ui\package.json
+================================================================================
+{
+  "name": "@saachi/ui",
+  "version": "0.1.0",
+  "private": true,
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "dependencies": {
+    "clsx": "^2.1.0",
+    "tailwind-merge": "^2.5.0",
+    "lucide-react": "^0.445.0"
+  },
+  "peerDependencies": {
+    "react": "^18.3.0"
+  },
+  "devDependencies": {
+    "typescript": "^5.5.0",
+    "@types/react": "^18.3.0"
+  }
+}
+
+
+
+================================================================================
+FILE: packages\ui\tsconfig.json
+================================================================================
+{
+  "compilerOptions": {
+    "target": "ES2020",
+    "lib": ["dom", "ES2020"],
+    "module": "esnext",
+    "moduleResolution": "bundler",
+    "strict": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "declaration": true,
+    "jsx": "react-jsx"
+  },
+  "include": ["src"]
+}
+
+
+
+================================================================================
+FILE: packages\utils\src\formatting\currency.ts
+================================================================================
+const CURRENCY_LOCALE: Record<string, string> = {
+  USD: "en-US",
+  PKR: "en-PK",
+  GBP: "en-GB"
+};
+
+export function formatCurrency(amount: number, currency: string = "USD"): string {
+  const locale = CURRENCY_LOCALE[currency] ?? "en-US";
+  return new Intl.NumberFormat(locale, {
+    style: "currency",
+    currency,
+    minimumFractionDigits: 2
+  }).format(amount);
+}
+
+export function formatCompactNumber(value: number): string {
+  return new Intl.NumberFormat("en-US", {
+    notation: "compact",
+    maximumFractionDigits: 1
+  }).format(value);
+}
+
+
+
+================================================================================
+FILE: packages\utils\src\formatting\date.ts
+================================================================================
+export function formatDate(input: string | Date, locale: string = "en-US"): string {
+  const date = typeof input === "string" ? new Date(input) : input;
+  return new Intl.DateTimeFormat(locale, {
+    year: "numeric",
+    month: "short",
+    day: "numeric"
+  }).format(date);
+}
+
+export function formatRelativeTime(input: string | Date): string {
+  const date = typeof input === "string" ? new Date(input) : input;
+  const diffMs = date.getTime() - Date.now();
+  const diffMinutes = Math.round(diffMs / 60000);
+
+  const rtf = new Intl.RelativeTimeFormat("en", { numeric: "auto" });
+
+  if (Math.abs(diffMinutes) < 60) return rtf.format(diffMinutes, "minute");
+  const diffHours = Math.round(diffMinutes / 60);
+  if (Math.abs(diffHours) < 24) return rtf.format(diffHours, "hour");
+  const diffDays = Math.round(diffHours / 24);
+  return rtf.format(diffDays, "day");
+}
+
+export function formatDuration(totalSeconds: number): string {
+  const hours = Math.floor(totalSeconds / 3600);
+  const minutes = Math.floor((totalSeconds % 3600) / 60);
+  if (hours > 0) return `${hours}h ${minutes}m`;
+  return `${minutes}m`;
+}
+
+
+
+================================================================================
+FILE: packages\utils\src\schemas\auth.ts
+================================================================================
+import { z } from "zod";
+
+export const loginSchema = z.object({
+  email: z.string().email("Enter a valid email address"),
+  password: z.string().min(8, "Password must be at least 8 characters")
+});
+export type LoginInput = z.infer<typeof loginSchema>;
+
+export const registerSchema = z
+  .object({
+    fullName: z.string().min(2, "Full name is required"),
+    email: z.string().email("Enter a valid email address"),
+    password: z.string().min(8, "Password must be at least 8 characters"),
+    confirmPassword: z.string(),
+    role: z.enum(["learner", "instructor"]).default("learner")
+  })
+  .refine((data) => data.password === data.confirmPassword, {
+    message: "Passwords do not match",
+    path: ["confirmPassword"]
+  });
+export type RegisterInput = z.infer<typeof registerSchema>;
+
+export const forgotPasswordSchema = z.object({
+  email: z.string().email("Enter a valid email address")
+});
+export type ForgotPasswordInput = z.infer<typeof forgotPasswordSchema>;
+
+export const resetPasswordSchema = z
+  .object({
+    token: z.string().min(1),
+    password: z.string().min(8, "Password must be at least 8 characters"),
+    confirmPassword: z.string()
+  })
+  .refine((data) => data.password === data.confirmPassword, {
+    message: "Passwords do not match",
+    path: ["confirmPassword"]
+  });
+export type ResetPasswordInput = z.infer<typeof resetPasswordSchema>;
+
+export const twoFactorSchema = z.object({
+  code: z.string().length(6, "Enter the 6-digit code")
+});
+export type TwoFactorInput = z.infer<typeof twoFactorSchema>;
+
+
+
+================================================================================
+FILE: packages\utils\src\schemas\course.ts
+================================================================================
+import { z } from "zod";
+
+export const courseBasicsSchema = z.object({
+  title: z.string().min(5, "Title must be at least 5 characters").max(120),
+  subtitle: z.string().max(180).optional(),
+  categoryId: z.string().min(1, "Select a category"),
+  tags: z.array(z.string()).max(10).default([]),
+  language: z.string().min(1, "Select a language"),
+  level: z.enum(["beginner", "intermediate", "advanced"])
+});
+export type CourseBasicsInput = z.infer<typeof courseBasicsSchema>;
+
+export const coursePricingSchema = z.object({
+  price: z.number().min(0, "Price cannot be negative"),
+  currency: z.enum(["PKR", "USD", "GBP"]).default("USD"),
+  subscriptionIncluded: z.boolean().default(false),
+  couponEligible: z.boolean().default(true)
+});
+export type CoursePricingInput = z.infer<typeof coursePricingSchema>;
+
+export const lessonSchema = z.object({
+  title: z.string().min(3, "Lesson title is required"),
+  type: z.enum(["video", "text", "quiz", "resource"]),
+  content: z.string().optional(),
+  durationSeconds: z.number().int().min(0).optional()
+});
+export type LessonInput = z.infer<typeof lessonSchema>;
+
+export const moduleSchema = z.object({
+  title: z.string().min(3, "Module title is required"),
+  lessons: z.array(lessonSchema).default([])
+});
+export type ModuleInput = z.infer<typeof moduleSchema>;
+
+export const curriculumSchema = z.object({
+  modules: z.array(moduleSchema).min(1, "Add at least one module")
+});
+export type CurriculumInput = z.infer<typeof curriculumSchema>;
+
+
+
+================================================================================
+FILE: packages\utils\src\constants.ts
+================================================================================
+export const INSTRUCTOR_TRUST_TIERS = [
+  "new",
+  "verified",
+  "top_rated",
+  "partner"
+] as const;
+export type InstructorTrustTier = (typeof INSTRUCTOR_TRUST_TIERS)[number];
+
+export const ADMIN_ROLES = [
+  "super_admin",
+  "admin",
+  "finance_officer",
+  "support_officer"
+] as const;
+export type AdminRole = (typeof ADMIN_ROLES)[number];
+
+export const COURSE_STATUS = [
+  "draft",
+  "pending_review",
+  "published",
+  "rejected",
+  "archived"
+] as const;
+export type CourseStatus = (typeof COURSE_STATUS)[number];
+
+export const PAYMENT_GATEWAYS = [
+  "stripe",
+  "paypal",
+  "easypaisa",
+  "jazzcash",
+  "bank_transfer"
+] as const;
+export type PaymentGateway = (typeof PAYMENT_GATEWAYS)[number];
+
+
+
+================================================================================
+FILE: packages\utils\src\index.ts
+================================================================================
+export * from "./schemas/auth";
+export * from "./schemas/course";
+export * from "./schemas/checkout";
+export * from "./formatting/currency";
+export * from "./formatting/date";
+export * from "./constants";
+
+
+
+================================================================================
+FILE: packages\utils\package.json
+================================================================================
+{
+  "name": "@saachi/utils",
+  "version": "0.1.0",
+  "private": true,
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "dependencies": {
+    "zod": "^3.23.0"
+  },
+  "devDependencies": {
+    "typescript": "^5.5.0"
+  }
+}
+
+
+
+================================================================================
+FILE: packages\utils\tsconfig.json
+================================================================================
+{
+  "compilerOptions": {
+    "target": "ES2020",
+    "lib": ["ES2020"],
+    "module": "esnext",
+    "moduleResolution": "bundler",
+    "strict": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "declaration": true,
+    "jsx": "preserve"
+  },
+  "include": ["src"]
+}
+
+
+
+================================================================================
+FILE: package.json
+================================================================================
+{
+  "name": "saachi-ai-frontend",
+  "private": true,
+  "packageManager": "pnpm@9.0.0",
+  "scripts": {
+    "dev": "turbo run dev",
+    "dev:web": "turbo run dev --filter=web",
+    "dev:admin": "turbo run dev --filter=admin",
+    "build": "turbo run build",
+    "lint": "turbo run lint",
+    "type-check": "turbo run type-check",
+    "test": "turbo run test"
+  },
+  "devDependencies": {
+    "turbo": "^2.1.0",
+    "typescript": "^5.5.0",
+    "prettier": "^3.3.0"
+  }
+}
+
+
+
+================================================================================
+FILE: README.md
+================================================================================
+# saachi-ai-remastered
+# saachi-ai-remastered
+
+
+
+================================================================================
+FILE: turbo.json
+================================================================================
+{
+  "$schema": "https://turbo.build/schema.json",
+  "tasks": {
+    "dev": {
+      "cache": false,
+      "persistent": true
+    },
+    "build": {
+      "dependsOn": ["^build"],
+      "outputs": [".next/**", "!.next/cache/**", "dist/**"]
+    },
+    "lint": {
+      "dependsOn": ["^build"]
+    },
+    "type-check": {
+      "dependsOn": ["^build"]
+    },
+    "test": {
+      "dependsOn": ["^build"]
+    }
+  }
+}
+
+
