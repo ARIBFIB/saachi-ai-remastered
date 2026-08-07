@@ -2,16 +2,15 @@
 
 import { useState } from "react";
 import { useParams, useRouter } from "next/navigation";
-import { ArrowLeft, LifeBuoy, Send, CheckCircle2, AlertTriangle } from "lucide-react";
+import { ArrowLeft, Send, CheckCircle2, AlertTriangle, StickyNote } from "lucide-react";
 import {
   useAdminTicketDetail,
   useReplyToTicket,
   useAddInternalNote,
   useResolveTicket,
-  useAssignTicket,
-  type SupportTicket
+  useAdminCannedResponses
 } from "@saachi/api-client";
-import { Button, Card, Select, StatusPill, Shimmer, Textarea, EmptyState, Badge } from "@saachi/ui";
+import { Button, Card, Select, StatusPill, Shimmer, EmptyState } from "@saachi/ui";
 import { formatRelativeTime } from "@saachi/utils";
 
 const STATUS_OPTIONS = [
@@ -21,46 +20,40 @@ const STATUS_OPTIONS = [
   { label: "Closed", value: "closed" }
 ];
 
-const STATUS_TONE: Record<SupportTicket["status"], "warning" | "info" | "success" | "neutral"> = {
-  open: "warning",
-  in_progress: "info",
-  resolved: "success",
-  closed: "neutral"
-};
-
-const PRIORITY_TONE: Record<SupportTicket["priority"], "neutral" | "info" | "warning" | "error"> = {
-  low: "neutral",
-  medium: "info",
-  high: "warning",
-  urgent: "error"
-};
-
-const CANNED_RESPONSES = [
-  { label: "Ask for order/transaction ID", value: "Could you please share your order or transaction ID so we can look into this further?" },
-  { label: "Refund policy explanation", value: "Refund requests are reviewed within 7 days of purchase, subject to course completion below 30%." },
-  { label: "Escalated to finance", value: "Thanks for the details - I have escalated this to our finance team and will follow up shortly." }
-];
-
 export default function SupportTicketDetailPage() {
-  const router = useRouter();
   const params = useParams<{ id: string }>();
-  const ticketId = params.id;
-
-  const { data: ticket, isLoading } = useAdminTicketDetail(ticketId);
-  const replyToTicket = useReplyToTicket();
-  const addInternalNote = useAddInternalNote();
+  const router = useRouter();
+  const { data: ticket, isLoading } = useAdminTicketDetail(params.id);
+  const { data: cannedResponses } = useAdminCannedResponses();
+  const reply = useReplyToTicket();
+  const addNote = useAddInternalNote();
   const resolveTicket = useResolveTicket();
-  const assignTicket = useAssignTicket();
 
-  const [reply, setReply] = useState("");
+  const [message, setMessage] = useState("");
   const [note, setNote] = useState("");
   const [mode, setMode] = useState<"reply" | "note">("reply");
+
+  const handleSend = () => {
+    if (!ticket) return;
+    if (mode === "reply" && message.trim()) {
+      reply.mutate({ id: ticket.id, message: message.trim() });
+      setMessage("");
+    } else if (mode === "note" && note.trim()) {
+      addNote.mutate({ id: ticket.id, note: note.trim() });
+      setNote("");
+    }
+  };
+
+  const applyCanned = (value: string) => {
+    if (!value) return;
+    setMode("reply");
+    setMessage(value);
+  };
 
   if (isLoading) {
     return (
       <main className="mx-auto max-w-[900px] px-4 py-8 md:px-8 md:py-10">
-        <Shimmer className="mb-6 h-10 w-48" />
-        <Shimmer className="mb-4 h-32 w-full rounded-card" />
+        <Shimmer className="mb-6 h-8 w-48" />
         <Shimmer className="h-64 w-full rounded-card" />
       </main>
     );
@@ -69,25 +62,13 @@ export default function SupportTicketDetailPage() {
   if (!ticket) {
     return (
       <main className="mx-auto max-w-[900px] px-4 py-8 md:px-8 md:py-10">
-        <EmptyState icon={<LifeBuoy size={22} strokeWidth={1.75} />} title="Ticket not found" description="This ticket may have been removed." />
+        <EmptyState icon={<AlertTriangle size={22} strokeWidth={1.75} />} title="Ticket not found" description="It may have been merged or removed." />
       </main>
     );
   }
 
   const overdue =
     new Date(ticket.slaDueAt).getTime() < Date.now() && ticket.status !== "resolved" && ticket.status !== "closed";
-
-  const handleSend = () => {
-    if (mode === "reply") {
-      if (!reply.trim()) return;
-      replyToTicket.mutate({ id: ticket.id, message: reply.trim() });
-      setReply("");
-    } else {
-      if (!note.trim()) return;
-      addInternalNote.mutate({ id: ticket.id, note: note.trim() });
-      setNote("");
-    }
-  };
 
   return (
     <main className="mx-auto max-w-[900px] px-4 py-8 md:px-8 md:py-10">
@@ -99,80 +80,73 @@ export default function SupportTicketDetailPage() {
         <ArrowLeft size={14} strokeWidth={1.75} /> Back to Ticket Queue
       </button>
 
-      <Card className="mb-5 flex flex-col gap-4 p-6">
+      <Card className="mb-6 p-6">
         <div className="flex flex-wrap items-start justify-between gap-3">
           <div>
-            <div className="flex flex-wrap items-center gap-2.5">
-              <h1 className="text-[18px] font-semibold text-ink">{ticket.subject}</h1>
-              <StatusPill label={ticket.status.replace("_", " ")} tone={STATUS_TONE[ticket.status]} />
-              <StatusPill label={ticket.priority} tone={PRIORITY_TONE[ticket.priority]} />
-              {overdue && (
-                <span className="flex items-center gap-1 text-[12px] font-medium text-error">
-                  <AlertTriangle size={12} strokeWidth={1.75} /> SLA overdue
-                </span>
-              )}
-            </div>
-            <p className="mt-1.5 text-[12.5px] text-ink-soft">
+            <h1 className="text-[19px] font-semibold text-ink">{ticket.subject}</h1>
+            <p className="mt-1 text-[13px] text-ink-soft">
               {ticket.requesterName} - {ticket.category} - opened {formatRelativeTime(ticket.createdAt)}
             </p>
           </div>
+          <div className="flex items-center gap-2">
+            {overdue && (
+              <span className="flex items-center gap-1.5 rounded-full bg-error-tint px-2.5 py-1 text-[11px] font-semibold text-error">
+                <AlertTriangle size={12} strokeWidth={1.75} /> SLA overdue
+              </span>
+            )}
+            <StatusPill label={ticket.priority} tone={ticket.priority === "urgent" || ticket.priority === "high" ? "error" : "neutral"} />
+          </div>
+        </div>
 
+        <div className="mt-4 flex flex-wrap items-center gap-3">
+          <div className="w-[180px]">
+            <Select
+              options={STATUS_OPTIONS}
+              value={ticket.status}
+              onChange={(e) => resolveTicket.mutate({ id: ticket.id, status: e.target.value as typeof ticket.status })}
+            />
+          </div>
           {ticket.status !== "resolved" && ticket.status !== "closed" && (
-            <Button size="sm" onClick={() => resolveTicket.mutate(ticket.id)} disabled={resolveTicket.isPending}>
-              <CheckCircle2 size={14} strokeWidth={1.75} /> {resolveTicket.isPending ? "Resolving..." : "Mark resolved"}
+            <Button size="sm" variant="secondary" onClick={() => resolveTicket.mutate({ id: ticket.id, status: "resolved" })}>
+              <CheckCircle2 size={14} strokeWidth={1.75} /> Mark resolved
             </Button>
           )}
         </div>
-
-        <div className="flex flex-wrap items-center gap-3 border-t border-line pt-4">
-          <div className="w-[220px]">
-            <Select
-              label="Assigned to"
-              placeholder="Unassigned"
-              options={[
-                { label: "Support Desk", value: "support_desk" },
-                { label: "Finance Desk", value: "finance_desk" },
-                { label: "Abdul Rehman Irfan", value: "abdulrehman" }
-              ]}
-              value={ticket.assignedTo ?? ""}
-              onChange={(e) => assignTicket.mutate({ id: ticket.id, assignedTo: e.target.value })}
-            />
-          </div>
-        </div>
       </Card>
 
-      <Card className="mb-5 flex flex-col gap-4 p-6">
-        <p className="text-[14px] font-semibold text-ink">Conversation</p>
-        <div className="flex flex-col gap-4">
-          {ticket.messages.map((msg) => (
-            <div
-              key={msg.id}
-              className={`flex flex-col gap-1 rounded-control border p-3.5 text-[13.5px] leading-relaxed ${
-                msg.isInternalNote
-                  ? "border-warning-tint bg-warning-tint/60"
-                  : msg.fromStaff
-                  ? "border-line bg-paper-dim"
+      <p className="mb-3 text-[14px] font-semibold text-ink">Conversation</p>
+      <div className="mb-6 flex flex-col gap-3">
+        {(ticket.thread ?? []).map((entry) => (
+          <div
+            key={entry.id}
+            className={`max-w-[85%] rounded-card border p-4 ${
+              entry.authorType === "staff"
+                ? "ml-auto border-line-strong bg-paper-dim"
+                : entry.authorType === "internal_note"
+                  ? "border-warning-tint bg-warning-tint/40"
                   : "border-line bg-card"
-              }`}
-            >
-              <div className="flex items-center gap-2">
-                <span className="font-semibold text-ink">{msg.authorName}</span>
-                {msg.isInternalNote && <Badge>Internal note</Badge>}
-                <span className="text-[11.5px] text-ink-soft">{formatRelativeTime(msg.createdAt)}</span>
-              </div>
-              <p className="text-ink">{msg.body}</p>
+            }`}
+          >
+            <div className="mb-1.5 flex items-center gap-2">
+              {entry.authorType === "internal_note" && <StickyNote size={12} strokeWidth={1.75} className="text-warning" />}
+              <span className="text-[12.5px] font-semibold text-ink">{entry.authorName}</span>
+              <span className="text-[11px] text-ink-soft">{formatRelativeTime(entry.createdAt)}</span>
             </div>
-          ))}
-        </div>
-      </Card>
+            <p className="text-[13.5px] leading-relaxed text-ink">{entry.message}</p>
+          </div>
+        ))}
+        {(!ticket.thread || ticket.thread.length === 0) && (
+          <p className="text-[13px] text-ink-soft">No messages yet - the original request is shown above.</p>
+        )}
+      </div>
 
-      <Card className="flex flex-col gap-3 p-6">
-        <div className="flex items-center gap-2">
+      <Card className="p-5">
+        <div className="mb-3 flex items-center gap-2">
           <button
             type="button"
             onClick={() => setMode("reply")}
-            className={`rounded-control px-3 py-1.5 text-[12.5px] font-medium ${
-              mode === "reply" ? "bg-ink text-paper" : "text-ink-soft hover:bg-paper-dim"
+            className={`rounded-control px-3 py-1.5 text-[12.5px] font-medium transition-colors duration-150 ease-out ${
+              mode === "reply" ? "bg-ink text-paper" : "bg-paper-dim text-ink-soft hover:text-ink"
             }`}
           >
             Reply to requester
@@ -180,46 +154,43 @@ export default function SupportTicketDetailPage() {
           <button
             type="button"
             onClick={() => setMode("note")}
-            className={`rounded-control px-3 py-1.5 text-[12.5px] font-medium ${
-              mode === "note" ? "bg-ink text-paper" : "text-ink-soft hover:bg-paper-dim"
+            className={`rounded-control px-3 py-1.5 text-[12.5px] font-medium transition-colors duration-150 ease-out ${
+              mode === "note" ? "bg-ink text-paper" : "bg-paper-dim text-ink-soft hover:text-ink"
             }`}
           >
             Internal note
           </button>
+          {mode === "reply" && cannedResponses && cannedResponses.length > 0 && (
+            <div className="ml-auto w-[220px]">
+              <Select
+                placeholder="Insert canned response"
+                options={cannedResponses.map((c) => ({ label: c.title, value: c.body }))}
+                value=""
+                onChange={(e) => applyCanned(e.target.value)}
+              />
+            </div>
+          )}
         </div>
 
-        {mode === "reply" && (
-          <div className="flex flex-wrap gap-1.5">
-            {CANNED_RESPONSES.map((c) => (
-              <button
-                key={c.label}
-                type="button"
-                onClick={() => setReply(c.value)}
-                className="rounded-full border border-line-strong px-2.5 py-1 text-[11.5px] text-ink-soft hover:border-ink hover:text-ink"
-              >
-                {c.label}
-              </button>
-            ))}
-          </div>
-        )}
-
-        <Textarea
-          placeholder={mode === "reply" ? "Write a reply to the requester..." : "Add a note visible only to staff..."}
+        <textarea
           rows={4}
-          value={mode === "reply" ? reply : note}
-          onChange={(e) => (mode === "reply" ? setReply(e.target.value) : setNote(e.target.value))}
+          value={mode === "reply" ? message : note}
+          onChange={(e) => (mode === "reply" ? setMessage(e.target.value) : setNote(e.target.value))}
+          placeholder={mode === "reply" ? "Write a reply to the requester..." : "Add a note visible only to staff..."}
+          className="w-full rounded-control border border-line bg-card p-3 text-[13px] text-ink outline-none placeholder:text-ink-soft/60 focus:border-line-strong"
         />
 
-        <div className="flex justify-end">
+        <div className="mt-3 flex justify-end">
           <Button
             size="sm"
             onClick={handleSend}
             disabled={
-              (mode === "reply" ? !reply.trim() || replyToTicket.isPending : !note.trim() || addInternalNote.isPending)
+              (mode === "reply" && (!message.trim() || reply.isPending)) ||
+              (mode === "note" && (!note.trim() || addNote.isPending))
             }
           >
             <Send size={14} strokeWidth={1.75} />
-            {mode === "reply" ? (replyToTicket.isPending ? "Sending..." : "Send reply") : (addInternalNote.isPending ? "Saving..." : "Save note")}
+            {mode === "reply" ? (reply.isPending ? "Sending..." : "Send reply") : addNote.isPending ? "Saving..." : "Add note"}
           </Button>
         </div>
       </Card>

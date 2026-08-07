@@ -15,3 +15,4 @@ export * from "./hooks/useAdminModeration";
 export * from "./hooks/useAdminSupport";
 export * from "./hooks/useAuth";
 export * from "./hooks/useCourses";
+export * from "./hooks/useAdminPayouts";

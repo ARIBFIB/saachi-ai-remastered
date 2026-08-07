@@ -5,7 +5,7 @@ import { usePathname } from "next/navigation";
 import { useState, type ReactNode } from "react";
 import { Menu, X, LogOut, Search, ChevronLeft, ChevronRight } from "lucide-react";
 import { ThemeToggle } from "@saachi/ui";
-import { ADMIN_NAV } from "../lib/nav-config";
+import { ADMIN_NAV } from "../../lib/nav-config";
 
 function cx(...parts: Array<string | false | undefined>) {
   return parts.filter(Boolean).join(" ");
