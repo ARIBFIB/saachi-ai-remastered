@@ -1,8 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { toast } from "sonner";
 import { ScrollText, Pencil, History } from "lucide-react";
-import { Button, Card, Textarea, Modal } from "@saachi/ui";
+import { Button, Card, Textarea, Modal, ShimmerTableRow } from "@saachi/ui";
 import { formatDate } from "@saachi/utils";
 
 type LegalDoc = {
@@ -21,9 +22,15 @@ const INITIAL_DOCS: LegalDoc[] = [
 ];
 
 export default function LegalDocumentManagementPage() {
+  const [isLoading, setIsLoading] = useState(true);
   const [docs, setDocs] = useState(INITIAL_DOCS);
   const [editing, setEditing] = useState<LegalDoc | null>(null);
   const [draft, setDraft] = useState("");
+
+  useEffect(() => {
+    const t = setTimeout(() => setIsLoading(false), 500);
+    return () => clearTimeout(t);
+  }, []);
 
   const openEdit = (doc: LegalDoc) => {
     setEditing(doc);
@@ -39,6 +46,7 @@ export default function LegalDocumentManagementPage() {
         d.id === editing.id ? { ...d, content: draft, version: nextVersion, updatedAt: new Date().toISOString() } : d
       )
     );
+    toast.success(`Published ${editing.title} ${nextVersion}`);
     setEditing(null);
   };
 
@@ -54,24 +62,32 @@ export default function LegalDocumentManagementPage() {
         </div>
       </div>
 
-      <div className="flex flex-col gap-3">
-        {docs.map((doc) => (
-          <Card key={doc.id} className="flex flex-col gap-4 p-5 sm:flex-row sm:items-center sm:justify-between">
-            <div>
-              <div className="flex items-center gap-2.5">
-                <p className="text-[14px] font-semibold text-ink">{doc.title}</p>
-                <span className="rounded-full border border-line-strong px-2 py-0.5 font-mono text-[11px] text-ink-soft">{doc.version}</span>
+      {isLoading ? (
+        <div className="overflow-hidden rounded-card border border-line bg-card">
+          {Array.from({ length: 4 }).map((_, i) => (
+            <ShimmerTableRow key={i} columns={2} />
+          ))}
+        </div>
+      ) : (
+        <div className="flex flex-col gap-3">
+          {docs.map((doc) => (
+            <Card key={doc.id} className="flex flex-col gap-4 p-5 sm:flex-row sm:items-center sm:justify-between">
+              <div>
+                <div className="flex items-center gap-2.5">
+                  <p className="text-[14px] font-semibold text-ink">{doc.title}</p>
+                  <span className="rounded-full border border-line-strong px-2 py-0.5 font-mono text-[11px] text-ink-soft">{doc.version}</span>
+                </div>
+                <p className="mt-1 flex items-center gap-1.5 text-[12px] text-ink-soft">
+                  <History size={12} strokeWidth={1.75} /> Last updated {formatDate(doc.updatedAt)}
+                </p>
               </div>
-              <p className="mt-1 flex items-center gap-1.5 text-[12px] text-ink-soft">
-                <History size={12} strokeWidth={1.75} /> Last updated {formatDate(doc.updatedAt)}
-              </p>
-            </div>
-            <Button size="sm" variant="secondary" onClick={() => openEdit(doc)}>
-              <Pencil size={14} strokeWidth={1.75} /> Edit
-            </Button>
-          </Card>
-        ))}
-      </div>
+              <Button size="sm" variant="secondary" onClick={() => openEdit(doc)}>
+                <Pencil size={14} strokeWidth={1.75} /> Edit
+              </Button>
+            </Card>
+          ))}
+        </div>
+      )}
 
       <Modal
         open={Boolean(editing)}

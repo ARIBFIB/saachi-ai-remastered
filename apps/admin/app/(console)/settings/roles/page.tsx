@@ -1,8 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { toast } from "sonner";
 import { ShieldCheck, Plus, Check, X } from "lucide-react";
-import { Button, Card, Input, Select, Modal, Badge } from "@saachi/ui";
+import { Button, Card, Input, Select, Modal, Badge, ShimmerTableRow } from "@saachi/ui";
 
 type StaffRole = "super_admin" | "admin" | "finance_officer" | "support_officer";
 
@@ -46,15 +47,22 @@ const INITIAL_STAFF: StaffAccount[] = [
 ];
 
 export default function RolesPermissionsPage() {
+  const [isLoading, setIsLoading] = useState(true);
   const [staff, setStaff] = useState(INITIAL_STAFF);
   const [showCreate, setShowCreate] = useState(false);
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [role, setRole] = useState<StaffRole>("support_officer");
 
+  useEffect(() => {
+    const t = setTimeout(() => setIsLoading(false), 500);
+    return () => clearTimeout(t);
+  }, []);
+
   const handleCreate = () => {
     if (!name.trim() || !email.trim()) return;
     setStaff((prev) => [...prev, { id: String(Date.now()), name: name.trim(), email: email.trim(), role }]);
+    toast.success(`Added ${name.trim()} as ${ROLE_LABEL[role]}`);
     setShowCreate(false);
     setName("");
     setEmail("");
@@ -73,53 +81,69 @@ export default function RolesPermissionsPage() {
             <p className="mt-0.5 text-[13px] text-ink-soft">Internal staff accounts and their permission scope.</p>
           </div>
         </div>
-        <Button size="sm" onClick={() => setShowCreate(true)}>
+        <Button size="sm" onClick={() => setShowCreate(true)} disabled={isLoading}>
           <Plus size={14} strokeWidth={1.75} /> New staff account
         </Button>
       </div>
 
-      <div className="mb-8 flex flex-col gap-3">
-        {staff.map((account) => (
-          <Card key={account.id} className="flex items-center justify-between gap-4 p-4">
-            <div>
-              <p className="text-[14px] font-semibold text-ink">{account.name}</p>
-              <p className="mt-0.5 text-[12.5px] text-ink-soft">{account.email}</p>
-            </div>
-            <Badge>{ROLE_LABEL[account.role]}</Badge>
-          </Card>
-        ))}
-      </div>
+      {isLoading ? (
+        <div className="mb-8 overflow-hidden rounded-card border border-line bg-card">
+          {Array.from({ length: 3 }).map((_, i) => (
+            <ShimmerTableRow key={i} columns={2} />
+          ))}
+        </div>
+      ) : (
+        <div className="mb-8 flex flex-col gap-3">
+          {staff.map((account) => (
+            <Card key={account.id} className="flex items-center justify-between gap-4 p-4">
+              <div>
+                <p className="text-[14px] font-semibold text-ink">{account.name}</p>
+                <p className="mt-0.5 text-[12.5px] text-ink-soft">{account.email}</p>
+              </div>
+              <Badge>{ROLE_LABEL[account.role]}</Badge>
+            </Card>
+          ))}
+        </div>
+      )}
 
       <p className="mb-3 text-[14px] font-semibold text-ink">Permission matrix</p>
-      <div className="overflow-x-auto rounded-card border border-line bg-card">
-        <table className="w-full min-w-[720px] border-collapse text-[13px]">
-          <thead>
-            <tr className="border-b border-line text-left text-ink-soft">
-              <th className="px-4 py-3 font-medium">Capability</th>
-              <th className="px-4 py-3 font-medium">Super Admin</th>
-              <th className="px-4 py-3 font-medium">Admin</th>
-              <th className="px-4 py-3 font-medium">Finance Officer</th>
-              <th className="px-4 py-3 font-medium">Support Officer</th>
-            </tr>
-          </thead>
-          <tbody>
-            {PERMISSION_MATRIX.map((row) => (
-              <tr key={row.capability} className="border-b border-line last:border-0">
-                <td className="px-4 py-3 font-medium text-ink">{row.capability}</td>
-                {(["super_admin", "admin", "finance_officer", "support_officer"] as StaffRole[]).map((r) => (
-                  <td key={r} className="px-4 py-3">
-                    {row.roles[r] ? (
-                      <Check size={15} strokeWidth={2} className="text-success" />
-                    ) : (
-                      <X size={15} strokeWidth={2} className="text-ink-soft/40" />
-                    )}
-                  </td>
-                ))}
+      {isLoading ? (
+        <div className="overflow-hidden rounded-card border border-line bg-card">
+          {Array.from({ length: 5 }).map((_, i) => (
+            <ShimmerTableRow key={i} columns={5} />
+          ))}
+        </div>
+      ) : (
+        <div className="overflow-x-auto rounded-card border border-line bg-card">
+          <table className="w-full min-w-[720px] border-collapse text-[13px]">
+            <thead>
+              <tr className="border-b border-line text-left text-ink-soft">
+                <th className="px-4 py-3 font-medium">Capability</th>
+                <th className="px-4 py-3 font-medium">Super Admin</th>
+                <th className="px-4 py-3 font-medium">Admin</th>
+                <th className="px-4 py-3 font-medium">Finance Officer</th>
+                <th className="px-4 py-3 font-medium">Support Officer</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
+            </thead>
+            <tbody>
+              {PERMISSION_MATRIX.map((row) => (
+                <tr key={row.capability} className="border-b border-line last:border-0">
+                  <td className="px-4 py-3 font-medium text-ink">{row.capability}</td>
+                  {(["super_admin", "admin", "finance_officer", "support_officer"] as StaffRole[]).map((r) => (
+                    <td key={r} className="px-4 py-3">
+                      {row.roles[r] ? (
+                        <Check size={15} strokeWidth={2} className="text-success" />
+                      ) : (
+                        <X size={15} strokeWidth={2} className="text-ink-soft/40" />
+                      )}
+                    </td>
+                  ))}
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
 
       <Modal
         open={showCreate}

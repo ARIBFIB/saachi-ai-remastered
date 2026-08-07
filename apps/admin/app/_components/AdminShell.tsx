@@ -1,20 +1,89 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
-import { useState, type ReactNode } from "react";
-import { Menu, X, LogOut, Search, ChevronLeft, ChevronRight } from "lucide-react";
+import { usePathname, useRouter } from "next/navigation";
+import { useEffect, useMemo, useRef, useState, type ReactNode } from "react";
+import {
+  Menu,
+  X,
+  LogOut,
+  Search,
+  ChevronLeft,
+  ChevronRight,
+  Bell,
+  User,
+  Settings,
+  ChevronDown,
+  Command
+} from "lucide-react";
 import { ThemeToggle } from "@saachi/ui";
 import { ADMIN_NAV } from "../../lib/nav-config";
+import { CommandPalette } from "./CommandPalette";
 
 function cx(...parts: Array<string | false | undefined>) {
   return parts.filter(Boolean).join(" ");
 }
 
+type NotificationItem = {
+  id: string;
+  label: string;
+  tone: "warning" | "error" | "info";
+  href: string;
+};
+
+const NOTIFICATIONS: NotificationItem[] = [
+  { id: "n1", label: "3 courses pending moderation review", tone: "warning", href: "/courses/moderation" },
+  { id: "n2", label: "1 refund request awaiting approval", tone: "error", href: "/finance/refunds" },
+  { id: "n3", label: "2 support tickets breaching SLA", tone: "error", href: "/support/tickets" },
+  { id: "n4", label: "Weekly payout batch ready to process", tone: "info", href: "/finance/payouts" }
+];
+
+const TONE_DOT: Record<NotificationItem["tone"], string> = {
+  warning: "bg-warning",
+  error: "bg-error",
+  info: "bg-info"
+};
+
+function usePageTitle(pathname: string | null) {
+  return useMemo(() => {
+    if (!pathname) return { section: "", label: "Dashboard" };
+    for (const section of ADMIN_NAV) {
+      for (const item of section.items) {
+        if (pathname === item.href || pathname.startsWith(`${item.href}/`)) {
+          return { section: section.title, label: item.label };
+        }
+      }
+    }
+    return { section: "", label: "Admin" };
+  }, [pathname]);
+}
+
 export function AdminShell({ children }: { children: ReactNode }) {
   const pathname = usePathname();
+  const router = useRouter();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [collapsed, setCollapsed] = useState(false);
+  const [notifOpen, setNotifOpen] = useState(false);
+  const [avatarOpen, setAvatarOpen] = useState(false);
+
+  const notifRef = useRef<HTMLDivElement>(null);
+  const avatarRef = useRef<HTMLDivElement>(null);
+
+  const { section, label } = usePageTitle(pathname);
+
+  useEffect(() => {
+    function handleClickOutside(e: MouseEvent) {
+      if (notifRef.current && !notifRef.current.contains(e.target as Node)) setNotifOpen(false);
+      if (avatarRef.current && !avatarRef.current.contains(e.target as Node)) setAvatarOpen(false);
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  const handleLogout = () => {
+    document.cookie = "saachi_admin_session=; path=/; max-age=0";
+    router.push("/login");
+  };
 
   const sidebarContent = (
     <div className="flex h-full flex-col">
@@ -31,15 +100,15 @@ export function AdminShell({ children }: { children: ReactNode }) {
       </div>
 
       <nav className="flex flex-1 flex-col gap-5 overflow-y-auto px-3 pb-4">
-        {ADMIN_NAV.map((section) => (
-          <div key={section.title}>
+        {ADMIN_NAV.map((navSection) => (
+          <div key={navSection.title}>
             {!collapsed && (
               <div className="mb-1.5 px-2.5 text-[10px] font-semibold uppercase tracking-[0.08em] text-ink-soft/60">
-                {section.title}
+                {navSection.title}
               </div>
             )}
             <div className="flex flex-col gap-0.5">
-              {section.items.map((item) => {
+              {navSection.items.map((item) => {
                 const active = pathname === item.href || Boolean(pathname?.startsWith(`${item.href}/`));
                 return (
                   <Link
@@ -75,8 +144,9 @@ export function AdminShell({ children }: { children: ReactNode }) {
           {collapsed ? <ChevronRight size={16} strokeWidth={1.75} /> : <ChevronLeft size={16} strokeWidth={1.75} />}
           {!collapsed && "Collapse"}
         </button>
-        <Link
-          href="/login"
+        <button
+          type="button"
+          onClick={handleLogout}
           className={cx(
             "flex w-full items-center gap-3 rounded-control px-2.5 py-2 text-[13px] font-medium text-ink-soft transition-colors duration-150 ease-out hover:bg-paper-dim hover:text-error",
             collapsed && "justify-center"
@@ -84,13 +154,15 @@ export function AdminShell({ children }: { children: ReactNode }) {
         >
           <LogOut size={16} strokeWidth={1.75} />
           {!collapsed && "Log out"}
-        </Link>
+        </button>
       </div>
     </div>
   );
 
   return (
     <div className="min-h-screen bg-paper">
+      <CommandPalette />
+
       <div
         className={cx(
           "hidden shrink-0 border-r border-line bg-card transition-[width] duration-200 ease-out md:fixed md:inset-y-0 md:flex",
@@ -102,40 +174,136 @@ export function AdminShell({ children }: { children: ReactNode }) {
 
       <div
         className={cx(
-          "sticky top-0 z-40 flex items-center justify-between border-b border-line bg-card/95 px-4 py-3 backdrop-blur-sm transition-[padding] duration-200 ease-out md:px-6",
+          "sticky top-0 z-40 flex items-center justify-between gap-3 border-b border-line bg-card/95 px-4 py-3 backdrop-blur-sm transition-[padding] duration-200 ease-out md:px-6",
           collapsed ? "md:pl-[76px]" : "md:pl-[248px]"
         )}
       >
-        <div className="flex items-center gap-3">
+        <div className="flex min-w-0 items-center gap-3">
           <button
             type="button"
             onClick={() => setMobileOpen(true)}
             aria-label="Open menu"
-            className="flex h-9 w-9 items-center justify-center rounded-control text-ink md:hidden"
+            className="flex h-9 w-9 shrink-0 items-center justify-center rounded-control text-ink md:hidden"
           >
             <Menu size={18} strokeWidth={1.75} />
           </button>
-          <div className="relative hidden sm:block">
-            <Search size={15} strokeWidth={1.75} className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-ink-soft" />
-            <input
-              placeholder="Search users, courses, tickets..."
-              className="h-9 w-[280px] rounded-control border border-line bg-paper pl-9 pr-3 text-[13px] text-ink outline-none placeholder:text-ink-soft/60 focus:border-line-strong"
-            />
+
+          <div className="min-w-0">
+            <div className="flex items-center gap-1.5 text-[11px] text-ink-soft">
+              {section && (
+                <>
+                  <span className="truncate">{section}</span>
+                  <span className="text-ink-soft/50">/</span>
+                </>
+              )}
+            </div>
+            <div className="truncate text-[15px] font-semibold text-ink">{label}</div>
           </div>
         </div>
 
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2 sm:gap-3">
+          <button
+            type="button"
+            onClick={() => window.dispatchEvent(new KeyboardEvent("keydown", { key: "k", metaKey: true }))}
+            className="hidden items-center gap-2 rounded-control border border-line px-3 py-1.5 text-[12px] text-ink-soft transition-colors duration-150 ease-out hover:border-line-strong hover:text-ink sm:flex"
+          >
+            <Search size={13} strokeWidth={1.75} />
+            <span>Search</span>
+            <span className="ml-1.5 flex items-center gap-0.5 rounded border border-line-strong px-1 py-0.5 text-[10px]">
+              <Command size={9} strokeWidth={2} />K
+            </span>
+          </button>
+
+          <div className="relative" ref={notifRef}>
+            <button
+              type="button"
+              onClick={() => setNotifOpen((v) => !v)}
+              aria-label="Notifications"
+              className="relative flex h-9 w-9 items-center justify-center rounded-control text-ink-soft transition-colors duration-150 ease-out hover:bg-paper-dim hover:text-ink"
+            >
+              <Bell size={17} strokeWidth={1.75} />
+              {NOTIFICATIONS.length > 0 && (
+                <span className="absolute right-1.5 top-1.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-error px-1 text-[9px] font-semibold text-paper">
+                  {NOTIFICATIONS.length}
+                </span>
+              )}
+            </button>
+
+            {notifOpen && (
+              <div className="absolute right-0 top-[calc(100%+8px)] w-[320px] overflow-hidden rounded-card border border-line bg-card shadow-lg">
+                <div className="border-b border-line px-4 py-3">
+                  <p className="text-[13px] font-semibold text-ink">Notifications</p>
+                </div>
+                <div className="flex flex-col">
+                  {NOTIFICATIONS.map((n) => (
+                    <Link
+                      key={n.id}
+                      href={n.href}
+                      onClick={() => setNotifOpen(false)}
+                      className="flex items-start gap-2.5 border-b border-line px-4 py-3 text-[12.5px] text-ink transition-colors duration-100 ease-out last:border-0 hover:bg-paper-dim"
+                    >
+                      <span className={cx("mt-1 h-1.5 w-1.5 shrink-0 rounded-full", TONE_DOT[n.tone])} />
+                      <span>{n.label}</span>
+                    </Link>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+
           <ThemeToggle />
-          <div className="flex h-9 w-9 items-center justify-center rounded-full border border-line text-[12px] font-semibold text-ink">
-            A
+
+          <div className="relative" ref={avatarRef}>
+            <button
+              type="button"
+              onClick={() => setAvatarOpen((v) => !v)}
+              className="flex items-center gap-1.5 rounded-control px-1.5 py-1 transition-colors duration-150 ease-out hover:bg-paper-dim"
+            >
+              <div className="flex h-8 w-8 items-center justify-center rounded-full border border-line text-[12px] font-semibold text-ink">
+                A
+              </div>
+              <ChevronDown size={13} strokeWidth={1.75} className="hidden text-ink-soft sm:block" />
+            </button>
+
+            {avatarOpen && (
+              <div className="absolute right-0 top-[calc(100%+8px)] w-[200px] overflow-hidden rounded-card border border-line bg-card shadow-lg">
+                <div className="border-b border-line px-4 py-3">
+                  <p className="text-[13px] font-semibold text-ink">Admin</p>
+                  <p className="text-[12px] text-ink-soft">abdulrehman@saachi.ai</p>
+                </div>
+                <div className="flex flex-col p-1.5">
+                  <Link
+                    href="/settings/roles"
+                    onClick={() => setAvatarOpen(false)}
+                    className="flex items-center gap-2.5 rounded-control px-3 py-2 text-[13px] text-ink transition-colors duration-100 ease-out hover:bg-paper-dim"
+                  >
+                    <User size={14} strokeWidth={1.75} /> Profile
+                  </Link>
+                  <Link
+                    href="/settings/platform"
+                    onClick={() => setAvatarOpen(false)}
+                    className="flex items-center gap-2.5 rounded-control px-3 py-2 text-[13px] text-ink transition-colors duration-100 ease-out hover:bg-paper-dim"
+                  >
+                    <Settings size={14} strokeWidth={1.75} /> Settings
+                  </Link>
+                  <button
+                    type="button"
+                    onClick={handleLogout}
+                    className="flex items-center gap-2.5 rounded-control px-3 py-2 text-left text-[13px] text-error transition-colors duration-100 ease-out hover:bg-error-tint"
+                  >
+                    <LogOut size={14} strokeWidth={1.75} /> Log out
+                  </button>
+                </div>
+              </div>
+            )}
           </div>
         </div>
       </div>
 
       {mobileOpen && (
         <div className="fixed inset-0 z-50 flex md:hidden">
-          <div className="absolute inset-0 bg-ink/40" onClick={() => setMobileOpen(false)} />
-          <div className="relative flex h-full w-[280px] flex-col bg-card">
+          <div className="absolute inset-0 bg-ink/40 transition-opacity duration-200 ease-out" onClick={() => setMobileOpen(false)} />
+          <div className="relative flex h-full w-[280px] flex-col bg-card transition-transform duration-200 ease-out">
             <button
               type="button"
               onClick={() => setMobileOpen(false)}

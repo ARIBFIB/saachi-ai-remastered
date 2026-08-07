@@ -1,0 +1,3619 @@
+﻿================================================================================
+MODULE CODE EXPORT: Admin
+Generated: 2026-08-08 03:09:14
+Total Files: 38
+================================================================================
+
+
+================================================================================
+FILE: apps\admin\app\(console)\analytics\cohorts\page.tsx
+================================================================================
+"use client";
+
+import { useEffect, useState } from "react";
+import { Layers } from "lucide-react";
+import { Shimmer } from "@saachi/ui";
+
+type CohortRow = {
+  cohort: string;
+  size: number;
+  weeks: number[];
+};
+
+const COHORT_DATA: CohortRow[] = [
+  { cohort: "Jun 2026", size: 420, weeks: [100, 68, 54, 47, 41, 38] },
+  { cohort: "Jul 2026", size: 512, weeks: [100, 71, 58, 50, 44, 0] },
+  { cohort: "Aug 2026", size: 389, weeks: [100, 74, 61, 0, 0, 0] }
+];
+
+function heatColor(pct: number) {
+  if (pct === 0) return "transparent";
+  const alpha = Math.max(0.08, pct / 100);
+  return `rgba(20, 23, 26, ${alpha})`;
+}
+
+export default function CohortAnalysisPage() {
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const t = setTimeout(() => setIsLoading(false), 600);
+    return () => clearTimeout(t);
+  }, []);
+
+  return (
+    <main className="mx-auto max-w-[1100px] px-4 py-8 md:px-8 md:py-10">
+      <div className="mb-6 flex items-center gap-3">
+        <div className="flex h-10 w-10 items-center justify-center rounded-control border border-line text-ink">
+          <Layers size={17} strokeWidth={1.75} />
+        </div>
+        <div>
+          <h1 className="text-[22px] font-semibold text-ink">Cohort Analysis</h1>
+          <p className="mt-0.5 text-[13px] text-ink-soft">Weekly retention percentage by learner signup cohort.</p>
+        </div>
+      </div>
+
+      {isLoading ? (
+        <div className="flex flex-col gap-2">
+          {Array.from({ length: 3 }).map((_, i) => (
+            <Shimmer key={i} className="h-14 w-full rounded-control" />
+          ))}
+        </div>
+      ) : (
+        <div className="overflow-x-auto rounded-card border border-line bg-card">
+          <table className="w-full min-w-[640px] border-collapse text-[13px]">
+            <thead>
+              <tr className="border-b border-line text-left text-ink-soft">
+                <th className="px-4 py-3 font-medium">Cohort</th>
+                <th className="px-4 py-3 font-medium">Size</th>
+                {Array.from({ length: 6 }).map((_, i) => (
+                  <th key={i} className="px-4 py-3 font-medium">Wk {i}</th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {COHORT_DATA.map((row) => (
+                <tr key={row.cohort} className="border-b border-line last:border-0">
+                  <td className="px-4 py-3 font-medium text-ink">{row.cohort}</td>
+                  <td className="px-4 py-3 text-ink-soft">{row.size}</td>
+                  {row.weeks.map((pct, i) => (
+                    <td key={i} className="px-4 py-3">
+                      {pct > 0 ? (
+                        <span
+                          className="inline-flex h-8 w-14 items-center justify-center rounded-control text-[12px] font-medium text-ink"
+                          style={{ backgroundColor: heatColor(pct) }}
+                        >
+                          {pct}%
+                        </span>
+                      ) : (
+                        <span className="text-ink-soft/40">-</span>
+                      )}
+                    </td>
+                  ))}
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
+    </main>
+  );
+}
+
+
+================================================================================
+FILE: apps\admin\app\(console)\analytics\overview\page.tsx
+================================================================================
+"use client";
+
+import { useEffect, useState } from "react";
+import { DollarSign, Repeat, GraduationCap, Undo2 } from "lucide-react";
+import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid } from "recharts";
+import { KpiCard, ShimmerKpiCard, ShimmerChart } from "@saachi/ui";
+import { formatCurrency } from "@saachi/utils";
+
+const GMV_TREND = [
+  { month: "Mar", gmv: 18400 },
+  { month: "Apr", gmv: 21200 },
+  { month: "May", gmv: 24900 },
+  { month: "Jun", gmv: 27600 },
+  { month: "Jul", gmv: 31800 },
+  { month: "Aug", gmv: 35200 }
+];
+
+export default function AnalyticsOverviewPage() {
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const t = setTimeout(() => setIsLoading(false), 600);
+    return () => clearTimeout(t);
+  }, []);
+
+  const kpis = [
+    { label: "Gross Merchandise Value", value: formatCurrency(35200, "USD"), icon: DollarSign, delta: { value: "+10.7%", direction: "up" as const } },
+    { label: "Subscription MRR", value: formatCurrency(6840, "USD"), icon: Repeat, delta: { value: "+4.2%", direction: "up" as const } },
+    { label: "Completion rate", value: "62%", icon: GraduationCap, delta: { value: "+3pts", direction: "up" as const } },
+    { label: "Refund rate", value: "2.4%", icon: Undo2, delta: { value: "-0.3pts", direction: "down" as const } }
+  ];
+
+  return (
+    <main className="mx-auto max-w-[1200px] px-4 py-8 md:px-8 md:py-10">
+      <div className="mb-8">
+        <h1 className="text-[22px] font-semibold text-ink">Analytics Overview</h1>
+        <p className="mt-1 text-[13px] text-ink-soft">Platform-wide GMV, subscription revenue, completion, and refund metrics.</p>
+      </div>
+
+      <div className="mb-8 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        {isLoading
+          ? Array.from({ length: 4 }).map((_, i) => <ShimmerKpiCard key={i} />)
+          : kpis.map((kpi) => <KpiCard key={kpi.label} {...kpi} />)}
+      </div>
+
+      {isLoading ? (
+        <ShimmerChart />
+      ) : (
+        <div className="rounded-card border border-line bg-card p-6">
+          <div className="mb-1 text-[14px] font-semibold text-ink">GMV - last 6 months</div>
+          <p className="mb-5 text-[12px] text-ink-soft">Gross transaction value across all courses and subscriptions.</p>
+          <ResponsiveContainer width="100%" height={260}>
+            <LineChart data={GMV_TREND}>
+              <CartesianGrid strokeDasharray="3 3" stroke="var(--color-line)" />
+              <XAxis dataKey="month" stroke="var(--color-ink-soft)" fontSize={12} tickLine={false} axisLine={false} />
+              <YAxis stroke="var(--color-ink-soft)" fontSize={12} tickLine={false} axisLine={false} />
+              <Tooltip
+                contentStyle={{
+                  background: "var(--color-card)",
+                  border: "1px solid var(--color-line)",
+                  borderRadius: 10,
+                  fontSize: 12,
+                  color: "var(--color-ink)"
+                }}
+              />
+              <Line type="monotone" dataKey="gmv" stroke="var(--color-ink)" strokeWidth={2} dot={false} />
+            </LineChart>
+          </ResponsiveContainer>
+        </div>
+      )}
+    </main>
+  );
+}
+
+
+================================================================================
+FILE: apps\admin\app\(console)\courses\catalog\page.tsx
+================================================================================
+"use client";
+
+import { useMemo, useState } from "react";
+import { Search, LibraryBig, Star, Pin } from "lucide-react";
+import type { ColumnDef } from "@tanstack/react-table";
+import {
+  useAdminCourseCatalog,
+  useAdminCategoryList,
+  useToggleCourseFlag,
+  type AdminCourse
+} from "@saachi/api-client";
+import { DataTable, StatusPill, Select } from "@saachi/ui";
+import { formatCurrency, formatDate } from "@saachi/utils";
+
+const STATUS_OPTIONS = [
+  { label: "Draft", value: "draft" },
+  { label: "Pending review", value: "pending_review" },
+  { label: "Published", value: "published" },
+  { label: "Rejected", value: "rejected" },
+  { label: "Archived", value: "archived" }
+];
+
+const STATUS_TONE: Record<AdminCourse["status"], "success" | "warning" | "error" | "info" | "neutral"> = {
+  draft: "neutral",
+  pending_review: "warning",
+  published: "success",
+  rejected: "error",
+  archived: "info"
+};
+
+export default function CourseCatalogPage() {
+  const [search, setSearch] = useState("");
+  const [categoryId, setCategoryId] = useState("");
+  const [status, setStatus] = useState("");
+
+  const { data: categories } = useAdminCategoryList();
+  const { data, isLoading } = useAdminCourseCatalog({
+    search: search || undefined,
+    categoryId: categoryId || undefined,
+    status: status || undefined
+  });
+  const toggleFlag = useToggleCourseFlag();
+
+  const categoryOptions = useMemo(
+    () => (categories ?? []).map((c) => ({ label: c.name, value: c.id })),
+    [categories]
+  );
+
+  const columns = useMemo<ColumnDef<AdminCourse, any>[]>(
+    () => [
+      {
+        header: "Course",
+        accessorKey: "title",
+        cell: ({ row }) => (
+          <div className="flex items-center gap-3">
+            <div className="h-9 w-16 shrink-0 overflow-hidden rounded-control border border-line bg-paper-dim">
+              {row.original.thumbnailUrl && (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img src={row.original.thumbnailUrl} alt={row.original.title} className="h-full w-full object-cover" />
+              )}
+            </div>
+            <div className="max-w-[260px]">
+              <div className="truncate font-medium text-ink">{row.original.title}</div>
+              <div className="text-[12px] text-ink-soft">{row.original.instructorName}</div>
+            </div>
+          </div>
+        )
+      },
+      {
+        header: "Category",
+        accessorKey: "categoryId",
+        cell: ({ getValue }) => <span className="text-ink-soft">{getValue()}</span>
+      },
+      {
+        header: "Price",
+        accessorKey: "price",
+        cell: ({ row }) => (
+          <span className="font-mono font-semibold text-ink">
+            {formatCurrency(row.original.price, row.original.currency)}
+          </span>
+        )
+      },
+      {
+        header: "Status",
+        accessorKey: "status",
+        cell: ({ getValue }) => {
+          const value = getValue() as AdminCourse["status"];
+          return <StatusPill label={value.replace("_", " ")} tone={STATUS_TONE[value]} />;
+        }
+      },
+      {
+        header: "Enrollments",
+        accessorKey: "enrollmentCount",
+        cell: ({ getValue }) => <span className="font-mono text-ink-soft">{(getValue() as number).toLocaleString()}</span>
+      },
+      {
+        header: "Submitted",
+        accessorKey: "submittedAt",
+        cell: ({ getValue }) => <span className="text-ink-soft">{formatDate(getValue() as string)}</span>
+      },
+      {
+        header: "Curate",
+        id: "curate",
+        cell: ({ row }) => (
+          <div className="flex items-center gap-1.5">
+            <button
+              type="button"
+              onClick={(e) => {
+                e.stopPropagation();
+                toggleFlag.mutate({ id: row.original.id, field: "featured" });
+              }}
+              title="Toggle featured"
+              className={`flex h-7 w-7 items-center justify-center rounded-control border transition-colors duration-150 ease-out ${
+                row.original.featured ? "border-ink bg-ink text-paper" : "border-line text-ink-soft hover:text-ink"
+              }`}
+            >
+              <Star size={13} strokeWidth={1.75} />
+            </button>
+            <button
+              type="button"
+              onClick={(e) => {
+                e.stopPropagation();
+                toggleFlag.mutate({ id: row.original.id, field: "pinned" });
+              }}
+              title="Toggle pinned"
+              className={`flex h-7 w-7 items-center justify-center rounded-control border transition-colors duration-150 ease-out ${
+                row.original.pinned ? "border-ink bg-ink text-paper" : "border-line text-ink-soft hover:text-ink"
+              }`}
+            >
+              <Pin size={13} strokeWidth={1.75} />
+            </button>
+          </div>
+        )
+      }
+    ],
+    [toggleFlag]
+  );
+
+  return (
+    <main className="mx-auto max-w-[1200px] px-4 py-8 md:px-8 md:py-10">
+      <div className="mb-6 flex items-center gap-3">
+        <div className="flex h-10 w-10 items-center justify-center rounded-control border border-line text-ink">
+          <LibraryBig size={17} strokeWidth={1.75} />
+        </div>
+        <div>
+          <h1 className="text-[22px] font-semibold text-ink">Course Catalog</h1>
+          <p className="mt-0.5 text-[13px] text-ink-soft">Full catalog across every status - feature or pin courses for curation.</p>
+        </div>
+      </div>
+
+      <DataTable
+        columns={columns}
+        data={data ?? []}
+        isLoading={isLoading}
+        emptyTitle="No courses found"
+        emptyDescription="Try adjusting your search or filters."
+        toolbar={
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
+            <div className="relative flex-1">
+              <Search size={15} strokeWidth={1.75} className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-ink-soft" />
+              <input
+                placeholder="Search by title or instructor"
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                className="h-10 w-full rounded-control border border-line bg-card pl-9 pr-3 text-[13px] text-ink outline-none placeholder:text-ink-soft/60 focus:border-line-strong"
+              />
+            </div>
+            <div className="sm:w-[220px]">
+              <Select placeholder="All categories" options={categoryOptions} value={categoryId} onChange={(e) => setCategoryId(e.target.value)} />
+            </div>
+            <div className="sm:w-[180px]">
+              <Select placeholder="All statuses" options={STATUS_OPTIONS} value={status} onChange={(e) => setStatus(e.target.value)} />
+            </div>
+          </div>
+        }
+      />
+    </main>
+  );
+}
+
+
+================================================================================
+FILE: apps\admin\app\(console)\courses\categories\page.tsx
+================================================================================
+"use client";
+
+import { useState } from "react";
+import { Tags, Plus, Pencil, Trash2, X } from "lucide-react";
+import {
+  useAdminCategoryList,
+  useCreateCategory,
+  useUpdateCategory,
+  useDeleteCategory,
+  type AdminCategory
+} from "@saachi/api-client";
+import { Button, Card, Input, Modal, ShimmerTableRow, Badge } from "@saachi/ui";
+
+export default function CategoryManagementPage() {
+  const { data: categories, isLoading } = useAdminCategoryList();
+  const createCategory = useCreateCategory();
+  const updateCategory = useUpdateCategory();
+  const deleteCategory = useDeleteCategory();
+
+  const [editing, setEditing] = useState<AdminCategory | null>(null);
+  const [showCreate, setShowCreate] = useState(false);
+  const [name, setName] = useState("");
+  const [tagInput, setTagInput] = useState("");
+  const [tags, setTags] = useState<string[]>([]);
+  const [deleteTarget, setDeleteTarget] = useState<AdminCategory | null>(null);
+
+  const openCreate = () => {
+    setName("");
+    setTags([]);
+    setTagInput("");
+    setShowCreate(true);
+  };
+
+  const openEdit = (category: AdminCategory) => {
+    setEditing(category);
+    setName(category.name);
+    setTags(category.tags);
+    setTagInput("");
+  };
+
+  const addTag = () => {
+    const value = tagInput.trim().toLowerCase();
+    if (!value || tags.includes(value)) return;
+    setTags((prev) => [...prev, value]);
+    setTagInput("");
+  };
+
+  const handleSave = () => {
+    if (!name.trim()) return;
+    if (editing) {
+      updateCategory.mutate({ id: editing.id, name: name.trim(), tags });
+      setEditing(null);
+    } else {
+      createCategory.mutate({ name: name.trim(), tags });
+      setShowCreate(false);
+    }
+  };
+
+  const handleDelete = () => {
+    if (!deleteTarget) return;
+    deleteCategory.mutate(deleteTarget.id);
+    setDeleteTarget(null);
+  };
+
+  const modalOpen = showCreate || Boolean(editing);
+
+  return (
+    <main className="mx-auto max-w-[900px] px-4 py-8 md:px-8 md:py-10">
+      <div className="mb-6 flex items-center justify-between gap-3">
+        <div className="flex items-center gap-3">
+          <div className="flex h-10 w-10 items-center justify-center rounded-control border border-line text-ink">
+            <Tags size={17} strokeWidth={1.75} />
+          </div>
+          <div>
+            <h1 className="text-[22px] font-semibold text-ink">Category & Tag Management</h1>
+            <p className="mt-0.5 text-[13px] text-ink-soft">Taxonomy used across the marketplace and course builder.</p>
+          </div>
+        </div>
+        <Button size="sm" onClick={openCreate}>
+          <Plus size={14} strokeWidth={1.75} /> New category
+        </Button>
+      </div>
+
+      <div className="overflow-hidden rounded-card border border-line bg-card">
+        {isLoading ? (
+          Array.from({ length: 5 }).map((_, i) => <ShimmerTableRow key={i} columns={3} />)
+        ) : (
+          categories?.map((category) => (
+            <div key={category.id} className="flex flex-col gap-3 border-b border-line px-5 py-4 last:border-0 sm:flex-row sm:items-center sm:justify-between">
+              <div>
+                <div className="flex items-center gap-2.5">
+                  <p className="text-[14px] font-semibold text-ink">{category.name}</p>
+                  <span className="text-[12px] text-ink-soft">/{category.slug}</span>
+                </div>
+                <div className="mt-2 flex flex-wrap gap-1.5">
+                  {category.tags.map((tag) => (
+                    <Badge key={tag}>{tag}</Badge>
+                  ))}
+                </div>
+              </div>
+              <div className="flex shrink-0 items-center gap-4">
+                <span className="text-[12px] text-ink-soft">{category.courseCount} courses</span>
+                <div className="flex gap-1.5">
+                  <button
+                    type="button"
+                    onClick={() => openEdit(category)}
+                    className="flex h-8 w-8 items-center justify-center rounded-control text-ink-soft hover:bg-paper-dim hover:text-ink"
+                  >
+                    <Pencil size={14} strokeWidth={1.75} />
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setDeleteTarget(category)}
+                    className="flex h-8 w-8 items-center justify-center rounded-control text-ink-soft hover:bg-paper-dim hover:text-error"
+                  >
+                    <Trash2 size={14} strokeWidth={1.75} />
+                  </button>
+                </div>
+              </div>
+            </div>
+          ))
+        )}
+      </div>
+
+      <Modal
+        open={modalOpen}
+        onClose={() => {
+          setShowCreate(false);
+          setEditing(null);
+        }}
+        title={editing ? "Edit category" : "New category"}
+        footer={
+          <>
+            <Button
+              variant="ghost"
+              onClick={() => {
+                setShowCreate(false);
+                setEditing(null);
+              }}
+            >
+              Cancel
+            </Button>
+            <Button onClick={handleSave} disabled={!name.trim() || createCategory.isPending || updateCategory.isPending}>
+              {editing ? "Save changes" : "Create category"}
+            </Button>
+          </>
+        }
+      >
+        <div className="flex flex-col gap-4">
+          <Input label="Category name" value={name} onChange={(e) => setName(e.target.value)} placeholder="e.g. AI for Careers & Job Search" />
+          <div>
+            <label className="mb-1.5 block text-[13px] font-semibold text-ink">Tags</label>
+            <div className="mb-2 flex flex-wrap gap-1.5">
+              {tags.map((tag) => (
+                <span key={tag} className="flex items-center gap-1.5 rounded-full border border-line-strong px-2.5 py-1 text-[12px] text-ink">
+                  {tag}
+                  <button type="button" onClick={() => setTags((prev) => prev.filter((t) => t !== tag))} className="text-ink-soft hover:text-error">
+                    <X size={11} strokeWidth={2} />
+                  </button>
+                </span>
+              ))}
+            </div>
+            <div className="flex gap-2">
+              <Input
+                placeholder="Add a tag and press Enter"
+                value={tagInput}
+                onChange={(e) => setTagInput(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") {
+                    e.preventDefault();
+                    addTag();
+                  }
+                }}
+                className="h-10 flex-1"
+              />
+              <Button type="button" size="sm" variant="secondary" onClick={addTag}>
+                Add
+              </Button>
+            </div>
+          </div>
+        </div>
+      </Modal>
+
+      <Modal
+        open={Boolean(deleteTarget)}
+        onClose={() => setDeleteTarget(null)}
+        title="Delete category?"
+        footer={
+          <>
+            <Button variant="ghost" onClick={() => setDeleteTarget(null)}>
+              Cancel
+            </Button>
+            <Button variant="danger" onClick={handleDelete} disabled={deleteCategory.isPending}>
+              Delete
+            </Button>
+          </>
+        }
+      >
+        <p className="text-[14px] text-ink-soft">
+          This will remove <span className="font-semibold text-ink">{deleteTarget?.name}</span> from the taxonomy.
+          Courses already assigned to it will need to be recategorized.
+        </p>
+      </Modal>
+    </main>
+  );
+}
+
+
+================================================================================
+FILE: apps\admin\app\(console)\courses\moderation\page.tsx
+================================================================================
+"use client";
+
+import { useState } from "react";
+import { CheckCircle2, XCircle, ClipboardCheck, User, Tag } from "lucide-react";
+import { useAdminModerationQueue, useModerateCourse, type AdminCourse } from "@saachi/api-client";
+import { Button, Card, Textarea, Modal, EmptyState, ShimmerKpiCard } from "@saachi/ui";
+import { formatCurrency, formatDate } from "@saachi/utils";
+
+export default function CourseModerationQueuePage() {
+  const { data: queue, isLoading } = useAdminModerationQueue();
+  const moderate = useModerateCourse();
+  const [rejectTarget, setRejectTarget] = useState<AdminCourse | null>(null);
+  const [reason, setReason] = useState("");
+
+  const handleApprove = (course: AdminCourse) => {
+    moderate.mutate({ id: course.id, decision: "published" });
+  };
+
+  const handleRejectSubmit = () => {
+    if (!rejectTarget) return;
+    moderate.mutate({ id: rejectTarget.id, decision: "rejected", reason });
+    setRejectTarget(null);
+    setReason("");
+  };
+
+  return (
+    <main className="mx-auto max-w-[1100px] px-4 py-8 md:px-8 md:py-10">
+      <div className="mb-6 flex items-center gap-3">
+        <div className="flex h-10 w-10 items-center justify-center rounded-control border border-line text-ink">
+          <ClipboardCheck size={17} strokeWidth={1.75} />
+        </div>
+        <div>
+          <h1 className="text-[22px] font-semibold text-ink">Course Moderation Queue</h1>
+          <p className="mt-0.5 text-[13px] text-ink-soft">Review newly submitted courses before they go live.</p>
+        </div>
+      </div>
+
+      {isLoading ? (
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+          {Array.from({ length: 3 }).map((_, i) => (
+            <ShimmerKpiCard key={i} />
+          ))}
+        </div>
+      ) : !queue || queue.length === 0 ? (
+        <EmptyState
+          icon={<ClipboardCheck size={22} strokeWidth={1.75} />}
+          title="Queue is clear"
+          description="No courses are currently pending review."
+        />
+      ) : (
+        <div className="flex flex-col gap-4">
+          {queue.map((course) => (
+            <Card key={course.id} className="flex flex-col gap-4 p-5 sm:flex-row sm:items-center">
+              <div className="h-[90px] w-[160px] shrink-0 overflow-hidden rounded-control border border-line bg-paper-dim">
+                {course.thumbnailUrl && (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img src={course.thumbnailUrl} alt={course.title} className="h-full w-full object-cover" />
+                )}
+              </div>
+
+              <div className="flex-1">
+                <h3 className="text-[15px] font-semibold text-ink">{course.title}</h3>
+                <div className="mt-1.5 flex flex-wrap items-center gap-x-4 gap-y-1 text-[12.5px] text-ink-soft">
+                  <span className="flex items-center gap-1.5">
+                    <User size={13} strokeWidth={1.75} /> {course.instructorName}
+                  </span>
+                  <span className="flex items-center gap-1.5">
+                    <Tag size={13} strokeWidth={1.75} /> {course.categoryId}
+                  </span>
+                  <span>Submitted {formatDate(course.submittedAt)}</span>
+                  <span className="font-mono font-semibold text-ink">
+                    {formatCurrency(course.price, course.currency)}
+                  </span>
+                </div>
+              </div>
+
+              <div className="flex shrink-0 gap-2">
+                <Button size="sm" variant="secondary" onClick={() => setRejectTarget(course)}>
+                  <XCircle size={14} strokeWidth={1.75} /> Reject
+                </Button>
+                <Button size="sm" onClick={() => handleApprove(course)} disabled={moderate.isPending}>
+                  <CheckCircle2 size={14} strokeWidth={1.75} /> Approve
+                </Button>
+              </div>
+            </Card>
+          ))}
+        </div>
+      )}
+
+      <Modal
+        open={Boolean(rejectTarget)}
+        onClose={() => setRejectTarget(null)}
+        title="Reject course submission"
+        footer={
+          <>
+            <Button variant="ghost" onClick={() => setRejectTarget(null)}>
+              Cancel
+            </Button>
+            <Button variant="danger" onClick={handleRejectSubmit} disabled={!reason.trim() || moderate.isPending}>
+              {moderate.isPending ? "Sending..." : "Send feedback & reject"}
+            </Button>
+          </>
+        }
+      >
+        <p className="mb-4 text-[13px] text-ink-soft">
+          Rejecting <span className="font-semibold text-ink">{rejectTarget?.title}</span>. This feedback is sent to
+          the instructor so they can revise and resubmit.
+        </p>
+        <Textarea
+          label="Feedback for instructor"
+          placeholder="Explain what needs to change before this course can be approved..."
+          rows={5}
+          value={reason}
+          onChange={(e) => setReason(e.target.value)}
+        />
+      </Modal>
+    </main>
+  );
+}
+
+
+================================================================================
+FILE: apps\admin\app\(console)\dashboard\page.tsx
+================================================================================
+"use client";
+
+import { useEffect, useState } from "react";
+import {
+  Users,
+  DollarSign,
+  ClipboardCheck,
+  LifeBuoy,
+  ArrowRight
+} from "lucide-react";
+import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid } from "recharts";
+import Link from "next/link";
+import { KpiCard, StatusPill, ShimmerKpiCard, ShimmerChart, Shimmer } from "@saachi/ui";
+
+const REVENUE_TREND = [
+  { day: "Mon", revenue: 1240 },
+  { day: "Tue", revenue: 1890 },
+  { day: "Wed", revenue: 1510 },
+  { day: "Thu", revenue: 2230 },
+  { day: "Fri", revenue: 2670 },
+  { day: "Sat", revenue: 1980 },
+  { day: "Sun", revenue: 2410 }
+];
+
+const ALERT_FEED = [
+  { id: "al_1", label: "3 courses pending moderation review", tone: "warning" as const, href: "/courses/moderation" },
+  { id: "al_2", label: "1 refund request awaiting approval", tone: "error" as const, href: "/finance/refunds" },
+  { id: "al_3", label: "2 support tickets breaching SLA", tone: "error" as const, href: "/support/tickets" },
+  { id: "al_4", label: "Weekly payout batch ready to process", tone: "info" as const, href: "/finance/payouts" }
+];
+
+export default function AdminDashboardPage() {
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const t = setTimeout(() => setIsLoading(false), 700);
+    return () => clearTimeout(t);
+  }, []);
+
+  const kpis = [
+    { label: "New signups today", value: "142", icon: Users, delta: { value: "+12%", direction: "up" as const } },
+    { label: "Revenue today", value: "$4,380", icon: DollarSign, delta: { value: "+8%", direction: "up" as const } },
+    { label: "Pending approvals", value: "3", icon: ClipboardCheck, delta: { value: "-2", direction: "down" as const } },
+    { label: "Open tickets", value: "7", icon: LifeBuoy, delta: { value: "+1", direction: "up" as const } }
+  ];
+
+  return (
+    <main className="mx-auto max-w-[1200px] px-4 py-8 md:px-8 md:py-10">
+      <div className="mb-8">
+        <h1 className="text-[24px] font-semibold text-ink">Dashboard</h1>
+        <p className="mt-1 text-[13px] text-ink-soft">Platform-wide overview and pending operational items.</p>
+      </div>
+
+      <div className="mb-8 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        {isLoading
+          ? Array.from({ length: 4 }).map((_, i) => <ShimmerKpiCard key={i} />)
+          : kpis.map((kpi) => <KpiCard key={kpi.label} {...kpi} />)}
+      </div>
+
+      <div className="mb-8 grid grid-cols-1 gap-6 lg:grid-cols-[1.4fr_1fr]">
+        {isLoading ? (
+          <ShimmerChart />
+        ) : (
+          <div className="rounded-card border border-line bg-card p-6">
+            <div className="mb-1 text-[14px] font-semibold text-ink">Revenue - last 7 days</div>
+            <p className="mb-5 text-[12px] text-ink-soft">Gross transaction volume across all payment gateways.</p>
+            <ResponsiveContainer width="100%" height={220}>
+              <LineChart data={REVENUE_TREND}>
+                <CartesianGrid strokeDasharray="3 3" stroke="var(--color-line)" />
+                <XAxis dataKey="day" stroke="var(--color-ink-soft)" fontSize={12} tickLine={false} axisLine={false} />
+                <YAxis stroke="var(--color-ink-soft)" fontSize={12} tickLine={false} axisLine={false} />
+                <Tooltip
+                  contentStyle={{
+                    background: "var(--color-card)",
+                    border: "1px solid var(--color-line)",
+                    borderRadius: 10,
+                    fontSize: 12,
+                    color: "var(--color-ink)"
+                  }}
+                />
+                <Line type="monotone" dataKey="revenue" stroke="var(--color-ink)" strokeWidth={2} dot={false} />
+              </LineChart>
+            </ResponsiveContainer>
+          </div>
+        )}
+
+        <div className="rounded-card border border-line bg-card p-6">
+          <div className="mb-4 text-[14px] font-semibold text-ink">Needs attention</div>
+          {isLoading ? (
+            <div className="flex flex-col gap-3">
+              {Array.from({ length: 4 }).map((_, i) => (
+                <Shimmer key={i} className="h-11 w-full" />
+              ))}
+            </div>
+          ) : (
+            <div className="flex flex-col gap-2">
+              {ALERT_FEED.map((alert) => (
+                <Link
+                  key={alert.id}
+                  href={alert.href}
+                  className="flex items-center justify-between gap-3 rounded-control border border-line px-3.5 py-3 text-[13px] text-ink transition-colors duration-150 ease-out hover:bg-paper-dim"
+                >
+                  <div className="flex items-center gap-2.5">
+                    <StatusPill label={alert.tone} tone={alert.tone} />
+                    <span className="text-[12.5px]">{alert.label}</span>
+                  </div>
+                  <ArrowRight size={14} strokeWidth={1.75} className="shrink-0 text-ink-soft" />
+                </Link>
+              ))}
+            </div>
+          )}
+        </div>
+      </div>
+    </main>
+  );
+}
+
+
+================================================================================
+FILE: apps\admin\app\(console)\finance\refunds\page.tsx
+================================================================================
+"use client";
+
+import { useState } from "react";
+import { Undo2, CheckCircle2, XCircle } from "lucide-react";
+import { useAdminRefunds, useResolveRefund, type AdminRefund } from "@saachi/api-client";
+import { Button, Card, Select, StatusPill, ShimmerTableRow, EmptyState, Modal } from "@saachi/ui";
+import { formatCurrency, formatDate } from "@saachi/utils";
+
+const STATUS_OPTIONS = [
+  { label: "Pending", value: "pending" },
+  { label: "Approved", value: "approved" },
+  { label: "Rejected", value: "rejected" }
+];
+
+const STATUS_TONE: Record<AdminRefund["status"], "success" | "warning" | "error"> = {
+  pending: "warning",
+  approved: "success",
+  rejected: "error"
+};
+
+export default function RefundManagementPage() {
+  const [statusFilter, setStatusFilter] = useState("");
+  const { data: refunds, isLoading } = useAdminRefunds({ status: statusFilter || undefined });
+  const resolveRefund = useResolveRefund();
+  const [viewTarget, setViewTarget] = useState<AdminRefund | null>(null);
+
+  return (
+    <main className="mx-auto max-w-[1000px] px-4 py-8 md:px-8 md:py-10">
+      <div className="mb-6 flex items-center justify-between gap-3">
+        <div className="flex items-center gap-3">
+          <div className="flex h-10 w-10 items-center justify-center rounded-control border border-line text-ink">
+            <Undo2 size={17} strokeWidth={1.75} />
+          </div>
+          <div>
+            <h1 className="text-[22px] font-semibold text-ink">Refund Management</h1>
+            <p className="mt-0.5 text-[13px] text-ink-soft">Learner refund requests - approving reverses the transaction and clawbacks instructor earnings.</p>
+          </div>
+        </div>
+        <div className="w-[180px]">
+          <Select placeholder="All statuses" options={STATUS_OPTIONS} value={statusFilter} onChange={(e) => setStatusFilter(e.target.value)} />
+        </div>
+      </div>
+
+      {isLoading ? (
+        <div className="overflow-hidden rounded-card border border-line bg-card">
+          {Array.from({ length: 4 }).map((_, i) => (
+            <ShimmerTableRow key={i} columns={4} />
+          ))}
+        </div>
+      ) : !refunds || refunds.length === 0 ? (
+        <EmptyState icon={<Undo2 size={22} strokeWidth={1.75} />} title="No refund requests found" description="Try a different status filter." />
+      ) : (
+        <div className="flex flex-col gap-3">
+          {refunds.map((refund) => (
+            <Card key={refund.id} className="flex flex-col gap-4 p-5 sm:flex-row sm:items-center sm:justify-between">
+              <div className="min-w-0">
+                <div className="flex items-center gap-2.5">
+                  <p className="truncate text-[14px] font-semibold text-ink">{refund.courseTitle}</p>
+                  <StatusPill label={refund.status} tone={STATUS_TONE[refund.status]} />
+                </div>
+                <p className="mt-1 text-[12.5px] text-ink-soft">
+                  {refund.learnerName} - Requested {formatDate(refund.requestedAt)} - {refund.transactionId}
+                </p>
+                <button
+                  type="button"
+                  onClick={() => setViewTarget(refund)}
+                  className="mt-1 text-[12px] font-medium text-ink underline decoration-line-strong underline-offset-2 hover:decoration-ink"
+                >
+                  View reason
+                </button>
+              </div>
+
+              <div className="flex shrink-0 items-center gap-4">
+                <span className="font-mono text-[16px] font-semibold text-ink">
+                  {formatCurrency(refund.amount, refund.currency)}
+                </span>
+                {refund.status === "pending" && (
+                  <div className="flex gap-2">
+                    <Button size="sm" variant="secondary" onClick={() => resolveRefund.mutate({ id: refund.id, status: "rejected" })}>
+                      <XCircle size={14} strokeWidth={1.75} /> Reject
+                    </Button>
+                    <Button size="sm" onClick={() => resolveRefund.mutate({ id: refund.id, status: "approved" })}>
+                      <CheckCircle2 size={14} strokeWidth={1.75} /> Approve
+                    </Button>
+                  </div>
+                )}
+              </div>
+            </Card>
+          ))}
+        </div>
+      )}
+
+      <Modal open={Boolean(viewTarget)} onClose={() => setViewTarget(null)} title="Refund reason">
+        <p className="mb-1 text-[13px] font-semibold text-ink">{viewTarget?.courseTitle}</p>
+        <p className="text-[14px] text-ink-soft">{viewTarget?.reason}</p>
+      </Modal>
+    </main>
+  );
+}
+
+
+================================================================================
+FILE: apps\admin\app\(console)\finance\tax-settings\page.tsx
+================================================================================
+"use client";
+
+import { useState } from "react";
+import { Percent, Plus, Pencil, Check, X } from "lucide-react";
+import { useAdminTaxRules, useUpdateTaxRule, useCreateTaxRule, type TaxRule } from "@saachi/api-client";
+import { Button, Card, Input, Modal, ShimmerTableRow } from "@saachi/ui";
+
+export default function TaxSettingsPage() {
+  const { data: rules, isLoading } = useAdminTaxRules();
+  const updateRule = useUpdateTaxRule();
+  const createRule = useCreateTaxRule();
+
+  const [editing, setEditing] = useState<TaxRule | null>(null);
+  const [editRate, setEditRate] = useState(0);
+  const [editActive, setEditActive] = useState(true);
+
+  const [showCreate, setShowCreate] = useState(false);
+  const [newRegion, setNewRegion] = useState("");
+  const [newRate, setNewRate] = useState(0);
+  const [newAppliesTo, setNewAppliesTo] = useState("");
+
+  const openEdit = (rule: TaxRule) => {
+    setEditing(rule);
+    setEditRate(rule.ratePercent);
+    setEditActive(rule.active);
+  };
+
+  const handleSaveEdit = () => {
+    if (!editing) return;
+    updateRule.mutate({ id: editing.id, ratePercent: editRate, active: editActive });
+    setEditing(null);
+  };
+
+  const handleCreate = () => {
+    if (!newRegion.trim()) return;
+    createRule.mutate({ region: newRegion.trim(), ratePercent: newRate, appliesTo: newAppliesTo.trim() || "All course sales" });
+    setShowCreate(false);
+    setNewRegion("");
+    setNewRate(0);
+    setNewAppliesTo("");
+  };
+
+  return (
+    <main className="mx-auto max-w-[900px] px-4 py-8 md:px-8 md:py-10">
+      <div className="mb-6 flex items-center justify-between gap-3">
+        <div className="flex items-center gap-3">
+          <div className="flex h-10 w-10 items-center justify-center rounded-control border border-line text-ink">
+            <Percent size={17} strokeWidth={1.75} />
+          </div>
+          <div>
+            <h1 className="text-[22px] font-semibold text-ink">Tax / VAT Settings</h1>
+            <p className="mt-0.5 text-[13px] text-ink-soft">Region-based tax rules applied at checkout.</p>
+          </div>
+        </div>
+        <Button size="sm" onClick={() => setShowCreate(true)}>
+          <Plus size={14} strokeWidth={1.75} /> New rule
+        </Button>
+      </div>
+
+      <div className="overflow-hidden rounded-card border border-line bg-card">
+        {isLoading ? (
+          Array.from({ length: 5 }).map((_, i) => <ShimmerTableRow key={i} columns={3} />)
+        ) : (
+          rules?.map((rule) => (
+            <div key={rule.id} className="flex flex-col gap-3 border-b border-line px-5 py-4 last:border-0 sm:flex-row sm:items-center sm:justify-between">
+              <div>
+                <div className="flex items-center gap-2.5">
+                  <p className="text-[14px] font-semibold text-ink">{rule.region}</p>
+                  <span
+                    className={
+                      rule.active
+                        ? "rounded-full bg-success-tint px-2.5 py-0.5 text-[11px] font-semibold text-success"
+                        : "rounded-full bg-paper-dim px-2.5 py-0.5 text-[11px] font-semibold text-ink-soft"
+                    }
+                  >
+                    {rule.active ? "Active" : "Inactive"}
+                  </span>
+                </div>
+                <p className="mt-1 text-[12px] text-ink-soft">{rule.appliesTo}</p>
+              </div>
+              <div className="flex shrink-0 items-center gap-4">
+                <span className="font-mono text-[16px] font-semibold text-ink">{rule.ratePercent}%</span>
+                <button
+                  type="button"
+                  onClick={() => openEdit(rule)}
+                  className="flex h-8 w-8 items-center justify-center rounded-control text-ink-soft hover:bg-paper-dim hover:text-ink"
+                >
+                  <Pencil size={14} strokeWidth={1.75} />
+                </button>
+              </div>
+            </div>
+          ))
+        )}
+      </div>
+
+      <Modal
+        open={Boolean(editing)}
+        onClose={() => setEditing(null)}
+        title={`Edit tax rule - ${editing?.region ?? ""}`}
+        footer={
+          <>
+            <Button variant="ghost" onClick={() => setEditing(null)}>
+              Cancel
+            </Button>
+            <Button onClick={handleSaveEdit} disabled={updateRule.isPending}>
+              Save changes
+            </Button>
+          </>
+        }
+      >
+        <div className="flex flex-col gap-4">
+          <Input
+            label="Rate (%)"
+            type="number"
+            min={0}
+            max={100}
+            value={editRate}
+            onChange={(e) => setEditRate(Number(e.target.value))}
+          />
+          <button
+            type="button"
+            onClick={() => setEditActive((v) => !v)}
+            className="flex w-fit items-center gap-2 rounded-control border border-line-strong px-3.5 py-2 text-[13px] font-medium text-ink hover:border-ink"
+          >
+            {editActive ? <Check size={14} strokeWidth={2} className="text-success" /> : <X size={14} strokeWidth={2} className="text-ink-soft" />}
+            {editActive ? "Active" : "Inactive"} - click to toggle
+          </button>
+        </div>
+      </Modal>
+
+      <Modal
+        open={showCreate}
+        onClose={() => setShowCreate(false)}
+        title="New tax rule"
+        footer={
+          <>
+            <Button variant="ghost" onClick={() => setShowCreate(false)}>
+              Cancel
+            </Button>
+            <Button onClick={handleCreate} disabled={!newRegion.trim() || createRule.isPending}>
+              Create rule
+            </Button>
+          </>
+        }
+      >
+        <div className="flex flex-col gap-4">
+          <Input label="Region" placeholder="e.g. Canada" value={newRegion} onChange={(e) => setNewRegion(e.target.value)} />
+          <Input label="Rate (%)" type="number" min={0} max={100} value={newRate} onChange={(e) => setNewRate(Number(e.target.value))} />
+          <Input label="Applies to" placeholder="e.g. Digital goods (GST)" value={newAppliesTo} onChange={(e) => setNewAppliesTo(e.target.value)} />
+        </div>
+      </Modal>
+    </main>
+  );
+}
+
+
+================================================================================
+FILE: apps\admin\app\(console)\finance\transactions\page.tsx
+================================================================================
+"use client";
+
+import { useMemo, useState } from "react";
+import { Search, Receipt, Download } from "lucide-react";
+import type { ColumnDef } from "@tanstack/react-table";
+import { useAdminTransactions, type AdminTransaction } from "@saachi/api-client";
+import { DataTable, StatusPill, Select, Button } from "@saachi/ui";
+import { formatCurrency, formatDate } from "@saachi/utils";
+
+const STATUS_OPTIONS = [
+  { label: "Completed", value: "completed" },
+  { label: "Pending", value: "pending" },
+  { label: "Failed", value: "failed" },
+  { label: "Refunded", value: "refunded" }
+];
+
+const GATEWAY_OPTIONS = [
+  { label: "Stripe", value: "stripe" },
+  { label: "PayPal", value: "paypal" },
+  { label: "Easypaisa", value: "easypaisa" },
+  { label: "JazzCash", value: "jazzcash" },
+  { label: "Bank Transfer", value: "bank_transfer" }
+];
+
+const STATUS_TONE: Record<AdminTransaction["status"], "success" | "warning" | "error" | "info"> = {
+  completed: "success",
+  pending: "warning",
+  failed: "error",
+  refunded: "info"
+};
+
+export default function TransactionsLedgerPage() {
+  const [search, setSearch] = useState("");
+  const [status, setStatus] = useState("");
+  const [gateway, setGateway] = useState("");
+
+  const { data, isLoading } = useAdminTransactions({
+    search: search || undefined,
+    status: status || undefined,
+    gateway: gateway || undefined
+  });
+
+  const columns = useMemo<ColumnDef<AdminTransaction, any>[]>(
+    () => [
+      {
+        header: "Transaction",
+        accessorKey: "id",
+        cell: ({ row }) => (
+          <div>
+            <div className="font-mono text-[12px] text-ink-soft">{row.original.id}</div>
+            <div className="max-w-[220px] truncate font-medium text-ink">{row.original.courseTitle}</div>
+          </div>
+        )
+      },
+      {
+        header: "Learner",
+        accessorKey: "learnerName",
+        cell: ({ getValue }) => <span className="text-ink-soft">{getValue()}</span>
+      },
+      {
+        header: "Instructor",
+        accessorKey: "instructorName",
+        cell: ({ getValue }) => <span className="text-ink-soft">{getValue()}</span>
+      },
+      {
+        header: "Amount",
+        accessorKey: "amount",
+        cell: ({ row }) => (
+          <span className="font-mono font-semibold text-ink">
+            {formatCurrency(row.original.amount, row.original.currency)}
+          </span>
+        )
+      },
+      {
+        header: "Commission",
+        accessorKey: "commission",
+        cell: ({ row }) => (
+          <span className="font-mono text-ink-soft">
+            {formatCurrency(row.original.commission, row.original.currency)}
+          </span>
+        )
+      },
+      {
+        header: "Gateway",
+        accessorKey: "gateway",
+        cell: ({ getValue }) => <span className="capitalize text-ink-soft">{(getValue() as string).replace("_", " ")}</span>
+      },
+      {
+        header: "Status",
+        accessorKey: "status",
+        cell: ({ getValue }) => {
+          const value = getValue() as AdminTransaction["status"];
+          return <StatusPill label={value} tone={STATUS_TONE[value]} />;
+        }
+      },
+      {
+        header: "Date",
+        accessorKey: "createdAt",
+        cell: ({ getValue }) => <span className="text-ink-soft">{formatDate(getValue() as string)}</span>
+      }
+    ],
+    []
+  );
+
+  return (
+    <main className="mx-auto max-w-[1240px] px-4 py-8 md:px-8 md:py-10">
+      <div className="mb-6 flex items-center justify-between gap-3">
+        <div className="flex items-center gap-3">
+          <div className="flex h-10 w-10 items-center justify-center rounded-control border border-line text-ink">
+            <Receipt size={17} strokeWidth={1.75} />
+          </div>
+          <div>
+            <h1 className="text-[22px] font-semibold text-ink">Transactions Ledger</h1>
+            <p className="mt-0.5 text-[13px] text-ink-soft">Full financial transaction history across all payment gateways.</p>
+          </div>
+        </div>
+        <Button size="sm" variant="secondary">
+          <Download size={14} strokeWidth={1.75} /> Export CSV
+        </Button>
+      </div>
+
+      <DataTable
+        columns={columns}
+        data={data ?? []}
+        isLoading={isLoading}
+        emptyTitle="No transactions found"
+        emptyDescription="Try adjusting your search or filters."
+        toolbar={
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
+            <div className="relative flex-1">
+              <Search size={15} strokeWidth={1.75} className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-ink-soft" />
+              <input
+                placeholder="Search by ID, course, learner, or instructor"
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                className="h-10 w-full rounded-control border border-line bg-card pl-9 pr-3 text-[13px] text-ink outline-none placeholder:text-ink-soft/60 focus:border-line-strong"
+              />
+            </div>
+            <div className="sm:w-[180px]">
+              <Select placeholder="All statuses" options={STATUS_OPTIONS} value={status} onChange={(e) => setStatus(e.target.value)} />
+            </div>
+            <div className="sm:w-[180px]">
+              <Select placeholder="All gateways" options={GATEWAY_OPTIONS} value={gateway} onChange={(e) => setGateway(e.target.value)} />
+            </div>
+          </div>
+        }
+      />
+    </main>
+  );
+}
+
+
+================================================================================
+FILE: apps\admin\app\(console)\logs\audit\page.tsx
+================================================================================
+"use client";
+
+import { useMemo, useState } from "react";
+import { Search, History } from "lucide-react";
+import type { ColumnDef } from "@tanstack/react-table";
+import { DataTable, Select } from "@saachi/ui";
+import { formatDate } from "@saachi/utils";
+
+type AuditEntry = {
+  id: string;
+  actorName: string;
+  actorRole: string;
+  action: string;
+  target: string;
+  module: string;
+  createdAt: string;
+};
+
+const MODULE_OPTIONS = [
+  { label: "Users", value: "users" },
+  { label: "Courses", value: "courses" },
+  { label: "Finance", value: "finance" },
+  { label: "Marketing", value: "marketing" },
+  { label: "Settings", value: "settings" }
+];
+
+const AUDIT_LOG: AuditEntry[] = [
+  { id: "log_1", actorName: "Abdul Rehman Irfan", actorRole: "Super Admin", action: "Approved payout batch", target: "PAYOUT-2026-0912", module: "finance", createdAt: "2026-08-06T14:20:00Z" },
+  { id: "log_2", actorName: "Support Desk", actorRole: "Support Officer", action: "Resolved ticket", target: "TCK-4471", module: "users", createdAt: "2026-08-06T11:05:00Z" },
+  { id: "log_3", actorName: "Finance Desk", actorRole: "Finance Officer", action: "Approved refund", target: "TXN-88213", module: "finance", createdAt: "2026-08-05T18:42:00Z" },
+  { id: "log_4", actorName: "Abdul Rehman Irfan", actorRole: "Super Admin", action: "Updated commission tier", target: "Verified Instructor -> 25%", module: "settings", createdAt: "2026-08-05T09:15:00Z" },
+  { id: "log_5", actorName: "Abdul Rehman Irfan", actorRole: "Super Admin", action: "Published homepage banner", target: "Founding Instructor Spots Open", module: "marketing", createdAt: "2026-08-04T16:30:00Z" },
+  { id: "log_6", actorName: "Support Desk", actorRole: "Support Officer", action: "Suspended user account", target: "user_9910", module: "users", createdAt: "2026-08-03T10:02:00Z" },
+  { id: "log_7", actorName: "Abdul Rehman Irfan", actorRole: "Super Admin", action: "Approved course for publish", target: "AI Automation with n8n", module: "courses", createdAt: "2026-08-02T13:48:00Z" }
+];
+
+export default function AuditLogViewerPage() {
+  const [search, setSearch] = useState("");
+  const [moduleFilter, setModuleFilter] = useState("");
+
+  const filtered = useMemo(() => {
+    return AUDIT_LOG.filter((entry) => {
+      const matchesSearch =
+        !search ||
+        entry.actorName.toLowerCase().includes(search.toLowerCase()) ||
+        entry.action.toLowerCase().includes(search.toLowerCase()) ||
+        entry.target.toLowerCase().includes(search.toLowerCase());
+      const matchesModule = !moduleFilter || entry.module === moduleFilter;
+      return matchesSearch && matchesModule;
+    });
+  }, [search, moduleFilter]);
+
+  const columns = useMemo<ColumnDef<AuditEntry, any>[]>(
+    () => [
+      {
+        header: "Actor",
+        accessorKey: "actorName",
+        cell: ({ row }) => (
+          <div>
+            <div className="font-medium text-ink">{row.original.actorName}</div>
+            <div className="text-[12px] text-ink-soft">{row.original.actorRole}</div>
+          </div>
+        )
+      },
+      { header: "Action", accessorKey: "action", cell: ({ getValue }) => <span className="text-ink">{getValue()}</span> },
+      { header: "Target", accessorKey: "target", cell: ({ getValue }) => <span className="font-mono text-[12.5px] text-ink-soft">{getValue()}</span> },
+      { header: "Module", accessorKey: "module", cell: ({ getValue }) => <span className="capitalize text-ink-soft">{getValue() as string}</span> },
+      { header: "Timestamp", accessorKey: "createdAt", cell: ({ getValue }) => <span className="text-ink-soft">{formatDate(getValue() as string)}</span> }
+    ],
+    []
+  );
+
+  return (
+    <main className="mx-auto max-w-[1100px] px-4 py-8 md:px-8 md:py-10">
+      <div className="mb-6 flex items-center gap-3">
+        <div className="flex h-10 w-10 items-center justify-center rounded-control border border-line text-ink">
+          <History size={17} strokeWidth={1.75} />
+        </div>
+        <div>
+          <h1 className="text-[22px] font-semibold text-ink">Audit Log</h1>
+          <p className="mt-0.5 text-[13px] text-ink-soft">Searchable system-wide record of internal staff actions.</p>
+        </div>
+      </div>
+
+      <DataTable
+        columns={columns}
+        data={filtered}
+        isLoading={false}
+        emptyTitle="No log entries found"
+        emptyDescription="Try adjusting your search or filters."
+        toolbar={
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
+            <div className="relative flex-1">
+              <Search size={15} strokeWidth={1.75} className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-ink-soft" />
+              <input
+                placeholder="Search by actor, action, or target"
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                className="h-10 w-full rounded-control border border-line bg-card pl-9 pr-3 text-[13px] text-ink outline-none placeholder:text-ink-soft/60 focus:border-line-strong"
+              />
+            </div>
+            <div className="sm:w-[180px]">
+              <Select placeholder="All modules" options={MODULE_OPTIONS} value={moduleFilter} onChange={(e) => setModuleFilter(e.target.value)} />
+            </div>
+          </div>
+        }
+      />
+    </main>
+  );
+}
+
+
+================================================================================
+FILE: apps\admin\app\(console)\marketing\banners\page.tsx
+================================================================================
+"use client";
+
+import { useState } from "react";
+import { Image as ImageIcon, Plus, Pencil, Trash2, ArrowUp, ArrowDown } from "lucide-react";
+import {
+  useAdminBanners,
+  useCreateBanner,
+  useUpdateBanner,
+  useDeleteBanner,
+  useReorderBanner,
+  type AdminBanner
+} from "@saachi/api-client";
+import { Button, Card, Input, Textarea, Select, Modal, StatusPill, ShimmerKpiCard, EmptyState } from "@saachi/ui";
+import { formatDate } from "@saachi/utils";
+
+const STATUS_OPTIONS = [
+  { label: "Draft", value: "draft" },
+  { label: "Scheduled", value: "scheduled" },
+  { label: "Active", value: "active" },
+  { label: "Expired", value: "expired" }
+];
+
+const STATUS_TONE: Record<AdminBanner["status"], "success" | "warning" | "error" | "info" | "neutral"> = {
+  active: "success",
+  scheduled: "info",
+  expired: "error",
+  draft: "neutral"
+};
+
+type FormState = {
+  title: string;
+  subtitle: string;
+  imageUrl: string;
+  linkUrl: string;
+  status: AdminBanner["status"];
+  startsAt: string;
+  endsAt: string;
+};
+
+const EMPTY_FORM: FormState = {
+  title: "",
+  subtitle: "",
+  imageUrl: "",
+  linkUrl: "",
+  status: "draft",
+  startsAt: new Date().toISOString().slice(0, 10),
+  endsAt: new Date(Date.now() + 14 * 24 * 60 * 60 * 1000).toISOString().slice(0, 10)
+};
+
+export default function HomepageBannersPage() {
+  const { data: banners, isLoading } = useAdminBanners();
+  const createBanner = useCreateBanner();
+  const updateBanner = useUpdateBanner();
+  const deleteBanner = useDeleteBanner();
+  const reorderBanner = useReorderBanner();
+
+  const [editing, setEditing] = useState<AdminBanner | null>(null);
+  const [showCreate, setShowCreate] = useState(false);
+  const [form, setForm] = useState<FormState>(EMPTY_FORM);
+  const [deleteTarget, setDeleteTarget] = useState<AdminBanner | null>(null);
+
+  const openCreate = () => {
+    setForm(EMPTY_FORM);
+    setShowCreate(true);
+  };
+
+  const openEdit = (banner: AdminBanner) => {
+    setEditing(banner);
+    setForm({
+      title: banner.title,
+      subtitle: banner.subtitle ?? "",
+      imageUrl: banner.imageUrl,
+      linkUrl: banner.linkUrl,
+      status: banner.status,
+      startsAt: banner.startsAt.slice(0, 10),
+      endsAt: banner.endsAt.slice(0, 10)
+    });
+  };
+
+  const closeModals = () => {
+    setShowCreate(false);
+    setEditing(null);
+  };
+
+  const handleSave = () => {
+    if (!form.title.trim()) return;
+    const payload = {
+      title: form.title.trim(),
+      subtitle: form.subtitle.trim() || undefined,
+      imageUrl: form.imageUrl.trim() || `https://picsum.photos/seed/${encodeURIComponent(form.title)}/1200/400`,
+      linkUrl: form.linkUrl.trim() || "/",
+      status: form.status,
+      startsAt: new Date(form.startsAt).toISOString(),
+      endsAt: new Date(form.endsAt).toISOString()
+    };
+    if (editing) {
+      updateBanner.mutate({ id: editing.id, ...payload });
+    } else {
+      createBanner.mutate(payload);
+    }
+    closeModals();
+  };
+
+  const handleDelete = () => {
+    if (!deleteTarget) return;
+    deleteBanner.mutate(deleteTarget.id);
+    setDeleteTarget(null);
+  };
+
+  const modalOpen = showCreate || Boolean(editing);
+
+  return (
+    <main className="mx-auto max-w-[1000px] px-4 py-8 md:px-8 md:py-10">
+      <div className="mb-6 flex items-center justify-between gap-3">
+        <div className="flex items-center gap-3">
+          <div className="flex h-10 w-10 items-center justify-center rounded-control border border-line text-ink">
+            <ImageIcon size={17} strokeWidth={1.75} />
+          </div>
+          <div>
+            <h1 className="text-[22px] font-semibold text-ink">Homepage Banners</h1>
+            <p className="mt-0.5 text-[13px] text-ink-soft">Create, schedule, and reorder homepage promotional banners.</p>
+          </div>
+        </div>
+        <Button size="sm" onClick={openCreate}>
+          <Plus size={14} strokeWidth={1.75} /> New banner
+        </Button>
+      </div>
+
+      {isLoading ? (
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+          {Array.from({ length: 4 }).map((_, i) => (
+            <ShimmerKpiCard key={i} />
+          ))}
+        </div>
+      ) : !banners || banners.length === 0 ? (
+        <EmptyState icon={<ImageIcon size={22} strokeWidth={1.75} />} title="No banners yet" description="Create your first homepage banner." />
+      ) : (
+        <div className="flex flex-col gap-3">
+          {banners.map((banner, index) => (
+            <Card key={banner.id} className="flex flex-col gap-4 p-4 sm:flex-row sm:items-center">
+              <div className="h-[64px] w-[140px] shrink-0 overflow-hidden rounded-control border border-line bg-paper-dim">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src={banner.imageUrl} alt={banner.title} className="h-full w-full object-cover" />
+              </div>
+
+              <div className="flex-1">
+                <div className="flex items-center gap-2.5">
+                  <p className="text-[14px] font-semibold text-ink">{banner.title}</p>
+                  <StatusPill label={banner.status} tone={STATUS_TONE[banner.status]} />
+                </div>
+                {banner.subtitle && <p className="mt-1 text-[12.5px] text-ink-soft">{banner.subtitle}</p>}
+                <p className="mt-1 text-[12px] text-ink-soft/70">
+                  {formatDate(banner.startsAt)} - {formatDate(banner.endsAt)} - links to {banner.linkUrl}
+                </p>
+              </div>
+
+              <div className="flex shrink-0 items-center gap-1.5">
+                <button
+                  type="button"
+                  disabled={index === 0}
+                  onClick={() => reorderBanner.mutate({ id: banner.id, direction: "up" })}
+                  className="flex h-8 w-8 items-center justify-center rounded-control text-ink-soft hover:bg-paper-dim hover:text-ink disabled:opacity-30"
+                >
+                  <ArrowUp size={14} strokeWidth={1.75} />
+                </button>
+                <button
+                  type="button"
+                  disabled={index === banners.length - 1}
+                  onClick={() => reorderBanner.mutate({ id: banner.id, direction: "down" })}
+                  className="flex h-8 w-8 items-center justify-center rounded-control text-ink-soft hover:bg-paper-dim hover:text-ink disabled:opacity-30"
+                >
+                  <ArrowDown size={14} strokeWidth={1.75} />
+                </button>
+                <button
+                  type="button"
+                  onClick={() => openEdit(banner)}
+                  className="flex h-8 w-8 items-center justify-center rounded-control text-ink-soft hover:bg-paper-dim hover:text-ink"
+                >
+                  <Pencil size={14} strokeWidth={1.75} />
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setDeleteTarget(banner)}
+                  className="flex h-8 w-8 items-center justify-center rounded-control text-ink-soft hover:bg-paper-dim hover:text-error"
+                >
+                  <Trash2 size={14} strokeWidth={1.75} />
+                </button>
+              </div>
+            </Card>
+          ))}
+        </div>
+      )}
+
+      <Modal
+        open={modalOpen}
+        onClose={closeModals}
+        title={editing ? "Edit banner" : "New banner"}
+        size="lg"
+        footer={
+          <>
+            <Button variant="ghost" onClick={closeModals}>
+              Cancel
+            </Button>
+            <Button onClick={handleSave} disabled={!form.title.trim() || createBanner.isPending || updateBanner.isPending}>
+              {editing ? "Save changes" : "Create banner"}
+            </Button>
+          </>
+        }
+      >
+        <div className="flex flex-col gap-4">
+          <Input label="Title" value={form.title} onChange={(e) => setForm({ ...form, title: e.target.value })} placeholder="e.g. Founding Instructor Spots Open" />
+          <Textarea label="Subtitle" value={form.subtitle} onChange={(e) => setForm({ ...form, subtitle: e.target.value })} rows={2} placeholder="Optional supporting line" />
+          <Input label="Image URL" value={form.imageUrl} onChange={(e) => setForm({ ...form, imageUrl: e.target.value })} placeholder="Leave blank to use a placeholder image" />
+          <Input label="Link URL" value={form.linkUrl} onChange={(e) => setForm({ ...form, linkUrl: e.target.value })} placeholder="/courses" />
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+            <Select label="Status" options={STATUS_OPTIONS} value={form.status} onChange={(e) => setForm({ ...form, status: e.target.value as AdminBanner["status"] })} />
+            <Input label="Starts" type="date" value={form.startsAt} onChange={(e) => setForm({ ...form, startsAt: e.target.value })} />
+            <Input label="Ends" type="date" value={form.endsAt} onChange={(e) => setForm({ ...form, endsAt: e.target.value })} />
+          </div>
+        </div>
+      </Modal>
+
+      <Modal
+        open={Boolean(deleteTarget)}
+        onClose={() => setDeleteTarget(null)}
+        title="Delete banner?"
+        footer={
+          <>
+            <Button variant="ghost" onClick={() => setDeleteTarget(null)}>
+              Cancel
+            </Button>
+            <Button variant="danger" onClick={handleDelete} disabled={deleteBanner.isPending}>
+              Delete
+            </Button>
+          </>
+        }
+      >
+        <p className="text-[14px] text-ink-soft">
+          This will remove <span className="font-semibold text-ink">{deleteTarget?.title}</span> from the homepage rotation.
+        </p>
+      </Modal>
+    </main>
+  );
+}
+
+
+================================================================================
+FILE: apps\admin\app\(console)\marketing\coupons\page.tsx
+================================================================================
+"use client";
+
+import { useState } from "react";
+import { Ticket, Plus, Trash2, Search } from "lucide-react";
+import {
+  useAdminCoupons,
+  useCreateCoupon,
+  useToggleCouponActive,
+  useDeleteCoupon,
+  type AdminCoupon
+} from "@saachi/api-client";
+import { Button, Card, Input, Select, Modal, ShimmerTableRow, EmptyState } from "@saachi/ui";
+import { formatDate } from "@saachi/utils";
+
+const TYPE_OPTIONS = [
+  { label: "Percent off", value: "percent" },
+  { label: "Fixed amount off", value: "fixed" }
+];
+
+const SCOPE_OPTIONS = [
+  { label: "Platform-wide", value: "platform_wide" },
+  { label: "Category", value: "category" },
+  { label: "Course", value: "course" }
+];
+
+export default function CouponManagementPage() {
+  const [search, setSearch] = useState("");
+  const { data: coupons, isLoading } = useAdminCoupons({ search: search || undefined });
+  const createCoupon = useCreateCoupon();
+  const toggleActive = useToggleCouponActive();
+  const deleteCoupon = useDeleteCoupon();
+
+  const [showCreate, setShowCreate] = useState(false);
+  const [code, setCode] = useState("");
+  const [type, setType] = useState<AdminCoupon["type"]>("percent");
+  const [value, setValue] = useState(10);
+  const [scope, setScope] = useState<AdminCoupon["scope"]>("platform_wide");
+  const [usageLimit, setUsageLimit] = useState(100);
+  const [expiresAt, setExpiresAt] = useState(new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().slice(0, 10));
+  const [deleteTarget, setDeleteTarget] = useState<AdminCoupon | null>(null);
+
+  const resetForm = () => {
+    setCode("");
+    setType("percent");
+    setValue(10);
+    setScope("platform_wide");
+    setUsageLimit(100);
+    setExpiresAt(new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().slice(0, 10));
+  };
+
+  const handleCreate = () => {
+    if (!code.trim()) return;
+    createCoupon.mutate({
+      code: code.trim().toUpperCase(),
+      type,
+      value,
+      scope,
+      usageLimit,
+      expiresAt: new Date(expiresAt).toISOString(),
+      active: true
+    });
+    setShowCreate(false);
+    resetForm();
+  };
+
+  const handleDelete = () => {
+    if (!deleteTarget) return;
+    deleteCoupon.mutate(deleteTarget.id);
+    setDeleteTarget(null);
+  };
+
+  return (
+    <main className="mx-auto max-w-[1100px] px-4 py-8 md:px-8 md:py-10">
+      <div className="mb-6 flex items-center justify-between gap-3">
+        <div className="flex items-center gap-3">
+          <div className="flex h-10 w-10 items-center justify-center rounded-control border border-line text-ink">
+            <Ticket size={17} strokeWidth={1.75} />
+          </div>
+          <div>
+            <h1 className="text-[22px] font-semibold text-ink">Coupon Management</h1>
+            <p className="mt-0.5 text-[13px] text-ink-soft">Platform-wide and scoped promotional codes.</p>
+          </div>
+        </div>
+        <Button size="sm" onClick={() => setShowCreate(true)}>
+          <Plus size={14} strokeWidth={1.75} /> New coupon
+        </Button>
+      </div>
+
+      <div className="relative mb-5 max-w-[320px]">
+        <Search size={15} strokeWidth={1.75} className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-ink-soft" />
+        <input
+          placeholder="Search coupon code"
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          className="h-10 w-full rounded-control border border-line bg-card pl-9 pr-3 text-[13px] text-ink outline-none placeholder:text-ink-soft/60 focus:border-line-strong"
+        />
+      </div>
+
+      {isLoading ? (
+        <div className="overflow-hidden rounded-card border border-line bg-card">
+          {Array.from({ length: 4 }).map((_, i) => (
+            <ShimmerTableRow key={i} columns={5} />
+          ))}
+        </div>
+      ) : !coupons || coupons.length === 0 ? (
+        <EmptyState icon={<Ticket size={22} strokeWidth={1.75} />} title="No coupons found" description="Try a different search, or create a new coupon." />
+      ) : (
+        <div className="flex flex-col gap-3">
+          {coupons.map((coupon) => {
+            const usagePct = coupon.usageLimit > 0 ? Math.round((coupon.usageCount / coupon.usageLimit) * 100) : 0;
+            return (
+              <Card key={coupon.id} className="flex flex-col gap-4 p-4 sm:flex-row sm:items-center sm:justify-between">
+                <div>
+                  <div className="flex items-center gap-2.5">
+                    <span className="rounded-control border border-line-strong px-2.5 py-1 font-mono text-[13px] font-semibold text-ink">
+                      {coupon.code}
+                    </span>
+                    <span
+                      className={
+                        coupon.active
+                          ? "rounded-full bg-success-tint px-2.5 py-0.5 text-[11px] font-semibold text-success"
+                          : "rounded-full bg-paper-dim px-2.5 py-0.5 text-[11px] font-semibold text-ink-soft"
+                      }
+                    >
+                      {coupon.active ? "Active" : "Inactive"}
+                    </span>
+                  </div>
+                  <p className="mt-1.5 text-[12.5px] text-ink-soft">
+                    {coupon.type === "percent" ? `${coupon.value}% off` : `$${coupon.value} off`} - {coupon.scope.replace("_", " ")} -
+                    {" "}{coupon.usageCount}/{coupon.usageLimit} used ({usagePct}%) - expires {formatDate(coupon.expiresAt)}
+                  </p>
+                </div>
+
+                <div className="flex shrink-0 items-center gap-2">
+                  <Button size="sm" variant="secondary" onClick={() => toggleActive.mutate(coupon.id)}>
+                    {coupon.active ? "Deactivate" : "Activate"}
+                  </Button>
+                  <button
+                    type="button"
+                    onClick={() => setDeleteTarget(coupon)}
+                    className="flex h-9 w-9 items-center justify-center rounded-control text-ink-soft hover:bg-paper-dim hover:text-error"
+                  >
+                    <Trash2 size={15} strokeWidth={1.75} />
+                  </button>
+                </div>
+              </Card>
+            );
+          })}
+        </div>
+      )}
+
+      <Modal
+        open={showCreate}
+        onClose={() => setShowCreate(false)}
+        title="New coupon"
+        footer={
+          <>
+            <Button variant="ghost" onClick={() => setShowCreate(false)}>
+              Cancel
+            </Button>
+            <Button onClick={handleCreate} disabled={!code.trim() || createCoupon.isPending}>
+              Create coupon
+            </Button>
+          </>
+        }
+      >
+        <div className="flex flex-col gap-4">
+          <Input label="Coupon code" value={code} onChange={(e) => setCode(e.target.value.toUpperCase())} placeholder="e.g. SUMMER20" />
+          <div className="grid grid-cols-2 gap-4">
+            <Select label="Discount type" options={TYPE_OPTIONS} value={type} onChange={(e) => setType(e.target.value as AdminCoupon["type"])} />
+            <Input
+              label={type === "percent" ? "Percent off" : "Amount off ($)"}
+              type="number"
+              min={0}
+              value={value}
+              onChange={(e) => setValue(Number(e.target.value))}
+            />
+          </div>
+          <Select label="Scope" options={SCOPE_OPTIONS} value={scope} onChange={(e) => setScope(e.target.value as AdminCoupon["scope"])} />
+          <div className="grid grid-cols-2 gap-4">
+            <Input label="Usage limit" type="number" min={1} value={usageLimit} onChange={(e) => setUsageLimit(Number(e.target.value))} />
+            <Input label="Expires" type="date" value={expiresAt} onChange={(e) => setExpiresAt(e.target.value)} />
+          </div>
+        </div>
+      </Modal>
+
+      <Modal
+        open={Boolean(deleteTarget)}
+        onClose={() => setDeleteTarget(null)}
+        title="Delete coupon?"
+        footer={
+          <>
+            <Button variant="ghost" onClick={() => setDeleteTarget(null)}>
+              Cancel
+            </Button>
+            <Button variant="danger" onClick={handleDelete} disabled={deleteCoupon.isPending}>
+              Delete
+            </Button>
+          </>
+        }
+      >
+        <p className="text-[14px] text-ink-soft">
+          This will permanently remove <span className="font-semibold text-ink">{deleteTarget?.code}</span>. It can no
+          longer be applied at checkout.
+        </p>
+      </Modal>
+    </main>
+  );
+}
+
+
+================================================================================
+FILE: apps\admin\app\(console)\marketing\promotions\page.tsx
+================================================================================
+"use client";
+
+import { Megaphone, Crown } from "lucide-react";
+import { useAdminPromotionSales, type PromotionSale } from "@saachi/api-client";
+import { Card, StatusPill, ShimmerKpiCard, ShimmerTableRow, EmptyState } from "@saachi/ui";
+import { formatCurrency, formatDate } from "@saachi/utils";
+
+const TIER_TONE: Record<PromotionSale["tier"], "warning" | "info" | "success"> = {
+  bronze: "warning",
+  silver: "info",
+  gold: "success"
+};
+
+export default function PromotionSalesPage() {
+  const { data: sales, isLoading } = useAdminPromotionSales();
+
+  const now = Date.now();
+  const active = (sales ?? []).filter((s) => new Date(s.expiresAt).getTime() > now);
+  const totalRevenue = (sales ?? []).reduce((sum, s) => sum + s.amount, 0);
+  const tierCounts = {
+    gold: (sales ?? []).filter((s) => s.tier === "gold").length,
+    silver: (sales ?? []).filter((s) => s.tier === "silver").length,
+    bronze: (sales ?? []).filter((s) => s.tier === "bronze").length
+  };
+
+  return (
+    <main className="mx-auto max-w-[1100px] px-4 py-8 md:px-8 md:py-10">
+      <div className="mb-6 flex items-center gap-3">
+        <div className="flex h-10 w-10 items-center justify-center rounded-control border border-line text-ink">
+          <Megaphone size={17} strokeWidth={1.75} />
+        </div>
+        <div>
+          <h1 className="text-[22px] font-semibold text-ink">Promotion Package Sales</h1>
+          <p className="mt-0.5 text-[13px] text-ink-soft">Instructor purchases of Bronze/Silver/Gold visibility boosts.</p>
+        </div>
+      </div>
+
+      {isLoading ? (
+        <div className="mb-6 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          {Array.from({ length: 4 }).map((_, i) => (
+            <ShimmerKpiCard key={i} />
+          ))}
+        </div>
+      ) : (
+        <div className="mb-6 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          <Card className="p-5">
+            <p className="text-[12px] text-ink-soft">Total revenue</p>
+            <p className="mt-1 font-mono text-[22px] font-semibold text-ink">{formatCurrency(totalRevenue, "USD")}</p>
+          </Card>
+          <Card className="p-5">
+            <p className="text-[12px] text-ink-soft">Currently active</p>
+            <p className="mt-1 font-mono text-[22px] font-semibold text-ink">{active.length}</p>
+          </Card>
+          <Card className="p-5">
+            <p className="flex items-center gap-1.5 text-[12px] text-ink-soft">
+              <Crown size={12} strokeWidth={1.75} /> Gold sold
+            </p>
+            <p className="mt-1 font-mono text-[22px] font-semibold text-ink">{tierCounts.gold}</p>
+          </Card>
+          <Card className="p-5">
+            <p className="text-[12px] text-ink-soft">Silver + Bronze sold</p>
+            <p className="mt-1 font-mono text-[22px] font-semibold text-ink">{tierCounts.silver + tierCounts.bronze}</p>
+          </Card>
+        </div>
+      )}
+
+      {isLoading ? (
+        <div className="overflow-hidden rounded-card border border-line bg-card">
+          {Array.from({ length: 5 }).map((_, i) => (
+            <ShimmerTableRow key={i} columns={4} />
+          ))}
+        </div>
+      ) : !sales || sales.length === 0 ? (
+        <EmptyState icon={<Megaphone size={22} strokeWidth={1.75} />} title="No promotion sales yet" description="Boost package purchases will show up here." />
+      ) : (
+        <div className="flex flex-col gap-3">
+          {sales.map((sale) => {
+            const isActive = new Date(sale.expiresAt).getTime() > now;
+            return (
+              <Card key={sale.id} className="flex flex-col gap-3 p-4 sm:flex-row sm:items-center sm:justify-between">
+                <div className="min-w-0">
+                  <div className="flex items-center gap-2.5">
+                    <p className="truncate text-[14px] font-semibold text-ink">{sale.courseTitle}</p>
+                    <StatusPill label={sale.tier} tone={TIER_TONE[sale.tier]} />
+                    {!isActive && <span className="text-[11px] font-medium text-ink-soft">Expired</span>}
+                  </div>
+                  <p className="mt-1 text-[12.5px] text-ink-soft">
+                    {sale.instructorName} - purchased {formatDate(sale.purchasedAt)} - {isActive ? "expires" : "expired"} {formatDate(sale.expiresAt)}
+                  </p>
+                </div>
+                <span className="shrink-0 font-mono text-[15px] font-semibold text-ink">
+                  {formatCurrency(sale.amount, sale.currency)}
+                </span>
+              </Card>
+            );
+          })}
+        </div>
+      )}
+    </main>
+  );
+}
+
+
+================================================================================
+FILE: apps\admin\app\(console)\moderation\forum\page.tsx
+================================================================================
+"use client";
+
+import { useState } from "react";
+import { MessagesSquare, Trash2, ShieldAlert, CheckCircle2 } from "lucide-react";
+import { useFlaggedForumPosts, useResolveFlaggedForumPost, type FlaggedForumPost } from "@saachi/api-client";
+import { Button, Card, Select, StatusPill, ShimmerTableRow, EmptyState } from "@saachi/ui";
+import { formatRelativeTime } from "@saachi/utils";
+
+const STATUS_OPTIONS = [
+  { label: "Pending", value: "pending" },
+  { label: "Removed", value: "removed" },
+  { label: "Dismissed", value: "dismissed" },
+  { label: "Warned", value: "warned" }
+];
+
+const STATUS_TONE: Record<FlaggedForumPost["status"], "warning" | "error" | "neutral" | "info"> = {
+  pending: "warning",
+  removed: "error",
+  dismissed: "neutral",
+  warned: "info"
+};
+
+export default function FlaggedForumPostsPage() {
+  const [statusFilter, setStatusFilter] = useState("pending");
+  const { data: posts, isLoading } = useFlaggedForumPosts({ status: statusFilter || undefined });
+  const resolve = useResolveFlaggedForumPost();
+
+  return (
+    <main className="mx-auto max-w-[1000px] px-4 py-8 md:px-8 md:py-10">
+      <div className="mb-6 flex items-center justify-between gap-3">
+        <div className="flex items-center gap-3">
+          <div className="flex h-10 w-10 items-center justify-center rounded-control border border-line text-ink">
+            <MessagesSquare size={17} strokeWidth={1.75} />
+          </div>
+          <div>
+            <h1 className="text-[22px] font-semibold text-ink">Flagged Forum Posts</h1>
+            <p className="mt-0.5 text-[13px] text-ink-soft">Community Q&A posts reported for review.</p>
+          </div>
+        </div>
+        <div className="w-[180px]">
+          <Select placeholder="All statuses" options={STATUS_OPTIONS} value={statusFilter} onChange={(e) => setStatusFilter(e.target.value)} />
+        </div>
+      </div>
+
+      {isLoading ? (
+        <div className="overflow-hidden rounded-card border border-line bg-card">
+          {Array.from({ length: 4 }).map((_, i) => (
+            <ShimmerTableRow key={i} columns={4} />
+          ))}
+        </div>
+      ) : !posts || posts.length === 0 ? (
+        <EmptyState icon={<MessagesSquare size={22} strokeWidth={1.75} />} title="Nothing flagged" description="No forum posts match this filter." />
+      ) : (
+        <div className="flex flex-col gap-4">
+          {posts.map((post) => (
+            <Card key={post.id} className="flex flex-col gap-4 p-5">
+              <div>
+                <div className="flex items-center gap-2.5">
+                  <p className="text-[14px] font-semibold text-ink">{post.authorName}</p>
+                  <StatusPill label={post.status} tone={STATUS_TONE[post.status]} />
+                </div>
+                <p className="mt-1 text-[12.5px] text-ink-soft">
+                  in {post.courseTitle} - {formatRelativeTime(post.createdAt)}
+                </p>
+              </div>
+
+              <p className="rounded-control border border-line bg-paper-dim p-3.5 text-[13.5px] leading-relaxed text-ink">
+                {post.body}
+              </p>
+
+              <div className="flex items-center gap-2 text-[12.5px] text-ink-soft">
+                <ShieldAlert size={13} strokeWidth={1.75} className="shrink-0 text-error" />
+                Flagged by {post.flaggedBy} - reason: {post.flagReason}
+              </div>
+
+              {post.status === "pending" && (
+                <div className="flex flex-wrap gap-2">
+                  <Button size="sm" variant="secondary" onClick={() => resolve.mutate({ id: post.id, status: "dismissed" })}>
+                    <CheckCircle2 size={14} strokeWidth={1.75} /> Dismiss flag
+                  </Button>
+                  <Button size="sm" variant="secondary" onClick={() => resolve.mutate({ id: post.id, status: "warned" })}>
+                    Warn user
+                  </Button>
+                  <Button size="sm" variant="danger" onClick={() => resolve.mutate({ id: post.id, status: "removed" })}>
+                    <Trash2 size={14} strokeWidth={1.75} /> Remove post
+                  </Button>
+                </div>
+              )}
+            </Card>
+          ))}
+        </div>
+      )}
+    </main>
+  );
+}
+
+
+================================================================================
+FILE: apps\admin\app\(console)\moderation\reviews\page.tsx
+================================================================================
+"use client";
+
+import { useState } from "react";
+import { MessageSquareWarning, Trash2, ShieldAlert, CheckCircle2 } from "lucide-react";
+import { useFlaggedReviews, useResolveFlaggedReview, type FlaggedReview } from "@saachi/api-client";
+import { Button, Card, Select, StatusPill, ShimmerTableRow, EmptyState } from "@saachi/ui";
+import { formatRelativeTime } from "@saachi/utils";
+
+const STATUS_OPTIONS = [
+  { label: "Pending", value: "pending" },
+  { label: "Removed", value: "removed" },
+  { label: "Dismissed", value: "dismissed" },
+  { label: "Warned", value: "warned" }
+];
+
+const STATUS_TONE: Record<FlaggedReview["status"], "warning" | "error" | "neutral" | "info"> = {
+  pending: "warning",
+  removed: "error",
+  dismissed: "neutral",
+  warned: "info"
+};
+
+export default function FlaggedReviewsPage() {
+  const [statusFilter, setStatusFilter] = useState("pending");
+  const { data: reviews, isLoading } = useFlaggedReviews({ status: statusFilter || undefined });
+  const resolve = useResolveFlaggedReview();
+
+  return (
+    <main className="mx-auto max-w-[1000px] px-4 py-8 md:px-8 md:py-10">
+      <div className="mb-6 flex items-center justify-between gap-3">
+        <div className="flex items-center gap-3">
+          <div className="flex h-10 w-10 items-center justify-center rounded-control border border-line text-ink">
+            <MessageSquareWarning size={17} strokeWidth={1.75} />
+          </div>
+          <div>
+            <h1 className="text-[22px] font-semibold text-ink">Flagged Reviews</h1>
+            <p className="mt-0.5 text-[13px] text-ink-soft">Course reviews reported by instructors, learners, or automated filters.</p>
+          </div>
+        </div>
+        <div className="w-[180px]">
+          <Select placeholder="All statuses" options={STATUS_OPTIONS} value={statusFilter} onChange={(e) => setStatusFilter(e.target.value)} />
+        </div>
+      </div>
+
+      {isLoading ? (
+        <div className="overflow-hidden rounded-card border border-line bg-card">
+          {Array.from({ length: 4 }).map((_, i) => (
+            <ShimmerTableRow key={i} columns={4} />
+          ))}
+        </div>
+      ) : !reviews || reviews.length === 0 ? (
+        <EmptyState icon={<MessageSquareWarning size={22} strokeWidth={1.75} />} title="Nothing flagged" description="No reviews match this filter." />
+      ) : (
+        <div className="flex flex-col gap-4">
+          {reviews.map((review) => (
+            <Card key={review.id} className="flex flex-col gap-4 p-5">
+              <div className="flex flex-wrap items-start justify-between gap-3">
+                <div>
+                  <div className="flex items-center gap-2.5">
+                    <p className="text-[14px] font-semibold text-ink">{review.authorName}</p>
+                    <StatusPill label={review.status} tone={STATUS_TONE[review.status]} />
+                  </div>
+                  <p className="mt-1 text-[12.5px] text-ink-soft">
+                    on {review.courseTitle} - {"\u2605".repeat(review.rating)}{"\u2606".repeat(5 - review.rating)} - {formatRelativeTime(review.createdAt)}
+                  </p>
+                </div>
+              </div>
+
+              <p className="rounded-control border border-line bg-paper-dim p-3.5 text-[13.5px] leading-relaxed text-ink">
+                {review.comment}
+              </p>
+
+              <div className="flex items-center gap-2 text-[12.5px] text-ink-soft">
+                <ShieldAlert size={13} strokeWidth={1.75} className="shrink-0 text-error" />
+                Flagged by {review.flaggedBy} - reason: {review.flagReason}
+              </div>
+
+              {review.status === "pending" && (
+                <div className="flex flex-wrap gap-2">
+                  <Button size="sm" variant="secondary" onClick={() => resolve.mutate({ id: review.id, status: "dismissed" })}>
+                    <CheckCircle2 size={14} strokeWidth={1.75} /> Dismiss flag
+                  </Button>
+                  <Button size="sm" variant="secondary" onClick={() => resolve.mutate({ id: review.id, status: "warned" })}>
+                    Warn user
+                  </Button>
+                  <Button size="sm" variant="danger" onClick={() => resolve.mutate({ id: review.id, status: "removed" })}>
+                    <Trash2 size={14} strokeWidth={1.75} /> Remove review
+                  </Button>
+                </div>
+              )}
+            </Card>
+          ))}
+        </div>
+      )}
+    </main>
+  );
+}
+
+
+================================================================================
+FILE: apps\admin\app\(console)\settings\commission-tiers\page.tsx
+================================================================================
+"use client";
+
+import { useState } from "react";
+import { Landmark, Save } from "lucide-react";
+import { Button, Card, Input } from "@saachi/ui";
+
+type Tier = {
+  id: string;
+  name: string;
+  criteria: string;
+  ratePercent: number;
+};
+
+const INITIAL_TIERS: Tier[] = [
+  { id: "new", name: "New Instructor", criteria: "Just approved, 0-2 published courses", ratePercent: 30 },
+  { id: "verified", name: "Verified Instructor", criteria: "Identity verified, 3+ courses, 4.0+ rating", ratePercent: 25 },
+  { id: "top_rated", name: "Top-Rated Instructor", criteria: "10+ courses, 4.5+ rating, consistent sales", ratePercent: 20 },
+  { id: "partner", name: "Partner Instructor", criteria: "Invited/negotiated status", ratePercent: 15 }
+];
+
+export default function CommissionTierConfigurationPage() {
+  const [tiers, setTiers] = useState(INITIAL_TIERS);
+  const [saving, setSaving] = useState(false);
+
+  const updateRate = (id: string, value: number) => {
+    setTiers((prev) => prev.map((t) => (t.id === id ? { ...t, ratePercent: value } : t)));
+  };
+
+  const handleSave = () => {
+    setSaving(true);
+    setTimeout(() => setSaving(false), 700);
+  };
+
+  return (
+    <main className="mx-auto max-w-[900px] px-4 py-8 md:px-8 md:py-10">
+      <div className="mb-6 flex items-center justify-between gap-3">
+        <div className="flex items-center gap-3">
+          <div className="flex h-10 w-10 items-center justify-center rounded-control border border-line text-ink">
+            <Landmark size={17} strokeWidth={1.75} />
+          </div>
+          <div>
+            <h1 className="text-[22px] font-semibold text-ink">Commission Tier Configuration</h1>
+            <p className="mt-0.5 text-[13px] text-ink-soft">Trust-tier commission rates applied to instructor course sales.</p>
+          </div>
+        </div>
+        <Button size="sm" onClick={handleSave} disabled={saving}>
+          <Save size={14} strokeWidth={1.75} /> {saving ? "Saving..." : "Save changes"}
+        </Button>
+      </div>
+
+      <div className="flex flex-col gap-3">
+        {tiers.map((tier) => (
+          <Card key={tier.id} className="flex flex-col gap-4 p-5 sm:flex-row sm:items-center sm:justify-between">
+            <div>
+              <p className="text-[14px] font-semibold text-ink">{tier.name}</p>
+              <p className="mt-1 text-[12.5px] text-ink-soft">{tier.criteria}</p>
+            </div>
+            <div className="w-full sm:w-[140px]">
+              <Input
+                label="Commission %"
+                type="number"
+                min={0}
+                max={100}
+                value={tier.ratePercent}
+                onChange={(e) => updateRate(tier.id, Number(e.target.value))}
+              />
+            </div>
+          </Card>
+        ))}
+      </div>
+    </main>
+  );
+}
+
+
+================================================================================
+FILE: apps\admin\app\(console)\settings\legal-documents\page.tsx
+================================================================================
+"use client";
+
+import { useState } from "react";
+import { ScrollText, Pencil, History } from "lucide-react";
+import { Button, Card, Textarea, Modal } from "@saachi/ui";
+import { formatDate } from "@saachi/utils";
+
+type LegalDoc = {
+  id: string;
+  title: string;
+  version: string;
+  updatedAt: string;
+  content: string;
+};
+
+const INITIAL_DOCS: LegalDoc[] = [
+  { id: "terms", title: "Terms & Conditions", version: "v1.0", updatedAt: "2026-06-01T00:00:00Z", content: "Draft pending client legal counsel review." },
+  { id: "privacy", title: "Privacy Policy", version: "v1.0", updatedAt: "2026-06-01T00:00:00Z", content: "Draft pending client legal counsel review." },
+  { id: "refund", title: "Refund Policy", version: "v1.0", updatedAt: "2026-06-01T00:00:00Z", content: "7-day / 30% completion threshold refund window - to be finalized." },
+  { id: "instructor_agreement", title: "Instructor Agreement", version: "v1.0", updatedAt: "2026-06-01T00:00:00Z", content: "Draft pending client legal counsel review." }
+];
+
+export default function LegalDocumentManagementPage() {
+  const [docs, setDocs] = useState(INITIAL_DOCS);
+  const [editing, setEditing] = useState<LegalDoc | null>(null);
+  const [draft, setDraft] = useState("");
+
+  const openEdit = (doc: LegalDoc) => {
+    setEditing(doc);
+    setDraft(doc.content);
+  };
+
+  const handlePublish = () => {
+    if (!editing) return;
+    const [major, minor] = editing.version.replace("v", "").split(".").map(Number);
+    const nextVersion = `v${major}.${minor + 1}`;
+    setDocs((prev) =>
+      prev.map((d) =>
+        d.id === editing.id ? { ...d, content: draft, version: nextVersion, updatedAt: new Date().toISOString() } : d
+      )
+    );
+    setEditing(null);
+  };
+
+  return (
+    <main className="mx-auto max-w-[900px] px-4 py-8 md:px-8 md:py-10">
+      <div className="mb-6 flex items-center gap-3">
+        <div className="flex h-10 w-10 items-center justify-center rounded-control border border-line text-ink">
+          <ScrollText size={17} strokeWidth={1.75} />
+        </div>
+        <div>
+          <h1 className="text-[22px] font-semibold text-ink">Legal Document Management</h1>
+          <p className="mt-0.5 text-[13px] text-ink-soft">Versioned editor for Terms, Privacy, Refund Policy, and Instructor Agreement.</p>
+        </div>
+      </div>
+
+      <div className="flex flex-col gap-3">
+        {docs.map((doc) => (
+          <Card key={doc.id} className="flex flex-col gap-4 p-5 sm:flex-row sm:items-center sm:justify-between">
+            <div>
+              <div className="flex items-center gap-2.5">
+                <p className="text-[14px] font-semibold text-ink">{doc.title}</p>
+                <span className="rounded-full border border-line-strong px-2 py-0.5 font-mono text-[11px] text-ink-soft">{doc.version}</span>
+              </div>
+              <p className="mt-1 flex items-center gap-1.5 text-[12px] text-ink-soft">
+                <History size={12} strokeWidth={1.75} /> Last updated {formatDate(doc.updatedAt)}
+              </p>
+            </div>
+            <Button size="sm" variant="secondary" onClick={() => openEdit(doc)}>
+              <Pencil size={14} strokeWidth={1.75} /> Edit
+            </Button>
+          </Card>
+        ))}
+      </div>
+
+      <Modal
+        open={Boolean(editing)}
+        onClose={() => setEditing(null)}
+        title={`Edit - ${editing?.title ?? ""}`}
+        size="lg"
+        footer={
+          <>
+            <Button variant="ghost" onClick={() => setEditing(null)}>Cancel</Button>
+            <Button onClick={handlePublish}>Publish new version</Button>
+          </>
+        }
+      >
+        <Textarea label="Document content" rows={12} value={draft} onChange={(e) => setDraft(e.target.value)} />
+      </Modal>
+    </main>
+  );
+}
+
+
+================================================================================
+FILE: apps\admin\app\(console)\settings\payment-gateways\page.tsx
+================================================================================
+"use client";
+
+import { useState } from "react";
+import { CreditCard, Pencil, Eye, EyeOff } from "lucide-react";
+import { Button, Card, Input, Modal } from "@saachi/ui";
+
+type Gateway = {
+  id: string;
+  name: string;
+  region: string;
+  enabled: boolean;
+  apiKeyMasked: string;
+};
+
+const INITIAL_GATEWAYS: Gateway[] = [
+  { id: "stripe", name: "Stripe", region: "International", enabled: true, apiKeyMasked: "sk_live_Ã¢â‚¬Â¢Ã¢â‚¬Â¢Ã¢â‚¬Â¢Ã¢â‚¬Â¢Ã¢â‚¬Â¢Ã¢â‚¬Â¢Ã¢â‚¬Â¢Ã¢â‚¬Â¢4f21" },
+  { id: "paypal", name: "PayPal", region: "International", enabled: true, apiKeyMasked: "client_Ã¢â‚¬Â¢Ã¢â‚¬Â¢Ã¢â‚¬Â¢Ã¢â‚¬Â¢Ã¢â‚¬Â¢Ã¢â‚¬Â¢Ã¢â‚¬Â¢Ã¢â‚¬Â¢a9e0" },
+  { id: "easypaisa", name: "Easypaisa", region: "Pakistan", enabled: false, apiKeyMasked: "not configured" },
+  { id: "jazzcash", name: "JazzCash", region: "Pakistan", enabled: false, apiKeyMasked: "not configured" },
+  { id: "bank_transfer", name: "Bank Transfer", region: "Pakistan", enabled: true, apiKeyMasked: "manual - no key" }
+];
+
+export default function PaymentGatewayConfigurationPage() {
+  const [gateways, setGateways] = useState(INITIAL_GATEWAYS);
+  const [editing, setEditing] = useState<Gateway | null>(null);
+  const [newKey, setNewKey] = useState("");
+  const [showKey, setShowKey] = useState(false);
+
+  const toggleEnabled = (id: string) => {
+    setGateways((prev) => prev.map((g) => (g.id === id ? { ...g, enabled: !g.enabled } : g)));
+  };
+
+  const openEdit = (gateway: Gateway) => {
+    setEditing(gateway);
+    setNewKey("");
+    setShowKey(false);
+  };
+
+  const handleSaveKey = () => {
+    if (!editing || !newKey.trim()) return;
+    const masked = `Ã¢â‚¬Â¢Ã¢â‚¬Â¢Ã¢â‚¬Â¢Ã¢â‚¬Â¢Ã¢â‚¬Â¢Ã¢â‚¬Â¢Ã¢â‚¬Â¢Ã¢â‚¬Â¢${newKey.trim().slice(-4)}`;
+    setGateways((prev) => prev.map((g) => (g.id === editing.id ? { ...g, apiKeyMasked: masked } : g)));
+    setEditing(null);
+  };
+
+  return (
+    <main className="mx-auto max-w-[900px] px-4 py-8 md:px-8 md:py-10">
+      <div className="mb-6 flex items-center gap-3">
+        <div className="flex h-10 w-10 items-center justify-center rounded-control border border-line text-ink">
+          <CreditCard size={17} strokeWidth={1.75} />
+        </div>
+        <div>
+          <h1 className="text-[22px] font-semibold text-ink">Payment Gateway Configuration</h1>
+          <p className="mt-0.5 text-[13px] text-ink-soft">Enable gateways and manage API keys (masked at rest).</p>
+        </div>
+      </div>
+
+      <div className="flex flex-col gap-3">
+        {gateways.map((gateway) => (
+          <Card key={gateway.id} className="flex flex-col gap-4 p-5 sm:flex-row sm:items-center sm:justify-between">
+            <div>
+              <div className="flex items-center gap-2.5">
+                <p className="text-[14px] font-semibold text-ink">{gateway.name}</p>
+                <span className="rounded-full border border-line-strong px-2 py-0.5 text-[11px] text-ink-soft">{gateway.region}</span>
+              </div>
+              <p className="mt-1 font-mono text-[12.5px] text-ink-soft">{gateway.apiKeyMasked}</p>
+            </div>
+            <div className="flex shrink-0 items-center gap-3">
+              <button
+                type="button"
+                onClick={() => toggleEnabled(gateway.id)}
+                className={`relative h-6 w-11 shrink-0 rounded-full transition-colors duration-150 ease-out ${
+                  gateway.enabled ? "bg-ink" : "bg-paper-dim"
+                }`}
+              >
+                <span
+                  className={`absolute top-0.5 h-5 w-5 rounded-full bg-paper transition-transform duration-150 ease-out ${
+                    gateway.enabled ? "translate-x-[22px]" : "translate-x-0.5"
+                  }`}
+                />
+              </button>
+              <button
+                type="button"
+                onClick={() => openEdit(gateway)}
+                className="flex h-8 w-8 items-center justify-center rounded-control text-ink-soft hover:bg-paper-dim hover:text-ink"
+              >
+                <Pencil size={14} strokeWidth={1.75} />
+              </button>
+            </div>
+          </Card>
+        ))}
+      </div>
+
+      <Modal
+        open={Boolean(editing)}
+        onClose={() => setEditing(null)}
+        title={`Update API key - ${editing?.name ?? ""}`}
+        footer={
+          <>
+            <Button variant="ghost" onClick={() => setEditing(null)}>Cancel</Button>
+            <Button onClick={handleSaveKey} disabled={!newKey.trim()}>Save key</Button>
+          </>
+        }
+      >
+        <div className="relative">
+          <Input
+            label="New API key / secret"
+            type={showKey ? "text" : "password"}
+            value={newKey}
+            onChange={(e) => setNewKey(e.target.value)}
+            placeholder="Paste the new secret key"
+          />
+          <button
+            type="button"
+            onClick={() => setShowKey((v) => !v)}
+            className="absolute right-3 top-[34px] text-ink-soft hover:text-ink"
+          >
+            {showKey ? <EyeOff size={15} strokeWidth={1.75} /> : <Eye size={15} strokeWidth={1.75} />}
+          </button>
+        </div>
+      </Modal>
+    </main>
+  );
+}
+
+
+================================================================================
+FILE: apps\admin\app\(console)\settings\platform\page.tsx
+================================================================================
+"use client";
+
+import { useState } from "react";
+import { SlidersHorizontal, Save } from "lucide-react";
+import { Button, Card, Input, Select } from "@saachi/ui";
+
+const CURRENCY_OPTIONS = [
+  { label: "USD - US Dollar", value: "USD" },
+  { label: "PKR - Pakistani Rupee", value: "PKR" },
+  { label: "GBP - British Pound", value: "GBP" }
+];
+
+type FeatureFlag = { key: string; label: string; description: string; enabled: boolean };
+
+const INITIAL_FLAGS: FeatureFlag[] = [
+  { key: "corporate_accounts", label: "Corporate / Team Accounts", description: "Enable bulk seat purchase and team dashboards.", enabled: false },
+  { key: "mentorship", label: "Mentorship Bookings", description: "Allow instructors to offer paid 1-on-1 sessions.", enabled: true },
+  { key: "affiliate_program", label: "Affiliate Program", description: "Enable referral links and affiliate payouts.", enabled: false },
+  { key: "ai_recommendations", label: "AI Recommendation Engine", description: "Personalized course suggestions on the homepage.", enabled: false }
+];
+
+export default function PlatformSettingsPage() {
+  const [siteName, setSiteName] = useState("Saachi AI");
+  const [defaultCurrency, setDefaultCurrency] = useState("USD");
+  const [flags, setFlags] = useState(INITIAL_FLAGS);
+  const [saving, setSaving] = useState(false);
+
+  const toggleFlag = (key: string) => {
+    setFlags((prev) => prev.map((f) => (f.key === key ? { ...f, enabled: !f.enabled } : f)));
+  };
+
+  const handleSave = () => {
+    setSaving(true);
+    setTimeout(() => setSaving(false), 700);
+  };
+
+  return (
+    <main className="mx-auto max-w-[800px] px-4 py-8 md:px-8 md:py-10">
+      <div className="mb-6 flex items-center justify-between gap-3">
+        <div className="flex items-center gap-3">
+          <div className="flex h-10 w-10 items-center justify-center rounded-control border border-line text-ink">
+            <SlidersHorizontal size={17} strokeWidth={1.75} />
+          </div>
+          <div>
+            <h1 className="text-[22px] font-semibold text-ink">Platform Settings</h1>
+            <p className="mt-0.5 text-[13px] text-ink-soft">Site identity, default currency, and feature flags.</p>
+          </div>
+        </div>
+        <Button size="sm" onClick={handleSave} disabled={saving}>
+          <Save size={14} strokeWidth={1.75} /> {saving ? "Saving..." : "Save changes"}
+        </Button>
+      </div>
+
+      <Card className="mb-5 flex flex-col gap-4 p-5">
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+          <Input label="Site name" value={siteName} onChange={(e) => setSiteName(e.target.value)} />
+          <Select label="Default currency" options={CURRENCY_OPTIONS} value={defaultCurrency} onChange={(e) => setDefaultCurrency(e.target.value)} />
+        </div>
+      </Card>
+
+      <Card className="p-5">
+        <p className="mb-4 text-[14px] font-semibold text-ink">Feature flags</p>
+        <div className="flex flex-col gap-1">
+          {flags.map((flag, i) => (
+            <div key={flag.key} className={`flex items-center justify-between gap-4 py-3 ${i > 0 ? "border-t border-line" : ""}`}>
+              <div>
+                <p className="text-[13.5px] font-medium text-ink">{flag.label}</p>
+                <p className="mt-0.5 text-[12px] text-ink-soft">{flag.description}</p>
+              </div>
+              <button
+                type="button"
+                onClick={() => toggleFlag(flag.key)}
+                className={`relative h-6 w-11 shrink-0 rounded-full transition-colors duration-150 ease-out ${
+                  flag.enabled ? "bg-ink" : "bg-paper-dim"
+                }`}
+              >
+                <span
+                  className={`absolute top-0.5 h-5 w-5 rounded-full bg-paper transition-transform duration-150 ease-out ${
+                    flag.enabled ? "translate-x-[22px]" : "translate-x-0.5"
+                  }`}
+                />
+              </button>
+            </div>
+          ))}
+        </div>
+      </Card>
+    </main>
+  );
+}
+
+
+================================================================================
+FILE: apps\admin\app\(console)\settings\roles\page.tsx
+================================================================================
+"use client";
+
+import { useState } from "react";
+import { ShieldCheck, Plus, Check, X } from "lucide-react";
+import { Button, Card, Input, Select, Modal, Badge } from "@saachi/ui";
+
+type StaffRole = "super_admin" | "admin" | "finance_officer" | "support_officer";
+
+type StaffAccount = {
+  id: string;
+  name: string;
+  email: string;
+  role: StaffRole;
+};
+
+const ROLE_OPTIONS = [
+  { label: "Super Admin", value: "super_admin" },
+  { label: "Admin", value: "admin" },
+  { label: "Finance Officer", value: "finance_officer" },
+  { label: "Support Officer", value: "support_officer" }
+];
+
+const ROLE_LABEL: Record<StaffRole, string> = {
+  super_admin: "Super Admin",
+  admin: "Admin",
+  finance_officer: "Finance Officer",
+  support_officer: "Support Officer"
+};
+
+const PERMISSION_MATRIX: { capability: string; roles: Record<StaffRole, boolean> }[] = [
+  { capability: "Manage internal admin accounts", roles: { super_admin: true, admin: false, finance_officer: false, support_officer: false } },
+  { capability: "Approve/reject courses", roles: { super_admin: true, admin: true, finance_officer: false, support_officer: false } },
+  { capability: "Process payouts", roles: { super_admin: true, admin: true, finance_officer: true, support_officer: false } },
+  { capability: "Issue refunds", roles: { super_admin: true, admin: true, finance_officer: true, support_officer: false } },
+  { capability: "Ban/suspend users", roles: { super_admin: true, admin: true, finance_officer: false, support_officer: true } },
+  { capability: "Handle support tickets", roles: { super_admin: true, admin: true, finance_officer: false, support_officer: true } },
+  { capability: "Configure commission rates", roles: { super_admin: true, admin: false, finance_officer: false, support_officer: false } },
+  { capability: "View financial reports", roles: { super_admin: true, admin: true, finance_officer: true, support_officer: false } },
+  { capability: "Configure payment gateways", roles: { super_admin: true, admin: false, finance_officer: false, support_officer: false } }
+];
+
+const INITIAL_STAFF: StaffAccount[] = [
+  { id: "1", name: "Abdul Rehman Irfan", email: "abdulrehman@saachi.ai", role: "super_admin" },
+  { id: "2", name: "Finance Desk", email: "finance@saachi.ai", role: "finance_officer" },
+  { id: "3", name: "Support Desk", email: "support@saachi.ai", role: "support_officer" }
+];
+
+export default function RolesPermissionsPage() {
+  const [staff, setStaff] = useState(INITIAL_STAFF);
+  const [showCreate, setShowCreate] = useState(false);
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [role, setRole] = useState<StaffRole>("support_officer");
+
+  const handleCreate = () => {
+    if (!name.trim() || !email.trim()) return;
+    setStaff((prev) => [...prev, { id: String(Date.now()), name: name.trim(), email: email.trim(), role }]);
+    setShowCreate(false);
+    setName("");
+    setEmail("");
+    setRole("support_officer");
+  };
+
+  return (
+    <main className="mx-auto max-w-[1000px] px-4 py-8 md:px-8 md:py-10">
+      <div className="mb-6 flex items-center justify-between gap-3">
+        <div className="flex items-center gap-3">
+          <div className="flex h-10 w-10 items-center justify-center rounded-control border border-line text-ink">
+            <ShieldCheck size={17} strokeWidth={1.75} />
+          </div>
+          <div>
+            <h1 className="text-[22px] font-semibold text-ink">Roles & Permissions</h1>
+            <p className="mt-0.5 text-[13px] text-ink-soft">Internal staff accounts and their permission scope.</p>
+          </div>
+        </div>
+        <Button size="sm" onClick={() => setShowCreate(true)}>
+          <Plus size={14} strokeWidth={1.75} /> New staff account
+        </Button>
+      </div>
+
+      <div className="mb-8 flex flex-col gap-3">
+        {staff.map((account) => (
+          <Card key={account.id} className="flex items-center justify-between gap-4 p-4">
+            <div>
+              <p className="text-[14px] font-semibold text-ink">{account.name}</p>
+              <p className="mt-0.5 text-[12.5px] text-ink-soft">{account.email}</p>
+            </div>
+            <Badge>{ROLE_LABEL[account.role]}</Badge>
+          </Card>
+        ))}
+      </div>
+
+      <p className="mb-3 text-[14px] font-semibold text-ink">Permission matrix</p>
+      <div className="overflow-x-auto rounded-card border border-line bg-card">
+        <table className="w-full min-w-[720px] border-collapse text-[13px]">
+          <thead>
+            <tr className="border-b border-line text-left text-ink-soft">
+              <th className="px-4 py-3 font-medium">Capability</th>
+              <th className="px-4 py-3 font-medium">Super Admin</th>
+              <th className="px-4 py-3 font-medium">Admin</th>
+              <th className="px-4 py-3 font-medium">Finance Officer</th>
+              <th className="px-4 py-3 font-medium">Support Officer</th>
+            </tr>
+          </thead>
+          <tbody>
+            {PERMISSION_MATRIX.map((row) => (
+              <tr key={row.capability} className="border-b border-line last:border-0">
+                <td className="px-4 py-3 font-medium text-ink">{row.capability}</td>
+                {(["super_admin", "admin", "finance_officer", "support_officer"] as StaffRole[]).map((r) => (
+                  <td key={r} className="px-4 py-3">
+                    {row.roles[r] ? (
+                      <Check size={15} strokeWidth={2} className="text-success" />
+                    ) : (
+                      <X size={15} strokeWidth={2} className="text-ink-soft/40" />
+                    )}
+                  </td>
+                ))}
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+
+      <Modal
+        open={showCreate}
+        onClose={() => setShowCreate(false)}
+        title="New staff account"
+        footer={
+          <>
+            <Button variant="ghost" onClick={() => setShowCreate(false)}>Cancel</Button>
+            <Button onClick={handleCreate} disabled={!name.trim() || !email.trim()}>Create account</Button>
+          </>
+        }
+      >
+        <div className="flex flex-col gap-4">
+          <Input label="Full name" value={name} onChange={(e) => setName(e.target.value)} />
+          <Input label="Email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} />
+          <Select label="Role" options={ROLE_OPTIONS} value={role} onChange={(e) => setRole(e.target.value as StaffRole)} />
+        </div>
+      </Modal>
+    </main>
+  );
+}
+
+
+================================================================================
+FILE: apps\admin\app\(console)\support\tickets\[id]\page.tsx
+================================================================================
+!! ERROR reading file: A parameter cannot be found that matches parameter name 'Raw'.
+
+
+================================================================================
+FILE: apps\admin\app\(console)\support\tickets\page.tsx
+================================================================================
+"use client";
+
+import { useMemo, useState } from "react";
+import { useRouter } from "next/navigation";
+import { Search, LifeBuoy, AlertTriangle } from "lucide-react";
+import type { ColumnDef } from "@tanstack/react-table";
+import { useAdminTickets, type SupportTicket } from "@saachi/api-client";
+import { DataTable, StatusPill, Select } from "@saachi/ui";
+import { formatRelativeTime } from "@saachi/utils";
+
+const STATUS_OPTIONS = [
+  { label: "Open", value: "open" },
+  { label: "In progress", value: "in_progress" },
+  { label: "Resolved", value: "resolved" },
+  { label: "Closed", value: "closed" }
+];
+
+const PRIORITY_OPTIONS = [
+  { label: "Low", value: "low" },
+  { label: "Medium", value: "medium" },
+  { label: "High", value: "high" },
+  { label: "Urgent", value: "urgent" }
+];
+
+const STATUS_TONE: Record<SupportTicket["status"], "warning" | "info" | "success" | "neutral"> = {
+  open: "warning",
+  in_progress: "info",
+  resolved: "success",
+  closed: "neutral"
+};
+
+const PRIORITY_TONE: Record<SupportTicket["priority"], "neutral" | "info" | "warning" | "error"> = {
+  low: "neutral",
+  medium: "info",
+  high: "warning",
+  urgent: "error"
+};
+
+export default function SupportTicketQueuePage() {
+  const router = useRouter();
+  const [search, setSearch] = useState("");
+  const [status, setStatus] = useState("");
+  const [priority, setPriority] = useState("");
+
+  const { data, isLoading } = useAdminTickets({
+    search: search || undefined,
+    status: status || undefined,
+    priority: priority || undefined
+  });
+
+  const columns = useMemo<ColumnDef<SupportTicket, any>[]>(
+    () => [
+      {
+        header: "Subject",
+        accessorKey: "subject",
+        cell: ({ row }) => (
+          <div className="max-w-[280px]">
+            <div className="truncate font-medium text-ink">{row.original.subject}</div>
+            <div className="text-[12px] text-ink-soft">{row.original.requesterName} - {row.original.category}</div>
+          </div>
+        )
+      },
+      {
+        header: "Priority",
+        accessorKey: "priority",
+        cell: ({ getValue }) => {
+          const value = getValue() as SupportTicket["priority"];
+          return <StatusPill label={value} tone={PRIORITY_TONE[value]} />;
+        }
+      },
+      {
+        header: "Status",
+        accessorKey: "status",
+        cell: ({ getValue }) => {
+          const value = getValue() as SupportTicket["status"];
+          return <StatusPill label={value.replace("_", " ")} tone={STATUS_TONE[value]} />;
+        }
+      },
+      {
+        header: "Assigned to",
+        accessorKey: "assignedTo",
+        cell: ({ getValue }) => <span className="text-ink-soft">{(getValue() as string) ?? "Unassigned"}</span>
+      },
+      {
+        header: "SLA",
+        accessorKey: "slaDueAt",
+        cell: ({ row }) => {
+          const overdue = new Date(row.original.slaDueAt).getTime() < Date.now() && row.original.status !== "resolved" && row.original.status !== "closed";
+          return overdue ? (
+            <span className="flex items-center gap-1.5 font-medium text-error">
+              <AlertTriangle size={13} strokeWidth={1.75} /> Overdue
+            </span>
+          ) : (
+            <span className="text-ink-soft">{formatRelativeTime(row.original.slaDueAt)}</span>
+          );
+        }
+      },
+      {
+        header: "Created",
+        accessorKey: "createdAt",
+        cell: ({ getValue }) => <span className="text-ink-soft">{formatRelativeTime(getValue() as string)}</span>
+      }
+    ],
+    []
+  );
+
+  return (
+    <main className="mx-auto max-w-[1200px] px-4 py-8 md:px-8 md:py-10">
+      <div className="mb-6 flex items-center gap-3">
+        <div className="flex h-10 w-10 items-center justify-center rounded-control border border-line text-ink">
+          <LifeBuoy size={17} strokeWidth={1.75} />
+        </div>
+        <div>
+          <h1 className="text-[22px] font-semibold text-ink">Support Ticket Queue</h1>
+          <p className="mt-0.5 text-[13px] text-ink-soft">Learner and instructor support requests, tracked against SLA.</p>
+        </div>
+      </div>
+
+      <DataTable
+        columns={columns}
+        data={data ?? []}
+        isLoading={isLoading}
+        emptyTitle="No tickets found"
+        emptyDescription="Try adjusting your search or filters."
+        onRowClick={(row) => router.push(`/support/tickets/${row.id}`)}
+        toolbar={
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
+            <div className="relative flex-1">
+              <Search size={15} strokeWidth={1.75} className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-ink-soft" />
+              <input
+                placeholder="Search by subject or requester"
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                className="h-10 w-full rounded-control border border-line bg-card pl-9 pr-3 text-[13px] text-ink outline-none placeholder:text-ink-soft/60 focus:border-line-strong"
+              />
+            </div>
+            <div className="sm:w-[180px]">
+              <Select placeholder="All statuses" options={STATUS_OPTIONS} value={status} onChange={(e) => setStatus(e.target.value)} />
+            </div>
+            <div className="sm:w-[180px]">
+              <Select placeholder="All priorities" options={PRIORITY_OPTIONS} value={priority} onChange={(e) => setPriority(e.target.value)} />
+            </div>
+          </div>
+        }
+      />
+    </main>
+  );
+}
+
+
+================================================================================
+FILE: apps\admin\app\(console)\users\[id]\page.tsx
+================================================================================
+!! ERROR reading file: A parameter cannot be found that matches parameter name 'Raw'.
+
+
+================================================================================
+FILE: apps\admin\app\(console)\users\page.tsx
+================================================================================
+"use client";
+
+import { useMemo, useState } from "react";
+import { useRouter } from "next/navigation";
+import { Search, UserCog } from "lucide-react";
+import type { ColumnDef } from "@tanstack/react-table";
+import { useAdminUserList, type AdminUser } from "@saachi/api-client";
+import { DataTable, StatusPill, Select } from "@saachi/ui";
+import { formatDate } from "@saachi/utils";
+
+const ROLE_OPTIONS = [
+  { label: "Learner", value: "learner" },
+  { label: "Instructor", value: "instructor" },
+  { label: "Corporate", value: "corporate" },
+  { label: "Admin", value: "admin" }
+];
+
+const STATUS_OPTIONS = [
+  { label: "Active", value: "active" },
+  { label: "Suspended", value: "suspended" },
+  { label: "Banned", value: "banned" },
+  { label: "Pending", value: "pending" }
+];
+
+const STATUS_TONE: Record<AdminUser["status"], "success" | "warning" | "error" | "info"> = {
+  active: "success",
+  suspended: "warning",
+  banned: "error",
+  pending: "info"
+};
+
+export default function AdminUsersPage() {
+  const router = useRouter();
+  const [search, setSearch] = useState("");
+  const [role, setRole] = useState("");
+  const [status, setStatus] = useState("");
+
+  const { data, isLoading } = useAdminUserList({
+    search: search || undefined,
+    role: role || undefined,
+    status: status || undefined
+  });
+
+  const columns = useMemo<ColumnDef<AdminUser, any>[]>(
+    () => [
+      {
+        header: "Name",
+        accessorKey: "fullName",
+        cell: ({ row }) => (
+          <div className="flex items-center gap-3">
+            <div className="flex h-8 w-8 shrink-0 items-center justify-center overflow-hidden rounded-full border border-line bg-paper-dim text-[12px] font-semibold text-ink-soft">
+              {row.original.avatarUrl ? (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img src={row.original.avatarUrl} alt={row.original.fullName} className="h-full w-full object-cover" />
+              ) : (
+                row.original.fullName.charAt(0)
+              )}
+            </div>
+            <div>
+              <div className="font-medium text-ink">{row.original.fullName}</div>
+              <div className="text-[12px] text-ink-soft">{row.original.email}</div>
+            </div>
+          </div>
+        )
+      },
+      {
+        header: "Role",
+        accessorKey: "role",
+        cell: ({ getValue }) => <span className="capitalize text-ink-soft">{getValue()}</span>
+      },
+      {
+        header: "Status",
+        accessorKey: "status",
+        cell: ({ getValue }) => {
+          const value = getValue() as AdminUser["status"];
+          return <StatusPill label={value} tone={STATUS_TONE[value]} />;
+        }
+      },
+      {
+        header: "Location",
+        accessorKey: "location",
+        cell: ({ getValue }) => <span className="text-ink-soft">{getValue() ?? "-"}</span>
+      },
+      {
+        header: "Joined",
+        accessorKey: "joinedAt",
+        cell: ({ getValue }) => <span className="text-ink-soft">{formatDate(getValue() as string)}</span>
+      },
+      {
+        header: "Last active",
+        accessorKey: "lastActiveAt",
+        cell: ({ getValue }) => <span className="text-ink-soft">{formatDate(getValue() as string)}</span>
+      }
+    ],
+    []
+  );
+
+  return (
+    <main className="mx-auto max-w-[1200px] px-4 py-8 md:px-8 md:py-10">
+      <div className="mb-6 flex items-center gap-3">
+        <div className="flex h-10 w-10 items-center justify-center rounded-control border border-line text-ink">
+          <UserCog size={17} strokeWidth={1.75} />
+        </div>
+        <div>
+          <h1 className="text-[22px] font-semibold text-ink">User Management</h1>
+          <p className="mt-0.5 text-[13px] text-ink-soft">Learners, instructors, and corporate accounts.</p>
+        </div>
+      </div>
+
+      <DataTable
+        columns={columns}
+        data={data ?? []}
+        isLoading={isLoading}
+        emptyTitle="No users found"
+        emptyDescription="Try adjusting your search or filters."
+        onRowClick={(row) => router.push(`/users/${row.id}`)}
+        toolbar={
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
+            <div className="relative flex-1">
+              <Search size={15} strokeWidth={1.75} className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-ink-soft" />
+              <input
+                placeholder="Search by name or email"
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                className="h-10 w-full rounded-control border border-line bg-card pl-9 pr-3 text-[13px] text-ink outline-none placeholder:text-ink-soft/60 focus:border-line-strong"
+              />
+            </div>
+            <div className="sm:w-[180px]">
+              <Select placeholder="All roles" options={ROLE_OPTIONS} value={role} onChange={(e) => setRole(e.target.value)} />
+            </div>
+            <div className="sm:w-[180px]">
+              <Select placeholder="All statuses" options={STATUS_OPTIONS} value={status} onChange={(e) => setStatus(e.target.value)} />
+            </div>
+          </div>
+        }
+      />
+    </main>
+  );
+}
+
+
+================================================================================
+FILE: apps\admin\app\(console)\page.tsx
+================================================================================
+import { redirect } from "next/navigation";
+
+export default function AdminRootPage() {
+  redirect("/login");
+}
+
+
+================================================================================
+FILE: apps\admin\app\login\page.tsx
+================================================================================
+"use client";
+
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { ShieldCheck } from "lucide-react";
+import { Button, Card, Input, ThemeToggle } from "@saachi/ui";
+
+export default function AdminLoginPage() {
+  const router = useRouter();
+  const [loading, setLoading] = useState(false);
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+    document.cookie = "saachi_admin_session=demo_token; path=/; max-age=" + 60 * 60 * 24 * 7;
+    setTimeout(() => router.push("/dashboard"), 500);
+  };
+
+  return (
+    <main className="flex min-h-screen items-center justify-center bg-paper px-4">
+      <div className="absolute right-5 top-5">
+        <ThemeToggle />
+      </div>
+
+      <Card className="w-full max-w-[400px] p-8">
+        <div className="mb-6 flex flex-col items-center text-center">
+          <span className="mb-4 flex h-11 w-11 items-center justify-center rounded-full border border-ink text-[15px] font-bold text-ink">
+            S
+          </span>
+          <h1 className="text-[20px] font-semibold text-ink">Saachi AI - Admin</h1>
+          <p className="mt-1.5 text-[13px] text-ink-soft">Internal staff access only. 2FA required.</p>
+        </div>
+
+        <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+          <Input label="Email" type="email" placeholder="you@saachi.ai" required />
+          <Input label="Password" type="password" placeholder="********" required />
+          <Button type="submit" size="lg" disabled={loading}>
+            {loading ? "Verifying..." : "Continue"}
+          </Button>
+        </form>
+
+        <div className="mt-5 flex items-center justify-center gap-1.5 text-[12px] text-ink-soft">
+          <ShieldCheck size={13} strokeWidth={1.75} />
+          Protected by mandatory two-factor authentication
+        </div>
+      </Card>
+    </main>
+  );
+}
+
+
+================================================================================
+FILE: apps\admin\app\_components\AdminShell.tsx
+================================================================================
+"use client";
+
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { useState, type ReactNode } from "react";
+import { Menu, X, LogOut, Search, ChevronLeft, ChevronRight } from "lucide-react";
+import { ThemeToggle } from "@saachi/ui";
+import { ADMIN_NAV } from "../../lib/nav-config";
+
+function cx(...parts: Array<string | false | undefined>) {
+  return parts.filter(Boolean).join(" ");
+}
+
+export function AdminShell({ children }: { children: ReactNode }) {
+  const pathname = usePathname();
+  const [mobileOpen, setMobileOpen] = useState(false);
+  const [collapsed, setCollapsed] = useState(false);
+
+  const sidebarContent = (
+    <div className="flex h-full flex-col">
+      <div className={cx("flex items-center gap-2.5 px-5 py-6", collapsed && "justify-center px-0")}>
+        <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-ink text-[13px] font-bold text-ink">
+          S
+        </span>
+        {!collapsed && (
+          <div>
+            <div className="text-[14px] font-semibold leading-none text-ink">Saachi AI</div>
+            <div className="mt-1 text-[10px] font-medium uppercase tracking-[0.08em] text-ink-soft">Admin</div>
+          </div>
+        )}
+      </div>
+
+      <nav className="flex flex-1 flex-col gap-5 overflow-y-auto px-3 pb-4">
+        {ADMIN_NAV.map((section) => (
+          <div key={section.title}>
+            {!collapsed && (
+              <div className="mb-1.5 px-2.5 text-[10px] font-semibold uppercase tracking-[0.08em] text-ink-soft/60">
+                {section.title}
+              </div>
+            )}
+            <div className="flex flex-col gap-0.5">
+              {section.items.map((item) => {
+                const active = pathname === item.href || Boolean(pathname?.startsWith(`${item.href}/`));
+                return (
+                  <Link
+                    key={item.href}
+                    href={item.href}
+                    onClick={() => setMobileOpen(false)}
+                    title={collapsed ? item.label : undefined}
+                    className={cx(
+                      "flex items-center gap-3 rounded-control px-2.5 py-2 text-[13px] font-medium transition-colors duration-150 ease-out",
+                      collapsed && "justify-center",
+                      active ? "bg-accent text-paper" : "text-ink-soft hover:bg-paper-dim hover:text-ink"
+                    )}
+                  >
+                    <item.icon size={16} strokeWidth={1.75} className="shrink-0" />
+                    {!collapsed && <span className="truncate">{item.label}</span>}
+                  </Link>
+                );
+              })}
+            </div>
+          </div>
+        ))}
+      </nav>
+
+      <div className="border-t border-line px-3 py-3">
+        <button
+          type="button"
+          onClick={() => setCollapsed((v) => !v)}
+          className={cx(
+            "mb-1 flex w-full items-center gap-3 rounded-control px-2.5 py-2 text-[13px] font-medium text-ink-soft transition-colors duration-150 ease-out hover:bg-paper-dim hover:text-ink",
+            collapsed && "justify-center"
+          )}
+        >
+          {collapsed ? <ChevronRight size={16} strokeWidth={1.75} /> : <ChevronLeft size={16} strokeWidth={1.75} />}
+          {!collapsed && "Collapse"}
+        </button>
+        <Link
+          href="/login"
+          className={cx(
+            "flex w-full items-center gap-3 rounded-control px-2.5 py-2 text-[13px] font-medium text-ink-soft transition-colors duration-150 ease-out hover:bg-paper-dim hover:text-error",
+            collapsed && "justify-center"
+          )}
+        >
+          <LogOut size={16} strokeWidth={1.75} />
+          {!collapsed && "Log out"}
+        </Link>
+      </div>
+    </div>
+  );
+
+  return (
+    <div className="min-h-screen bg-paper">
+      <div
+        className={cx(
+          "hidden shrink-0 border-r border-line bg-card transition-[width] duration-200 ease-out md:fixed md:inset-y-0 md:flex",
+          collapsed ? "w-[76px]" : "w-[248px]"
+        )}
+      >
+        {sidebarContent}
+      </div>
+
+      <div
+        className={cx(
+          "sticky top-0 z-40 flex items-center justify-between border-b border-line bg-card/95 px-4 py-3 backdrop-blur-sm transition-[padding] duration-200 ease-out md:px-6",
+          collapsed ? "md:pl-[76px]" : "md:pl-[248px]"
+        )}
+      >
+        <div className="flex items-center gap-3">
+          <button
+            type="button"
+            onClick={() => setMobileOpen(true)}
+            aria-label="Open menu"
+            className="flex h-9 w-9 items-center justify-center rounded-control text-ink md:hidden"
+          >
+            <Menu size={18} strokeWidth={1.75} />
+          </button>
+          <div className="relative hidden sm:block">
+            <Search size={15} strokeWidth={1.75} className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-ink-soft" />
+            <input
+              placeholder="Search users, courses, tickets..."
+              className="h-9 w-[280px] rounded-control border border-line bg-paper pl-9 pr-3 text-[13px] text-ink outline-none placeholder:text-ink-soft/60 focus:border-line-strong"
+            />
+          </div>
+        </div>
+
+        <div className="flex items-center gap-3">
+          <ThemeToggle />
+          <div className="flex h-9 w-9 items-center justify-center rounded-full border border-line text-[12px] font-semibold text-ink">
+            A
+          </div>
+        </div>
+      </div>
+
+      {mobileOpen && (
+        <div className="fixed inset-0 z-50 flex md:hidden">
+          <div className="absolute inset-0 bg-ink/40" onClick={() => setMobileOpen(false)} />
+          <div className="relative flex h-full w-[280px] flex-col bg-card">
+            <button
+              type="button"
+              onClick={() => setMobileOpen(false)}
+              aria-label="Close menu"
+              className="absolute right-3 top-3 flex h-9 w-9 items-center justify-center rounded-control text-ink"
+            >
+              <X size={18} strokeWidth={1.75} />
+            </button>
+            {sidebarContent}
+          </div>
+        </div>
+      )}
+
+      <div className={cx("transition-[padding] duration-200 ease-out", collapsed ? "md:pl-[76px]" : "md:pl-[248px]")}>
+        {children}
+      </div>
+    </div>
+  );
+}
+
+
+================================================================================
+FILE: apps\admin\app\globals.css
+================================================================================
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@500;600&display=swap");
+@import "tailwindcss";
+
+@theme {
+  --color-ink: #14171a;
+  --color-ink-soft: #565b63;
+
+  --color-paper: #f6f7f8;
+  --color-paper-dim: #eceef0;
+  --color-card: #ffffff;
+
+  --color-line: #e3e5e8;
+  --color-line-strong: #cfd3d8;
+
+  --color-accent: #14171a;
+  --color-accent-soft: #eceef0;
+
+  --color-success: #1c7a4d;
+  --color-success-tint: #e6f4ec;
+  --color-warning: #96650b;
+  --color-warning-tint: #fbf0dd;
+  --color-error: #b3392c;
+  --color-error-tint: #faeae8;
+  --color-info: #2453a6;
+  --color-info-tint: #e8eefb;
+
+  --font-body: "Inter", -apple-system, "Segoe UI", sans-serif;
+  --font-mono: "IBM Plex Mono", "SFMono-Regular", monospace;
+
+  --radius-card: 16px;
+  --radius-control: 10px;
+
+  --animate-shimmer: shimmer 1.6s ease-in-out infinite;
+}
+
+@keyframes shimmer {
+  100% { transform: translateX(100%); }
+}
+
+[data-theme="dark"] {
+  --color-ink: #f2f3f5;
+  --color-ink-soft: #9aa0a8;
+
+  --color-paper: #0d0f12;
+  --color-paper-dim: #16191d;
+  --color-card: #131619;
+
+  --color-line: #23272c;
+  --color-line-strong: #33383e;
+
+  --color-accent: #f2f3f5;
+  --color-accent-soft: #1c2026;
+
+  --color-success: #4ade95;
+  --color-success-tint: #10241a;
+  --color-warning: #f0b849;
+  --color-warning-tint: #2a2110;
+  --color-error: #f28b7d;
+  --color-error-tint: #2a1613;
+  --color-info: #7ea6ef;
+  --color-info-tint: #131f30;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  color-scheme: light;
+}
+html[data-theme="dark"] {
+  color-scheme: dark;
+}
+
+body {
+  background: var(--color-paper);
+  color: var(--color-ink);
+  font-family: var(--font-body);
+  transition: background-color 150ms ease-out, color 150ms ease-out;
+}
+
+::selection {
+  background: var(--color-ink);
+  color: var(--color-paper);
+}
+
+/* Black & white icon rule: all lucide icons in the admin app are stroke-only,
+   inherit currentColor, no fills - keeps the interface monochrome. */
+svg {
+  color: inherit;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+
+================================================================================
+FILE: apps\admin\app\providers.tsx
+================================================================================
+"use client";
+
+import { useState } from "react";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+
+export function Providers({ children }: { children: React.ReactNode }) {
+  const [queryClient] = useState(
+    () =>
+      new QueryClient({
+        defaultOptions: {
+          queries: {
+            staleTime: 30 * 1000,
+            refetchOnWindowFocus: true,
+            retry: 1
+          }
+        }
+      })
+  );
+
+  return <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>;
+}
+
+
+
+================================================================================
+FILE: apps\admin\lib\nav-config.ts
+================================================================================
+import type { LucideIcon } from "lucide-react";
+import {
+  LayoutDashboard,
+  Users,
+  ClipboardCheck,
+  LibraryBig,
+  Tags,
+  Receipt,
+  Banknote,
+  Undo2,
+  Percent,
+  Image,
+  Ticket,
+  Megaphone,
+  MessageSquareWarning,
+  MessagesSquare,
+  LifeBuoy,
+  BarChart3,
+  Layers,
+  SlidersHorizontal,
+  Landmark,
+  CreditCard,
+  ScrollText,
+  ShieldCheck,
+  History
+} from "lucide-react";
+
+export type AdminNavItem = {
+  label: string;
+  href: string;
+  icon: LucideIcon;
+};
+
+export type AdminNavSection = {
+  title: string;
+  items: AdminNavItem[];
+};
+
+export const ADMIN_NAV: AdminNavSection[] = [
+  {
+    title: "Overview",
+    items: [{ label: "Dashboard", href: "/dashboard", icon: LayoutDashboard }]
+  },
+  {
+    title: "Users",
+    items: [{ label: "User Management", href: "/users", icon: Users }]
+  },
+  {
+    title: "Courses",
+    items: [
+      { label: "Moderation Queue", href: "/courses/moderation", icon: ClipboardCheck },
+      { label: "Course Catalog", href: "/courses/catalog", icon: LibraryBig },
+      { label: "Categories & Tags", href: "/courses/categories", icon: Tags }
+    ]
+  },
+  {
+    title: "Finance",
+    items: [
+      { label: "Transactions", href: "/finance/transactions", icon: Receipt },
+      { label: "Payouts", href: "/finance/payouts", icon: Banknote },
+      { label: "Refunds", href: "/finance/refunds", icon: Undo2 },
+      { label: "Tax / VAT Settings", href: "/finance/tax-settings", icon: Percent }
+    ]
+  },
+  {
+    title: "Marketing",
+    items: [
+      { label: "Homepage Banners", href: "/marketing/banners", icon: Image },
+      { label: "Coupons", href: "/marketing/coupons", icon: Ticket },
+      { label: "Promotion Sales", href: "/marketing/promotions", icon: Megaphone }
+    ]
+  },
+  {
+    title: "Moderation",
+    items: [
+      { label: "Flagged Reviews", href: "/moderation/reviews", icon: MessageSquareWarning },
+      { label: "Flagged Forum Posts", href: "/moderation/forum", icon: MessagesSquare }
+    ]
+  },
+  {
+    title: "Support",
+    items: [{ label: "Ticket Queue", href: "/support/tickets", icon: LifeBuoy }]
+  },
+  {
+    title: "Analytics",
+    items: [
+      { label: "Overview", href: "/analytics/overview", icon: BarChart3 },
+      { label: "Cohort Analysis", href: "/analytics/cohorts", icon: Layers }
+    ]
+  },
+  {
+    title: "Settings",
+    items: [
+      { label: "Platform Settings", href: "/settings/platform", icon: SlidersHorizontal },
+      { label: "Commission Tiers", href: "/settings/commission-tiers", icon: Landmark },
+      { label: "Payment Gateways", href: "/settings/payment-gateways", icon: CreditCard },
+      { label: "Legal Documents", href: "/settings/legal-documents", icon: ScrollText },
+      { label: "Roles & Permissions", href: "/settings/roles", icon: ShieldCheck }
+    ]
+  },
+  {
+    title: "System",
+    items: [{ label: "Audit Log", href: "/logs/audit", icon: History }]
+  }
+];
+
+
+================================================================================
+FILE: apps\admin\.eslintrc.json
+================================================================================
+{
+  "extends": "next/core-web-vitals"
+}
+
+
+
+================================================================================
+FILE: apps\admin\middleware.ts
+================================================================================
+import { NextResponse } from "next/server";
+import type { NextRequest } from "next/server";
+
+const PUBLIC_PATHS = ["/login"];
+
+export function middleware(request: NextRequest) {
+  const { pathname } = request.nextUrl;
+  const adminSession = request.cookies.get("saachi_admin_session");
+
+  const isPublic = PUBLIC_PATHS.some((p) => pathname.startsWith(p));
+
+  if (!isPublic && !adminSession) {
+    const loginUrl = new URL("/login", request.url);
+    return NextResponse.redirect(loginUrl);
+  }
+
+  return NextResponse.next();
+}
+
+export const config = {
+  matcher: ["/((?!_next/static|_next/image|favicon.ico).*)"]
+};
+
+
+
+================================================================================
+FILE: apps\admin\next-env.d.ts
+================================================================================
+/// <reference types="next" />
+/// <reference types="next/image-types/global" />
+/// <reference path="./.next/types/routes.d.ts" />
+
+// NOTE: This file should not be edited
+// see https://nextjs.org/docs/app/api-reference/config/typescript for more information.
+
+
+
+================================================================================
+FILE: apps\admin\next.config.js
+================================================================================
+/** @type {import("next").NextConfig} */
+const nextConfig = {
+  reactStrictMode: true,
+  transpilePackages: ["@saachi/ui", "@saachi/api-client", "@saachi/utils", "@saachi/store"],
+  async rewrites() {
+    return [
+      {
+        source: "/api/proxy/:path*",
+        destination: `${process.env.NEXT_PUBLIC_API_URL}/admin/:path*`
+      }
+    ];
+  }
+};
+
+module.exports = nextConfig;
+
+
+
+================================================================================
+FILE: apps\admin\package.json
+================================================================================
+{
+  "name": "admin",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev -p 3001",
+    "build": "next build",
+    "start": "next start -p 3001",
+    "lint": "next lint",
+    "type-check": "tsc --noEmit"
+  },
+  "dependencies": {
+    "next": "^15.0.0",
+    "react": "^18.3.0",
+    "react-dom": "^18.3.0",
+    "@tanstack/react-query": "^5.56.0",
+    "@tanstack/react-table": "^8.20.0",
+    "zustand": "^4.5.0",
+    "@saachi/ui": "workspace:*",
+    "@saachi/store": "workspace:*",
+    "@saachi/utils": "workspace:*",
+    "@saachi/api-client": "workspace:*",
+    "react-hook-form": "^7.53.0",
+    "@hookform/resolvers": "^3.9.0",
+    "zod": "^3.23.0",
+    "recharts": "^2.12.0",
+    "lucide-react": "^0.445.0",
+    "clsx": "^2.1.0",
+    "tailwind-merge": "^2.5.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.5.0",
+    "@types/react": "^18.3.0",
+    "@types/react-dom": "^18.3.0",
+    "typescript": "^5.5.0",
+    "tailwindcss": "^4.0.0",
+    "@tailwindcss/postcss": "^4.0.0",
+    "postcss": "^8.4.0",
+    "eslint": "^9.9.0",
+    "eslint-config-next": "^15.0.0"
+  }
+}
+
+
+
+================================================================================
+FILE: apps\admin\postcss.config.mjs
+================================================================================
+export default {
+  plugins: {
+    "@tailwindcss/postcss": {}
+  }
+};
+
+
+
+================================================================================
+FILE: apps\admin\README.md
+================================================================================
+# saachi-ai-remastered
+
+
+
+================================================================================
+FILE: apps\admin\tsconfig.json
+================================================================================
+{
+  "compilerOptions": {
+    "target": "ES2020",
+    "lib": ["dom", "dom.iterable", "esnext"],
+    "allowJs": false,
+    "skipLibCheck": true,
+    "strict": true,
+    "noEmit": true,
+    "esModuleInterop": true,
+    "module": "esnext",
+    "moduleResolution": "bundler",
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "jsx": "preserve",
+    "incremental": true,
+    "plugins": [{ "name": "next" }],
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["./*"],
+      "@saachi/ui": ["../../packages/ui/src"],
+      "@saachi/ui/*": ["../../packages/ui/src/*"],
+      "@saachi/api-client": ["../../packages/api-client/src"],
+      "@saachi/api-client/*": ["../../packages/api-client/src/*"],
+      "@saachi/utils": ["../../packages/utils/src"],
+      "@saachi/utils/*": ["../../packages/utils/src/*"],
+      "@saachi/store": ["../../packages/store/src"],
+      "@saachi/store/*": ["../../packages/store/src/*"]
+    }
+  },
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
+  "exclude": ["node_modules"]
+}
+
+

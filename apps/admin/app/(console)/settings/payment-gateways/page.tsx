@@ -13,8 +13,8 @@ type Gateway = {
 };
 
 const INITIAL_GATEWAYS: Gateway[] = [
-  { id: "stripe", name: "Stripe", region: "International", enabled: true, apiKeyMasked: "sk_live_â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢4f21" },
-  { id: "paypal", name: "PayPal", region: "International", enabled: true, apiKeyMasked: "client_â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢a9e0" },
+  { id: "stripe", name: "Stripe", region: "International", enabled: true, apiKeyMasked: "sk_live_********4f21" },
+  { id: "paypal", name: "PayPal", region: "International", enabled: true, apiKeyMasked: "client_********a9e0" },
   { id: "easypaisa", name: "Easypaisa", region: "Pakistan", enabled: false, apiKeyMasked: "not configured" },
   { id: "jazzcash", name: "JazzCash", region: "Pakistan", enabled: false, apiKeyMasked: "not configured" },
   { id: "bank_transfer", name: "Bank Transfer", region: "Pakistan", enabled: true, apiKeyMasked: "manual - no key" }
@@ -38,7 +38,7 @@ export default function PaymentGatewayConfigurationPage() {
 
   const handleSaveKey = () => {
     if (!editing || !newKey.trim()) return;
-    const masked = `â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢${newKey.trim().slice(-4)}`;
+    const masked = `********${newKey.trim().slice(-4)}`;
     setGateways((prev) => prev.map((g) => (g.id === editing.id ? { ...g, apiKeyMasked: masked } : g)));
     setEditing(null);
   };

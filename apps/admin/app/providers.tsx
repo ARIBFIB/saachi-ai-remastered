@@ -1,7 +1,8 @@
-﻿"use client";
+"use client";
 
 import { useState } from "react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { Toaster } from "sonner";
 
 export function Providers({ children }: { children: React.ReactNode }) {
   const [queryClient] = useState(
@@ -17,5 +18,21 @@ export function Providers({ children }: { children: React.ReactNode }) {
       })
   );
 
-  return <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>;
+  return (
+    <QueryClientProvider client={queryClient}>
+      {children}
+      <Toaster
+        position="top-right"
+        toastOptions={{
+          style: {
+            background: "var(--color-card)",
+            color: "var(--color-ink)",
+            border: "1px solid var(--color-line)",
+            borderRadius: "10px",
+            fontSize: "13px"
+          }
+        }}
+      />
+    </QueryClientProvider>
+  );
 }
