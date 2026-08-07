@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { CreditCard, Pencil, Eye, EyeOff } from "lucide-react";
-import { Button, Card, Input, Modal , HelpTooltip } from "@saachi/ui";
+import { Button, Card, Input, Modal , HelpTooltip , Switch } from "@saachi/ui";
 
 type Gateway = {
   id: string;
@@ -66,19 +66,7 @@ export default function PaymentGatewayConfigurationPage() {
               <p className="mt-1 font-mono text-[12.5px] text-ink-soft">{gateway.apiKeyMasked}</p>
             </div>
             <div className="flex shrink-0 items-center gap-3">
-              <button
-                type="button"
-                onClick={() => toggleEnabled(gateway.id)}
-                className={`relative h-6 w-11 shrink-0 rounded-full transition-colors duration-150 ease-out ${
-                  gateway.enabled ? "bg-ink" : "bg-paper-dim"
-                }`}
-              >
-                <span
-                  className={`absolute top-0.5 h-5 w-5 rounded-full bg-paper transition-transform duration-150 ease-out ${
-                    gateway.enabled ? "translate-x-[22px]" : "translate-x-0.5"
-                  }`}
-                />
-              </button>
+              <Switch checked={gateway.enabled} onChange={() => toggleEnabled(gateway.id)} />
               <button
                 type="button"
                 onClick={() => openEdit(gateway)}

@@ -107,3 +107,20 @@ svg {
 .admin-clickable-table table tbody tr:hover {
   background-color: var(--color-paper-dim);
 }
+/* global-button-feedback */
+button:not(:disabled) {
+  cursor: pointer;
+  transition: filter 120ms ease-out, transform 100ms ease-out, opacity 120ms ease-out;
+}
+button:not(:disabled):hover {
+  filter: brightness(0.94);
+}
+[data-theme="dark"] button:not(:disabled):hover {
+  filter: brightness(1.15);
+}
+button:not(:disabled):active {
+  transform: scale(0.97);
+}
+button:disabled {
+  cursor: not-allowed;
+}

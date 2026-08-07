@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { SlidersHorizontal, Save } from "lucide-react";
-import { Button, Card, Input, Select , HelpTooltip } from "@saachi/ui";
+import { Button, Card, Input, Select , HelpTooltip , Switch } from "@saachi/ui";
 
 const CURRENCY_OPTIONS = [
   { label: "USD - US Dollar", value: "USD" },
@@ -67,19 +67,7 @@ export default function PlatformSettingsPage() {
                 <p className="text-[13.5px] font-medium text-ink">{flag.label}</p>
                 <p className="mt-0.5 text-[12px] text-ink-soft">{flag.description}</p>
               </div>
-              <button
-                type="button"
-                onClick={() => toggleFlag(flag.key)}
-                className={`relative h-6 w-11 shrink-0 rounded-full transition-colors duration-150 ease-out ${
-                  flag.enabled ? "bg-ink" : "bg-paper-dim"
-                }`}
-              >
-                <span
-                  className={`absolute top-0.5 h-5 w-5 rounded-full bg-paper transition-transform duration-150 ease-out ${
-                    flag.enabled ? "translate-x-[22px]" : "translate-x-0.5"
-                  }`}
-                />
-              </button>
+              <Switch checked={flag.enabled} onChange={() => toggleFlag(flag.key)} />
             </div>
           ))}
         </div>

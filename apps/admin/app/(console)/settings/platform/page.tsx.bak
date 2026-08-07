@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { SlidersHorizontal, Save } from "lucide-react";
-import { Button, Card, Input, Select } from "@saachi/ui";
+import { Button, Card, Input, Select , HelpTooltip } from "@saachi/ui";
 
 const CURRENCY_OPTIONS = [
   { label: "USD - US Dollar", value: "USD" },
@@ -42,7 +42,7 @@ export default function PlatformSettingsPage() {
             <SlidersHorizontal size={17} strokeWidth={1.75} />
           </div>
           <div>
-            <h1 className="text-[22px] font-semibold text-ink">Platform Settings</h1>
+            <div className="flex items-center gap-1.5"><h1 className="text-[22px] font-semibold text-ink">Platform Settings</h1><HelpTooltip text="Site-wide identity settings, default currency, and feature flags that turn platform capabilities on or off." /></div>
             <p className="mt-0.5 text-[13px] text-ink-soft">Site identity, default currency, and feature flags.</p>
           </div>
         </div>

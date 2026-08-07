@@ -24,3 +24,7 @@ export * from "./components/StatusPill";
 export * from "./RefreshButton";
 
 export * from "./HelpTooltip";
+
+export * from "./Switch";
+
+export * from "./Button";
