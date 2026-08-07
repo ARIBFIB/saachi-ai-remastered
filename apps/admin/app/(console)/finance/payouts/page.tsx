@@ -4,12 +4,12 @@ import { useMemo, useState } from "react";
 import { toast } from "sonner";
 import { Banknote, CheckCircle2, XCircle, Search, Layers } from "lucide-react";
 import {
-  useAdminPayouts,
-  useProcessPayout,
-  useBatchProcessPayouts,
-  type AdminPayout
+  useAdminPayoutQueue,
+  useProcessPayoutRequest,
+  useBatchProcessPayoutRequests,
+  type AdminPayoutRequest
 } from "@saachi/api-client";
-import { Button, Card, Select, StatusPill, Modal, EmptyState, ShimmerKpiCard, ShimmerTableRow } from "@saachi/ui";
+import { Button, Card, Select, StatusPill, Modal, EmptyState } from "@saachi/ui";
 import { formatCurrency, formatDate } from "@saachi/utils";
 import { LoadingSpinner } from "../../../_components/LoadingSpinner";
 
@@ -27,7 +27,7 @@ const METHOD_OPTIONS = [
   { label: "JazzCash", value: "jazzcash" }
 ];
 
-const STATUS_TONE: Record<AdminPayout["status"], "success" | "warning" | "error" | "info"> = {
+const STATUS_TONE: Record<AdminPayoutRequest["status"], "success" | "warning" | "error" | "info"> = {
   pending: "warning",
   approved: "info",
   paid: "success",
@@ -39,15 +39,15 @@ export default function PayoutProcessingQueuePage() {
   const [methodFilter, setMethodFilter] = useState("");
   const [search, setSearch] = useState("");
   const [selected, setSelected] = useState<Record<string, boolean>>({});
-  const [rejectTarget, setRejectTarget] = useState<AdminPayout | null>(null);
+  const [rejectTarget, setRejectTarget] = useState<AdminPayoutRequest | null>(null);
 
-  const { data: payouts, isLoading } = useAdminPayouts({
+  const { data: payouts, isLoading } = useAdminPayoutQueue({
     status: statusFilter || undefined,
     method: methodFilter || undefined,
     search: search || undefined
   });
-  const processPayout = useProcessPayout();
-  const batchProcess = useBatchProcessPayouts();
+  const processPayout = useProcessPayoutRequest();
+  const batchProcess = useBatchProcessPayoutRequests();
 
   const selectedIds = useMemo(
     () => Object.entries(selected).filter(([, v]) => v).map(([id]) => id),
@@ -89,7 +89,7 @@ export default function PayoutProcessingQueuePage() {
     setSelected({});
   };
 
-  const handleApproveSingle = (payout: AdminPayout) => {
+  const handleApproveSingle = (payout: AdminPayoutRequest) => {
     processPayout.mutate(
       { id: payout.id, decision: "approved" },
       {
@@ -99,7 +99,7 @@ export default function PayoutProcessingQueuePage() {
     );
   };
 
-  const handleMarkPaid = (payout: AdminPayout) => {
+  const handleMarkPaid = (payout: AdminPayoutRequest) => {
     processPayout.mutate(
       { id: payout.id, decision: "paid" },
       {
@@ -264,7 +264,7 @@ function PayoutRejectModal({
   onSubmit,
   pending
 }: {
-  target: AdminPayout | null;
+  target: AdminPayoutRequest | null;
   onClose: () => void;
   onSubmit: (reason: string) => void;
   pending: boolean;

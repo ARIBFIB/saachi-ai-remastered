@@ -16,3 +16,5 @@ export * from "./hooks/useAdminSupport";
 export * from "./hooks/useAuth";
 export * from "./hooks/useCourses";
 export * from "./hooks/useAdminPayouts";
+export * from "./hooks/useAdminUserDetail";
+export * from "./hooks/useAdminTicketDetail";

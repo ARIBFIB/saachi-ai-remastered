@@ -97,3 +97,13 @@ svg {
     transition-duration: 0.01ms !important;
   }
 }
+
+
+/* admin-clickable-table rules - added by fix-userdetail-hooks-and-cursor.ps1 */
+.admin-clickable-table table tbody tr {
+  cursor: pointer;
+  transition: background-color 120ms ease-out;
+}
+.admin-clickable-table table tbody tr:hover {
+  background-color: var(--color-paper-dim);
+}

@@ -107,7 +107,7 @@ export default function AdminUsersPage() {
         </div>
       </div>
 
-      <DataTable
+      <div className="admin-clickable-table"><DataTable 
         columns={columns}
         data={data ?? []}
         isLoading={isLoading}
@@ -133,7 +133,6 @@ export default function AdminUsersPage() {
             </div>
           </div>
         }
-      />
-    </main>
+      /></div>    </main>
   );
 }

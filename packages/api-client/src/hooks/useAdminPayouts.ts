@@ -3,23 +3,23 @@
 import { useMemo } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
-export type AdminPayoutStatus = "pending" | "approved" | "paid" | "rejected";
-export type AdminPayoutMethod = "bank_transfer" | "stripe_connect" | "easypaisa" | "jazzcash";
+export type AdminPayoutRequestStatus = "pending" | "approved" | "paid" | "rejected";
+export type AdminPayoutRequestMethod = "bank_transfer" | "stripe_connect" | "easypaisa" | "jazzcash";
 
-export type AdminPayout = {
+export type AdminPayoutRequest = {
   id: string;
   instructorId: string;
   instructorName: string;
   amount: number;
   currency: string;
-  method: AdminPayoutMethod;
-  status: AdminPayoutStatus;
+  method: AdminPayoutRequestMethod;
+  status: AdminPayoutRequestStatus;
   requestedAt: string;
   processedAt?: string;
   rejectionReason?: string;
 };
 
-const MOCK_PAYOUTS: AdminPayout[] = [
+const MOCK_PAYOUT_REQUESTS: AdminPayoutRequest[] = [
   {
     id: "PAYOUT-2026-0913",
     instructorId: "inst_1",
@@ -75,19 +75,19 @@ const MOCK_PAYOUTS: AdminPayout[] = [
   }
 ];
 
-let payoutStore: AdminPayout[] = [...MOCK_PAYOUTS];
+let payoutRequestStore: AdminPayoutRequest[] = [...MOCK_PAYOUT_REQUESTS];
 
-const PAYOUTS_KEY = ["admin", "payouts"] as const;
+const PAYOUT_QUEUE_KEY = ["admin", "payout-queue"] as const;
 
-type PayoutFilters = {
+type PayoutQueueFilters = {
   status?: string;
   method?: string;
   search?: string;
 };
 
-async function fetchPayouts(filters: PayoutFilters): Promise<AdminPayout[]> {
+async function fetchPayoutQueue(filters: PayoutQueueFilters): Promise<AdminPayoutRequest[]> {
   await new Promise((r) => setTimeout(r, 350));
-  return payoutStore.filter((p) => {
+  return payoutRequestStore.filter((p) => {
     const matchesStatus = !filters.status || p.status === filters.status;
     const matchesMethod = !filters.method || p.method === filters.method;
     const matchesSearch =
@@ -98,23 +98,23 @@ async function fetchPayouts(filters: PayoutFilters): Promise<AdminPayout[]> {
   });
 }
 
-export function useAdminPayouts(filters: PayoutFilters = {}) {
+export function useAdminPayoutQueue(filters: PayoutQueueFilters = {}) {
   const key = useMemo(
-    () => [...PAYOUTS_KEY, filters.status ?? "", filters.method ?? "", filters.search ?? ""],
+    () => [...PAYOUT_QUEUE_KEY, filters.status ?? "", filters.method ?? "", filters.search ?? ""],
     [filters.status, filters.method, filters.search]
   );
   return useQuery({
     queryKey: key,
-    queryFn: () => fetchPayouts(filters)
+    queryFn: () => fetchPayoutQueue(filters)
   });
 }
 
-export function useProcessPayout() {
+export function useProcessPayoutRequest() {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async (input: { id: string; decision: "approved" | "paid" | "rejected"; reason?: string }) => {
       await new Promise((r) => setTimeout(r, 300));
-      payoutStore = payoutStore.map((p) =>
+      payoutRequestStore = payoutRequestStore.map((p) =>
         p.id === input.id
           ? {
               ...p,
@@ -124,26 +124,26 @@ export function useProcessPayout() {
             }
           : p
       );
-      return payoutStore.find((p) => p.id === input.id);
+      return payoutRequestStore.find((p) => p.id === input.id);
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: PAYOUTS_KEY });
+      queryClient.invalidateQueries({ queryKey: PAYOUT_QUEUE_KEY });
     }
   });
 }
 
-export function useBatchProcessPayouts() {
+export function useBatchProcessPayoutRequests() {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async (input: { ids: string[]; decision: "approved" | "paid" | "rejected" }) => {
       await new Promise((r) => setTimeout(r, 400));
-      payoutStore = payoutStore.map((p) =>
+      payoutRequestStore = payoutRequestStore.map((p) =>
         input.ids.includes(p.id) ? { ...p, status: input.decision, processedAt: new Date().toISOString() } : p
       );
-      return payoutStore.filter((p) => input.ids.includes(p.id));
+      return payoutRequestStore.filter((p) => input.ids.includes(p.id));
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: PAYOUTS_KEY });
+      queryClient.invalidateQueries({ queryKey: PAYOUT_QUEUE_KEY });
     }
   });
 }

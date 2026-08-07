@@ -116,7 +116,7 @@ export default function SupportTicketQueuePage() {
         </div>
       </div>
 
-      <DataTable
+      <div className="admin-clickable-table"><DataTable 
         columns={columns}
         data={data ?? []}
         isLoading={isLoading}
@@ -142,7 +142,6 @@ export default function SupportTicketQueuePage() {
             </div>
           </div>
         }
-      />
-    </main>
+      /></div>    </main>
   );
 }
