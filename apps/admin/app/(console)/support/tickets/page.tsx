@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { Search, LifeBuoy, AlertTriangle } from "lucide-react";
 import type { ColumnDef } from "@tanstack/react-table";
 import { useAdminTickets, type SupportTicket } from "@saachi/api-client";
-import { DataTable, StatusPill, Select } from "@saachi/ui";
+import { DataTable, StatusPill, Select , RefreshButton } from "@saachi/ui";
 import { formatRelativeTime } from "@saachi/utils";
 
 const STATUS_OPTIONS = [

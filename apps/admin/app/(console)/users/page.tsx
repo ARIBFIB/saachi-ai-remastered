@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { Search, UserCog } from "lucide-react";
 import type { ColumnDef } from "@tanstack/react-table";
 import { useAdminUserList, type AdminUser } from "@saachi/api-client";
-import { DataTable, StatusPill, Select } from "@saachi/ui";
+import { DataTable, StatusPill, Select , RefreshButton } from "@saachi/ui";
 import { formatDate } from "@saachi/utils";
 
 const ROLE_OPTIONS = [

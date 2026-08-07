@@ -3,7 +3,7 @@
 import { useMemo, useState } from "react";
 import { Search, History } from "lucide-react";
 import type { ColumnDef } from "@tanstack/react-table";
-import { DataTable, Select } from "@saachi/ui";
+import { DataTable, Select , RefreshButton } from "@saachi/ui";
 import { formatDate } from "@saachi/utils";
 
 type AuditEntry = {
@@ -81,6 +81,7 @@ export default function AuditLogViewerPage() {
           <p className="mt-0.5 text-[13px] text-ink-soft">Searchable system-wide record of internal staff actions.</p>
         </div>
       </div>
+      <div className="mb-3 flex justify-end"><RefreshButton /></div>
 
       <DataTable
         columns={columns}
