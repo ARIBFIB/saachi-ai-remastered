@@ -7,3 +7,4 @@ export * from "./useCourseBuilderStore";
 export * from "./useOrderStore";
 export * from "./useCommunityStore";
 export * from "./usePromotionStore";
+export * from "./useCorporateStore";
