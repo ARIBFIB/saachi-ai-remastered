@@ -1,0 +1,4882 @@
+﻿================================================================================
+MODULE CODE EXPORT: Web
+Generated: 2026-08-07 18:08:52
+Total Files: 66
+================================================================================
+
+
+================================================================================
+FILE: apps\web\app\(auth)\forgot-password\page.tsx
+================================================================================
+"use client";
+
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useState } from "react";
+import Link from "next/link";
+import { forgotPasswordSchema, type ForgotPasswordInput } from "@saachi/utils";
+import { apiRequest } from "@saachi/api-client";
+import { Button, Card, Input } from "@saachi/ui";
+
+export default function ForgotPasswordPage() {
+  const [sent, setSent] = useState(false);
+  const [serverError, setServerError] = useState<string | null>(null);
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting }
+  } = useForm<ForgotPasswordInput>({
+    resolver: zodResolver(forgotPasswordSchema)
+  });
+
+  const onSubmit = async (data: ForgotPasswordInput) => {
+    setServerError(null);
+    try {
+      await apiRequest("/auth/forgot-password", { method: "POST", body: data });
+      setSent(true);
+    } catch (err: any) {
+      setServerError(err?.message ?? "Something went wrong. Please try again.");
+    }
+  };
+
+  if (sent) {
+    return (
+      <Card className="w-full max-w-[420px] p-8">
+        <h1 className="font-display text-[22px] font-semibold text-ink">Check your email</h1>
+        <p className="mt-2 text-[14px] text-ink-soft">
+          If an account exists for that email, we've sent a password reset link.
+        </p>
+        <div className="mt-6">
+          <Link href="/login" className="text-[14px] font-semibold text-ink hover:text-gold-dark">
+            Back to login
+          </Link>
+        </div>
+      </Card>
+    );
+  }
+
+  return (
+    <Card className="w-full max-w-[420px] p-8">
+      <h1 className="font-display text-[22px] font-semibold text-ink">Reset your password</h1>
+      <p className="mb-6 mt-1 text-[14px] text-ink-soft">
+        Enter your email and we'll send you a reset link.
+      </p>
+
+      <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
+        <Input
+          label="Email"
+          type="email"
+          placeholder="you@example.com"
+          {...register("email")}
+          error={errors.email?.message}
+        />
+
+        {serverError && <p className="text-[13px] text-error">{serverError}</p>}
+
+        <Button type="submit" size="lg" disabled={isSubmitting}>
+          {isSubmitting ? "Sendingâ€¦" : "Send Reset Link"}
+        </Button>
+      </form>
+
+      <div className="mt-5 text-center text-[14px] text-ink-soft">
+        <Link href="/login" className="hover:text-ink">
+          Back to login
+        </Link>
+      </div>
+    </Card>
+  );
+}
+
+
+================================================================================
+FILE: apps\web\app\(auth)\login\2fa\page.tsx
+================================================================================
+"use client";
+
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { ShieldCheck } from "lucide-react";
+import { twoFactorSchema, type TwoFactorInput } from "@saachi/utils";
+import { Button, Card, Input } from "@saachi/ui";
+
+export default function TwoFactorPage() {
+  const router = useRouter();
+  const [serverError, setServerError] = useState<string | null>(null);
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting }
+  } = useForm<TwoFactorInput>({
+    resolver: zodResolver(twoFactorSchema)
+  });
+
+  const onSubmit = async (data: TwoFactorInput) => {
+    setServerError(null);
+    // NOTE: demo-only. In this build, useLogin never returns requires2fa: true,
+    // so this screen is reachable directly for UI/QA purposes. Wire to real
+    // Auth API 2FA verification once the backend is available.
+    await new Promise((resolve) => setTimeout(resolve, 500));
+    if (data.code !== "000000") {
+      setServerError("Demo mode: enter 000000 to continue.");
+      return;
+    }
+    router.push("/dashboard");
+  };
+
+  return (
+    <Card className="w-full max-w-[400px] p-8 text-center">
+      <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-teal-light text-teal">
+        <ShieldCheck size={22} />
+      </div>
+      <h1 className="font-display text-[22px] font-semibold text-ink">Two-factor verification</h1>
+      <p className="mb-6 mt-2 text-[14px] text-ink-soft">
+        Enter the 6-digit code from your authenticator app.
+      </p>
+
+      <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4 text-left">
+        <Input
+          label="Verification code"
+          placeholder="000000"
+          maxLength={6}
+          {...register("code")}
+          error={errors.code?.message}
+        />
+
+        {serverError && <p className="text-[13px] text-error">{serverError}</p>}
+
+        <Button type="submit" size="lg" disabled={isSubmitting}>
+          {isSubmitting ? "Verifying..." : "Verify"}
+        </Button>
+      </form>
+    </Card>
+  );
+}
+
+
+================================================================================
+FILE: apps\web\app\(auth)\login\page.tsx
+================================================================================
+"use client";
+
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
+import Link from "next/link";
+import { loginSchema, type LoginInput } from "@saachi/utils";
+import { useLogin } from "@saachi/api-client";
+import { Button, Card, Input, SocialLoginButtons } from "@saachi/ui";
+
+export default function LoginPage() {
+  const router = useRouter();
+  const loginMutation = useLogin();
+  const [serverError, setServerError] = useState<string | null>(null);
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting }
+  } = useForm<LoginInput>({
+    resolver: zodResolver(loginSchema)
+  });
+
+  const onSubmit = async (data: LoginInput) => {
+    setServerError(null);
+    try {
+      const result = await loginMutation.mutateAsync(data);
+      if ("requires2fa" in result && result.requires2fa) {
+        router.push("/login/2fa");
+        return;
+      }
+      router.push("/dashboard");
+    } catch (err: any) {
+      setServerError(err?.message ?? "Login failed. Please try again.");
+    }
+  };
+
+  return (
+    <Card className="w-full max-w-[420px] p-8">
+      <h1 className="font-display text-[24px] font-semibold text-ink">Welcome back</h1>
+      <p className="mb-6 mt-1 text-[14px] text-ink-soft">
+        Log in to continue learning or teaching on Saachi AI.
+      </p>
+
+      <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
+        <Input
+          label="Email"
+          type="email"
+          placeholder="you@example.com"
+          {...register("email")}
+          error={errors.email?.message}
+        />
+        <Input
+          label="Password"
+          type="password"
+          placeholder="********"
+          {...register("password")}
+          error={errors.password?.message}
+        />
+
+        {serverError && <p className="text-[13px] text-error">{serverError}</p>}
+
+        <Button type="submit" size="lg" disabled={isSubmitting || loginMutation.isPending}>
+          {isSubmitting || loginMutation.isPending ? "Logging inÃƒÂ¢Ã¢â€šÂ¬Ã‚Â¦" : "Log In"}
+        </Button>
+      </form>
+
+      <div className="mt-6">
+        <SocialLoginButtons
+          onGoogle={() => onSubmit({ email: "demo.google@saachi.ai", password: "demo-oauth" })}
+          onMicrosoft={() => onSubmit({ email: "demo.microsoft@saachi.ai", password: "demo-oauth" })}
+        />
+      </div>
+
+      <div className="mt-5 text-center text-[14px] text-ink-soft">
+        <Link href="/forgot-password" className="hover:text-ink">
+          Forgot password?
+        </Link>
+        <span className="mx-2">Ãƒâ€šÃ‚Â·</span>
+        <Link href="/register" className="hover:text-ink">
+          Create an account
+        </Link>
+      </div>
+    </Card>
+  );
+}
+
+
+================================================================================
+FILE: apps\web\app\(auth)\register\page.tsx
+================================================================================
+"use client";
+
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
+import Link from "next/link";
+import { registerSchema, type RegisterInput } from "@saachi/utils";
+import { useRegister } from "@saachi/api-client";
+import { Button, Card, Input, SocialLoginButtons } from "@saachi/ui";
+
+export default function RegisterPage() {
+  const router = useRouter();
+  const registerMutation = useRegister();
+  const [serverError, setServerError] = useState<string | null>(null);
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting }
+  } = useForm<RegisterInput>({
+    resolver: zodResolver(registerSchema),
+    defaultValues: { role: "learner" }
+  });
+
+  const onSubmit = async (data: RegisterInput) => {
+    setServerError(null);
+    try {
+      await registerMutation.mutateAsync(data);
+      router.push("/dashboard");
+    } catch (err: any) {
+      setServerError(err?.message ?? "Registration failed. Please try again.");
+    }
+  };
+
+  return (
+    <Card className="w-full max-w-[440px] p-8">
+      <h1 className="font-display text-[24px] font-semibold text-ink">Create your account</h1>
+      <p className="mb-6 mt-1 text-[14px] text-ink-soft">
+        Join Saachi AI as a learner. You can apply to become an instructor later.
+      </p>
+
+      <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
+        <Input label="Full name" placeholder="Your name" {...register("fullName")} error={errors.fullName?.message} />
+        <Input
+          label="Email"
+          type="email"
+          placeholder="you@example.com"
+          {...register("email")}
+          error={errors.email?.message}
+        />
+        <Input
+          label="Password"
+          type="password"
+          placeholder="At least 8 characters"
+          {...register("password")}
+          error={errors.password?.message}
+        />
+        <Input
+          label="Confirm password"
+          type="password"
+          placeholder="Repeat your password"
+          {...register("confirmPassword")}
+          error={errors.confirmPassword?.message}
+        />
+
+        {serverError && <p className="text-[13px] text-error">{serverError}</p>}
+
+        <Button type="submit" size="lg" disabled={isSubmitting || registerMutation.isPending}>
+          {isSubmitting || registerMutation.isPending ? "Creating accountÃƒÂ¢Ã¢â€šÂ¬Ã‚Â¦" : "Create Account"}
+        </Button>
+      </form>
+
+      <div className="mt-6">
+        <SocialLoginButtons
+          onGoogle={() =>
+            onSubmit({ fullName: "Google User", email: "demo.google@saachi.ai", password: "demo-oauth123", confirmPassword: "demo-oauth123", role: "learner" })
+          }
+          onMicrosoft={() =>
+            onSubmit({ fullName: "Microsoft User", email: "demo.microsoft@saachi.ai", password: "demo-oauth123", confirmPassword: "demo-oauth123", role: "learner" })
+          }
+        />
+      </div>
+
+      <div className="mt-5 text-center text-[14px] text-ink-soft">
+        Already have an account?{" "}
+        <Link href="/login" className="font-semibold text-ink hover:text-gold-dark">
+          Log in
+        </Link>
+      </div>
+    </Card>
+  );
+}
+
+
+================================================================================
+FILE: apps\web\app\(auth)\reset-password\page.tsx
+================================================================================
+"use client";
+
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useRouter, useSearchParams } from "next/navigation";
+import { useState } from "react";
+import Link from "next/link";
+import { resetPasswordSchema, type ResetPasswordInput } from "@saachi/utils";
+import { Button, Card, Input } from "@saachi/ui";
+
+export default function ResetPasswordPage() {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const [serverError, setServerError] = useState<string | null>(null);
+  const [done, setDone] = useState(false);
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting }
+  } = useForm<ResetPasswordInput>({
+    resolver: zodResolver(resetPasswordSchema),
+    defaultValues: { token: searchParams.get("token") ?? "demo-token" }
+  });
+
+  const onSubmit = async (data: ResetPasswordInput) => {
+    setServerError(null);
+    // NOTE: demo-only. Replace with apiRequest("/auth/reset-password", ...) once backend exists.
+    await new Promise((resolve) => setTimeout(resolve, 500));
+    setDone(true);
+  };
+
+  if (done) {
+    return (
+      <Card className="w-full max-w-[420px] p-8 text-center">
+        <h1 className="font-display text-[22px] font-semibold text-ink">Password updated</h1>
+        <p className="mt-2 text-[14px] text-ink-soft">
+          Your password has been reset. You can now log in with your new password.
+        </p>
+        <Button size="lg" className="mt-6 w-full" onClick={() => router.push("/login")}>
+          Go to login
+        </Button>
+      </Card>
+    );
+  }
+
+  return (
+    <Card className="w-full max-w-[420px] p-8">
+      <h1 className="font-display text-[22px] font-semibold text-ink">Set a new password</h1>
+      <p className="mb-6 mt-1 text-[14px] text-ink-soft">Choose a strong password for your account.</p>
+
+      <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
+        <input type="hidden" {...register("token")} />
+        <Input
+          label="New password"
+          type="password"
+          placeholder="At least 8 characters"
+          {...register("password")}
+          error={errors.password?.message}
+        />
+        <Input
+          label="Confirm new password"
+          type="password"
+          placeholder="Repeat new password"
+          {...register("confirmPassword")}
+          error={errors.confirmPassword?.message}
+        />
+
+        {serverError && <p className="text-[13px] text-error">{serverError}</p>}
+
+        <Button type="submit" size="lg" disabled={isSubmitting}>
+          {isSubmitting ? "Updating..." : "Update password"}
+        </Button>
+      </form>
+
+      <div className="mt-5 text-center text-[14px] text-ink-soft">
+        <Link href="/login" className="hover:text-ink">
+          Back to login
+        </Link>
+      </div>
+    </Card>
+  );
+}
+
+
+================================================================================
+FILE: apps\web\app\(auth)\verify-email\page.tsx
+================================================================================
+"use client";
+
+import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
+import Link from "next/link";
+import { MailCheck, Loader2 } from "lucide-react";
+import { Button, Card } from "@saachi/ui";
+
+export default function VerifyEmailPage() {
+  const router = useRouter();
+  const [status, setStatus] = useState<"pending" | "verified">("pending");
+
+  useEffect(() => {
+    // NOTE: demo-only. Replace with apiRequest("/auth/verify-email", ...) using
+    // the token from the URL once the backend is available.
+    const timer = setTimeout(() => setStatus("verified"), 1200);
+    return () => clearTimeout(timer);
+  }, []);
+
+  return (
+    <Card className="w-full max-w-[420px] p-8 text-center">
+      <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-teal-light text-teal">
+        {status === "pending" ? <Loader2 size={22} className="animate-spin" /> : <MailCheck size={22} />}
+      </div>
+
+      {status === "pending" ? (
+        <>
+          <h1 className="font-display text-[22px] font-semibold text-ink">Verifying your email...</h1>
+          <p className="mt-2 text-[14px] text-ink-soft">This will only take a moment.</p>
+        </>
+      ) : (
+        <>
+          <h1 className="font-display text-[22px] font-semibold text-ink">Email verified</h1>
+          <p className="mt-2 text-[14px] text-ink-soft">
+            Your email address has been confirmed. You're all set.
+          </p>
+          <Button size="lg" className="mt-6 w-full" onClick={() => router.push("/dashboard")}>
+            Go to dashboard
+          </Button>
+        </>
+      )}
+
+      <div className="mt-5 text-center text-[14px] text-ink-soft">
+        <Link href="/login" className="hover:text-ink">
+          Back to login
+        </Link>
+      </div>
+    </Card>
+  );
+}
+
+
+================================================================================
+FILE: apps\web\app\(auth)\loading.tsx
+================================================================================
+import { Loading } from "@saachi/ui";
+
+export default function RouteLoading() {
+  return <Loading fullScreen label="Loading..." />;
+}
+
+
+================================================================================
+FILE: apps\web\app\(corporate)\corporate\assignments\page.tsx
+================================================================================
+"use client";
+
+import { useState } from "react";
+import { useCorporateStore } from "@saachi/store";
+import { DUMMY_COURSES } from "@saachi/api-client";
+import { Button, Card, Select, Badge, EmptyState } from "@saachi/ui";
+import { Users } from "lucide-react";
+
+export default function CourseAssignmentPage() {
+  const { team, assignCourse } = useCorporateStore();
+  const [selectedMemberId, setSelectedMemberId] = useState(team[0]?.id ?? "");
+  const [selectedCourseId, setSelectedCourseId] = useState(DUMMY_COURSES[0]?.id ?? "");
+
+  const memberOptions = team.map((m) => ({ label: m.name, value: m.id }));
+  const courseOptions = DUMMY_COURSES.map((c) => ({ label: c.title, value: c.id }));
+
+  const handleAssign = () => {
+    if (!selectedMemberId || !selectedCourseId) return;
+    assignCourse(selectedMemberId, selectedCourseId);
+  };
+
+  return (
+    <main className="mx-auto max-w-[900px] px-6 py-10 md:px-10">
+      <h1 className="mb-8 font-display text-[26px] font-semibold text-ink">Course Assignment</h1>
+
+      {team.length === 0 ? (
+        <EmptyState icon={<Users size={22} />} title="No team members yet" description="Invite team members first from Team Roster." />
+      ) : (
+        <>
+          <Card className="mb-8 p-6">
+            <h2 className="mb-4 text-[15px] font-semibold text-ink">Assign a course</h2>
+            <div className="flex flex-col gap-4 sm:flex-row sm:items-end">
+              <Select label="Team member" options={memberOptions} value={selectedMemberId} onChange={(e) => setSelectedMemberId(e.target.value)} className="flex-1" />
+              <Select label="Course" options={courseOptions} value={selectedCourseId} onChange={(e) => setSelectedCourseId(e.target.value)} className="flex-1" />
+              <Button onClick={handleAssign}>Assign</Button>
+            </div>
+          </Card>
+
+          <div className="flex flex-col gap-3">
+            {team.map((member) => (
+              <Card key={member.id} className="p-4">
+                <p className="mb-2 text-[14px] font-semibold text-ink">{member.name}</p>
+                {member.assignedCourseIds.length === 0 ? (
+                  <p className="text-[12px] text-ink-soft">No courses assigned yet.</p>
+                ) : (
+                  <div className="flex flex-wrap gap-2">
+                    {member.assignedCourseIds.map((courseId) => {
+                      const course = DUMMY_COURSES.find((c) => c.id === courseId);
+                      const completed = member.completedCourseIds.includes(courseId);
+                      return (
+                        <Badge key={courseId} variant={completed ? "success" : "default"}>
+                          {course?.title ?? courseId} {completed ? "- done" : ""}
+                        </Badge>
+                      );
+                    })}
+                  </div>
+                )}
+              </Card>
+            ))}
+          </div>
+        </>
+      )}
+    </main>
+  );
+}
+
+
+================================================================================
+FILE: apps\web\app\(corporate)\corporate\billing\page.tsx
+================================================================================
+"use client";
+
+import { useState } from "react";
+import { CreditCard, FileText } from "lucide-react";
+import { useCorporateStore } from "@saachi/store";
+import { Button, Card, Input } from "@saachi/ui";
+import { formatCurrency } from "@saachi/utils";
+
+const SEAT_PRICE = 29;
+
+export default function CorporateBillingPage() {
+  const { account, purchaseSeats } = useCorporateStore();
+  const [seatCount, setSeatCount] = useState(5);
+  const [purchased, setPurchased] = useState(false);
+
+  const handlePurchase = () => {
+    purchaseSeats(seatCount);
+    setPurchased(true);
+    setTimeout(() => setPurchased(false), 2500);
+  };
+
+  return (
+    <main className="mx-auto max-w-[800px] px-6 py-10 md:px-10">
+      <h1 className="mb-8 font-display text-[26px] font-semibold text-ink">Billing</h1>
+
+      <div className="mb-8 grid grid-cols-1 gap-4 sm:grid-cols-2">
+        <Card className="p-5">
+          <p className="text-[13px] text-ink-soft">Total seats</p>
+          <p className="mt-1 font-mono text-[22px] font-semibold text-ink">{account.seatsPurchased}</p>
+        </Card>
+        <Card className="p-5">
+          <p className="text-[13px] text-ink-soft">Seats used</p>
+          <p className="mt-1 font-mono text-[22px] font-semibold text-ink">{account.seatsUsed}</p>
+        </Card>
+      </div>
+
+      <Card className="mb-8 p-6">
+        <h2 className="mb-4 text-[15px] font-semibold text-ink">Purchase additional seats</h2>
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-end">
+          <Input
+            label="Number of seats"
+            type="number"
+            min={1}
+            value={seatCount}
+            onChange={(e) => setSeatCount(Number(e.target.value))}
+            className="sm:w-[180px]"
+          />
+          <div className="flex-1 text-[13px] text-ink-soft">
+            {seatCount} seats &times; {formatCurrency(SEAT_PRICE, "USD")} ={" "}
+            <span className="font-semibold text-ink">{formatCurrency(seatCount * SEAT_PRICE, "USD")}</span>
+          </div>
+          <Button onClick={handlePurchase}>
+            <CreditCard size={16} /> Purchase seats
+          </Button>
+        </div>
+        {purchased && <p className="mt-3 text-[13px] text-teal">Seats purchased (demo) - invoice sent to billing email.</p>}
+      </Card>
+
+      <Card className="p-6">
+        <div className="flex items-center gap-3">
+          <FileText size={18} className="text-ink-soft" />
+          <div>
+            <h2 className="text-[15px] font-semibold text-ink">PO-based billing</h2>
+            <p className="text-[13px] text-ink-soft">
+              Enterprise clients can request custom invoicing instead of card checkout - contact sales.
+            </p>
+          </div>
+        </div>
+      </Card>
+    </main>
+  );
+}
+
+
+================================================================================
+FILE: apps\web\app\(corporate)\corporate\dashboard\page.tsx
+================================================================================
+"use client";
+
+import { Users, BookOpen, TrendingUp, CreditCard } from "lucide-react";
+import { useCorporateStore } from "@saachi/store";
+import { Card } from "@saachi/ui";
+
+export default function CorporateDashboardPage() {
+  const { account, team } = useCorporateStore();
+
+  const totalAssignments = team.reduce((sum, m) => sum + m.assignedCourseIds.length, 0);
+  const totalCompletions = team.reduce((sum, m) => sum + m.completedCourseIds.length, 0);
+  const completionRate = totalAssignments > 0 ? Math.round((totalCompletions / totalAssignments) * 100) : 0;
+  const activeMembers = team.filter((m) => m.status === "active").length;
+
+  const stats = [
+    { label: "Team members", value: `${activeMembers}/${team.length}`, icon: Users },
+    { label: "Seats available", value: `${account.seatsPurchased - account.seatsUsed}`, icon: CreditCard },
+    { label: "Course assignments", value: String(totalAssignments), icon: BookOpen },
+    { label: "Completion rate", value: `${completionRate}%`, icon: TrendingUp }
+  ];
+
+  return (
+    <main className="mx-auto max-w-[1000px] px-6 py-10 md:px-10">
+      <div className="mb-8">
+        <h1 className="font-display text-[26px] font-semibold text-ink">{account.companyName} Dashboard</h1>
+        <p className="mt-1 text-[14px] text-ink-soft">Team learning overview and seat usage.</p>
+      </div>
+
+      <div className="mb-10 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        {stats.map((stat) => (
+          <Card key={stat.label} className="p-5">
+            <div className="mb-3 flex h-9 w-9 items-center justify-center rounded-control bg-paper-dim text-ink">
+              <stat.icon size={17} />
+            </div>
+            <div className="font-mono text-[22px] font-semibold text-ink">{stat.value}</div>
+            <div className="mt-1 text-[13px] text-ink-soft">{stat.label}</div>
+          </Card>
+        ))}
+      </div>
+
+      <h2 className="mb-4 font-display text-[18px] font-semibold text-ink">Recent activity</h2>
+      <div className="flex flex-col gap-3">
+        {team.slice(0, 5).map((member) => (
+          <Card key={member.id} className="flex items-center justify-between p-4">
+            <div>
+              <p className="text-[14px] font-semibold text-ink">{member.name}</p>
+              <p className="mt-0.5 text-[12px] text-ink-soft">
+                {member.completedCourseIds.length} of {member.assignedCourseIds.length} assigned courses completed
+              </p>
+            </div>
+            <span className="text-[12px] capitalize text-ink-soft">{member.status}</span>
+          </Card>
+        ))}
+      </div>
+    </main>
+  );
+}
+
+
+================================================================================
+FILE: apps\web\app\(corporate)\corporate\reports\page.tsx
+================================================================================
+"use client";
+
+import { Download } from "lucide-react";
+import { useCorporateStore } from "@saachi/store";
+import { Button, Card } from "@saachi/ui";
+
+export default function TeamReportsPage() {
+  const { team } = useCorporateStore();
+
+  return (
+    <main className="mx-auto max-w-[900px] px-6 py-10 md:px-10">
+      <div className="mb-8 flex items-center justify-between">
+        <div>
+          <h1 className="font-display text-[26px] font-semibold text-ink">Team Reports</h1>
+          <p className="mt-1 text-[14px] text-ink-soft">Per-employee completion and compliance overview.</p>
+        </div>
+        <Button variant="secondary">
+          <Download size={15} /> Export CSV
+        </Button>
+      </div>
+
+      <Card className="overflow-hidden p-0">
+        <table className="w-full text-left text-[13px]">
+          <thead className="border-b border-line bg-paper-dim text-ink-soft">
+            <tr>
+              <th className="px-4 py-3 font-semibold">Name</th>
+              <th className="px-4 py-3 font-semibold">Status</th>
+              <th className="px-4 py-3 font-semibold">Assigned</th>
+              <th className="px-4 py-3 font-semibold">Completed</th>
+              <th className="px-4 py-3 font-semibold">Completion %</th>
+            </tr>
+          </thead>
+          <tbody>
+            {team.map((member) => {
+              const pct =
+                member.assignedCourseIds.length > 0
+                  ? Math.round((member.completedCourseIds.length / member.assignedCourseIds.length) * 100)
+                  : 0;
+              return (
+                <tr key={member.id} className="border-b border-line last:border-0">
+                  <td className="px-4 py-3 text-ink">{member.name}</td>
+                  <td className="px-4 py-3 capitalize text-ink-soft">{member.status}</td>
+                  <td className="px-4 py-3 text-ink-soft">{member.assignedCourseIds.length}</td>
+                  <td className="px-4 py-3 text-ink-soft">{member.completedCourseIds.length}</td>
+                  <td className="px-4 py-3 font-semibold text-ink">{pct}%</td>
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
+      </Card>
+    </main>
+  );
+}
+
+
+================================================================================
+FILE: apps\web\app\(corporate)\corporate\team\page.tsx
+================================================================================
+"use client";
+
+import { useState } from "react";
+import { UserPlus, Trash2 } from "lucide-react";
+import { useCorporateStore } from "@saachi/store";
+import { Button, Card, Input, Badge } from "@saachi/ui";
+
+export default function TeamRosterPage() {
+  const { team, account, inviteMember, removeMember } = useCorporateStore();
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+
+  const seatsRemaining = account.seatsPurchased - account.seatsUsed;
+
+  const handleInvite = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!name.trim() || !email.trim() || seatsRemaining <= 0) return;
+    inviteMember(name.trim(), email.trim());
+    setName("");
+    setEmail("");
+  };
+
+  return (
+    <main className="mx-auto max-w-[900px] px-6 py-10 md:px-10">
+      <div className="mb-8">
+        <h1 className="font-display text-[26px] font-semibold text-ink">Team Roster</h1>
+        <p className="mt-1 text-[14px] text-ink-soft">
+          {seatsRemaining} of {account.seatsPurchased} seats available
+        </p>
+      </div>
+
+      <Card className="mb-8 p-6">
+        <h2 className="mb-4 text-[15px] font-semibold text-ink">Invite a team member</h2>
+        <form onSubmit={handleInvite} className="flex flex-col gap-4 sm:flex-row sm:items-end">
+          <Input label="Full name" placeholder="Team member's name" value={name} onChange={(e) => setName(e.target.value)} className="flex-1" />
+          <Input label="Work email" type="email" placeholder="name@company.com" value={email} onChange={(e) => setEmail(e.target.value)} className="flex-1" />
+          <Button type="submit" disabled={seatsRemaining <= 0}>
+            <UserPlus size={16} /> Invite
+          </Button>
+        </form>
+        {seatsRemaining <= 0 && (
+          <p className="mt-3 text-[12px] text-error">No seats remaining - purchase more seats in Billing.</p>
+        )}
+      </Card>
+
+      <div className="flex flex-col gap-3">
+        {team.map((member) => (
+          <Card key={member.id} className="flex items-center justify-between p-4">
+            <div>
+              <div className="flex items-center gap-2">
+                <p className="text-[14px] font-semibold text-ink">{member.name}</p>
+                <Badge variant={member.status === "active" ? "success" : "default"}>{member.status}</Badge>
+              </div>
+              <p className="mt-1 text-[12px] text-ink-soft">{member.email}</p>
+            </div>
+            <button
+              type="button"
+              onClick={() => removeMember(member.id)}
+              className="flex h-8 w-8 items-center justify-center rounded-control text-ink-soft hover:bg-paper-dim hover:text-error"
+              aria-label="Remove member"
+            >
+              <Trash2 size={15} />
+            </button>
+          </Card>
+        ))}
+      </div>
+    </main>
+  );
+}
+
+
+================================================================================
+FILE: apps\web\app\(corporate)\_components\CorporateShell.tsx
+================================================================================
+"use client";
+
+import Link from "next/link";
+import { usePathname, useRouter } from "next/navigation";
+import { useState, type ReactNode } from "react";
+import { LayoutDashboard, Users, BookOpen, BarChart3, CreditCard, LogOut, Menu, X } from "lucide-react";
+import { useSession, useLogout } from "@saachi/api-client";
+import { useCorporateStore } from "@saachi/store";
+import { cn } from "@saachi/ui";
+
+const NAV_ITEMS = [
+  { label: "Dashboard", href: "/corporate/dashboard", icon: LayoutDashboard },
+  { label: "Team Roster", href: "/corporate/team", icon: Users },
+  { label: "Course Assignment", href: "/corporate/assignments", icon: BookOpen },
+  { label: "Reports", href: "/corporate/reports", icon: BarChart3 },
+  { label: "Billing", href: "/corporate/billing", icon: CreditCard }
+];
+
+export function CorporateShell({ children }: { children: ReactNode }) {
+  const pathname = usePathname();
+  const router = useRouter();
+  const { data: session } = useSession();
+  const logout = useLogout();
+  const { account } = useCorporateStore();
+  const [mobileOpen, setMobileOpen] = useState(false);
+
+  const handleLogout = async () => {
+    await logout.mutateAsync();
+    router.push("/");
+  };
+
+  const sidebarContent = (
+    <div className="flex h-full flex-col">
+      <Link href="/" className="flex items-center gap-2.5 px-6 py-6">
+        <span className="flex h-9 w-9 items-center justify-center rounded-full border-2 border-ink bg-ink font-display text-[15px] font-bold text-white">
+          S
+        </span>
+        <div>
+          <div className="font-display text-[15px] font-semibold leading-none text-ink">{account.companyName}</div>
+          <div className="mt-1 text-[11px] font-medium uppercase tracking-[0.06em] text-ink-soft">
+            Corporate Account
+          </div>
+        </div>
+      </Link>
+
+      <nav className="flex flex-1 flex-col gap-1 px-3">
+        {NAV_ITEMS.map((item) => {
+          const active = pathname === item.href || Boolean(pathname && pathname.startsWith(`${item.href}/`));
+          return (
+            <Link
+              key={item.href}
+              href={item.href}
+              onClick={() => setMobileOpen(false)}
+              className={cn(
+                "flex items-center gap-3 rounded-control px-3.5 py-2.5 text-[14px] font-medium transition-colors duration-150 ease-out",
+                active ? "bg-paper-dim text-ink" : "text-ink-soft hover:bg-paper-dim hover:text-ink"
+              )}
+            >
+              <item.icon size={18} />
+              {item.label}
+            </Link>
+          );
+        })}
+      </nav>
+
+      <div className="border-t border-line px-3 py-4">
+        <div className="mb-3 px-3 text-[12px] text-ink-soft">
+          {account.seatsUsed} / {account.seatsPurchased} seats used
+        </div>
+        <div className="mb-3 flex items-center gap-3 px-3">
+          <div className="flex h-9 w-9 shrink-0 items-center justify-center overflow-hidden rounded-full bg-teal-light text-[13px] font-semibold text-teal">
+            {session?.fullName?.charAt(0) ?? "?"}
+          </div>
+          <div className="min-w-0">
+            <div className="truncate text-[13px] font-semibold text-ink">{session?.fullName ?? "Guest"}</div>
+            <div className="truncate text-[12px] text-ink-soft">{session?.email ?? ""}</div>
+          </div>
+        </div>
+        <button
+          type="button"
+          onClick={handleLogout}
+          disabled={logout.isPending}
+          className="flex w-full items-center gap-3 rounded-control px-3.5 py-2.5 text-[14px] font-medium text-ink-soft transition-colors duration-150 ease-out hover:bg-paper-dim hover:text-error"
+        >
+          <LogOut size={18} />
+          {logout.isPending ? "Logging out..." : "Log out"}
+        </button>
+      </div>
+    </div>
+  );
+
+  return (
+    <div className="min-h-screen bg-paper">
+      <div className="hidden w-[260px] shrink-0 border-r border-line bg-card md:fixed md:inset-y-0 md:flex">
+        {sidebarContent}
+      </div>
+
+      <div className="flex items-center justify-between border-b border-line bg-card px-4 py-3 md:hidden">
+        <span className="font-display text-[15px] font-semibold text-ink">{account.companyName}</span>
+        <button
+          type="button"
+          onClick={() => setMobileOpen(true)}
+          aria-label="Open menu"
+          className="flex h-9 w-9 items-center justify-center rounded-control text-ink"
+        >
+          <Menu size={20} />
+        </button>
+      </div>
+
+      {mobileOpen && (
+        <div className="fixed inset-0 z-50 flex md:hidden">
+          <div className="absolute inset-0 bg-ink/40" onClick={() => setMobileOpen(false)} />
+          <div className="relative flex h-full w-[280px] flex-col bg-card">
+            <button
+              type="button"
+              onClick={() => setMobileOpen(false)}
+              aria-label="Close menu"
+              className="absolute right-3 top-3 flex h-9 w-9 items-center justify-center rounded-control text-ink"
+            >
+              <X size={20} />
+            </button>
+            {sidebarContent}
+          </div>
+        </div>
+      )}
+
+      <div className="md:pl-[260px]">{children}</div>
+    </div>
+  );
+}
+
+
+================================================================================
+FILE: apps\web\app\(corporate)\loading.tsx
+================================================================================
+import { Loading } from "@saachi/ui";
+
+export default function RouteLoading() {
+  return <Loading fullScreen label="Loading..." />;
+}
+
+
+================================================================================
+FILE: apps\web\app\(instructor)\instructor\analytics\page.tsx
+================================================================================
+"use client";
+
+import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid } from "recharts";
+import { Card } from "@saachi/ui";
+
+const ENROLLMENT_TREND = [
+  { month: "Feb", enrollments: 40 },
+  { month: "Mar", enrollments: 62 },
+  { month: "Apr", enrollments: 58 },
+  { month: "May", enrollments: 91 },
+  { month: "Jun", enrollments: 120 },
+  { month: "Jul", enrollments: 148 }
+];
+
+const REVENUE_TREND = [
+  { month: "Feb", revenue: 620 },
+  { month: "Mar", revenue: 980 },
+  { month: "Apr", revenue: 890 },
+  { month: "May", revenue: 1450 },
+  { month: "Jun", revenue: 1980 },
+  { month: "Jul", revenue: 2340 }
+];
+
+export default function InstructorAnalyticsPage() {
+  return (
+    <main className="mx-auto max-w-[1000px] px-6 py-10 md:px-10">
+      <div className="mb-8">
+        <h1 className="font-display text-[26px] font-semibold text-ink">Analytics</h1>
+        <p className="mt-1 text-[14px] text-ink-soft">
+          Demo data - connects to the real Analytics/Enrollments API once the backend is live.
+        </p>
+      </div>
+
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
+        <Card className="p-6">
+          <h2 className="mb-4 text-[15px] font-semibold text-ink">Enrollment trend</h2>
+          <ResponsiveContainer width="100%" height={240}>
+            <LineChart data={ENROLLMENT_TREND}>
+              <CartesianGrid strokeDasharray="3 3" stroke="var(--color-line)" />
+              <XAxis dataKey="month" stroke="var(--color-ink-soft)" fontSize={12} />
+              <YAxis stroke="var(--color-ink-soft)" fontSize={12} />
+              <Tooltip />
+              <Line type="monotone" dataKey="enrollments" stroke="var(--color-teal)" strokeWidth={2} dot={false} />
+            </LineChart>
+          </ResponsiveContainer>
+        </Card>
+
+        <Card className="p-6">
+          <h2 className="mb-4 text-[15px] font-semibold text-ink">Revenue trend</h2>
+          <ResponsiveContainer width="100%" height={240}>
+            <LineChart data={REVENUE_TREND}>
+              <CartesianGrid strokeDasharray="3 3" stroke="var(--color-line)" />
+              <XAxis dataKey="month" stroke="var(--color-ink-soft)" fontSize={12} />
+              <YAxis stroke="var(--color-ink-soft)" fontSize={12} />
+              <Tooltip />
+              <Line type="monotone" dataKey="revenue" stroke="var(--color-gold-dark)" strokeWidth={2} dot={false} />
+            </LineChart>
+          </ResponsiveContainer>
+        </Card>
+      </div>
+    </main>
+  );
+}
+
+
+================================================================================
+FILE: apps\web\app\(instructor)\instructor\courses\new\page.tsx
+================================================================================
+"use client";
+
+import { useRouter } from "next/navigation";
+import { Plus, Trash2, CheckCircle2, PlayCircle, FileText, HelpCircle, Download } from "lucide-react";
+import { useCourseBuilderStore, useInstructorCourseStore } from "@saachi/store";
+import { Button, Card, Input, Textarea, Select, Checkbox, Badge } from "@saachi/ui";
+
+const STEPS = ["Basics", "Curriculum", "Pricing", "Media", "Review"];
+
+const CATEGORY_OPTIONS = [
+  { label: "AI Fundamentals & Prompt Engineering", value: "ai-fundamentals" },
+  { label: "AI for Marketing & Sales", value: "ai-marketing" },
+  { label: "AI Automation & Workflow Tools", value: "ai-automation" },
+  { label: "AI Customer Support & Communication", value: "ai-support" },
+  { label: "AI Website & App Development", value: "ai-dev" },
+  { label: "AI Integration for Developers", value: "ai-integration" }
+];
+
+const LEVEL_OPTIONS = [
+  { label: "Beginner", value: "beginner" },
+  { label: "Intermediate", value: "intermediate" },
+  { label: "Advanced", value: "advanced" }
+];
+
+const LANGUAGE_OPTIONS = [
+  { label: "English", value: "en" },
+  { label: "Urdu", value: "ur" }
+];
+
+const CURRENCY_OPTIONS = [
+  { label: "USD", value: "USD" },
+  { label: "PKR", value: "PKR" },
+  { label: "GBP", value: "GBP" }
+];
+
+const LESSON_TYPE_ICON = {
+  video: PlayCircle,
+  text: FileText,
+  quiz: HelpCircle,
+  resource: Download
+} as const;
+
+export default function CourseWizardPage() {
+  const router = useRouter();
+  const wizard = useCourseBuilderStore();
+  const instructorCourses = useInstructorCourseStore();
+  const { draft, step } = wizard;
+
+  const canGoNext = () => {
+    if (step === 1) return draft.title.trim().length >= 5 && draft.categoryId;
+    if (step === 2) return draft.modules.length > 0;
+    if (step === 3) return draft.price >= 0;
+    return true;
+  };
+
+  const handlePublish = (status: "draft" | "pending_review") => {
+    const totalLessons = draft.modules.reduce((sum, m) => sum + m.lessons.length, 0);
+    instructorCourses.addCourse({
+      id: `crs_local_${Date.now()}`,
+      title: draft.title,
+      subtitle: draft.subtitle,
+      categoryId: draft.categoryId,
+      language: draft.language,
+      level: draft.level,
+      price: draft.price,
+      currency: draft.currency,
+      status,
+      modules: draft.modules,
+      createdAt: new Date().toISOString(),
+      enrollmentCount: 0,
+      revenue: 0,
+      rating: 0
+    });
+    wizard.reset();
+    router.push("/instructor/courses");
+  };
+
+  return (
+    <main className="mx-auto max-w-[800px] px-6 py-10 md:px-10">
+      <h1 className="mb-2 font-display text-[26px] font-semibold text-ink">Create a course</h1>
+      <p className="mb-8 text-[14px] text-ink-soft">
+        This demo wizard saves your course locally in the browser (no backend yet).
+      </p>
+
+      <div className="mb-8 flex items-center gap-2">
+        {STEPS.map((label, i) => {
+          const stepNum = i + 1;
+          const active = stepNum === step;
+          const done = stepNum < step;
+          return (
+            <div key={label} className="flex flex-1 items-center gap-2">
+              <div
+                className={[
+                  "flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-[12px] font-semibold",
+                  done ? "bg-teal text-white" : active ? "bg-gold text-ink" : "bg-paper-dim text-ink-soft"
+                ].join(" ")}
+              >
+                {done ? <CheckCircle2 size={15} /> : stepNum}
+              </div>
+              <span className={active ? "text-[12px] font-semibold text-ink" : "text-[12px] text-ink-soft"}>
+                {label}
+              </span>
+              {stepNum < STEPS.length && <div className="h-px flex-1 bg-line" />}
+            </div>
+          );
+        })}
+      </div>
+
+      <Card className="p-6">
+        {step === 1 && (
+          <div className="flex flex-col gap-4">
+            <Input
+              label="Course title"
+              placeholder="e.g. Build a WhatsApp AI Auto-Responder"
+              value={draft.title}
+              onChange={(e) => wizard.updateDraft({ title: e.target.value })}
+            />
+            <Textarea
+              label="Subtitle"
+              placeholder="One sentence describing the outcome"
+              value={draft.subtitle}
+              onChange={(e) => wizard.updateDraft({ subtitle: e.target.value })}
+            />
+            <Select
+              label="Category"
+              placeholder="Select a category"
+              options={CATEGORY_OPTIONS}
+              value={draft.categoryId}
+              onChange={(e) => wizard.updateDraft({ categoryId: e.target.value })}
+            />
+            <div className="grid grid-cols-2 gap-4">
+              <Select
+                label="Level"
+                options={LEVEL_OPTIONS}
+                value={draft.level}
+                onChange={(e) => wizard.updateDraft({ level: e.target.value as typeof draft.level })}
+              />
+              <Select
+                label="Language"
+                options={LANGUAGE_OPTIONS}
+                value={draft.language}
+                onChange={(e) => wizard.updateDraft({ language: e.target.value })}
+              />
+            </div>
+          </div>
+        )}
+
+        {step === 2 && (
+          <div className="flex flex-col gap-5">
+            {draft.modules.length === 0 && (
+              <p className="text-[13px] text-ink-soft">Add at least one module to continue.</p>
+            )}
+            {draft.modules.map((mod) => (
+              <div key={mod.id} className="rounded-control border border-line p-4">
+                <div className="mb-3 flex items-center gap-2">
+                  <Input
+                    value={mod.title}
+                    onChange={(e) => wizard.updateModuleTitle(mod.id, e.target.value)}
+                    className="flex-1"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => wizard.removeModule(mod.id)}
+                    className="flex h-9 w-9 items-center justify-center rounded-control text-ink-soft hover:bg-paper-dim hover:text-error"
+                  >
+                    <Trash2 size={15} />
+                  </button>
+                </div>
+
+                <div className="flex flex-col gap-2">
+                  {mod.lessons.map((lesson) => {
+                    const Icon = LESSON_TYPE_ICON[lesson.type];
+                    return (
+                      <div key={lesson.id} className="flex items-center gap-2">
+                        <Icon size={15} className="shrink-0 text-ink-soft" />
+                        <Input
+                          value={lesson.title}
+                          onChange={(e) => wizard.updateLessonTitle(mod.id, lesson.id, e.target.value)}
+                          className="h-9 flex-1"
+                        />
+                        <button
+                          type="button"
+                          onClick={() => wizard.removeLesson(mod.id, lesson.id)}
+                          className="flex h-8 w-8 items-center justify-center rounded-control text-ink-soft hover:bg-paper-dim hover:text-error"
+                        >
+                          <Trash2 size={13} />
+                        </button>
+                      </div>
+                    );
+                  })}
+                </div>
+
+                <div className="mt-3 flex flex-wrap gap-2">
+                  {(["video", "text", "quiz", "resource"] as const).map((type) => (
+                    <button
+                      key={type}
+                      type="button"
+                      onClick={() => wizard.addLesson(mod.id, type)}
+                      className="flex items-center gap-1.5 rounded-full border border-line-strong px-3 py-1.5 text-[12px] font-medium text-ink-soft hover:border-ink hover:text-ink"
+                    >
+                      <Plus size={12} /> {type}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            ))}
+            <Button variant="secondary" onClick={() => wizard.addModule()}>
+              <Plus size={15} /> Add module
+            </Button>
+          </div>
+        )}
+
+        {step === 3 && (
+          <div className="flex flex-col gap-4">
+            <div className="grid grid-cols-2 gap-4">
+              <Input
+                label="Price"
+                type="number"
+                min={0}
+                value={draft.price}
+                onChange={(e) => wizard.updateDraft({ price: Number(e.target.value) })}
+              />
+              <Select
+                label="Currency"
+                options={CURRENCY_OPTIONS}
+                value={draft.currency}
+                onChange={(e) => wizard.updateDraft({ currency: e.target.value as typeof draft.currency })}
+              />
+            </div>
+            <Checkbox
+              label="Include this course in Saachi AI Pro subscription"
+              checked={draft.subscriptionIncluded}
+              onChange={(e) => wizard.updateDraft({ subscriptionIncluded: e.target.checked })}
+            />
+          </div>
+        )}
+
+        {step === 4 && (
+          <div className="flex flex-col gap-4">
+            <Input
+              label="Thumbnail seed (demo)"
+              placeholder="e.g. my-course-thumbnail"
+              helperText="In demo mode this generates a placeholder image. Real upload wires to Media API later."
+              value={draft.thumbnailSeed}
+              onChange={(e) => wizard.updateDraft({ thumbnailSeed: e.target.value })}
+            />
+            {draft.thumbnailSeed && (
+              <div className="aspect-video w-full max-w-[360px] overflow-hidden rounded-control bg-paper-dim">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={`https://picsum.photos/seed/${encodeURIComponent(draft.thumbnailSeed)}/800/450`}
+                  alt="Course thumbnail preview"
+                  className="h-full w-full object-cover"
+                />
+              </div>
+            )}
+          </div>
+        )}
+
+        {step === 5 && (
+          <div className="flex flex-col gap-4">
+            <h3 className="text-[16px] font-semibold text-ink">{draft.title || "Untitled course"}</h3>
+            <p className="text-[14px] text-ink-soft">{draft.subtitle}</p>
+            <div className="flex flex-wrap gap-2">
+              <Badge>{draft.categoryId || "No category"}</Badge>
+              <Badge>{draft.level}</Badge>
+              <Badge>{draft.language === "en" ? "English" : "Urdu"}</Badge>
+              <Badge variant="gold">
+                {draft.currency} {draft.price}
+              </Badge>
+            </div>
+            <p className="text-[13px] text-ink-soft">
+              {draft.modules.length} modules, {draft.modules.reduce((s, m) => s + m.lessons.length, 0)} lessons
+            </p>
+          </div>
+        )}
+      </Card>
+
+      <div className="mt-6 flex items-center justify-between">
+        <Button
+          variant="ghost"
+          onClick={() => wizard.setStep(Math.max(1, step - 1))}
+          disabled={step === 1}
+        >
+          Back
+        </Button>
+
+        {step < STEPS.length ? (
+          <Button onClick={() => wizard.setStep(step + 1)} disabled={!canGoNext()}>
+            Continue
+          </Button>
+        ) : (
+          <div className="flex gap-3">
+            <Button variant="secondary" onClick={() => handlePublish("draft")}>
+              Save as draft
+            </Button>
+            <Button onClick={() => handlePublish("pending_review")}>Submit for review</Button>
+          </div>
+        )}
+      </div>
+    </main>
+  );
+}
+
+
+================================================================================
+FILE: apps\web\app\(instructor)\instructor\courses\page.tsx
+================================================================================
+"use client";
+
+import Link from "next/link";
+import { PlusCircle, BookOpen } from "lucide-react";
+import { useInstructorCourseStore } from "@saachi/store";
+import { Button, Card, Badge, EmptyState } from "@saachi/ui";
+import { formatCurrency, formatDate } from "@saachi/utils";
+
+const STATUS_VARIANT = {
+  draft: "default",
+  pending_review: "warning",
+  published: "success"
+} as const;
+
+export default function InstructorCoursesPage() {
+  const { courses, removeCourse } = useInstructorCourseStore();
+
+  return (
+    <main className="mx-auto max-w-[1100px] px-6 py-10 md:px-10">
+      <div className="mb-8 flex items-center justify-between">
+        <div>
+          <h1 className="font-display text-[26px] font-semibold text-ink">My Courses</h1>
+          <p className="mt-1 text-[14px] text-ink-soft">Manage the courses you've created.</p>
+        </div>
+        <Link href="/instructor/courses/new">
+          <Button>
+            <PlusCircle size={16} /> Create course
+          </Button>
+        </Link>
+      </div>
+
+      {courses.length === 0 ? (
+        <EmptyState
+          icon={<BookOpen size={22} />}
+          title="No courses yet"
+          description="Start the course creation wizard to publish your first course."
+          action={
+            <Link href="/instructor/courses/new">
+              <Button>Create course</Button>
+            </Link>
+          }
+        />
+      ) : (
+        <div className="flex flex-col gap-3">
+          {courses.map((course) => (
+            <Card key={course.id} className="flex flex-col gap-3 p-4 sm:flex-row sm:items-center sm:justify-between">
+              <div>
+                <div className="flex items-center gap-2">
+                  <p className="text-[15px] font-semibold text-ink">{course.title || "Untitled course"}</p>
+                  <Badge variant={STATUS_VARIANT[course.status]}>{course.status.replace("_", " ")}</Badge>
+                </div>
+                <p className="mt-1 text-[13px] text-ink-soft">
+                  {course.modules.length} modules &middot; Created {formatDate(course.createdAt)}
+                </p>
+              </div>
+              <div className="flex items-center gap-4">
+                <span className="font-mono text-[14px] font-semibold text-ink">
+                  {formatCurrency(course.price, course.currency)}
+                </span>
+                <Button size="sm" variant="secondary" onClick={() => removeCourse(course.id)}>
+                  Delete
+                </Button>
+              </div>
+            </Card>
+          ))}
+        </div>
+      )}
+    </main>
+  );
+}
+
+
+================================================================================
+FILE: apps\web\app\(instructor)\instructor\dashboard\page.tsx
+================================================================================
+"use client";
+
+import Link from "next/link";
+import { DollarSign, BookOpen, Users, Star, PlusCircle } from "lucide-react";
+import { useSession } from "@saachi/api-client";
+import { useInstructorCourseStore } from "@saachi/store";
+import { Button, Card } from "@saachi/ui";
+import { formatCurrency } from "@saachi/utils";
+
+export default function InstructorDashboardPage() {
+  const { data: session } = useSession();
+  const { courses } = useInstructorCourseStore();
+
+  const totalRevenue = courses.reduce((sum, c) => sum + c.revenue, 0);
+  const totalEnrollments = courses.reduce((sum, c) => sum + c.enrollmentCount, 0);
+  const avgRating = courses.length
+    ? (courses.reduce((sum, c) => sum + c.rating, 0) / courses.length).toFixed(1)
+    : "Ã¢â‚¬â€";
+  const published = courses.filter((c) => c.status === "published").length;
+
+  const stats = [
+    { label: "Total earnings", value: formatCurrency(totalRevenue, "USD"), icon: DollarSign },
+    { label: "Published courses", value: String(published), icon: BookOpen },
+    { label: "Total students", value: totalEnrollments.toLocaleString(), icon: Users },
+    { label: "Average rating", value: avgRating, icon: Star }
+  ];
+
+  return (
+    <main className="mx-auto max-w-[1100px] px-6 py-10 md:px-10">
+      <div className="mb-8 flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-center">
+        <div>
+          <h1 className="font-display text-[26px] font-semibold text-ink">
+            Welcome back{session?.fullName ? `, ${session.fullName.split(" ")[0]}` : ""}
+          </h1>
+          <p className="mt-1 text-[14px] text-ink-soft">Here's how your courses are performing.</p>
+        </div>
+        <Link href="/instructor/courses/new">
+          <Button>
+            <PlusCircle size={16} /> Create course
+          </Button>
+        </Link>
+      </div>
+
+      <div className="mb-10 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        {stats.map((stat) => (
+          <Card key={stat.label} className="p-5">
+            <div className="mb-3 flex h-9 w-9 items-center justify-center rounded-control bg-teal-light text-teal">
+              <stat.icon size={17} />
+            </div>
+            <div className="font-mono text-[22px] font-semibold text-ink">{stat.value}</div>
+            <div className="mt-1 text-[13px] text-ink-soft">{stat.label}</div>
+          </Card>
+        ))}
+      </div>
+
+      <h2 className="mb-4 font-display text-[18px] font-semibold text-ink">Your courses</h2>
+      {courses.length === 0 ? (
+        <Card className="p-6 text-center">
+          <p className="mb-4 text-[14px] text-ink-soft">
+            You haven't created any courses yet. This is demo data - courses you create here are
+            stored locally in your browser.
+          </p>
+          <Link href="/instructor/courses/new">
+            <Button>Create your first course</Button>
+          </Link>
+        </Card>
+      ) : (
+        <div className="flex flex-col gap-3">
+          {courses.slice(0, 5).map((course) => (
+            <Card key={course.id} className="flex items-center justify-between p-4">
+              <div>
+                <p className="text-[14px] font-semibold text-ink">{course.title || "Untitled course"}</p>
+                <p className="mt-1 text-[12px] capitalize text-ink-soft">{course.status.replace("_", " ")}</p>
+              </div>
+              <span className="font-mono text-[14px] font-semibold text-ink">
+                {formatCurrency(course.revenue, course.currency)}
+              </span>
+            </Card>
+          ))}
+        </div>
+      )}
+    </main>
+  );
+}
+
+
+================================================================================
+FILE: apps\web\app\(instructor)\instructor\earnings\page.tsx
+================================================================================
+"use client";
+
+import { useState } from "react";
+import { Wallet, Landmark } from "lucide-react";
+import { Button, Card, Input, Select, Badge } from "@saachi/ui";
+import { formatCurrency, formatDate } from "@saachi/utils";
+
+const PAYOUT_HISTORY = [
+  { id: "po_1", amount: 420, date: "2026-06-01T00:00:00.000Z", status: "paid", method: "Bank Transfer" },
+  { id: "po_2", amount: 610, date: "2026-05-01T00:00:00.000Z", status: "paid", method: "Easypaisa" },
+  { id: "po_3", amount: 300, date: "2026-04-01T00:00:00.000Z", status: "paid", method: "Bank Transfer" }
+];
+
+export default function InstructorEarningsPage() {
+  const [requested, setRequested] = useState(false);
+
+  return (
+    <main className="mx-auto max-w-[900px] px-6 py-10 md:px-10">
+      <h1 className="mb-8 font-display text-[26px] font-semibold text-ink">Earnings & Payouts</h1>
+
+      <div className="mb-8 grid grid-cols-1 gap-4 sm:grid-cols-3">
+        <Card className="p-5">
+          <p className="text-[13px] text-ink-soft">Available balance</p>
+          <p className="mt-1 font-mono text-[22px] font-semibold text-ink">{formatCurrency(890, "USD")}</p>
+        </Card>
+        <Card className="p-5">
+          <p className="text-[13px] text-ink-soft">Lifetime earnings</p>
+          <p className="mt-1 font-mono text-[22px] font-semibold text-ink">{formatCurrency(4620, "USD")}</p>
+        </Card>
+        <Card className="p-5">
+          <p className="text-[13px] text-ink-soft">Next payout</p>
+          <p className="mt-1 font-mono text-[22px] font-semibold text-ink">Aug 1</p>
+        </Card>
+      </div>
+
+      <Card className="mb-8 p-6">
+        <h2 className="mb-4 text-[16px] font-semibold text-ink">Request a payout</h2>
+        {requested ? (
+          <p className="text-[14px] text-teal">Payout request submitted (demo) - Finance will process within 3-5 days.</p>
+        ) : (
+          <div className="flex flex-col gap-4 sm:flex-row sm:items-end">
+            <Input label="Amount" type="number" defaultValue={890} className="sm:w-[200px]" />
+            <Select
+              label="Payout method"
+              options={[
+                { label: "Bank Transfer", value: "bank_transfer" },
+                { label: "Easypaisa", value: "easypaisa" },
+                { label: "JazzCash", value: "jazzcash" }
+              ]}
+              defaultValue="bank_transfer"
+              className="sm:w-[220px]"
+            />
+            <Button onClick={() => setRequested(true)}>
+              <Wallet size={16} /> Request payout
+            </Button>
+          </div>
+        )}
+      </Card>
+
+      <Card className="mb-8 p-6">
+        <div className="flex items-center gap-3">
+          <Landmark size={20} className="text-teal" />
+          <div>
+            <h2 className="text-[15px] font-semibold text-ink">Payout method</h2>
+            <p className="text-[13px] text-ink-soft">Bank Transfer - HBL Ã¢â‚¬Â¢Ã¢â‚¬Â¢Ã¢â‚¬Â¢Ã¢â‚¬Â¢ 4821 (demo)</p>
+          </div>
+        </div>
+      </Card>
+
+      <h2 className="mb-4 text-[16px] font-semibold text-ink">Payout history</h2>
+      <div className="flex flex-col gap-3">
+        {PAYOUT_HISTORY.map((p) => (
+          <Card key={p.id} className="flex items-center justify-between p-4">
+            <div>
+              <p className="text-[14px] font-semibold text-ink">{formatCurrency(p.amount, "USD")}</p>
+              <p className="mt-1 text-[12px] text-ink-soft">
+                {p.method} &middot; {formatDate(p.date)}
+              </p>
+            </div>
+            <Badge variant="success">Paid</Badge>
+          </Card>
+        ))}
+      </div>
+    </main>
+  );
+}
+
+
+================================================================================
+FILE: apps\web\app\(instructor)\instructor\mentorship\page.tsx
+================================================================================
+"use client";
+
+import { useState } from "react";
+import { Users2, Plus, X } from "lucide-react";
+import { Button, Card, Checkbox, Input } from "@saachi/ui";
+import { formatCurrency } from "@saachi/utils";
+
+const DAYS = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
+
+export default function InstructorMentorshipSettingsPage() {
+  const [enabled, setEnabled] = useState(false);
+  const [rate, setRate] = useState(40);
+  const [slots, setSlots] = useState<string[]>(["Mon 3:00 PM", "Wed 11:00 AM"]);
+  const [newSlot, setNewSlot] = useState("");
+  const [saved, setSaved] = useState(false);
+
+  const addSlot = () => {
+    if (!newSlot.trim()) return;
+    setSlots((prev) => [...prev, newSlot.trim()]);
+    setNewSlot("");
+  };
+
+  const removeSlot = (slot: string) => {
+    setSlots((prev) => prev.filter((s) => s !== slot));
+  };
+
+  const handleSave = (e: React.FormEvent) => {
+    e.preventDefault();
+    setSaved(true);
+    setTimeout(() => setSaved(false), 2500);
+  };
+
+  return (
+    <main className="mx-auto max-w-[720px] px-6 py-10 md:px-10">
+      <div className="mb-8 flex items-center gap-3">
+        <div className="flex h-10 w-10 items-center justify-center rounded-control bg-teal-light text-teal">
+          <Users2 size={18} />
+        </div>
+        <div>
+          <h1 className="font-display text-[24px] font-semibold text-ink">Mentorship Settings</h1>
+          <p className="mt-1 text-[13px] text-ink-soft">Offer paid 1-on-1 sessions to your students.</p>
+        </div>
+      </div>
+
+      <form onSubmit={handleSave} className="flex flex-col gap-6">
+        <Card className="p-6">
+          <Checkbox
+            label="Enable mentorship bookings for my profile"
+            checked={enabled}
+            onChange={(e) => setEnabled(e.target.checked)}
+          />
+        </Card>
+
+        <Card className="p-6">
+          <Input
+            label="Hourly rate (USD)"
+            type="number"
+            min={0}
+            value={rate}
+            onChange={(e) => setRate(Number(e.target.value))}
+            helperText={`Learners will see this shown as ${formatCurrency(rate, "USD")} / 30 min session.`}
+          />
+        </Card>
+
+        <Card className="p-6">
+          <h2 className="mb-4 text-[15px] font-semibold text-ink">Available time slots</h2>
+          <div className="mb-4 flex flex-wrap gap-2">
+            {slots.map((slot) => (
+              <span
+                key={slot}
+                className="flex items-center gap-2 rounded-full border border-line-strong px-3 py-1.5 text-[12px] text-ink"
+              >
+                {slot}
+                <button type="button" onClick={() => removeSlot(slot)} className="text-ink-soft hover:text-error">
+                  <X size={12} />
+                </button>
+              </span>
+            ))}
+          </div>
+          <div className="flex items-center gap-2">
+            <Input
+              placeholder="e.g. Tue 4:00 PM"
+              value={newSlot}
+              onChange={(e) => setNewSlot(e.target.value)}
+              className="h-10 flex-1"
+            />
+            <Button type="button" size="sm" variant="secondary" onClick={addSlot}>
+              <Plus size={14} /> Add slot
+            </Button>
+          </div>
+          <p className="mt-3 text-[12px] text-ink-soft">
+            Days for reference: {DAYS.join(", ")}
+          </p>
+        </Card>
+
+        <div className="flex items-center gap-3">
+          <Button type="submit">Save mentorship settings</Button>
+          {saved && <span className="text-[13px] text-teal">Saved</span>}
+        </div>
+      </form>
+    </main>
+  );
+}
+
+
+================================================================================
+FILE: apps\web\app\(instructor)\instructor\promotions\page.tsx
+================================================================================
+"use client";
+
+import { useState } from "react";
+import { Rocket, Check, Crown } from "lucide-react";
+import { useInstructorCourseStore, usePromotionStore } from "@saachi/store";
+import { Button, Card, Select, Badge, EmptyState } from "@saachi/ui";
+import { formatCurrency, formatDate } from "@saachi/utils";
+
+const TIERS = [
+  {
+    id: "bronze" as const,
+    name: "Bronze",
+    price: 15,
+    features: ["Category page pinning", "14-day boost"]
+  },
+  {
+    id: "silver" as const,
+    name: "Silver",
+    price: 35,
+    features: ["Everything in Bronze", "Top-of-search placement", "14-day boost"]
+  },
+  {
+    id: "gold" as const,
+    name: "Gold",
+    price: 75,
+    features: ["Everything in Silver", "Homepage featured slot", "14-day boost", "Priority support"]
+  }
+];
+
+export default function InstructorPromotionsPage() {
+  const { courses } = useInstructorCourseStore();
+  const promotions = usePromotionStore();
+  const [selectedCourseId, setSelectedCourseId] = useState(courses[0]?.id ?? "");
+
+  const courseOptions = courses.map((c) => ({ label: c.title || "Untitled course", value: c.id }));
+
+  const handlePurchase = (tier: (typeof TIERS)[number]) => {
+    const course = courses.find((c) => c.id === selectedCourseId);
+    if (!course) return;
+    promotions.purchase(course.id, course.title, tier.id);
+  };
+
+  return (
+    <main className="mx-auto max-w-[1000px] px-6 py-10 md:px-10">
+      <div className="mb-8">
+        <h1 className="font-display text-[26px] font-semibold text-ink">Promotions</h1>
+        <p className="mt-1 text-[14px] text-ink-soft">Boost a course's visibility across the marketplace.</p>
+      </div>
+
+      {courses.length === 0 ? (
+        <EmptyState
+          icon={<Rocket size={22} />}
+          title="No courses to promote yet"
+          description="Create a course first, then come back here to boost it."
+        />
+      ) : (
+        <>
+          <div className="mb-6 max-w-[360px]">
+            <Select
+              label="Course to promote"
+              options={courseOptions}
+              value={selectedCourseId}
+              onChange={(e) => setSelectedCourseId(e.target.value)}
+            />
+          </div>
+
+          <div className="grid grid-cols-1 gap-6 sm:grid-cols-3">
+            {TIERS.map((tier) => (
+              <Card key={tier.id} className={tier.id === "gold" ? "border-2 border-ink p-6" : "p-6"}>
+                {tier.id === "gold" && (
+                  <span className="mb-3 flex w-fit items-center gap-1 rounded-full bg-gold px-3 py-1 text-[11px] font-bold uppercase tracking-[0.05em] text-ink">
+                    <Crown size={12} /> Best value
+                  </span>
+                )}
+                <h3 className="text-[16px] font-semibold text-ink">{tier.name}</h3>
+                <p className="mt-1 font-mono text-[24px] font-semibold text-ink">
+                  {formatCurrency(tier.price, "USD")}
+                </p>
+                <ul className="mt-4 flex flex-col gap-2">
+                  {tier.features.map((f) => (
+                    <li key={f} className="flex items-start gap-2 text-[13px] text-ink-soft">
+                      <Check size={14} className="mt-0.5 shrink-0 text-teal" />
+                      {f}
+                    </li>
+                  ))}
+                </ul>
+                <Button
+                  className="mt-5 w-full"
+                  variant={tier.id === "gold" ? "primary" : "secondary"}
+                  onClick={() => handlePurchase(tier)}
+                  disabled={!selectedCourseId}
+                >
+                  Boost with {tier.name}
+                </Button>
+              </Card>
+            ))}
+          </div>
+
+          {promotions.active.length > 0 && (
+            <div className="mt-10">
+              <h2 className="mb-4 text-[16px] font-semibold text-ink">Active promotions</h2>
+              <div className="flex flex-col gap-3">
+                {promotions.active.map((p) => (
+                  <Card key={p.courseId} className="flex items-center justify-between p-4">
+                    <div>
+                      <p className="text-[14px] font-semibold text-ink">{p.courseTitle}</p>
+                      <p className="mt-1 text-[12px] text-ink-soft">
+                        Expires {formatDate(p.expiresAt)}
+                      </p>
+                    </div>
+                    <Badge variant="gold">{p.tier}</Badge>
+                  </Card>
+                ))}
+              </div>
+            </div>
+          )}
+        </>
+      )}
+    </main>
+  );
+}
+
+
+================================================================================
+FILE: apps\web\app\(instructor)\instructor\reviews\page.tsx
+================================================================================
+"use client";
+
+import { ReviewCard } from "@saachi/ui";
+import { DUMMY_COURSES } from "@saachi/api-client";
+
+export default function InstructorReviewsPage() {
+  const allReviews = DUMMY_COURSES.flatMap((c) =>
+    (c.reviews ?? []).map((r) => ({ ...r, courseTitle: c.title }))
+  );
+
+  return (
+    <main className="mx-auto max-w-[900px] px-6 py-10 md:px-10">
+      <h1 className="mb-8 font-display text-[26px] font-semibold text-ink">Reviews</h1>
+
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+        {allReviews.map((review) => (
+          <div key={review.id}>
+            <p className="mb-2 text-[12px] font-semibold uppercase tracking-[0.04em] text-gold-dark">
+              {review.courseTitle}
+            </p>
+            <ReviewCard {...review} />
+          </div>
+        ))}
+      </div>
+    </main>
+  );
+}
+
+
+================================================================================
+FILE: apps\web\app\(instructor)\instructor\settings\page.tsx
+================================================================================
+"use client";
+
+import { useState } from "react";
+import { useSession } from "@saachi/api-client";
+import { Button, Card, Input, Textarea } from "@saachi/ui";
+
+export default function InstructorSettingsPage() {
+  const { data: session } = useSession();
+  const [bio, setBio] = useState("");
+  const [portfolio, setPortfolio] = useState("");
+  const [saved, setSaved] = useState(false);
+
+  const handleSave = (e: React.FormEvent) => {
+    e.preventDefault();
+    setSaved(true);
+    setTimeout(() => setSaved(false), 2500);
+  };
+
+  return (
+    <main className="mx-auto max-w-[720px] px-6 py-10 md:px-10">
+      <h1 className="mb-8 font-display text-[26px] font-semibold text-ink">Instructor Settings</h1>
+
+      <Card className="p-6">
+        <form onSubmit={handleSave} className="flex flex-col gap-4">
+          <Input label="Full name" defaultValue={session?.fullName ?? ""} />
+          <Input label="Email" defaultValue={session?.email ?? ""} disabled />
+          <Textarea
+            label="Instructor bio"
+            placeholder="Tell learners about your background and expertise..."
+            value={bio}
+            onChange={(e) => setBio(e.target.value)}
+          />
+          <Input
+            label="Portfolio link"
+            placeholder="https://github.com/you or LinkedIn"
+            value={portfolio}
+            onChange={(e) => setPortfolio(e.target.value)}
+          />
+          <div className="mt-2 flex items-center gap-3">
+            <Button type="submit">Save changes</Button>
+            {saved && <span className="text-[13px] text-teal">Saved</span>}
+          </div>
+        </form>
+      </Card>
+    </main>
+  );
+}
+
+
+================================================================================
+FILE: apps\web\app\(instructor)\instructor\students\page.tsx
+================================================================================
+"use client";
+
+import { Card, Input, Badge } from "@saachi/ui";
+import { Search } from "lucide-react";
+import { useState } from "react";
+
+const DEMO_STUDENTS = [
+  { id: "std_1", name: "Bilal Ahmed", email: "bilal@example.com", course: "Prompt Engineering Fundamentals", progress: 80 },
+  { id: "std_2", name: "Hina Malik", email: "hina@example.com", course: "Prompt Engineering Fundamentals", progress: 45 },
+  { id: "std_3", name: "Omar Sheikh", email: "omar@example.com", course: "AI-Powered Marketing Campaigns", progress: 100 },
+  { id: "std_4", name: "Fatima Noor", email: "fatima@example.com", course: "Automate Everything with n8n & AI", progress: 20 }
+];
+
+export default function InstructorStudentsPage() {
+  const [search, setSearch] = useState("");
+
+  const filtered = DEMO_STUDENTS.filter(
+    (s) => s.name.toLowerCase().includes(search.toLowerCase()) || s.course.toLowerCase().includes(search.toLowerCase())
+  );
+
+  return (
+    <main className="mx-auto max-w-[1000px] px-6 py-10 md:px-10">
+      <h1 className="mb-6 font-display text-[26px] font-semibold text-ink">Students</h1>
+
+      <div className="relative mb-6 max-w-[360px]">
+        <Search size={16} className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-ink-soft/60" />
+        <Input placeholder="Search students or courses" value={search} onChange={(e) => setSearch(e.target.value)} className="pl-10" />
+      </div>
+
+      <div className="flex flex-col gap-3">
+        {filtered.map((s) => (
+          <Card key={s.id} className="flex flex-col gap-3 p-4 sm:flex-row sm:items-center sm:justify-between">
+            <div>
+              <p className="text-[14px] font-semibold text-ink">{s.name}</p>
+              <p className="text-[12px] text-ink-soft">{s.email}</p>
+              <p className="mt-1 text-[12px] text-ink-soft">{s.course}</p>
+            </div>
+            <Badge variant={s.progress === 100 ? "success" : "default"}>{s.progress}% complete</Badge>
+          </Card>
+        ))}
+      </div>
+    </main>
+  );
+}
+
+
+================================================================================
+FILE: apps\web\app\(instructor)\instructor\verification\page.tsx
+================================================================================
+"use client";
+
+import { useState } from "react";
+import { ShieldCheck, Upload, Clock, CheckCircle2 } from "lucide-react";
+import { Button, Card, Input, Badge } from "@saachi/ui";
+
+type VerificationStatus = "not_submitted" | "pending" | "verified";
+
+const TIER_STEPS = [
+  { tier: "New Instructor", requirement: "Just approved, 0-2 published courses" },
+  { tier: "Verified Instructor", requirement: "ID verified, 3+ courses, 4.0+ average rating" },
+  { tier: "Top-Rated Instructor", requirement: "10+ courses, 4.5+ rating, consistent sales" },
+  { tier: "Partner Instructor", requirement: "Invited/negotiated status" }
+];
+
+export default function VerificationStatusPage() {
+  const [status, setStatus] = useState<VerificationStatus>("not_submitted");
+  const [idFile, setIdFile] = useState<string | null>(null);
+  const [portfolioLink, setPortfolioLink] = useState("");
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    setStatus("pending");
+  };
+
+  return (
+    <main className="mx-auto max-w-[720px] px-6 py-10 md:px-10">
+      <div className="mb-8 flex items-center gap-3">
+        <div className="flex h-10 w-10 items-center justify-center rounded-control bg-teal-light text-teal">
+          <ShieldCheck size={18} />
+        </div>
+        <div>
+          <h1 className="font-display text-[24px] font-semibold text-ink">Verification Status</h1>
+          <p className="mt-1 text-[13px] text-ink-soft">Get verified to unlock lower commission rates.</p>
+        </div>
+      </div>
+
+      <Card className="mb-6 p-6">
+        {status === "not_submitted" && (
+          <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+            <div>
+              <label className="mb-1.5 block text-[13px] font-semibold text-ink">
+                Government ID or business registration
+              </label>
+              <button
+                type="button"
+                onClick={() => setIdFile("id-document-demo.pdf")}
+                className="flex w-full items-center justify-center gap-2 rounded-control border border-dashed border-line-strong py-6 text-[13px] text-ink-soft hover:border-ink"
+              >
+                <Upload size={16} />
+                {idFile ? idFile : "Click to upload (demo)"}
+              </button>
+            </div>
+            <Input
+              label="Portfolio / proof-of-work link"
+              placeholder="GitHub, LinkedIn, or personal site"
+              value={portfolioLink}
+              onChange={(e) => setPortfolioLink(e.target.value)}
+            />
+            <Button type="submit" disabled={!idFile}>
+              Submit for verification
+            </Button>
+          </form>
+        )}
+
+        {status === "pending" && (
+          <div className="flex items-center gap-3">
+            <Clock size={20} className="text-gold-dark" />
+            <div>
+              <p className="text-[14px] font-semibold text-ink">Under review</p>
+              <p className="text-[13px] text-ink-soft">
+                Your documents were submitted (demo). Admin review typically takes 2-3 business days.
+              </p>
+            </div>
+            <Button size="sm" variant="secondary" className="ml-auto" onClick={() => setStatus("verified")}>
+              Simulate approval
+            </Button>
+          </div>
+        )}
+
+        {status === "verified" && (
+          <div className="flex items-center gap-3">
+            <CheckCircle2 size={20} className="text-teal" />
+            <div>
+              <p className="text-[14px] font-semibold text-ink">Verified Instructor</p>
+              <p className="text-[13px] text-ink-soft">
+                You now qualify for a reduced commission rate and the Verified badge.
+              </p>
+            </div>
+            <Badge variant="success" className="ml-auto">
+              Verified
+            </Badge>
+          </div>
+        )}
+      </Card>
+
+      <h2 className="mb-4 text-[15px] font-semibold text-ink">Instructor trust tiers</h2>
+      <div className="flex flex-col gap-3">
+        {TIER_STEPS.map((t) => (
+          <Card key={t.tier} className="flex items-center justify-between p-4">
+            <div>
+              <p className="text-[13px] font-semibold text-ink">{t.tier}</p>
+              <p className="mt-0.5 text-[12px] text-ink-soft">{t.requirement}</p>
+            </div>
+          </Card>
+        ))}
+      </div>
+    </main>
+  );
+}
+
+
+================================================================================
+FILE: apps\web\app\(instructor)\_components\InstructorShell.tsx
+================================================================================
+"use client";
+
+import Link from "next/link";
+import { usePathname, useRouter } from "next/navigation";
+import { useState, type ReactNode } from "react";
+import {
+  LayoutDashboard,
+  BookOpen,
+  PlusCircle,
+  BarChart3,
+  Wallet,
+  Star,
+  Users,
+  Settings,
+  LogOut,
+  Menu,
+  X,
+  Rocket,
+  Users2,
+  ShieldCheck
+} from "lucide-react";
+import { useSession, useLogout } from "@saachi/api-client";
+import { cn } from "@saachi/ui";
+
+const NAV_ITEMS = [
+  { label: "Dashboard", href: "/instructor/dashboard", icon: LayoutDashboard },
+  { label: "My Courses", href: "/instructor/courses", icon: BookOpen },
+  { label: "Create Course", href: "/instructor/courses/new", icon: PlusCircle },
+  { label: "Analytics", href: "/instructor/analytics", icon: BarChart3 },
+  { label: "Earnings & Payouts", href: "/instructor/earnings", icon: Wallet },
+  { label: "Promotions", href: "/instructor/promotions", icon: Rocket },
+  { label: "Mentorship", href: "/instructor/mentorship", icon: Users2 },
+  { label: "Reviews", href: "/instructor/reviews", icon: Star },
+  { label: "Students", href: "/instructor/students", icon: Users },
+  { label: "Verification", href: "/instructor/verification", icon: ShieldCheck },
+  { label: "Settings", href: "/instructor/settings", icon: Settings }
+];
+
+export function InstructorShell({ children }: { children: ReactNode }) {
+  const pathname = usePathname();
+  const router = useRouter();
+  const { data: session } = useSession();
+  const logout = useLogout();
+  const [mobileOpen, setMobileOpen] = useState(false);
+
+  const handleLogout = async () => {
+    await logout.mutateAsync();
+    router.push("/");
+  };
+
+  const sidebarContent = (
+    <div className="flex h-full flex-col">
+      <Link href="/" className="flex items-center gap-2.5 px-6 py-6">
+        <span className="flex h-9 w-9 items-center justify-center rounded-full border-2 border-ink bg-teal font-display text-[15px] font-bold text-white">
+          S
+        </span>
+        <div>
+          <div className="font-display text-[16px] font-semibold leading-none text-ink">Saachi AI</div>
+          <div className="mt-1 text-[11px] font-medium uppercase tracking-[0.06em] text-teal">Instructor</div>
+        </div>
+      </Link>
+
+      <nav className="flex flex-1 flex-col gap-1 px-3">
+        {NAV_ITEMS.map((item) => {
+          const active = pathname === item.href || Boolean(pathname && pathname.startsWith(`${item.href}/`));
+          return (
+            <Link
+              key={item.href}
+              href={item.href}
+              onClick={() => setMobileOpen(false)}
+              className={cn(
+                "flex items-center gap-3 rounded-control px-3.5 py-2.5 text-[14px] font-medium transition-colors duration-150 ease-out",
+                active ? "bg-teal-light text-teal" : "text-ink-soft hover:bg-paper-dim hover:text-ink"
+              )}
+            >
+              <item.icon size={18} />
+              {item.label}
+            </Link>
+          );
+        })}
+      </nav>
+
+      <div className="border-t border-line px-3 py-4">
+        <div className="mb-3 flex items-center gap-3 px-3">
+          <div className="flex h-9 w-9 shrink-0 items-center justify-center overflow-hidden rounded-full bg-teal-light text-[13px] font-semibold text-teal">
+            {session?.avatarUrl ? (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img src={session.avatarUrl} alt={session.fullName} className="h-full w-full object-cover" />
+            ) : (
+              session?.fullName?.charAt(0) ?? "?"
+            )}
+          </div>
+          <div className="min-w-0">
+            <div className="truncate text-[13px] font-semibold text-ink">{session?.fullName ?? "Guest"}</div>
+            <div className="truncate text-[12px] text-ink-soft">{session?.email ?? ""}</div>
+          </div>
+        </div>
+        <Link
+          href="/dashboard"
+          className="mb-1 flex w-full items-center gap-3 rounded-control px-3.5 py-2.5 text-[13px] font-medium text-ink-soft transition-colors duration-150 ease-out hover:bg-paper-dim hover:text-ink"
+        >
+          Switch to learner view
+        </Link>
+        <button
+          type="button"
+          onClick={handleLogout}
+          disabled={logout.isPending}
+          className="flex w-full items-center gap-3 rounded-control px-3.5 py-2.5 text-[14px] font-medium text-ink-soft transition-colors duration-150 ease-out hover:bg-paper-dim hover:text-error"
+        >
+          <LogOut size={18} />
+          {logout.isPending ? "Logging out..." : "Log out"}
+        </button>
+      </div>
+    </div>
+  );
+
+  return (
+    <div className="min-h-screen bg-paper">
+      <div className="hidden w-[260px] shrink-0 border-r border-line bg-card md:fixed md:inset-y-0 md:flex">
+        {sidebarContent}
+      </div>
+
+      <div className="flex items-center justify-between border-b border-line bg-card px-4 py-3 md:hidden">
+        <Link href="/" className="flex items-center gap-2">
+          <span className="flex h-8 w-8 items-center justify-center rounded-full border-2 border-ink bg-teal font-display text-[13px] font-bold text-white">
+            S
+          </span>
+          <span className="font-display text-[15px] font-semibold text-ink">Saachi AI Instructor</span>
+        </Link>
+        <button
+          type="button"
+          onClick={() => setMobileOpen(true)}
+          aria-label="Open menu"
+          className="flex h-9 w-9 items-center justify-center rounded-control text-ink"
+        >
+          <Menu size={20} />
+        </button>
+      </div>
+
+      {mobileOpen && (
+        <div className="fixed inset-0 z-50 flex md:hidden">
+          <div className="absolute inset-0 bg-ink/40" onClick={() => setMobileOpen(false)} />
+          <div className="relative flex h-full w-[280px] flex-col bg-card">
+            <button
+              type="button"
+              onClick={() => setMobileOpen(false)}
+              aria-label="Close menu"
+              className="absolute right-3 top-3 flex h-9 w-9 items-center justify-center rounded-control text-ink"
+            >
+              <X size={20} />
+            </button>
+            {sidebarContent}
+          </div>
+        </div>
+      )}
+
+      <div className="md:pl-[260px]">{children}</div>
+    </div>
+  );
+}
+
+
+================================================================================
+FILE: apps\web\app\(instructor)\loading.tsx
+================================================================================
+import { Loading } from "@saachi/ui";
+
+export default function RouteLoading() {
+  return <Loading fullScreen label="Loading..." />;
+}
+
+
+================================================================================
+FILE: apps\web\app\(learner)\cart\page.tsx
+================================================================================
+"use client";
+
+import { useState } from "react";
+import Link from "next/link";
+import { ShoppingCart, X, Tag } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { useCartStore } from "@saachi/store";
+import { Button, Card, Input, EmptyState } from "@saachi/ui";
+import { formatCurrency } from "@saachi/utils";
+
+export default function CartPage() {
+  const router = useRouter();
+  const cart = useCartStore();
+  const [couponInput, setCouponInput] = useState("");
+  const [couponMessage, setCouponMessage] = useState<{ text: string; ok: boolean } | null>(null);
+
+  const currency = cart.items[0]?.currency ?? "USD";
+
+  const handleApplyCoupon = () => {
+    if (!couponInput.trim()) return;
+    const result = cart.applyCoupon(couponInput);
+    setCouponMessage({ text: result.message, ok: result.success });
+  };
+
+  if (cart.items.length === 0) {
+    return (
+      <main className="mx-auto max-w-[1000px] px-6 py-10 md:px-10">
+        <h1 className="mb-8 font-display text-[26px] font-semibold text-ink">Your cart</h1>
+        <EmptyState
+          icon={<ShoppingCart size={22} />}
+          title="Your cart is empty"
+          description="Browse the marketplace and add a course to get started."
+          action={
+            <Link href="/courses">
+              <Button>Browse courses</Button>
+            </Link>
+          }
+        />
+      </main>
+    );
+  }
+
+  return (
+    <main className="mx-auto max-w-[1000px] px-6 py-10 md:px-10">
+      <h1 className="mb-8 font-display text-[26px] font-semibold text-ink">
+        Your cart <span className="text-ink-soft">({cart.items.length})</span>
+      </h1>
+
+      <div className="grid grid-cols-1 gap-8 lg:grid-cols-[1fr_320px]">
+        <div className="flex flex-col gap-4">
+          {cart.items.map((item) => (
+            <Card key={item.courseId} className="flex flex-col gap-4 p-4 sm:flex-row sm:items-center">
+              <Link href={`/courses/${item.slug}`} className="block h-[90px] w-[160px] shrink-0 overflow-hidden rounded-control bg-paper-dim">
+                {item.thumbnailUrl && (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img src={item.thumbnailUrl} alt={item.title} className="h-full w-full object-cover" />
+                )}
+              </Link>
+              <div className="flex-1">
+                <Link href={`/courses/${item.slug}`} className="text-[15px] font-semibold text-ink hover:text-gold-dark">
+                  {item.title}
+                </Link>
+                <p className="mt-1 text-[13px] text-ink-soft">{item.instructorName}</p>
+              </div>
+              <div className="flex shrink-0 items-center gap-4">
+                <span className="font-mono text-[16px] font-semibold text-ink">
+                  {formatCurrency(item.price, item.currency)}
+                </span>
+                <button
+                  type="button"
+                  onClick={() => cart.removeItem(item.courseId)}
+                  aria-label="Remove from cart"
+                  className="flex h-8 w-8 items-center justify-center rounded-full text-ink-soft transition-colors hover:bg-paper-dim hover:text-error"
+                >
+                  <X size={16} />
+                </button>
+              </div>
+            </Card>
+          ))}
+        </div>
+
+        <div className="lg:sticky lg:top-6 lg:self-start">
+          <Card className="p-6">
+            <h2 className="mb-4 text-[16px] font-semibold text-ink">Order summary</h2>
+
+            <div className="mb-4 flex flex-col gap-2">
+              <div className="flex items-center gap-2">
+                <Tag size={15} className="text-ink-soft" />
+                <Input
+                  placeholder="Coupon code"
+                  value={couponInput}
+                  onChange={(e) => setCouponInput(e.target.value)}
+                  className="h-10"
+                />
+                <Button size="sm" variant="secondary" onClick={handleApplyCoupon}>
+                  Apply
+                </Button>
+              </div>
+              {couponMessage && (
+                <p className={couponMessage.ok ? "text-[12px] text-teal" : "text-[12px] text-error"}>
+                  {couponMessage.text}
+                </p>
+              )}
+              {cart.coupon && (
+                <div className="flex items-center justify-between text-[13px] text-ink-soft">
+                  <span>Applied: {cart.coupon.code}</span>
+                  <button type="button" onClick={() => cart.removeCoupon()} className="text-error hover:underline">
+                    Remove
+                  </button>
+                </div>
+              )}
+            </div>
+
+            <div className="flex flex-col gap-2 border-t border-line pt-4 text-[14px]">
+              <div className="flex justify-between text-ink-soft">
+                <span>Subtotal</span>
+                <span>{formatCurrency(cart.subtotal(), currency)}</span>
+              </div>
+              {cart.coupon && (
+                <div className="flex justify-between text-teal">
+                  <span>Discount ({cart.coupon.percentOff}%)</span>
+                  <span>-{formatCurrency(cart.discount(), currency)}</span>
+                </div>
+              )}
+              <div className="flex justify-between border-t border-line pt-2 text-[16px] font-semibold text-ink">
+                <span>Total</span>
+                <span>{formatCurrency(cart.total(), currency)}</span>
+              </div>
+            </div>
+
+            <Button size="lg" className="mt-6 w-full" onClick={() => router.push("/checkout")}>
+              Proceed to checkout
+            </Button>
+          </Card>
+        </div>
+      </div>
+    </main>
+  );
+}
+
+
+================================================================================
+FILE: apps\web\app\(learner)\certificates\page.tsx
+================================================================================
+"use client";
+
+import Link from "next/link";
+import { Award, Download, ShieldCheck } from "lucide-react";
+import { useEnrollmentStore } from "@saachi/store";
+import { useSession } from "@saachi/api-client";
+import { Button, Card, EmptyState } from "@saachi/ui";
+import { formatDate } from "@saachi/utils";
+
+function verificationId(courseId: string) {
+  return `SAACHI-${courseId.toUpperCase().replace("CRS_", "")}-DEMO`;
+}
+
+export default function CertificatesPage() {
+  const { enrollments } = useEnrollmentStore();
+  const { data: session } = useSession();
+
+  const completed = enrollments.filter((e) => e.progressPercent >= 100);
+
+  return (
+    <main className="mx-auto max-w-[1000px] px-6 py-10 md:px-10">
+      <div className="mb-8">
+        <h1 className="font-display text-[26px] font-semibold text-ink">Certificates</h1>
+        <p className="mt-1 text-[14px] text-ink-soft">Courses you've fully completed.</p>
+      </div>
+
+      {completed.length === 0 ? (
+        <EmptyState
+          icon={<Award size={22} />}
+          title="No certificates yet"
+          description="Complete every lesson in a course to earn your certificate."
+          action={
+            <Link href="/my-courses">
+              <Button>Go to My Courses</Button>
+            </Link>
+          }
+        />
+      ) : (
+        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
+          {completed.map((course) => (
+            <Card key={course.courseId} className="flex flex-col gap-4 border-2 border-ink bg-gold-tint p-6">
+              <div className="flex items-center justify-between">
+                <Award size={28} className="text-gold-dark" />
+                <span className="text-[11px] font-semibold uppercase tracking-[0.05em] text-ink-soft">
+                  Certificate of Completion
+                </span>
+              </div>
+              <div>
+                <h3 className="font-display text-[18px] font-semibold text-ink">{course.title}</h3>
+                <p className="mt-1 text-[13px] text-ink-soft">Awarded to {session?.fullName ?? "Learner"}</p>
+                <p className="mt-1 text-[12px] text-ink-soft/70">
+                  Completed {formatDate(course.purchasedAt)}
+                </p>
+              </div>
+              <div className="flex items-center gap-1.5 text-[11px] text-ink-soft">
+                <ShieldCheck size={13} /> Verification ID: {verificationId(course.courseId)}
+              </div>
+              <Button size="sm" variant="secondary" className="mt-2 w-fit">
+                <Download size={15} /> Download (demo)
+              </Button>
+            </Card>
+          ))}
+        </div>
+      )}
+    </main>
+  );
+}
+
+
+================================================================================
+FILE: apps\web\app\(learner)\community\[courseId]\page.tsx
+================================================================================
+!! ERROR reading file: A parameter cannot be found that matches parameter name 'Raw'.
+
+
+================================================================================
+FILE: apps\web\app\(learner)\dashboard\page.tsx
+================================================================================
+"use client";
+
+import Link from "next/link";
+import { useSession, useCourseList } from "@saachi/api-client";
+import { Button, Card, CourseCard, SkeletonCard } from "@saachi/ui";
+
+export default function LearnerDashboardPage() {
+  const { data: session } = useSession();
+  const { data, isLoading } = useCourseList({ sort: "popular" });
+
+  const courses = data?.items ?? [];
+
+  return (
+    <main className="mx-auto max-w-[1000px] px-6 py-10 md:px-10">
+      <div className="mb-10">
+        <h1 className="font-display text-[28px] font-semibold text-ink">
+          Welcome back{session?.fullName ? `, ${session.fullName.split(" ")[0]}` : ""}
+        </h1>
+        <p className="mt-1 text-[14px] text-ink-soft">
+          Pick up where you left off, or explore something new.
+        </p>
+      </div>
+
+      <Card className="mb-10 flex flex-col items-start gap-4 p-6 sm:flex-row sm:items-center sm:justify-between">
+        <div>
+          <h2 className="text-[16px] font-semibold text-ink">This is demo data</h2>
+          <p className="mt-1 text-[14px] text-ink-soft">
+            You are signed in with a local demo session - no backend or real account required yet.
+          </p>
+        </div>
+        <Link href="/courses">
+          <Button>Browse courses</Button>
+        </Link>
+      </Card>
+
+      <h2 className="mb-4 font-display text-[20px] font-semibold text-ink">Recommended for you</h2>
+      <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
+        {isLoading
+          ? Array.from({ length: 4 }).map((_, i) => <SkeletonCard key={i} />)
+          : courses.slice(0, 4).map((course) => (
+              <CourseCard
+                key={course.id}
+                slug={course.slug}
+                title={course.title}
+                thumbnailUrl={course.thumbnailUrl}
+                instructorName={course.instructor.fullName}
+                price={course.price}
+                currency={course.currency}
+                rating={course.rating}
+                ratingCount={course.ratingCount}
+              />
+            ))}
+      </div>
+    </main>
+  );
+}
+
+
+================================================================================
+FILE: apps\web\app\(learner)\learn\[courseId]\[lessonId]\page.tsx
+================================================================================
+!! ERROR reading file: A parameter cannot be found that matches parameter name 'Raw'.
+
+
+================================================================================
+FILE: apps\web\app\(learner)\mentorship\page.tsx
+================================================================================
+"use client";
+
+import { useState } from "react";
+import Link from "next/link";
+import { Users2, Clock, Video, CheckCircle2 } from "lucide-react";
+import { Button, Card, EmptyState } from "@saachi/ui";
+import { formatCurrency } from "@saachi/utils";
+
+const MENTORS = [
+  {
+    id: "ins_003",
+    name: "Ayesha Khan",
+    expertise: "AI Automation & n8n Workflows",
+    avatarSeed: "ayesha-khan-instructor",
+    rate: 40,
+    slots: ["Mon 3:00 PM", "Wed 11:00 AM", "Fri 4:30 PM"]
+  },
+  {
+    id: "ins_004",
+    name: "Bilal Ahmed",
+    expertise: "AI Customer Support Systems",
+    avatarSeed: "bilal-ahmed-instructor",
+    rate: 55,
+    slots: ["Tue 2:00 PM", "Thu 10:00 AM"]
+  },
+  {
+    id: "ins_006",
+    name: "Usman Ali",
+    expertise: "AI API Integration for Developers",
+    avatarSeed: "usman-ali",
+    rate: 65,
+    slots: ["Mon 6:00 PM", "Wed 7:00 PM", "Sat 12:00 PM"]
+  }
+];
+
+export default function MentorshipPage() {
+  const [booked, setBooked] = useState<Record<string, string>>({});
+
+  const handleBook = (mentorId: string, slot: string) => {
+    setBooked((prev) => ({ ...prev, [mentorId]: slot }));
+  };
+
+  return (
+    <main className="mx-auto max-w-[1000px] px-6 py-10 md:px-10">
+      <div className="mb-8">
+        <h1 className="font-display text-[26px] font-semibold text-ink">Mentorship</h1>
+        <p className="mt-1 text-[14px] text-ink-soft">
+          Book 1-on-1 time with an instructor for personalized guidance.
+        </p>
+      </div>
+
+      <div className="flex flex-col gap-4">
+        {MENTORS.map((mentor) => {
+          const bookedSlot = booked[mentor.id];
+          return (
+            <Card key={mentor.id} className="flex flex-col gap-4 p-5 sm:flex-row sm:items-center sm:justify-between">
+              <div className="flex items-center gap-4">
+                <div className="flex h-14 w-14 shrink-0 items-center justify-center overflow-hidden rounded-full bg-teal-light text-[16px] font-semibold text-teal">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src={`https://picsum.photos/seed/${mentor.avatarSeed}/150/150`}
+                    alt={mentor.name}
+                    className="h-full w-full object-cover"
+                  />
+                </div>
+                <div>
+                  <p className="text-[15px] font-semibold text-ink">{mentor.name}</p>
+                  <p className="text-[13px] text-ink-soft">{mentor.expertise}</p>
+                  <p className="mt-1 flex items-center gap-1 text-[12px] text-ink-soft">
+                    <Clock size={12} /> {formatCurrency(mentor.rate, "USD")} / 30 min session
+                  </p>
+                </div>
+              </div>
+
+              {bookedSlot ? (
+                <div className="flex items-center gap-2 rounded-control bg-teal-light px-4 py-2.5 text-[13px] font-semibold text-teal">
+                  <CheckCircle2 size={16} /> Booked for {bookedSlot}
+                </div>
+              ) : (
+                <div className="flex flex-wrap gap-2">
+                  {mentor.slots.map((slot) => (
+                    <button
+                      key={slot}
+                      type="button"
+                      onClick={() => handleBook(mentor.id, slot)}
+                      className="rounded-full border border-line-strong px-3.5 py-2 text-[12px] font-medium text-ink-soft transition-colors duration-150 ease-out hover:border-ink hover:text-ink"
+                    >
+                      {slot}
+                    </button>
+                  ))}
+                </div>
+              )}
+            </Card>
+          );
+        })}
+      </div>
+
+      {Object.keys(booked).length > 0 && (
+        <Card className="mt-8 flex items-center gap-3 p-5">
+          <Video size={18} className="shrink-0 text-teal" />
+          <p className="text-[13px] text-ink-soft">
+            This is a demo booking - no real calendar invite or payment was processed. Once the
+            backend Mentorship module (Doc 1, Section 6.2) is live, this will generate a real
+            video-call link and checkout.
+          </p>
+        </Card>
+      )}
+    </main>
+  );
+}
+
+
+================================================================================
+FILE: apps\web\app\(learner)\my-courses\page.tsx
+================================================================================
+"use client";
+
+import Link from "next/link";
+import { BookOpen } from "lucide-react";
+import { useEnrollmentStore } from "@saachi/store";
+import { useCourseDetail } from "@saachi/api-client";
+import { Button, Card, EmptyState } from "@saachi/ui";
+
+function ContinueButton({ courseId, slug }: { courseId: string; slug: string }) {
+  const { data: course } = useCourseDetail(slug);
+  const firstLessonId = course?.curriculum?.[0]?.lessons?.[0]?.id;
+
+  if (!firstLessonId) {
+    return (
+      <Button size="sm" variant="secondary" className="shrink-0" disabled>
+        Loading...
+      </Button>
+    );
+  }
+
+  return (
+    <Link href={`/learn/${courseId}/${firstLessonId}`}>
+      <Button size="sm" variant="secondary" className="shrink-0">
+        Continue
+      </Button>
+    </Link>
+  );
+}
+
+export default function MyCoursesPage() {
+  const { enrollments } = useEnrollmentStore();
+
+  return (
+    <main className="mx-auto max-w-[1000px] px-6 py-10 md:px-10">
+      <div className="mb-8">
+        <h1 className="font-display text-[26px] font-semibold text-ink">My Courses</h1>
+        <p className="mt-1 text-[14px] text-ink-soft">Everything you're enrolled in, in one place.</p>
+      </div>
+
+      {enrollments.length === 0 ? (
+        <EmptyState
+          icon={<BookOpen size={22} />}
+          title="No courses yet"
+          description="Once you purchase a course, it will show up here with your progress."
+          action={
+            <Link href="/courses">
+              <Button>Browse courses</Button>
+            </Link>
+          }
+        />
+      ) : (
+        <div className="flex flex-col gap-4">
+          {enrollments.map((course) => (
+            <Card key={course.courseId} className="flex flex-col gap-4 p-4 sm:flex-row sm:items-center">
+              <Link href={`/courses/${course.slug}`} className="block h-[90px] w-[160px] shrink-0 overflow-hidden rounded-control bg-paper-dim">
+                {course.thumbnailUrl && (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img src={course.thumbnailUrl} alt={course.title} className="h-full w-full object-cover" />
+                )}
+              </Link>
+              <div className="flex-1">
+                <Link href={`/courses/${course.slug}`} className="text-[15px] font-semibold text-ink hover:text-gold-dark">
+                  {course.title}
+                </Link>
+                <p className="mt-1 text-[13px] text-ink-soft">{course.instructorName}</p>
+                <div className="mt-3 flex items-center gap-3">
+                  <div className="h-2 w-full max-w-[220px] overflow-hidden rounded-full bg-paper-dim">
+                    <div
+                      className="h-full rounded-full bg-gold"
+                      style={{ width: `${course.progressPercent}%` }}
+                    />
+                  </div>
+                  <span className="shrink-0 text-[12px] text-ink-soft">{course.progressPercent}% complete</span>
+                </div>
+              </div>
+              {course.progressPercent >= 100 ? (
+                <Link href="/certificates">
+                  <Button size="sm" variant="secondary" className="shrink-0">
+                    View certificate
+                  </Button>
+                </Link>
+              ) : (
+                <ContinueButton courseId={course.courseId} slug={course.slug} />
+              )}
+            </Card>
+          ))}
+        </div>
+      )}
+    </main>
+  );
+}
+
+
+================================================================================
+FILE: apps\web\app\(learner)\notifications\page.tsx
+================================================================================
+"use client";
+
+import { Bell, BookOpen, MessageSquare, CreditCard, Info } from "lucide-react";
+import { useNotificationStore } from "@saachi/store";
+import { Button, Card, EmptyState, Badge } from "@saachi/ui";
+import { formatRelativeTime } from "@saachi/utils";
+
+const TYPE_ICON = {
+  course: BookOpen,
+  system: Info,
+  community: MessageSquare,
+  payment: CreditCard
+} as const;
+
+export default function NotificationsPage() {
+  const { items, markAllRead, markRead } = useNotificationStore();
+  const unreadCount = items.filter((n) => !n.read).length;
+
+  return (
+    <main className="mx-auto max-w-[800px] px-6 py-10 md:px-10">
+      <div className="mb-8 flex items-center justify-between">
+        <div>
+          <h1 className="font-display text-[26px] font-semibold text-ink">Notifications</h1>
+          <p className="mt-1 text-[14px] text-ink-soft">
+            {unreadCount > 0 ? `${unreadCount} unread` : "You're all caught up"}
+          </p>
+        </div>
+        {unreadCount > 0 && (
+          <Button size="sm" variant="secondary" onClick={markAllRead}>
+            Mark all as read
+          </Button>
+        )}
+      </div>
+
+      {items.length === 0 ? (
+        <EmptyState icon={<Bell size={22} />} title="No notifications" description="Nothing here yet." />
+      ) : (
+        <div className="flex flex-col gap-3">
+          {items.map((n) => {
+            const Icon = TYPE_ICON[n.type];
+            return (
+              <Card
+                key={n.id}
+                onClick={() => markRead(n.id)}
+                className={[
+                  "flex cursor-pointer items-start gap-4 p-4",
+                  !n.read ? "border-gold-dark/40 bg-gold-tint/40" : ""
+                ].join(" ")}
+              >
+                <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-teal-light text-teal">
+                  <Icon size={16} />
+                </div>
+                <div className="flex-1">
+                  <div className="flex items-center gap-2">
+                    <h3 className="text-[14px] font-semibold text-ink">{n.title}</h3>
+                    {!n.read && <Badge variant="gold">New</Badge>}
+                  </div>
+                  <p className="mt-1 text-[13px] text-ink-soft">{n.body}</p>
+                  <p className="mt-2 text-[12px] text-ink-soft/60">{formatRelativeTime(n.createdAt)}</p>
+                </div>
+              </Card>
+            );
+          })}
+        </div>
+      )}
+    </main>
+  );
+}
+
+
+================================================================================
+FILE: apps\web\app\(learner)\orders\page.tsx
+================================================================================
+"use client";
+
+import Link from "next/link";
+import { Receipt, Download } from "lucide-react";
+import { useOrderStore } from "@saachi/store";
+import { Button, Card, Badge, EmptyState } from "@saachi/ui";
+import { formatCurrency, formatDate } from "@saachi/utils";
+
+export default function OrdersPage() {
+  const { orders } = useOrderStore();
+
+  return (
+    <main className="mx-auto max-w-[900px] px-6 py-10 md:px-10">
+      <div className="mb-8">
+        <h1 className="font-display text-[26px] font-semibold text-ink">Order History</h1>
+        <p className="mt-1 text-[14px] text-ink-soft">All your past purchases on Saachi AI.</p>
+      </div>
+
+      {orders.length === 0 ? (
+        <EmptyState
+          icon={<Receipt size={22} />}
+          title="No orders yet"
+          description="Once you complete a purchase, it will show up here."
+          action={
+            <Link href="/courses">
+              <Button>Browse courses</Button>
+            </Link>
+          }
+        />
+      ) : (
+        <div className="flex flex-col gap-4">
+          {orders.map((order) => (
+            <Card key={order.id} className="p-5">
+              <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
+                <div>
+                  <p className="text-[14px] font-semibold text-ink">{order.id}</p>
+                  <p className="mt-0.5 text-[12px] text-ink-soft">{formatDate(order.createdAt)}</p>
+                </div>
+                <div className="flex items-center gap-3">
+                  <Badge variant={order.status === "paid" ? "success" : "error"}>
+                    {order.status === "paid" ? "Paid" : "Refunded"}
+                  </Badge>
+                  <Button size="sm" variant="secondary">
+                    <Download size={14} /> Invoice
+                  </Button>
+                </div>
+              </div>
+
+              <div className="flex flex-col gap-1 border-t border-line pt-3">
+                {order.items.map((item) => (
+                  <div key={item.courseId} className="flex justify-between text-[13px] text-ink-soft">
+                    <span className="line-clamp-1 pr-2">{item.title}</span>
+                    <span className="shrink-0 text-ink">{formatCurrency(item.price, order.currency)}</span>
+                  </div>
+                ))}
+              </div>
+
+              <div className="mt-3 flex justify-between border-t border-line pt-3 text-[14px] font-semibold text-ink">
+                <span>Total ({order.paymentMethod.replace("_", " ")})</span>
+                <span>{formatCurrency(order.total, order.currency)}</span>
+              </div>
+            </Card>
+          ))}
+        </div>
+      )}
+    </main>
+  );
+}
+
+
+================================================================================
+FILE: apps\web\app\(learner)\settings\profile\page.tsx
+================================================================================
+"use client";
+
+import { useState } from "react";
+import Link from "next/link";
+import { useSession } from "@saachi/api-client";
+import { Button, Card, Input, Textarea } from "@saachi/ui";
+
+const SETTINGS_TABS = [
+  { label: "Profile", href: "/settings/profile" },
+  { label: "Security", href: "/settings/security" }
+];
+
+export default function SettingsProfilePage() {
+  const { data: session } = useSession();
+  const [fullName, setFullName] = useState(session?.fullName ?? "");
+  const [bio, setBio] = useState("");
+  const [saved, setSaved] = useState(false);
+
+  const handleSave = (e: React.FormEvent) => {
+    e.preventDefault();
+    // NOTE: demo-only, local state. Replace with Users API PATCH once backend exists.
+    setSaved(true);
+    setTimeout(() => setSaved(false), 2500);
+  };
+
+  return (
+    <main className="mx-auto max-w-[720px] px-6 py-10 md:px-10">
+      <h1 className="mb-6 font-display text-[26px] font-semibold text-ink">Settings</h1>
+
+      <div className="mb-8 flex gap-2 border-b border-line">
+        {SETTINGS_TABS.map((tab) => (
+          <Link
+            key={tab.href}
+            href={tab.href}
+            className="border-b-2 border-ink px-1 pb-3 text-[14px] font-semibold text-ink"
+          >
+            {tab.label}
+          </Link>
+        ))}
+      </div>
+
+      <Card className="p-6">
+        <div className="mb-6 flex items-center gap-4">
+          <div className="flex h-16 w-16 items-center justify-center overflow-hidden rounded-full bg-teal-light text-[20px] font-semibold text-teal">
+            {session?.avatarUrl ? (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img src={session.avatarUrl} alt={session.fullName} className="h-full w-full object-cover" />
+            ) : (
+              session?.fullName?.charAt(0) ?? "?"
+            )}
+          </div>
+          <div>
+            <p className="text-[14px] font-semibold text-ink">Profile photo</p>
+            <p className="text-[12px] text-ink-soft">Demo avatar - upload not wired to a backend yet.</p>
+          </div>
+        </div>
+
+        <form onSubmit={handleSave} className="flex flex-col gap-4">
+          <Input label="Full name" value={fullName} onChange={(e) => setFullName(e.target.value)} />
+          <Input label="Email" value={session?.email ?? ""} disabled />
+          <Textarea
+            label="Bio"
+            placeholder="Tell us a bit about yourself..."
+            value={bio}
+            onChange={(e) => setBio(e.target.value)}
+          />
+          <div className="mt-2 flex items-center gap-3">
+            <Button type="submit">Save changes</Button>
+            {saved && <span className="text-[13px] text-teal">Saved</span>}
+          </div>
+        </form>
+      </Card>
+    </main>
+  );
+}
+
+
+================================================================================
+FILE: apps\web\app\(learner)\settings\security\page.tsx
+================================================================================
+"use client";
+
+import { useState } from "react";
+import Link from "next/link";
+import { ShieldCheck } from "lucide-react";
+import { Button, Card, Input } from "@saachi/ui";
+
+const SETTINGS_TABS = [
+  { label: "Profile", href: "/settings/profile" },
+  { label: "Security", href: "/settings/security" }
+];
+
+export default function SettingsSecurityPage() {
+  const [saved, setSaved] = useState(false);
+
+  const handleSave = (e: React.FormEvent) => {
+    e.preventDefault();
+    // NOTE: demo-only. Replace with real Auth/Users API call once backend exists.
+    setSaved(true);
+    setTimeout(() => setSaved(false), 2500);
+  };
+
+  return (
+    <main className="mx-auto max-w-[720px] px-6 py-10 md:px-10">
+      <h1 className="mb-6 font-display text-[26px] font-semibold text-ink">Settings</h1>
+
+      <div className="mb-8 flex gap-6 border-b border-line">
+        {SETTINGS_TABS.map((tab) => (
+          <Link
+            key={tab.href}
+            href={tab.href}
+            className={
+              tab.label === "Security"
+                ? "border-b-2 border-ink px-1 pb-3 text-[14px] font-semibold text-ink"
+                : "px-1 pb-3 text-[14px] font-medium text-ink-soft hover:text-ink"
+            }
+          >
+            {tab.label}
+          </Link>
+        ))}
+      </div>
+
+      <Card className="mb-6 p-6">
+        <h2 className="mb-4 text-[16px] font-semibold text-ink">Change password</h2>
+        <form onSubmit={handleSave} className="flex flex-col gap-4">
+          <Input label="Current password" type="password" placeholder="********" />
+          <Input label="New password" type="password" placeholder="At least 8 characters" />
+          <Input label="Confirm new password" type="password" placeholder="Repeat new password" />
+          <div className="mt-2 flex items-center gap-3">
+            <Button type="submit">Update password</Button>
+            {saved && <span className="text-[13px] text-teal">Saved</span>}
+          </div>
+        </form>
+      </Card>
+
+      <Card className="p-6">
+        <div className="flex items-center gap-3">
+          <ShieldCheck size={20} className="text-teal" />
+          <div>
+            <h2 className="text-[15px] font-semibold text-ink">Two-factor authentication</h2>
+            <p className="text-[13px] text-ink-soft">Not enabled - available once the backend auth flow is live.</p>
+          </div>
+        </div>
+      </Card>
+    </main>
+  );
+}
+
+
+================================================================================
+FILE: apps\web\app\(learner)\wishlist\page.tsx
+================================================================================
+"use client";
+
+import Link from "next/link";
+import { Heart } from "lucide-react";
+import { useWishlistStore, useCartStore } from "@saachi/store";
+import { Button, Card, EmptyState, CourseCard } from "@saachi/ui";
+
+export default function WishlistPage() {
+  const wishlist = useWishlistStore();
+  const cart = useCartStore();
+
+  const moveToCart = (item: (typeof wishlist.items)[number]) => {
+    cart.addItem({
+      courseId: item.courseId,
+      slug: item.slug,
+      title: item.title,
+      thumbnailUrl: item.thumbnailUrl,
+      instructorName: item.instructorName,
+      price: item.price,
+      currency: item.currency
+    });
+    wishlist.remove(item.courseId);
+  };
+
+  return (
+    <main className="mx-auto max-w-[1000px] px-6 py-10 md:px-10">
+      <div className="mb-8">
+        <h1 className="font-display text-[26px] font-semibold text-ink">Wishlist</h1>
+        <p className="mt-1 text-[14px] text-ink-soft">Courses you've saved for later.</p>
+      </div>
+
+      {wishlist.items.length === 0 ? (
+        <EmptyState
+          icon={<Heart size={22} />}
+          title="Your wishlist is empty"
+          description="Save courses you're interested in and come back to them anytime."
+          action={
+            <Link href="/courses">
+              <Button>Browse courses</Button>
+            </Link>
+          }
+        />
+      ) : (
+        <div className="flex flex-col gap-4">
+          {wishlist.items.map((item) => (
+            <Card key={item.courseId} className="flex flex-col gap-4 p-4 sm:flex-row sm:items-center">
+              <Link href={`/courses/${item.slug}`} className="block h-[90px] w-[160px] shrink-0 overflow-hidden rounded-control bg-paper-dim">
+                {item.thumbnailUrl && (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img src={item.thumbnailUrl} alt={item.title} className="h-full w-full object-cover" />
+                )}
+              </Link>
+              <div className="flex-1">
+                <Link href={`/courses/${item.slug}`} className="text-[15px] font-semibold text-ink hover:text-gold-dark">
+                  {item.title}
+                </Link>
+                <p className="mt-1 text-[13px] text-ink-soft">{item.instructorName}</p>
+                <p className="mt-1 font-mono text-[15px] font-semibold text-ink">
+                  {new Intl.NumberFormat("en-US", { style: "currency", currency: item.currency }).format(item.price)}
+                </p>
+              </div>
+              <div className="flex shrink-0 gap-2">
+                <Button size="sm" onClick={() => moveToCart(item)}>
+                  Add to cart
+                </Button>
+                <Button size="sm" variant="ghost" onClick={() => wishlist.remove(item.courseId)}>
+                  Remove
+                </Button>
+              </div>
+            </Card>
+          ))}
+        </div>
+      )}
+    </main>
+  );
+}
+
+
+================================================================================
+FILE: apps\web\app\(learner)\_components\LearnerShell.tsx
+================================================================================
+"use client";
+
+import Link from "next/link";
+import { usePathname, useRouter } from "next/navigation";
+import { useState, type ReactNode } from "react";
+import {
+  LayoutDashboard,
+  BookOpen,
+  Heart,
+  ShoppingCart,
+  Award,
+  Bell,
+  Settings,
+  LogOut,
+  Menu,
+  X,
+  Receipt,
+  Users2
+} from "lucide-react";
+import { useSession, useLogout } from "@saachi/api-client";
+import { useCartStore, useNotificationStore } from "@saachi/store";
+import { useRealtimeNotifications } from "../../../hooks/useRealtimeNotifications";
+import { cn } from "@saachi/ui";
+
+const NAV_ITEMS = [
+  { label: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
+  { label: "My Courses", href: "/my-courses", icon: BookOpen },
+  { label: "Wishlist", href: "/wishlist", icon: Heart },
+  { label: "Cart", href: "/cart", icon: ShoppingCart },
+  { label: "Certificates", href: "/certificates", icon: Award },
+  { label: "Orders", href: "/orders", icon: Receipt },
+  { label: "Mentorship", href: "/mentorship", icon: Users2 },
+  { label: "Notifications", href: "/notifications", icon: Bell },
+  { label: "Settings", href: "/settings/profile", icon: Settings }
+];
+
+export function LearnerShell({ children }: { children: ReactNode }) {
+  const pathname = usePathname();
+  const router = useRouter();
+  const { data: session } = useSession();
+  const logout = useLogout();
+  const cartCount = useCartStore((s) => s.items.length);
+  const unreadCount = useNotificationStore((s) => s.items.filter((n) => !n.read).length);
+  const [mobileOpen, setMobileOpen] = useState(false);
+
+  useRealtimeNotifications(true);
+
+  const handleLogout = async () => {
+    await logout.mutateAsync();
+    router.push("/");
+  };
+
+  const sidebarContent = (
+    <div className="flex h-full flex-col">
+      <Link href="/" className="flex items-center gap-2.5 px-6 py-6">
+        <span className="flex h-9 w-9 items-center justify-center rounded-full border-2 border-ink bg-gold font-display text-[15px] font-bold text-ink">
+          S
+        </span>
+        <span className="font-display text-[17px] font-semibold text-ink">Saachi AI</span>
+      </Link>
+
+      <nav className="flex flex-1 flex-col gap-1 px-3">
+        {NAV_ITEMS.map((item) => {
+          const active = pathname === item.href || Boolean(pathname && pathname.startsWith(`${item.href}/`));
+          return (
+            <Link
+              key={item.href}
+              href={item.href}
+              onClick={() => setMobileOpen(false)}
+              className={cn(
+                "flex items-center gap-3 rounded-control px-3.5 py-2.5 text-[14px] font-medium transition-colors duration-150 ease-out",
+                active ? "bg-gold-tint text-ink" : "text-ink-soft hover:bg-paper-dim hover:text-ink"
+              )}
+            >
+              <item.icon size={18} />
+              {item.label}
+              {item.href === "/cart" && cartCount > 0 && (
+                <span className="ml-auto flex h-5 min-w-[20px] items-center justify-center rounded-full bg-gold px-1.5 text-[11px] font-bold text-ink">
+                  {cartCount}
+                </span>
+              )}
+              {item.href === "/notifications" && unreadCount > 0 && (
+                <span className="ml-auto flex h-5 min-w-[20px] items-center justify-center rounded-full bg-error px-1.5 text-[11px] font-bold text-white">
+                  {unreadCount}
+                </span>
+              )}
+            </Link>
+          );
+        })}
+      </nav>
+
+      <div className="border-t border-line px-3 py-4">
+        <div className="mb-3 flex items-center gap-3 px-3">
+          <div className="flex h-9 w-9 shrink-0 items-center justify-center overflow-hidden rounded-full bg-teal-light text-[13px] font-semibold text-teal">
+            {session?.avatarUrl ? (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img src={session.avatarUrl} alt={session.fullName} className="h-full w-full object-cover" />
+            ) : (
+              session?.fullName?.charAt(0) ?? "?"
+            )}
+          </div>
+          <div className="min-w-0">
+            <div className="truncate text-[13px] font-semibold text-ink">{session?.fullName ?? "Guest"}</div>
+            <div className="truncate text-[12px] text-ink-soft">{session?.email ?? ""}</div>
+          </div>
+        </div>
+        <button
+          type="button"
+          onClick={handleLogout}
+          disabled={logout.isPending}
+          className="flex w-full items-center gap-3 rounded-control px-3.5 py-2.5 text-[14px] font-medium text-ink-soft transition-colors duration-150 ease-out hover:bg-paper-dim hover:text-error"
+        >
+          <LogOut size={18} />
+          {logout.isPending ? "Logging out..." : "Log out"}
+        </button>
+      </div>
+    </div>
+  );
+
+  return (
+    <div className="min-h-screen bg-paper">
+      <div className="hidden w-[260px] shrink-0 border-r border-line bg-card md:fixed md:inset-y-0 md:flex">
+        {sidebarContent}
+      </div>
+
+      <div className="flex items-center justify-between border-b border-line bg-card px-4 py-3 md:hidden">
+        <Link href="/" className="flex items-center gap-2">
+          <span className="flex h-8 w-8 items-center justify-center rounded-full border-2 border-ink bg-gold font-display text-[13px] font-bold text-ink">
+            S
+          </span>
+          <span className="font-display text-[15px] font-semibold text-ink">Saachi AI</span>
+        </Link>
+        <button
+          type="button"
+          onClick={() => setMobileOpen(true)}
+          aria-label="Open menu"
+          className="flex h-9 w-9 items-center justify-center rounded-control text-ink"
+        >
+          <Menu size={20} />
+        </button>
+      </div>
+
+      {mobileOpen && (
+        <div className="fixed inset-0 z-50 flex md:hidden">
+          <div className="absolute inset-0 bg-ink/40" onClick={() => setMobileOpen(false)} />
+          <div className="relative flex h-full w-[280px] flex-col bg-card">
+            <button
+              type="button"
+              onClick={() => setMobileOpen(false)}
+              aria-label="Close menu"
+              className="absolute right-3 top-3 flex h-9 w-9 items-center justify-center rounded-control text-ink"
+            >
+              <X size={20} />
+            </button>
+            {sidebarContent}
+          </div>
+        </div>
+      )}
+
+      <div className="md:pl-[260px]">{children}</div>
+    </div>
+  );
+}
+
+
+================================================================================
+FILE: apps\web\app\(learner)\loading.tsx
+================================================================================
+import { Loading } from "@saachi/ui";
+
+export default function RouteLoading() {
+  return <Loading fullScreen label="Loading..." />;
+}
+
+
+================================================================================
+FILE: apps\web\app\(marketing)\categories\[slug]\page.tsx
+================================================================================
+!! ERROR reading file: A parameter cannot be found that matches parameter name 'Raw'.
+
+
+================================================================================
+FILE: apps\web\app\(marketing)\contact\page.tsx
+================================================================================
+"use client";
+
+import { useState } from "react";
+import { Mail, MessageCircle } from "lucide-react";
+import { Button, Card, Input, Textarea } from "@saachi/ui";
+import { Navbar } from "../_components/Navbar";
+import { Footer } from "../_components/Footer";
+
+export default function ContactPage() {
+  const [sent, setSent] = useState(false);
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    // NOTE: demo-only. Replace with real Support/Helpdesk API call once backend exists.
+    setSent(true);
+  };
+
+  return (
+    <>
+      <Navbar />
+      <main className="mx-auto max-w-[900px] px-6 py-16">
+        <div className="mb-10 text-center">
+          <h1 className="font-display text-[28px] font-semibold text-ink">Get in touch</h1>
+          <p className="mt-2 text-[15px] text-ink-soft">
+            Questions about courses, instructor applications, or your account? We're here to help.
+          </p>
+        </div>
+
+        <div className="grid grid-cols-1 gap-8 md:grid-cols-[1fr_320px]">
+          <Card className="p-6">
+            {sent ? (
+              <div className="py-8 text-center">
+                <h2 className="text-[18px] font-semibold text-ink">Message sent</h2>
+                <p className="mt-2 text-[14px] text-ink-soft">
+                  This is a demo form - no message was actually delivered. We'll typically reply
+                  within 1 business day once live support is connected.
+                </p>
+              </div>
+            ) : (
+              <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                  <Input label="Your name" placeholder="Full name" required />
+                  <Input label="Email" type="email" placeholder="you@example.com" required />
+                </div>
+                <Input label="Subject" placeholder="What's this about?" required />
+                <Textarea label="Message" placeholder="Tell us more..." rows={6} required />
+                <Button type="submit" size="lg" className="mt-2 w-fit">
+                  Send message
+                </Button>
+              </form>
+            )}
+          </Card>
+
+          <div className="flex flex-col gap-4">
+            <Card className="flex items-start gap-3 p-5">
+              <Mail size={18} className="mt-0.5 shrink-0 text-teal" />
+              <div>
+                <p className="text-[14px] font-semibold text-ink">Email support</p>
+                <p className="mt-1 text-[13px] text-ink-soft">support@saachi.ai</p>
+              </div>
+            </Card>
+            <Card className="flex items-start gap-3 p-5">
+              <MessageCircle size={18} className="mt-0.5 shrink-0 text-teal" />
+              <div>
+                <p className="text-[14px] font-semibold text-ink">Community</p>
+                <p className="mt-1 text-[13px] text-ink-soft">
+                  Enrolled learners can ask questions directly in any course's Q&A tab.
+                </p>
+              </div>
+            </Card>
+          </div>
+        </div>
+      </main>
+      <Footer />
+    </>
+  );
+}
+
+
+================================================================================
+FILE: apps\web\app\(marketing)\courses\[slug]\page.tsx
+================================================================================
+!! ERROR reading file: A parameter cannot be found that matches parameter name 'Raw'.
+
+
+================================================================================
+FILE: apps\web\app\(marketing)\courses\page.tsx
+================================================================================
+"use client";
+
+import { useMemo, useState } from "react";
+import { Search } from "lucide-react";
+import { useCourseList } from "@saachi/api-client";
+import { Input, Select, EmptyState, SkeletonCard, CourseCard, FilterSidebar } from "@saachi/ui";
+import type { FilterSidebarValue } from "@saachi/ui";
+import { Navbar } from "../_components/Navbar";
+import { Footer } from "../_components/Footer";
+
+const CATEGORY_OPTIONS = [
+  { label: "AI Fundamentals & Prompt Engineering", value: "ai-fundamentals" },
+  { label: "AI for Marketing & Sales", value: "ai-marketing" },
+  { label: "AI Automation & Workflow Tools", value: "ai-automation" },
+  { label: "AI Customer Support & Communication", value: "ai-support" },
+  { label: "AI Website & App Development", value: "ai-dev" },
+  { label: "AI Integration for Developers", value: "ai-integration" }
+];
+
+const LEVEL_OPTIONS = [
+  { label: "Beginner", value: "beginner" },
+  { label: "Intermediate", value: "intermediate" },
+  { label: "Advanced", value: "advanced" }
+];
+
+const LANGUAGE_OPTIONS = [
+  { label: "English", value: "en" },
+  { label: "Urdu", value: "ur" }
+];
+
+const SORT_OPTIONS = [
+  { label: "Most popular", value: "popular" },
+  { label: "Newest", value: "newest" },
+  { label: "Price: Low to High", value: "price_asc" },
+  { label: "Price: High to Low", value: "price_desc" },
+  { label: "Highest rated", value: "rating" }
+];
+
+export default function CourseMarketplacePage() {
+  const [search, setSearch] = useState("");
+  const [sort, setSort] = useState("popular");
+  const [filters, setFilters] = useState<FilterSidebarValue>({
+    categories: [],
+    level: undefined,
+    language: undefined
+  });
+
+  const queryFilters = useMemo(
+    () => ({
+      search: search || undefined,
+      category: filters.categories[0],
+      level: filters.level,
+      language: filters.language,
+      sort
+    }),
+    [search, filters, sort]
+  );
+
+  const { data, isLoading, isError } = useCourseList(queryFilters);
+
+  const courses = data?.items ?? [];
+
+  return (
+    <>
+      <Navbar />
+      <main className="mx-auto max-w-[1140px] px-6 py-16">
+        <div className="mb-10">
+          <h1 className="font-display text-[32px] font-semibold text-ink">Explore courses</h1>
+          <p className="mt-2 text-[15px] text-ink-soft">
+            Practical AI skills, taught by practitioners who use them every day.
+          </p>
+        </div>
+
+        <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-center">
+          <div className="relative flex-1">
+            <Search
+              size={18}
+              className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-ink-soft/60"
+            />
+            <Input
+              placeholder="Search courses, e.g. 'n8n automation'"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              className="pl-10"
+            />
+          </div>
+          <div className="sm:w-[240px]">
+            <Select options={SORT_OPTIONS} value={sort} onChange={(e) => setSort(e.target.value)} />
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 gap-8 lg:grid-cols-[260px_1fr]">
+          <FilterSidebar
+            categoryOptions={CATEGORY_OPTIONS}
+            levelOptions={LEVEL_OPTIONS}
+            languageOptions={LANGUAGE_OPTIONS}
+            value={filters}
+            onChange={setFilters}
+          />
+
+          <section>
+            {isLoading && (
+              <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 xl:grid-cols-3">
+                {Array.from({ length: 6 }).map((_, i) => (
+                  <SkeletonCard key={i} />
+                ))}
+              </div>
+            )}
+
+            {isError && (
+              <EmptyState
+                title="Couldn't load courses"
+                description="Something went wrong while fetching the course list. Please try again."
+              />
+            )}
+
+            {!isLoading && !isError && courses.length === 0 && (
+              <EmptyState
+                title="No courses found"
+                description="Try adjusting your filters or search terms."
+              />
+            )}
+
+            {!isLoading && !isError && courses.length > 0 && (
+              <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 xl:grid-cols-3">
+                {courses.map((course) => (
+                  <CourseCard
+                    key={course.id}
+                    slug={course.slug}
+                    title={course.title}
+                    thumbnailUrl={course.thumbnailUrl}
+                    instructorName={course.instructor.fullName}
+                    price={course.price}
+                    currency={course.currency}
+                    rating={course.rating}
+                    ratingCount={course.ratingCount}
+                  />
+                ))}
+              </div>
+            )}
+          </section>
+        </div>
+      </main>
+      <Footer />
+    </>
+  );
+}
+
+
+================================================================================
+FILE: apps\web\app\(marketing)\instructors\[slug]\page.tsx
+================================================================================
+!! ERROR reading file: A parameter cannot be found that matches parameter name 'Raw'.
+
+
+================================================================================
+FILE: apps\web\app\(marketing)\legal\[doc]\page.tsx
+================================================================================
+!! ERROR reading file: A parameter cannot be found that matches parameter name 'Raw'.
+
+
+================================================================================
+FILE: apps\web\app\(marketing)\pricing\page.tsx
+================================================================================
+import Link from "next/link";
+import { Check } from "lucide-react";
+import { Button, Card, Accordion } from "@saachi/ui";
+import { Navbar } from "../_components/Navbar";
+import { Footer } from "../_components/Footer";
+
+const PLANS = [
+  {
+    name: "Basic",
+    price: "Free",
+    desc: "Browse and buy individual courses.",
+    features: ["Buy courses individually", "Lifetime access to purchased courses", "Community Q&A access", "Certificate on completion"],
+    cta: "Get started",
+    featured: false
+  },
+  {
+    name: "Pro",
+    price: "$19/mo",
+    desc: "Unlimited access to the Standard course library.",
+    features: [
+      "Everything in Basic",
+      "Unlimited access to all Standard-tier courses",
+      "Priority community support",
+      "Early access to new courses"
+    ],
+    cta: "Start Pro",
+    featured: true
+  },
+  {
+    name: "Business",
+    price: "Custom",
+    desc: "Bulk seats and team reporting for organizations.",
+    features: [
+      "Everything in Pro",
+      "Bulk seat licenses for your team",
+      "Team completion & compliance reports",
+      "Custom invoicing / PO billing"
+    ],
+    cta: "Contact sales",
+    featured: false
+  }
+];
+
+const FAQ_ITEMS = [
+  {
+    id: "f1",
+    title: "Can I cancel my Pro subscription anytime?",
+    content: "Yes, Pro is billed monthly or yearly and can be cancelled anytime from your billing settings."
+  },
+  {
+    id: "f2",
+    title: "Do Basic (pay-per-course) purchases expire?",
+    content: "No, courses you purchase individually are yours for life, regardless of your subscription status."
+  },
+  {
+    id: "f3",
+    title: "What's included in Business/Team plans?",
+    content: "Bulk seat purchasing, a team roster dashboard, course assignment, and completion reporting for your organization."
+  }
+];
+
+export default function PricingPage() {
+  return (
+    <>
+      <Navbar />
+      <main>
+        <section className="px-6 py-16 text-center md:py-24">
+          <span className="text-[13px] font-semibold uppercase tracking-[0.06em] text-gold-dark">
+            Pricing
+          </span>
+          <h1 className="mx-auto mt-3 max-w-[640px] font-display text-[30px] font-semibold leading-[1.2] text-ink md:text-[40px]">
+            Simple pricing, built around how you learn
+          </h1>
+        </section>
+
+        <section className="px-6 pb-20">
+          <div className="mx-auto grid max-w-[1100px] grid-cols-1 gap-6 md:grid-cols-3">
+            {PLANS.map((plan) => (
+              <Card
+                key={plan.name}
+                featured={plan.featured}
+                className={plan.featured ? "flex flex-col border-2 border-ink p-8" : "flex flex-col p-8"}
+              >
+                {plan.featured && (
+                  <span className="mb-4 w-fit rounded-full bg-gold px-3 py-1 text-[11px] font-bold uppercase tracking-[0.05em] text-ink">
+                    Most popular
+                  </span>
+                )}
+                <h3 className="text-[18px] font-semibold text-ink">{plan.name}</h3>
+                <p className="mt-1 font-mono text-[28px] font-semibold text-ink">{plan.price}</p>
+                <p className="mt-2 text-[13px] text-ink-soft">{plan.desc}</p>
+                <ul className="mt-6 flex flex-1 flex-col gap-3">
+                  {plan.features.map((f) => (
+                    <li key={f} className="flex items-start gap-2 text-[13px] text-ink-soft">
+                      <Check size={15} className="mt-0.5 shrink-0 text-teal" />
+                      {f}
+                    </li>
+                  ))}
+                </ul>
+                <Link href={plan.name === "Business" ? "/contact" : "/register"} className="mt-6">
+                  <Button size="lg" variant={plan.featured ? "primary" : "secondary"} className="w-full">
+                    {plan.cta}
+                  </Button>
+                </Link>
+              </Card>
+            ))}
+          </div>
+        </section>
+
+        <section className="bg-paper-dim px-6 py-16 md:py-24">
+          <div className="mx-auto max-w-[720px]">
+            <h2 className="mb-8 text-center font-display text-[24px] font-semibold text-ink">
+              Frequently asked questions
+            </h2>
+            <Accordion items={FAQ_ITEMS} />
+          </div>
+        </section>
+      </main>
+      <Footer />
+    </>
+  );
+}
+
+
+================================================================================
+FILE: apps\web\app\(marketing)\search\page.tsx
+================================================================================
+"use client";
+
+import { useMemo, useState } from "react";
+import { useSearchParams, useRouter } from "next/navigation";
+import { Search } from "lucide-react";
+import Link from "next/link";
+import { DUMMY_COURSES } from "@saachi/api-client";
+import { CourseCard, Input, EmptyState, Card } from "@saachi/ui";
+import { Navbar } from "../_components/Navbar";
+import { Footer } from "../_components/Footer";
+
+function slugifyName(name: string) {
+  return name.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
+}
+
+export default function SearchPage() {
+  const params = useSearchParams();
+  const router = useRouter();
+  const initialQuery = params.get("q") ?? "";
+  const [query, setQuery] = useState(initialQuery);
+
+  const results = useMemo(() => {
+    const q = query.trim().toLowerCase();
+    if (!q) return { courses: [], instructors: [] };
+
+    const courses = DUMMY_COURSES.filter((c) => c.title.toLowerCase().includes(q));
+
+    const instructorMap = new Map<string, { name: string; slug: string; avatarUrl?: string; courseCount: number }>();
+    DUMMY_COURSES.forEach((c) => {
+      if (c.instructor.fullName.toLowerCase().includes(q)) {
+        const slug = slugifyName(c.instructor.fullName);
+        const existing = instructorMap.get(slug);
+        if (existing) {
+          existing.courseCount += 1;
+        } else {
+          instructorMap.set(slug, {
+            name: c.instructor.fullName,
+            slug,
+            avatarUrl: c.instructor.avatarUrl,
+            courseCount: 1
+          });
+        }
+      }
+    });
+
+    return { courses, instructors: Array.from(instructorMap.values()) };
+  }, [query]);
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    router.push(`/search?q=${encodeURIComponent(query)}`);
+  };
+
+  const hasResults = results.courses.length > 0 || results.instructors.length > 0;
+
+  return (
+    <>
+      <Navbar />
+      <main className="mx-auto max-w-[1000px] px-6 py-16">
+        <h1 className="mb-6 font-display text-[28px] font-semibold text-ink">Search</h1>
+
+        <form onSubmit={handleSubmit} className="relative mb-10 max-w-[520px]">
+          <Search size={18} className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-ink-soft/60" />
+          <Input
+            placeholder="Search courses and instructors"
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            className="pl-10"
+          />
+        </form>
+
+        {!query.trim() ? (
+          <EmptyState title="Start typing to search" description="Search across all courses and instructors." />
+        ) : !hasResults ? (
+          <EmptyState title="No results found" description={`Nothing matched "${query}". Try a different term.`} />
+        ) : (
+          <div className="flex flex-col gap-14">
+            {results.instructors.length > 0 && (
+              <div>
+                <h2 className="mb-4 text-[16px] font-semibold text-ink">Instructors</h2>
+                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                  {results.instructors.map((instructor) => (
+                    <Link key={instructor.slug} href={`/instructors/${instructor.slug}`}>
+                      <Card className="flex items-center gap-4 p-4">
+                        <div className="flex h-12 w-12 shrink-0 items-center justify-center overflow-hidden rounded-full bg-teal-light text-[15px] font-semibold text-teal">
+                          {instructor.avatarUrl ? (
+                            // eslint-disable-next-line @next/next/no-img-element
+                            <img src={instructor.avatarUrl} alt={instructor.name} className="h-full w-full object-cover" />
+                          ) : (
+                            instructor.name.charAt(0)
+                          )}
+                        </div>
+                        <div>
+                          <p className="text-[14px] font-semibold text-ink">{instructor.name}</p>
+                          <p className="text-[12px] text-ink-soft">{instructor.courseCount} courses</p>
+                        </div>
+                      </Card>
+                    </Link>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {results.courses.length > 0 && (
+              <div>
+                <h2 className="mb-4 text-[16px] font-semibold text-ink">Courses</h2>
+                <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 xl:grid-cols-3">
+                  {results.courses.map((course) => (
+                    <CourseCard
+                      key={course.id}
+                      slug={course.slug}
+                      title={course.title}
+                      thumbnailUrl={course.thumbnailUrl}
+                      instructorName={course.instructor.fullName}
+                      price={course.price}
+                      currency={course.currency}
+                      rating={course.rating}
+                      ratingCount={course.ratingCount}
+                    />
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+        )}
+      </main>
+      <Footer />
+    </>
+  );
+}
+
+
+================================================================================
+FILE: apps\web\app\(marketing)\_components\Footer.tsx
+================================================================================
+import Link from "next/link";
+import { Twitter, Linkedin, Youtube } from "lucide-react";
+
+const FOOTER_COLUMNS = [
+  {
+    title: "Platform",
+    links: [
+      { label: "Explore Courses", href: "/courses" },
+      { label: "Become an Instructor", href: "/register" },
+      { label: "Pricing", href: "/pricing" },
+      { label: "Mentorship", href: "/mentorship" }
+    ]
+  },
+  {
+    title: "Company",
+    links: [
+      { label: "About Us", href: "/about" },
+      { label: "Careers", href: "/about" },
+      { label: "Contact", href: "/contact" }
+    ]
+  },
+  {
+    title: "Legal",
+    links: [
+      { label: "Terms & Conditions", href: "/legal/terms" },
+      { label: "Privacy Policy", href: "/legal/privacy" },
+      { label: "Refund Policy", href: "/legal/refund-policy" },
+      { label: "Instructor Agreement", href: "/legal/instructor-agreement" }
+    ]
+  }
+];
+
+export function Footer() {
+  return (
+    <footer className="bg-ink text-[#9AA0AE]">
+      <div className="mx-auto max-w-[1140px] px-6 py-20">
+        <div className="grid grid-cols-1 gap-12 md:grid-cols-[1.4fr_1fr_1fr_1fr] md:gap-8">
+          <div>
+            <div className="flex items-center gap-2.5">
+              <span className="flex h-9 w-9 items-center justify-center rounded-full border-2 border-gold font-display text-[15px] font-bold text-gold">
+                S
+              </span>
+              <span className="font-display text-[17px] font-semibold text-white">Saachi AI</span>
+            </div>
+            <p className="mt-4 max-w-[280px] text-[14px] leading-relaxed">
+              A skills exchange for the AI era. Learn to build with AI, and sell what you know.
+            </p>
+            <div className="mt-6 flex items-center gap-3">
+              {[Twitter, Linkedin, Youtube].map((Icon, i) => (
+                <a
+                  key={i}
+                  href="#"
+                  aria-label="Social link"
+                  className="flex h-9 w-9 items-center justify-center rounded-full border border-white/10 text-[#9AA0AE] transition-colors duration-150 ease-out hover:border-gold hover:text-gold"
+                >
+                  <Icon size={16} />
+                </a>
+              ))}
+            </div>
+          </div>
+
+          {FOOTER_COLUMNS.map((col) => (
+            <div key={col.title}>
+              <h4 className="text-[13px] font-semibold uppercase tracking-[0.06em] text-[#6B7280]">
+                {col.title}
+              </h4>
+              <ul className="mt-4 flex flex-col gap-3">
+                {col.links.map((link) => (
+                  <li key={link.label}>
+                    <Link href={link.href} className="text-[14px] transition-colors duration-150 ease-out hover:text-gold">
+                      {link.label}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ))}
+        </div>
+
+        <div className="mt-16 flex flex-col gap-6 border-t border-white/10 pt-8 md:flex-row md:items-center md:justify-between">
+          <p className="text-[13px]">Â© {new Date().getFullYear()} Saachi AI. All rights reserved.</p>
+
+          <form className="flex w-full max-w-[360px] items-center gap-2">
+            <input
+              type="email"
+              placeholder="Your email"
+              className="h-11 w-full rounded-full border border-white/10 bg-white/5 px-4 text-[14px] text-white placeholder:text-[#6B7280] outline-none focus:border-gold"
+            />
+            <button
+              type="submit"
+              className="h-11 shrink-0 rounded-full bg-gold px-5 text-[14px] font-semibold text-ink transition-colors duration-150 ease-out hover:bg-gold-dark"
+            >
+              Subscribe
+            </button>
+          </form>
+        </div>
+      </div>
+    </footer>
+  );
+}
+
+
+================================================================================
+FILE: apps\web\app\(marketing)\_components\LocaleSwitcher.tsx
+================================================================================
+"use client";
+
+import { Languages } from "lucide-react";
+import { useLocaleStore } from "@saachi/store";
+
+export function LocaleSwitcher() {
+  const { locale, setLocale } = useLocaleStore();
+
+  return (
+    <button
+      type="button"
+      onClick={() => setLocale(locale === "en" ? "ur" : "en")}
+      className="flex items-center gap-1.5 rounded-full border border-line-strong px-3 py-1.5 text-[12px] font-medium text-ink-soft transition-colors duration-150 ease-out hover:border-ink hover:text-ink"
+      aria-label="Switch language"
+      title={locale === "en" ? "Switch to Urdu" : "Switch to English"}
+    >
+      <Languages size={13} />
+      {locale === "en" ? "EN" : "UR"}
+    </button>
+  );
+}
+
+
+================================================================================
+FILE: apps\web\app\(marketing)\_components\Navbar.tsx
+================================================================================
+"use client";
+
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
+import { Menu, X, ShoppingCart, Search } from "lucide-react";
+import { Button } from "@saachi/ui";
+import { useSession, useLogout } from "@saachi/api-client";
+import { LocaleSwitcher } from "./LocaleSwitcher";
+
+const NAV_LINKS = [
+  { label: "Explore Courses", href: "/courses" },
+  { label: "Become an Instructor", href: "/instructor/dashboard" },
+  { label: "Pricing", href: "/pricing" },
+  { label: "About", href: "/about" }
+];
+
+export function Navbar() {
+  const router = useRouter();
+  const [scrolled, setScrolled] = useState(false);
+  const [mobileOpen, setMobileOpen] = useState(false);
+  const { data: session } = useSession();
+  const logout = useLogout();
+
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 24);
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
+  const handleLogout = async () => {
+    await logout.mutateAsync();
+    setMobileOpen(false);
+    router.push("/");
+  };
+
+  return (
+    <header
+      className={[
+        "sticky top-0 z-50 w-full border-b transition-colors duration-200 ease-out",
+        scrolled ? "border-line bg-paper/95 backdrop-blur-sm" : "border-transparent bg-paper"
+      ].join(" ")}
+    >
+      <div className="mx-auto flex h-[72px] max-w-[1140px] items-center justify-between px-6">
+        <Link href="/" className="flex items-center gap-2.5">
+          <span className="flex h-9 w-9 items-center justify-center rounded-full border-2 border-ink bg-gold font-display text-[15px] font-bold text-ink">
+            S
+          </span>
+          <span className="font-display text-[18px] font-semibold tracking-[-0.01em] text-ink">
+            Saachi AI
+          </span>
+        </Link>
+
+        <nav className="hidden items-center gap-8 md:flex">
+          {NAV_LINKS.map((link) => (
+            <Link
+              key={link.href}
+              href={link.href}
+              className="text-[14px] font-medium text-ink-soft transition-colors duration-150 ease-out hover:text-ink"
+            >
+              {link.label}
+            </Link>
+          ))}
+        </nav>
+
+        <div className="hidden items-center gap-3 md:flex">
+          <Link
+            href="/search"
+            aria-label="Search"
+            className="flex h-10 w-10 items-center justify-center rounded-full text-ink-soft transition-colors duration-150 ease-out hover:bg-paper-dim hover:text-ink"
+          >
+            <Search size={18} />
+          </Link>
+          <LocaleSwitcher />
+          {session ? (
+            <>
+              <Link
+                href="/cart"
+                aria-label="Cart"
+                className="flex h-10 w-10 items-center justify-center rounded-full text-ink-soft transition-colors duration-150 ease-out hover:bg-paper-dim hover:text-ink"
+              >
+                <ShoppingCart size={19} />
+              </Link>
+              <Link
+                href="/dashboard"
+                className="flex items-center gap-2 rounded-full border border-line-strong bg-card py-1.5 pl-1.5 pr-4 transition-colors duration-150 ease-out hover:border-ink"
+              >
+                <span className="flex h-7 w-7 items-center justify-center overflow-hidden rounded-full bg-teal-light text-[12px] font-semibold text-teal">
+                  {session.avatarUrl ? (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img src={session.avatarUrl} alt={session.fullName} className="h-full w-full object-cover" />
+                  ) : (
+                    session.fullName.charAt(0)
+                  )}
+                </span>
+                <span className="text-[13px] font-semibold text-ink">{session.fullName.split(" ")[0]}</span>
+              </Link>
+              <Button variant="ghost" size="sm" onClick={handleLogout} disabled={logout.isPending}>
+                {logout.isPending ? "..." : "Log out"}
+              </Button>
+            </>
+          ) : (
+            <>
+              <Link href="/login">
+                <Button variant="ghost" size="sm">
+                  Log in
+                </Button>
+              </Link>
+              <Link href="/register">
+                <Button variant="primary" size="sm">
+                  Get Started
+                </Button>
+              </Link>
+            </>
+          )}
+        </div>
+
+        <button
+          type="button"
+          onClick={() => setMobileOpen((v) => !v)}
+          className="flex h-10 w-10 items-center justify-center rounded-control text-ink md:hidden"
+          aria-label="Toggle menu"
+        >
+          {mobileOpen ? <X size={22} /> : <Menu size={22} />}
+        </button>
+      </div>
+
+      {mobileOpen && (
+        <div className="border-t border-line bg-paper px-6 py-6 md:hidden">
+          <nav className="flex flex-col gap-4">
+            {NAV_LINKS.map((link) => (
+              <Link
+                key={link.href}
+                href={link.href}
+                onClick={() => setMobileOpen(false)}
+                className="text-[15px] font-medium text-ink"
+              >
+                {link.label}
+              </Link>
+            ))}
+          </nav>
+          <div className="mt-6 flex flex-col gap-3">
+            {session ? (
+              <>
+                <Link href="/dashboard" onClick={() => setMobileOpen(false)}>
+                  <Button variant="secondary" size="md" className="w-full">
+                    Dashboard
+                  </Button>
+                </Link>
+                <Link href="/cart" onClick={() => setMobileOpen(false)}>
+                  <Button variant="secondary" size="md" className="w-full">
+                    Cart
+                  </Button>
+                </Link>
+                <Button
+                  variant="ghost"
+                  size="md"
+                  className="w-full"
+                  onClick={handleLogout}
+                  disabled={logout.isPending}
+                >
+                  {logout.isPending ? "Logging out..." : "Log out"}
+                </Button>
+              </>
+            ) : (
+              <>
+                <Link href="/login" onClick={() => setMobileOpen(false)}>
+                  <Button variant="secondary" size="md" className="w-full">
+                    Log in
+                  </Button>
+                </Link>
+                <Link href="/register" onClick={() => setMobileOpen(false)}>
+                  <Button variant="primary" size="md" className="w-full">
+                    Get Started
+                  </Button>
+                </Link>
+              </>
+            )}
+          </div>
+        </div>
+      )}
+    </header>
+  );
+}
+
+
+================================================================================
+FILE: apps\web\app\(marketing)\loading.tsx
+================================================================================
+import { Loading } from "@saachi/ui";
+
+export default function RouteLoading() {
+  return <Loading fullScreen label="Loading..." />;
+}
+
+
+================================================================================
+FILE: apps\web\app\(marketing)\page.tsx
+================================================================================
+import Link from "next/link";
+import {
+  ArrowRight,
+  Megaphone,
+  Workflow,
+  MessageSquareText,
+  Code2,
+  Wand2,
+  Sparkles,
+  Star,
+  CheckCircle2,
+  PlayCircle,
+  Users,
+  BookOpen,
+  Award,
+  TrendingUp,
+  BadgeCheck
+} from "lucide-react";
+import { Button } from "@saachi/ui";
+import { Navbar } from "./_components/Navbar";
+import { Footer } from "./_components/Footer";
+
+const CATEGORIES = [
+  {
+    icon: Sparkles,
+    title: "AI Fundamentals & Prompt Engineering",
+    desc: "Go from zero to confident Ã¢â‚¬â€ prompt engineering basics and everyday AI literacy.",
+    featured: true
+  },
+  {
+    icon: Megaphone,
+    title: "AI for Marketing & Sales",
+    desc: "AI-powered campaigns, ad copy, and lead generation that actually converts."
+  },
+  {
+    icon: Workflow,
+    title: "AI Automation & Workflow Tools",
+    desc: "n8n, Zapier, Make.com Ã¢â‚¬â€ connect AI models into no-code automations."
+  },
+  {
+    icon: MessageSquareText,
+    title: "AI Customer Support & Communication",
+    desc: "Build WhatsApp auto-responders and AI call-center response systems."
+  },
+  {
+    icon: Code2,
+    title: "AI Integration for Developers",
+    desc: "Wire OpenAI, Claude, and Gemini APIs into real production apps."
+  },
+  {
+    icon: Wand2,
+    title: "AI Design & Creative Tools",
+    desc: "Generate graphics, logos, and UI with Midjourney, DALLÃ‚Â·E, and Figma AI."
+  }
+];
+
+const STATS = [
+  { value: "12,000+", label: "Learners building with AI" },
+  { value: "600+", label: "Practical, outcome-based courses" },
+  { value: "4.8/5", label: "Average course rating" },
+  { value: "$2.1M+", label: "Paid out to instructors" }
+];
+
+const TESTIMONIALS = [
+  {
+    quote:
+      "I packaged the exact automation workflow I use for client work into a course. Three months later it's paying my rent Ã¢â‚¬â€ something YouTube never did.",
+    name: "Ayesha Khan",
+    role: "Freelance Automation Consultant"
+  },
+  {
+    quote:
+      "Every course here is built to produce something real. I didn't just watch a WhatsApp bot get built Ã¢â‚¬â€ I shipped my own by the end of the week.",
+    name: "Bilal Ahmed",
+    role: "Learner, AI Customer Support track"
+  },
+  {
+    quote:
+      "The certification actually means something because it's tied to a real deliverable, not a quiz. Clients recognize that.",
+    name: "Sana Rizvi",
+    role: "AI Marketing Instructor"
+  }
+];
+
+const WHY_CARDS = [
+  {
+    icon: CheckCircle2,
+    title: "Outcome-based, not watch-time",
+    desc: "Every course is built around a real, reproducible result Ã¢â‚¬â€ not passive viewing."
+  },
+  {
+    icon: Users,
+    title: "Learn from practitioners",
+    desc: "Instructors are freelancers, agency owners, and developers using AI in real work today."
+  },
+  {
+    icon: Award,
+    title: "Certification that verifies skill",
+    desc: "Completion requires the actual outcome, with a publicly verifiable certificate ID."
+  },
+  {
+    icon: TrendingUp,
+    title: "A path to income, both ways",
+    desc: "Learn a skill, then package your own expertise and sell it to the next learner."
+  }
+];
+
+export default function HomePage() {
+  return (
+    <main>
+      <Navbar />
+
+      {/* ---------- Hero ---------- */}
+      <section className="relative overflow-hidden px-6 pb-24 pt-20 md:pb-32 md:pt-28">
+        <div className="relative mx-auto flex max-w-[880px] flex-col items-center text-center">
+          <div className="inline-flex items-center gap-2 rounded-full border border-line px-4 py-2 text-[13px] font-medium text-ink-soft">
+            <span className="flex h-2 w-2 rounded-full bg-gold" />
+            Now in early access Ã¢â‚¬â€ founding instructor spots open
+          </div>
+
+          <h1 className="mt-8 font-display text-[40px] font-semibold leading-[1.1] tracking-[-0.02em] text-ink md:text-[68px]">
+            Learn practical AI skills.
+            <br />
+            Build real things. <span className="italic text-gold-dark">Get paid</span> to teach.
+          </h1>
+
+          <p className="mt-6 max-w-[620px] text-[17px] leading-[1.6] text-ink-soft md:text-[18px]">
+            Saachi AI is a skills-first marketplace for applied AI Ã¢â‚¬â€ practitioners teach the
+            exact workflows they use for real work, and learners walk away with something
+            they built, not just something they watched.
+          </p>
+
+          <div className="mt-8 flex flex-col items-center gap-4 sm:flex-row">
+            <Link href="/register">
+              <Button size="lg">
+                Get Started Free <ArrowRight size={17} />
+              </Button>
+            </Link>
+            <Link href="/courses">
+              <Button size="lg" variant="secondary">
+                <PlayCircle size={18} /> Browse Courses
+              </Button>
+            </Link>
+          </div>
+
+          {/* Signature seal + product mockup */}
+          <div className="relative mt-16 w-full max-w-[1000px]">
+            <div className="absolute -top-8 right-6 z-10 hidden h-24 w-24 rotate-6 items-center justify-center rounded-full border-2 border-dashed border-gold-dark bg-paper text-center md:flex">
+              <div className="flex flex-col items-center gap-0.5">
+                <BadgeCheck size={20} className="text-teal" />
+                <span className="font-display text-[10px] font-semibold uppercase leading-tight tracking-[0.08em] text-ink">
+                  Verified
+                  <br />
+                  skill
+                </span>
+              </div>
+            </div>
+            <div className="overflow-hidden rounded-card border border-line bg-card">
+              <div className="flex items-center gap-1.5 border-b border-line bg-paper-dim px-4 py-3">
+                <span className="h-2.5 w-2.5 rounded-full bg-error/50" />
+                <span className="h-2.5 w-2.5 rounded-full bg-gold/60" />
+                <span className="h-2.5 w-2.5 rounded-full bg-teal/50" />
+              </div>
+              <div className="grid grid-cols-1 gap-4 p-6 sm:grid-cols-3">
+                {CATEGORIES.slice(0, 3).map((cat) => (
+                  <div key={cat.title} className="rounded-control border border-line bg-paper p-4 text-left">
+                    <div className="mb-3 flex h-9 w-9 items-center justify-center rounded-control bg-gold-tint">
+                      <cat.icon size={17} className="text-gold-dark" />
+                    </div>
+                    <p className="text-[13px] font-semibold leading-snug text-ink">{cat.title}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          <div className="mt-12 flex flex-wrap items-center justify-center gap-x-10 gap-y-4 text-[13px] font-medium uppercase tracking-[0.06em] text-ink-soft">
+            <span className="opacity-60 transition-opacity hover:opacity-100">Built for freelancers</span>
+            <span className="opacity-60 transition-opacity hover:opacity-100">Trusted by agencies</span>
+            <span className="opacity-60 transition-opacity hover:opacity-100">Local payment rails</span>
+            <span className="opacity-60 transition-opacity hover:opacity-100">Certified outcomes</span>
+          </div>
+        </div>
+      </section>
+
+      {/* ---------- Why Saachi AI ---------- */}
+      <section className="bg-paper-dim px-6 py-16 md:py-24">
+        <div className="mx-auto max-w-[1140px]">
+          <div className="mx-auto mb-14 max-w-[640px] text-center">
+            <span className="text-[13px] font-semibold uppercase tracking-[0.06em] text-gold-dark">
+              Why Saachi AI
+            </span>
+            <h2 className="mt-3 font-display text-[28px] font-semibold leading-[1.2] text-ink md:text-[36px]">
+              Not a video platform. A skills exchange.
+            </h2>
+          </div>
+
+          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
+            {WHY_CARDS.map((card) => (
+              <div
+                key={card.title}
+                className="rounded-card border border-line bg-card p-6 transition-all duration-200 ease-out hover:-translate-y-1 hover:border-gold-dark/40"
+              >
+                <div className="mb-4 flex h-11 w-11 items-center justify-center rounded-control bg-teal-light">
+                  <card.icon size={19} className="text-teal" />
+                </div>
+                <h3 className="mb-2 text-[16px] font-semibold text-ink">{card.title}</h3>
+                <p className="text-[14px] leading-relaxed text-ink-soft">{card.desc}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ---------- Category grid ---------- */}
+      <section className="px-6 py-16 md:py-24">
+        <div className="mx-auto max-w-[1140px]">
+          <div className="mx-auto mb-14 max-w-[640px] text-center">
+            <span className="text-[13px] font-semibold uppercase tracking-[0.06em] text-gold-dark">
+              Explore
+            </span>
+            <h2 className="mt-3 font-display text-[28px] font-semibold leading-[1.2] text-ink md:text-[36px]">
+              Practical AI, organized by outcome
+            </h2>
+            <p className="mt-4 text-[16px] leading-relaxed text-ink-soft">
+              Ten focused tracks, each built around what you can actually ship afterward.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            {CATEGORIES.map((cat) => (
+              <div
+                key={cat.title}
+                className={
+                  cat.featured
+                    ? "rounded-card border-2 border-ink bg-gold-tint p-6"
+                    : "rounded-card border border-line bg-card p-6 transition-all duration-200 ease-out hover:-translate-y-1 hover:border-gold-dark/40"
+                }
+              >
+                <div className="mb-4 flex h-11 w-11 items-center justify-center rounded-control bg-ink/5">
+                  <cat.icon size={19} className="text-ink" />
+                </div>
+                <h3 className="mb-2 text-[17px] font-semibold text-ink">{cat.title}</h3>
+                <p className="mb-4 text-[14px] leading-relaxed text-ink-soft">{cat.desc}</p>
+                <Link
+                  href="/courses"
+                  className="inline-flex items-center gap-1 text-[13px] font-semibold text-gold-dark transition-colors hover:text-ink"
+                >
+                  Explore track <ArrowRight size={14} />
+                </Link>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ---------- Stat banner ---------- */}
+      <section className="bg-ink px-6 py-16 md:py-24">
+        <div className="mx-auto grid max-w-[1140px] grid-cols-2 gap-8 text-center md:grid-cols-4">
+          {STATS.map((stat) => (
+            <div key={stat.label}>
+              <div className="font-mono text-[30px] font-semibold text-gold md:text-[40px]">{stat.value}</div>
+              <p className="mt-2 text-[13px] text-white/60 md:text-[14px]">{stat.label}</p>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* ---------- Testimonials ---------- */}
+      <section className="px-6 py-16 md:py-24">
+        <div className="mx-auto max-w-[1140px]">
+          <div className="mx-auto mb-14 max-w-[640px] text-center">
+            <span className="text-[13px] font-semibold uppercase tracking-[0.06em] text-gold-dark">
+              Real outcomes
+            </span>
+            <h2 className="mt-3 font-display text-[28px] font-semibold leading-[1.2] text-ink md:text-[36px]">
+              Learners and instructors, in their own words
+            </h2>
+          </div>
+
+          <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
+            {TESTIMONIALS.map((t) => (
+              <div key={t.name} className="rounded-card border border-line bg-card p-6">
+                <div className="mb-4 flex items-center gap-1">
+                  {Array.from({ length: 5 }).map((_, i) => (
+                    <Star key={i} size={14} className="fill-gold text-gold" />
+                  ))}
+                </div>
+                <p className="mb-6 text-[15px] leading-relaxed text-ink">{t.quote}</p>
+                <div className="flex items-center gap-3">
+                  <div className="flex h-10 w-10 items-center justify-center overflow-hidden rounded-full bg-teal-light text-[14px] font-semibold text-teal">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img
+                      src={`https://picsum.photos/seed/${encodeURIComponent(t.name)}/100/100`}
+                      alt={t.name}
+                      className="h-full w-full object-cover"
+                    />
+                  </div>
+                  <div>
+                    <div className="text-[13px] font-semibold text-ink">{t.name}</div>
+                    <div className="text-[12px] text-ink-soft">{t.role}</div>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ---------- Become an instructor CTA ---------- */}
+      <section className="px-6 py-16 md:py-24">
+        <div className="mx-auto max-w-[1140px]">
+          <div className="flex flex-col items-center gap-6 rounded-card border-2 border-ink bg-gold px-8 py-16 text-center md:px-16">
+            <div className="inline-flex items-center gap-2 rounded-full border border-ink/20 bg-paper px-4 py-2 text-[13px] font-medium text-ink">
+              <BookOpen size={14} />
+              For practitioners
+            </div>
+            <h2 className="max-w-[640px] font-display text-[28px] font-semibold leading-[1.2] text-ink md:text-[40px]">
+              Have practical AI skills? Turn them into income.
+            </h2>
+            <p className="max-w-[560px] text-[16px] leading-relaxed text-ink/80">
+              Package the exact workflow you already use for real work into a course, and
+              start earning from learners who want to build it too.
+            </p>
+            <Link href="/register">
+              <Button size="lg" variant="secondary" className="mt-2 border-ink bg-ink text-white hover:bg-ink-soft">
+                Become an Instructor <ArrowRight size={17} />
+              </Button>
+            </Link>
+          </div>
+        </div>
+      </section>
+
+      <Footer />
+    </main>
+  );
+}
+
+
+================================================================================
+FILE: apps\web\app\globals.css
+================================================================================
+@import url("https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap");
+@import "tailwindcss";
+
+@theme {
+  /* Ink / text */
+  --color-ink: #14171f;
+  --color-ink-soft: #3a3f4c;
+
+  /* Surfaces */
+  --color-paper: #faf8f3;
+  --color-paper-dim: #f1ece0;
+  --color-card: #ffffff;
+
+  /* Lines */
+  --color-line: #e7e1d3;
+  --color-line-strong: #d8cfb8;
+
+  /* Primary accent - "hallmark gold" */
+  --color-gold: #e2992f;
+  --color-gold-dark: #b9761b;
+  --color-gold-tint: #fbead0;
+
+  /* Secondary accent - "verified" teal */
+  --color-teal: #1f4b47;
+  --color-teal-light: #dceae8;
+
+  /* Status */
+  --color-error: #c1443b;
+  --color-error-tint: #f8e4e2;
+
+  /* Type */
+  --font-display: "Fraunces", "Georgia", serif;
+  --font-body: "Inter", -apple-system, "Segoe UI", sans-serif;
+  --font-mono: "IBM Plex Mono", "SFMono-Regular", monospace;
+
+  /* Radius */
+  --radius-card: 20px;
+  --radius-control: 12px;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background: var(--color-paper);
+  color: var(--color-ink);
+  font-family: var(--font-body);
+}
+
+h1, h2, h3 {
+  font-family: var(--font-display);
+}
+
+::selection {
+  background: var(--color-gold-tint);
+  color: var(--color-ink);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+
+================================================================================
+FILE: apps\web\app\not-found.tsx
+================================================================================
+import Link from "next/link";
+import { Button } from "@saachi/ui";
+
+export default function NotFound() {
+  return (
+    <main className="flex min-h-screen flex-col items-center justify-center bg-paper px-6 text-center">
+      <span className="font-display text-[80px] font-semibold leading-none text-gold-tint">404</span>
+      <h1 className="mt-4 font-display text-[24px] font-semibold text-ink">Page not found</h1>
+      <p className="mt-2 max-w-[420px] text-[14px] text-ink-soft">
+        The page you're looking for doesn't exist or may have moved.
+      </p>
+      <Link href="/" className="mt-6">
+        <Button>Back to homepage</Button>
+      </Link>
+    </main>
+  );
+}
+
+
+================================================================================
+FILE: apps\web\app\providers.tsx
+================================================================================
+"use client";
+
+import { useState } from "react";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+
+export function Providers({ children }: { children: React.ReactNode }) {
+  const [queryClient] = useState(
+    () =>
+      new QueryClient({
+        defaultOptions: {
+          queries: {
+            staleTime: 30 * 1000,
+            refetchOnWindowFocus: true,
+            retry: 1
+          }
+        }
+      })
+  );
+
+  return <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>;
+}
+
+
+
+================================================================================
+FILE: apps\web\hooks\useRealtimeNotifications.ts
+================================================================================
+"use client";
+
+import { useEffect } from "react";
+import { useNotificationStore } from "@saachi/store";
+
+const DEMO_MESSAGES = [
+  { title: "New course recommendation", body: "Based on your activity, you might like AI Automation & Workflow Tools.", type: "system" as const },
+  { title: "Instructor replied", body: "Your question in the course Q&A received a new reply.", type: "community" as const },
+  { title: "Payment reminder", body: "A saved cart item has a limited-time coupon expiring soon.", type: "payment" as const }
+];
+
+export function useRealtimeNotifications(enabled: boolean) {
+  useEffect(() => {
+    if (!enabled) return;
+
+    const interval = setInterval(() => {
+      const msg = DEMO_MESSAGES[Math.floor(Math.random() * DEMO_MESSAGES.length)];
+      const store = useNotificationStore.getState();
+      const alreadyExists = store.items.some((n) => n.title === msg.title && !n.read);
+      if (alreadyExists) return;
+
+      useNotificationStore.setState({
+        items: [
+          {
+            id: `ntf_rt_${Date.now()}`,
+            title: msg.title,
+            body: msg.body,
+            type: msg.type,
+            createdAt: new Date().toISOString(),
+            read: false
+          },
+          ...store.items
+        ]
+      });
+    }, 45000);
+
+    return () => clearInterval(interval);
+  }, [enabled]);
+}
+
+
+================================================================================
+FILE: apps\web\public\animations\loading.json
+================================================================================
+{"nm":"newScene","ddd":0,"h":600,"w":800,"meta":{"g":"@lottiefiles/toolkit-js 0.33.2"},"layers":[{"ty":0,"nm":"Komplet","sr":1,"st":-18,"op":15,"ip":0,"hd":false,"ddd":0,"bm":0,"hasMask":false,"ao":0,"ks":{"a":{"a":0,"k":[400,300,0]},"s":{"a":0,"k":[100,100,100]},"sk":{"a":0,"k":0},"p":{"a":0,"k":[400,300,0]},"r":{"a":0,"k":0},"sa":{"a":0,"k":0},"o":{"a":0,"k":100}},"ef":[],"w":800,"h":600,"refId":"comp_0","ind":1},{"ty":0,"nm":"Komplet","sr":1,"st":15,"op":33,"ip":15,"hd":false,"ddd":0,"bm":0,"hasMask":false,"ao":0,"ks":{"a":{"a":0,"k":[400,300,0]},"s":{"a":0,"k":[100,100,100]},"sk":{"a":0,"k":0},"p":{"a":0,"k":[400,300,0]},"r":{"a":0,"k":0},"sa":{"a":0,"k":0},"o":{"a":0,"k":100}},"ef":[],"w":800,"h":600,"refId":"comp_0","ind":2}],"v":"4.5.7","fr":25,"op":33,"ip":0,"assets":[{"nm":"","id":"comp_0","layers":[{"ty":3,"nm":"Null 1","sr":1,"st":0,"op":33,"ip":0,"hd":false,"ddd":0,"bm":0,"hasMask":false,"ao":0,"ks":{"a":{"a":0,"k":[0,0,0]},"s":{"a":0,"k":[200,200,100]},"sk":{"a":0,"k":0},"p":{"a":1,"k":[{"o":{"x":0.721,"y":0},"i":{"x":0.277,"y":1},"s":[460,304,0],"t":0,"ti":[20.3333339691162,1,0],"to":[-20.3333339691162,-1,0]},{"s":[338,298,0],"t":33}]},"r":{"a":1,"k":[{"o":{"x":0.73,"y":0},"i":{"x":0.268,"y":1},"s":[0],"t":0},{"s":[180],"t":33}]},"sa":{"a":0,"k":0},"o":{"a":0,"k":0}},"ef":[],"ind":1},{"ty":4,"nm":"Shape Layer 4","sr":1,"st":0,"op":33,"ip":0,"hd":false,"ddd":0,"bm":0,"hasMask":false,"ao":0,"ks":{"a":{"a":0,"k":[-99.5,-5.375,0]},"s":{"a":1,"k":[{"o":{"x":0.728,"y":0},"i":{"x":0.279,"y":1},"s":[75,75,100],"t":6},{"o":{"x":0.729,"y":0},"i":{"x":0.275,"y":1},"s":[150,150,100],"t":19},{"s":[75,75,100],"t":32}]},"sk":{"a":0,"k":0},"p":{"a":1,"k":[{"o":{"x":0.731,"y":0},"i":{"x":0.26,"y":1},"s":[14.5,-1.375,0],"t":6,"ti":[0,0,0],"to":[0,0,0]},{"o":{"x":0.716,"y":0},"i":{"x":0.267,"y":1},"s":[14.5,28.625,0],"t":19,"ti":[0,0,0],"to":[0,0,0]},{"s":[14.5,-1.375,0],"t":32}]},"r":{"a":0,"k":0},"sa":{"a":0,"k":0},"o":{"a":0,"k":100}},"ef":[],"shapes":[{"ty":"gr","bm":0,"hd":false,"mn":"ADBE Vector Group","nm":"Ellipse 1","np":3,"it":[{"ty":"el","bm":0,"hd":false,"mn":"ADBE Vector Shape - Ellipse","nm":"Ellipse Path 1","d":1,"p":{"a":0,"k":[0,0]},"s":{"a":0,"k":[20.969,20.969]}},{"ty":"st","bm":0,"hd":false,"mn":"ADBE Vector Graphic - Stroke","nm":"Stroke 1","lc":1,"lj":1,"ml":4,"o":{"a":0,"k":100},"w":{"a":0,"k":0},"c":{"a":0,"k":[0.902,0.8748,0.698,1]}},{"ty":"fl","bm":0,"hd":false,"mn":"ADBE Vector Graphic - Fill","nm":"Fill 1","c":{"a":1,"k":[{"o":{"x":0.167,"y":0.167},"i":{"x":0.833,"y":0.833},"s":[0.835,0.7457,0.165,1],"t":0},{"o":{"x":0.167,"y":0.167},"i":{"x":0.833,"y":0.833},"s":[0.902,0.8748,0.698,1],"t":17},{"s":[0.835,0.7457,0.165,1],"t":33}]},"r":2,"o":{"a":0,"k":100}},{"ty":"tr","a":{"a":0,"k":[0,0],"ix":1},"s":{"a":0,"k":[100,100],"ix":3},"sk":{"a":0,"k":0,"ix":4},"p":{"a":0,"k":[-99.516,-5.516],"ix":2},"r":{"a":0,"k":0,"ix":6},"sa":{"a":0,"k":0,"ix":5},"o":{"a":0,"k":100,"ix":7}}]}],"ind":2,"parent":1},{"ty":4,"nm":"Shape Layer 3","sr":1,"st":0,"op":33,"ip":0,"hd":false,"ddd":0,"bm":0,"hasMask":false,"ao":0,"ks":{"a":{"a":0,"k":[-99.5,-5.375,0]},"s":{"a":1,"k":[{"o":{"x":0.728,"y":0},"i":{"x":0.279,"y":1},"s":[75,75,100],"t":4},{"o":{"x":0.729,"y":0},"i":{"x":0.275,"y":1},"s":[150,150,100],"t":17},{"s":[75,75,100],"t":30}]},"sk":{"a":0,"k":0},"p":{"a":1,"k":[{"o":{"x":0.73,"y":0},"i":{"x":0.281,"y":1},"s":[-15.5,-1.375,0],"t":4,"ti":[0,0,0],"to":[0,0,0]},{"o":{"x":0.737,"y":0},"i":{"x":0.266,"y":1},"s":[-15.5,-31.375,0],"t":17,"ti":[0,0,0],"to":[0,0,0]},{"s":[-15.5,-1.375,0],"t":30}]},"r":{"a":0,"k":0},"sa":{"a":0,"k":0},"o":{"a":0,"k":100}},"ef":[],"shapes":[{"ty":"gr","bm":0,"hd":false,"mn":"ADBE Vector Group","nm":"Ellipse 1","np":3,"it":[{"ty":"el","bm":0,"hd":false,"mn":"ADBE Vector Shape - Ellipse","nm":"Ellipse Path 1","d":1,"p":{"a":0,"k":[0,0]},"s":{"a":0,"k":[20.969,20.969]}},{"ty":"st","bm":0,"hd":false,"mn":"ADBE Vector Graphic - Stroke","nm":"Stroke 1","lc":1,"lj":1,"ml":4,"o":{"a":0,"k":100},"w":{"a":0,"k":0},"c":{"a":0,"k":[0.902,0.8748,0.698,1]}},{"ty":"fl","bm":0,"hd":false,"mn":"ADBE Vector Graphic - Fill","nm":"Fill 1","c":{"a":1,"k":[{"o":{"x":0.167,"y":0.167},"i":{"x":0.833,"y":0.833},"s":[0.835,0.7457,0.165,1],"t":0},{"o":{"x":0.167,"y":0.167},"i":{"x":0.833,"y":0.833},"s":[0.9961,0.9608,0.7412,1],"t":17},{"s":[0.835,0.7457,0.165,1],"t":33}]},"r":2,"o":{"a":0,"k":100}},{"ty":"tr","a":{"a":0,"k":[0,0],"ix":1},"s":{"a":0,"k":[100,100],"ix":3},"sk":{"a":0,"k":0,"ix":4},"p":{"a":0,"k":[-99.516,-5.516],"ix":2},"r":{"a":0,"k":0,"ix":6},"sa":{"a":0,"k":0,"ix":5},"o":{"a":0,"k":100,"ix":7}}]}],"ind":3,"parent":1},{"ty":4,"nm":"Shape Layer 2","sr":1,"st":0,"op":33,"ip":0,"hd":false,"ddd":0,"bm":0,"hasMask":false,"ao":0,"ks":{"a":{"a":0,"k":[-99.5,-5.375,0]},"s":{"a":1,"k":[{"o":{"x":0.728,"y":0},"i":{"x":0.279,"y":1},"s":[75,75,100],"t":2},{"o":{"x":0.729,"y":0},"i":{"x":0.275,"y":1},"s":[150,150,100],"t":15},{"s":[75,75,100],"t":28}]},"sk":{"a":0,"k":0},"p":{"a":1,"k":[{"o":{"x":0.729,"y":0},"i":{"x":0.28,"y":1},"s":[-45.5,-1.375,0],"t":2,"ti":[0,0,0],"to":[0,0,0]},{"o":{"x":0.714,"y":0},"i":{"x":0.287,"y":1},"s":[-45.5,28.625,0],"t":15,"ti":[0,0,0],"to":[0,0,0]},{"s":[-45.5,-1.375,0],"t":28}]},"r":{"a":0,"k":0},"sa":{"a":0,"k":0},"o":{"a":0,"k":100}},"ef":[],"shapes":[{"ty":"gr","bm":0,"hd":false,"mn":"ADBE Vector Group","nm":"Ellipse 1","np":3,"it":[{"ty":"el","bm":0,"hd":false,"mn":"ADBE Vector Shape - Ellipse","nm":"Ellipse Path 1","d":1,"p":{"a":0,"k":[0,0]},"s":{"a":0,"k":[20.969,20.969]}},{"ty":"st","bm":0,"hd":false,"mn":"ADBE Vector Graphic - Stroke","nm":"Stroke 1","lc":1,"lj":1,"ml":4,"o":{"a":0,"k":100},"w":{"a":0,"k":0},"c":{"a":0,"k":[0.902,0.8748,0.698,1]}},{"ty":"fl","bm":0,"hd":false,"mn":"ADBE Vector Graphic - Fill","nm":"Fill 1","c":{"a":1,"k":[{"o":{"x":0.167,"y":0.167},"i":{"x":0.833,"y":0.833},"s":[0.835,0.7457,0.165,1],"t":0},{"o":{"x":0.167,"y":0.167},"i":{"x":0.833,"y":0.833},"s":[0.9725,0.8824,0.3216,1],"t":17},{"s":[0.835,0.7457,0.165,1],"t":33}]},"r":2,"o":{"a":0,"k":100}},{"ty":"tr","a":{"a":0,"k":[0,0],"ix":1},"s":{"a":0,"k":[100,100],"ix":3},"sk":{"a":0,"k":0,"ix":4},"p":{"a":0,"k":[-99.516,-5.516],"ix":2},"r":{"a":0,"k":0,"ix":6},"sa":{"a":0,"k":0,"ix":5},"o":{"a":0,"k":100,"ix":7}}]}],"ind":4,"parent":1},{"ty":4,"nm":"Shape Layer 1","sr":1,"st":0,"op":33,"ip":0,"hd":false,"ddd":0,"bm":0,"hasMask":false,"ao":0,"ks":{"a":{"a":0,"k":[-99.5,-5.375,0]},"s":{"a":1,"k":[{"o":{"x":0.728,"y":0},"i":{"x":0.279,"y":1},"s":[75,75,100],"t":0},{"o":{"x":0.729,"y":0},"i":{"x":0.275,"y":1},"s":[150,150,100],"t":13},{"s":[75,75,100],"t":26}]},"sk":{"a":0,"k":0},"p":{"a":1,"k":[{"o":{"x":0.728,"y":0},"i":{"x":0.279,"y":1},"s":[-75.5,-1.375,0],"t":0,"ti":[0,0,0],"to":[0,-5,0]},{"o":{"x":0.735,"y":0},"i":{"x":0.264,"y":1},"s":[-75.5,-31.375,0],"t":13,"ti":[0,-5,0],"to":[0,0,0]},{"s":[-75.5,-1.375,0],"t":26}]},"r":{"a":0,"k":0},"sa":{"a":0,"k":0},"o":{"a":0,"k":100}},"ef":[],"shapes":[{"ty":"gr","bm":0,"hd":false,"mn":"ADBE Vector Group","nm":"Ellipse 1","np":3,"it":[{"ty":"el","bm":0,"hd":false,"mn":"ADBE Vector Shape - Ellipse","nm":"Ellipse Path 1","d":1,"p":{"a":0,"k":[0,0]},"s":{"a":0,"k":[20.969,20.969]}},{"ty":"st","bm":0,"hd":false,"mn":"ADBE Vector Graphic - Stroke","nm":"Stroke 1","lc":1,"lj":1,"ml":4,"o":{"a":0,"k":100},"w":{"a":0,"k":0},"c":{"a":0,"k":[0.902,0.8748,0.698,1]}},{"ty":"fl","bm":0,"hd":false,"mn":"ADBE Vector Graphic - Fill","nm":"Fill 1","c":{"a":0,"k":[0.835,0.7457,0.165,1]},"r":2,"o":{"a":0,"k":100}},{"ty":"tr","a":{"a":0,"k":[0,0],"ix":1},"s":{"a":0,"k":[100,100],"ix":3},"sk":{"a":0,"k":0,"ix":4},"p":{"a":0,"k":[-99.516,-5.516],"ix":2},"r":{"a":0,"k":0,"ix":6},"sa":{"a":0,"k":0,"ix":5},"o":{"a":0,"k":100,"ix":7}}]}],"ind":5,"parent":1}]}]}
+
+
+================================================================================
+FILE: apps\web\.eslintrc.json
+================================================================================
+{
+  "extends": "next/core-web-vitals"
+}
+
+
+
+================================================================================
+FILE: apps\web\middleware.ts
+================================================================================
+import { NextResponse } from "next/server";
+import type { NextRequest } from "next/server";
+
+const LEARNER_PREFIX = "/dashboard";
+const INSTRUCTOR_PREFIX = "/instructor";
+
+export function middleware(request: NextRequest) {
+  const { pathname } = request.nextUrl;
+  const sessionCookie = request.cookies.get("saachi_session");
+
+  const isProtected =
+    pathname.startsWith(LEARNER_PREFIX) || pathname.startsWith(INSTRUCTOR_PREFIX);
+
+  if (isProtected && !sessionCookie) {
+    const loginUrl = new URL("/login", request.url);
+    loginUrl.searchParams.set("redirect", pathname);
+    return NextResponse.redirect(loginUrl);
+  }
+
+  return NextResponse.next();
+}
+
+export const config = {
+  matcher: ["/dashboard/:path*", "/instructor/:path*"]
+};
+
+
+
+================================================================================
+FILE: apps\web\next-env.d.ts
+================================================================================
+/// <reference types="next" />
+/// <reference types="next/image-types/global" />
+/// <reference path="./.next/types/routes.d.ts" />
+
+// NOTE: This file should not be edited
+// see https://nextjs.org/docs/app/api-reference/config/typescript for more information.
+
+
+
+================================================================================
+FILE: apps\web\next.config.js
+================================================================================
+/** @type {import("next").NextConfig} */
+const nextConfig = {
+  reactStrictMode: true,
+  transpilePackages: ["@saachi/ui", "@saachi/api-client", "@saachi/utils", "@saachi/store"],
+  images: {
+    remotePatterns: [
+      { protocol: "https", hostname: "**.cloudfront.net" },
+      { protocol: "https", hostname: "res.cloudinary.com" }
+    ]
+  },
+  async rewrites() {
+    return [
+      {
+        source: "/api/proxy/:path*",
+        destination: `${process.env.NEXT_PUBLIC_API_URL}/:path*`
+      }
+    ];
+  }
+};
+
+module.exports = nextConfig;
+
+
+
+================================================================================
+FILE: apps\web\package.json
+================================================================================
+{
+  "name": "web",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev -p 3000",
+    "build": "next build",
+    "start": "next start -p 3000",
+    "lint": "next lint",
+    "type-check": "tsc --noEmit"
+  },
+  "dependencies": {
+    "next": "^15.0.0",
+    "react": "^18.3.0",
+    "react-dom": "^18.3.0",
+    "@tanstack/react-query": "^5.56.0",
+    "@tanstack/react-table": "^8.20.0",
+    "zustand": "^4.5.0",
+    "@saachi/store": "workspace:*",
+    "react-hook-form": "^7.53.0",
+    "@hookform/resolvers": "^3.9.0",
+    "zod": "^3.23.0",
+    "framer-motion": "^11.5.0",
+    "recharts": "^2.12.0",
+    "lucide-react": "^0.445.0",
+    "lottie-react": "^2.4.0",
+    "next-intl": "^3.19.0",
+    "clsx": "^2.1.0",
+    "tailwind-merge": "^2.5.0",
+    "@tiptap/react": "^2.7.0",
+    "@tiptap/starter-kit": "^2.7.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.5.0",
+    "@types/react": "^18.3.0",
+    "@types/react-dom": "^18.3.0",
+    "typescript": "^5.5.0",
+    "tailwindcss": "^4.0.0",
+    "@tailwindcss/postcss": "^4.0.0",
+    "postcss": "^8.4.0",
+    "eslint": "^9.9.0",
+    "eslint-config-next": "^15.0.0",
+    "vitest": "^2.0.0",
+    "@testing-library/react": "^16.0.0",
+    "playwright": "^1.47.0"
+  }
+}
+
+
+
+================================================================================
+FILE: apps\web\postcss.config.mjs
+================================================================================
+export default {
+  plugins: {
+    "@tailwindcss/postcss": {}
+  }
+};
+
+
+
+================================================================================
+FILE: apps\web\tsconfig.json
+================================================================================
+{
+  "compilerOptions": {
+    "target": "ES2020",
+    "lib": ["dom", "dom.iterable", "esnext"],
+    "allowJs": false,
+    "skipLibCheck": true,
+    "strict": true,
+    "noEmit": true,
+    "esModuleInterop": true,
+    "module": "esnext",
+    "moduleResolution": "bundler",
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "jsx": "preserve",
+    "incremental": true,
+    "plugins": [{ "name": "next" }],
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["./*"],
+      "@saachi/ui": ["../../packages/ui/src"],
+      "@saachi/ui/*": ["../../packages/ui/src/*"],
+      "@saachi/api-client": ["../../packages/api-client/src"],
+      "@saachi/api-client/*": ["../../packages/api-client/src/*"],
+      "@saachi/utils": ["../../packages/utils/src"],
+      "@saachi/utils/*": ["../../packages/utils/src/*"],
+      "@saachi/store": ["../../packages/store/src"],
+      "@saachi/store/*": ["../../packages/store/src/*"]
+    }
+  },
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
+  "exclude": ["node_modules"]
+}
+
+

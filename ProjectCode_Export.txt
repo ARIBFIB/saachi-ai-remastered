@@ -1,7 +1,7 @@
 ﻿================================================================================
 PROJECT CODE EXPORT
-Generated: 2026-08-07 15:38:51
-Total Files: 152
+Generated: 2026-08-07 15:59:16
+Total Files: 169
 ================================================================================
 
 
@@ -640,6 +640,1354 @@ export default function AdminDashboardPage() {
           )}
         </div>
       </div>
+    </main>
+  );
+}
+
+
+================================================================================
+FILE: apps\admin\app\(console)\finance\refunds\page.tsx
+================================================================================
+"use client";
+
+import { useState } from "react";
+import { Undo2, CheckCircle2, XCircle } from "lucide-react";
+import { useAdminRefunds, useResolveRefund, type AdminRefund } from "@saachi/api-client";
+import { Button, Card, Select, StatusPill, ShimmerTableRow, EmptyState, Modal } from "@saachi/ui";
+import { formatCurrency, formatDate } from "@saachi/utils";
+
+const STATUS_OPTIONS = [
+  { label: "Pending", value: "pending" },
+  { label: "Approved", value: "approved" },
+  { label: "Rejected", value: "rejected" }
+];
+
+const STATUS_TONE: Record<AdminRefund["status"], "success" | "warning" | "error"> = {
+  pending: "warning",
+  approved: "success",
+  rejected: "error"
+};
+
+export default function RefundManagementPage() {
+  const [statusFilter, setStatusFilter] = useState("");
+  const { data: refunds, isLoading } = useAdminRefunds({ status: statusFilter || undefined });
+  const resolveRefund = useResolveRefund();
+  const [viewTarget, setViewTarget] = useState<AdminRefund | null>(null);
+
+  return (
+    <main className="mx-auto max-w-[1000px] px-4 py-8 md:px-8 md:py-10">
+      <div className="mb-6 flex items-center justify-between gap-3">
+        <div className="flex items-center gap-3">
+          <div className="flex h-10 w-10 items-center justify-center rounded-control border border-line text-ink">
+            <Undo2 size={17} strokeWidth={1.75} />
+          </div>
+          <div>
+            <h1 className="text-[22px] font-semibold text-ink">Refund Management</h1>
+            <p className="mt-0.5 text-[13px] text-ink-soft">Learner refund requests - approving reverses the transaction and clawbacks instructor earnings.</p>
+          </div>
+        </div>
+        <div className="w-[180px]">
+          <Select placeholder="All statuses" options={STATUS_OPTIONS} value={statusFilter} onChange={(e) => setStatusFilter(e.target.value)} />
+        </div>
+      </div>
+
+      {isLoading ? (
+        <div className="overflow-hidden rounded-card border border-line bg-card">
+          {Array.from({ length: 4 }).map((_, i) => (
+            <ShimmerTableRow key={i} columns={4} />
+          ))}
+        </div>
+      ) : !refunds || refunds.length === 0 ? (
+        <EmptyState icon={<Undo2 size={22} strokeWidth={1.75} />} title="No refund requests found" description="Try a different status filter." />
+      ) : (
+        <div className="flex flex-col gap-3">
+          {refunds.map((refund) => (
+            <Card key={refund.id} className="flex flex-col gap-4 p-5 sm:flex-row sm:items-center sm:justify-between">
+              <div className="min-w-0">
+                <div className="flex items-center gap-2.5">
+                  <p className="truncate text-[14px] font-semibold text-ink">{refund.courseTitle}</p>
+                  <StatusPill label={refund.status} tone={STATUS_TONE[refund.status]} />
+                </div>
+                <p className="mt-1 text-[12.5px] text-ink-soft">
+                  {refund.learnerName} - Requested {formatDate(refund.requestedAt)} - {refund.transactionId}
+                </p>
+                <button
+                  type="button"
+                  onClick={() => setViewTarget(refund)}
+                  className="mt-1 text-[12px] font-medium text-ink underline decoration-line-strong underline-offset-2 hover:decoration-ink"
+                >
+                  View reason
+                </button>
+              </div>
+
+              <div className="flex shrink-0 items-center gap-4">
+                <span className="font-mono text-[16px] font-semibold text-ink">
+                  {formatCurrency(refund.amount, refund.currency)}
+                </span>
+                {refund.status === "pending" && (
+                  <div className="flex gap-2">
+                    <Button size="sm" variant="secondary" onClick={() => resolveRefund.mutate({ id: refund.id, status: "rejected" })}>
+                      <XCircle size={14} strokeWidth={1.75} /> Reject
+                    </Button>
+                    <Button size="sm" onClick={() => resolveRefund.mutate({ id: refund.id, status: "approved" })}>
+                      <CheckCircle2 size={14} strokeWidth={1.75} /> Approve
+                    </Button>
+                  </div>
+                )}
+              </div>
+            </Card>
+          ))}
+        </div>
+      )}
+
+      <Modal open={Boolean(viewTarget)} onClose={() => setViewTarget(null)} title="Refund reason">
+        <p className="mb-1 text-[13px] font-semibold text-ink">{viewTarget?.courseTitle}</p>
+        <p className="text-[14px] text-ink-soft">{viewTarget?.reason}</p>
+      </Modal>
+    </main>
+  );
+}
+
+
+================================================================================
+FILE: apps\admin\app\(console)\finance\tax-settings\page.tsx
+================================================================================
+"use client";
+
+import { useState } from "react";
+import { Percent, Plus, Pencil, Check, X } from "lucide-react";
+import { useAdminTaxRules, useUpdateTaxRule, useCreateTaxRule, type TaxRule } from "@saachi/api-client";
+import { Button, Card, Input, Modal, ShimmerTableRow } from "@saachi/ui";
+
+export default function TaxSettingsPage() {
+  const { data: rules, isLoading } = useAdminTaxRules();
+  const updateRule = useUpdateTaxRule();
+  const createRule = useCreateTaxRule();
+
+  const [editing, setEditing] = useState<TaxRule | null>(null);
+  const [editRate, setEditRate] = useState(0);
+  const [editActive, setEditActive] = useState(true);
+
+  const [showCreate, setShowCreate] = useState(false);
+  const [newRegion, setNewRegion] = useState("");
+  const [newRate, setNewRate] = useState(0);
+  const [newAppliesTo, setNewAppliesTo] = useState("");
+
+  const openEdit = (rule: TaxRule) => {
+    setEditing(rule);
+    setEditRate(rule.ratePercent);
+    setEditActive(rule.active);
+  };
+
+  const handleSaveEdit = () => {
+    if (!editing) return;
+    updateRule.mutate({ id: editing.id, ratePercent: editRate, active: editActive });
+    setEditing(null);
+  };
+
+  const handleCreate = () => {
+    if (!newRegion.trim()) return;
+    createRule.mutate({ region: newRegion.trim(), ratePercent: newRate, appliesTo: newAppliesTo.trim() || "All course sales" });
+    setShowCreate(false);
+    setNewRegion("");
+    setNewRate(0);
+    setNewAppliesTo("");
+  };
+
+  return (
+    <main className="mx-auto max-w-[900px] px-4 py-8 md:px-8 md:py-10">
+      <div className="mb-6 flex items-center justify-between gap-3">
+        <div className="flex items-center gap-3">
+          <div className="flex h-10 w-10 items-center justify-center rounded-control border border-line text-ink">
+            <Percent size={17} strokeWidth={1.75} />
+          </div>
+          <div>
+            <h1 className="text-[22px] font-semibold text-ink">Tax / VAT Settings</h1>
+            <p className="mt-0.5 text-[13px] text-ink-soft">Region-based tax rules applied at checkout.</p>
+          </div>
+        </div>
+        <Button size="sm" onClick={() => setShowCreate(true)}>
+          <Plus size={14} strokeWidth={1.75} /> New rule
+        </Button>
+      </div>
+
+      <div className="overflow-hidden rounded-card border border-line bg-card">
+        {isLoading ? (
+          Array.from({ length: 5 }).map((_, i) => <ShimmerTableRow key={i} columns={3} />)
+        ) : (
+          rules?.map((rule) => (
+            <div key={rule.id} className="flex flex-col gap-3 border-b border-line px-5 py-4 last:border-0 sm:flex-row sm:items-center sm:justify-between">
+              <div>
+                <div className="flex items-center gap-2.5">
+                  <p className="text-[14px] font-semibold text-ink">{rule.region}</p>
+                  <span
+                    className={
+                      rule.active
+                        ? "rounded-full bg-success-tint px-2.5 py-0.5 text-[11px] font-semibold text-success"
+                        : "rounded-full bg-paper-dim px-2.5 py-0.5 text-[11px] font-semibold text-ink-soft"
+                    }
+                  >
+                    {rule.active ? "Active" : "Inactive"}
+                  </span>
+                </div>
+                <p className="mt-1 text-[12px] text-ink-soft">{rule.appliesTo}</p>
+              </div>
+              <div className="flex shrink-0 items-center gap-4">
+                <span className="font-mono text-[16px] font-semibold text-ink">{rule.ratePercent}%</span>
+                <button
+                  type="button"
+                  onClick={() => openEdit(rule)}
+                  className="flex h-8 w-8 items-center justify-center rounded-control text-ink-soft hover:bg-paper-dim hover:text-ink"
+                >
+                  <Pencil size={14} strokeWidth={1.75} />
+                </button>
+              </div>
+            </div>
+          ))
+        )}
+      </div>
+
+      <Modal
+        open={Boolean(editing)}
+        onClose={() => setEditing(null)}
+        title={`Edit tax rule - ${editing?.region ?? ""}`}
+        footer={
+          <>
+            <Button variant="ghost" onClick={() => setEditing(null)}>
+              Cancel
+            </Button>
+            <Button onClick={handleSaveEdit} disabled={updateRule.isPending}>
+              Save changes
+            </Button>
+          </>
+        }
+      >
+        <div className="flex flex-col gap-4">
+          <Input
+            label="Rate (%)"
+            type="number"
+            min={0}
+            max={100}
+            value={editRate}
+            onChange={(e) => setEditRate(Number(e.target.value))}
+          />
+          <button
+            type="button"
+            onClick={() => setEditActive((v) => !v)}
+            className="flex w-fit items-center gap-2 rounded-control border border-line-strong px-3.5 py-2 text-[13px] font-medium text-ink hover:border-ink"
+          >
+            {editActive ? <Check size={14} strokeWidth={2} className="text-success" /> : <X size={14} strokeWidth={2} className="text-ink-soft" />}
+            {editActive ? "Active" : "Inactive"} - click to toggle
+          </button>
+        </div>
+      </Modal>
+
+      <Modal
+        open={showCreate}
+        onClose={() => setShowCreate(false)}
+        title="New tax rule"
+        footer={
+          <>
+            <Button variant="ghost" onClick={() => setShowCreate(false)}>
+              Cancel
+            </Button>
+            <Button onClick={handleCreate} disabled={!newRegion.trim() || createRule.isPending}>
+              Create rule
+            </Button>
+          </>
+        }
+      >
+        <div className="flex flex-col gap-4">
+          <Input label="Region" placeholder="e.g. Canada" value={newRegion} onChange={(e) => setNewRegion(e.target.value)} />
+          <Input label="Rate (%)" type="number" min={0} max={100} value={newRate} onChange={(e) => setNewRate(Number(e.target.value))} />
+          <Input label="Applies to" placeholder="e.g. Digital goods (GST)" value={newAppliesTo} onChange={(e) => setNewAppliesTo(e.target.value)} />
+        </div>
+      </Modal>
+    </main>
+  );
+}
+
+
+================================================================================
+FILE: apps\admin\app\(console)\finance\transactions\page.tsx
+================================================================================
+"use client";
+
+import { useMemo, useState } from "react";
+import { Search, Receipt, Download } from "lucide-react";
+import type { ColumnDef } from "@tanstack/react-table";
+import { useAdminTransactions, type AdminTransaction } from "@saachi/api-client";
+import { DataTable, StatusPill, Select, Button } from "@saachi/ui";
+import { formatCurrency, formatDate } from "@saachi/utils";
+
+const STATUS_OPTIONS = [
+  { label: "Completed", value: "completed" },
+  { label: "Pending", value: "pending" },
+  { label: "Failed", value: "failed" },
+  { label: "Refunded", value: "refunded" }
+];
+
+const GATEWAY_OPTIONS = [
+  { label: "Stripe", value: "stripe" },
+  { label: "PayPal", value: "paypal" },
+  { label: "Easypaisa", value: "easypaisa" },
+  { label: "JazzCash", value: "jazzcash" },
+  { label: "Bank Transfer", value: "bank_transfer" }
+];
+
+const STATUS_TONE: Record<AdminTransaction["status"], "success" | "warning" | "error" | "info"> = {
+  completed: "success",
+  pending: "warning",
+  failed: "error",
+  refunded: "info"
+};
+
+export default function TransactionsLedgerPage() {
+  const [search, setSearch] = useState("");
+  const [status, setStatus] = useState("");
+  const [gateway, setGateway] = useState("");
+
+  const { data, isLoading } = useAdminTransactions({
+    search: search || undefined,
+    status: status || undefined,
+    gateway: gateway || undefined
+  });
+
+  const columns = useMemo<ColumnDef<AdminTransaction, any>[]>(
+    () => [
+      {
+        header: "Transaction",
+        accessorKey: "id",
+        cell: ({ row }) => (
+          <div>
+            <div className="font-mono text-[12px] text-ink-soft">{row.original.id}</div>
+            <div className="max-w-[220px] truncate font-medium text-ink">{row.original.courseTitle}</div>
+          </div>
+        )
+      },
+      {
+        header: "Learner",
+        accessorKey: "learnerName",
+        cell: ({ getValue }) => <span className="text-ink-soft">{getValue()}</span>
+      },
+      {
+        header: "Instructor",
+        accessorKey: "instructorName",
+        cell: ({ getValue }) => <span className="text-ink-soft">{getValue()}</span>
+      },
+      {
+        header: "Amount",
+        accessorKey: "amount",
+        cell: ({ row }) => (
+          <span className="font-mono font-semibold text-ink">
+            {formatCurrency(row.original.amount, row.original.currency)}
+          </span>
+        )
+      },
+      {
+        header: "Commission",
+        accessorKey: "commission",
+        cell: ({ row }) => (
+          <span className="font-mono text-ink-soft">
+            {formatCurrency(row.original.commission, row.original.currency)}
+          </span>
+        )
+      },
+      {
+        header: "Gateway",
+        accessorKey: "gateway",
+        cell: ({ getValue }) => <span className="capitalize text-ink-soft">{(getValue() as string).replace("_", " ")}</span>
+      },
+      {
+        header: "Status",
+        accessorKey: "status",
+        cell: ({ getValue }) => {
+          const value = getValue() as AdminTransaction["status"];
+          return <StatusPill label={value} tone={STATUS_TONE[value]} />;
+        }
+      },
+      {
+        header: "Date",
+        accessorKey: "createdAt",
+        cell: ({ getValue }) => <span className="text-ink-soft">{formatDate(getValue() as string)}</span>
+      }
+    ],
+    []
+  );
+
+  return (
+    <main className="mx-auto max-w-[1240px] px-4 py-8 md:px-8 md:py-10">
+      <div className="mb-6 flex items-center justify-between gap-3">
+        <div className="flex items-center gap-3">
+          <div className="flex h-10 w-10 items-center justify-center rounded-control border border-line text-ink">
+            <Receipt size={17} strokeWidth={1.75} />
+          </div>
+          <div>
+            <h1 className="text-[22px] font-semibold text-ink">Transactions Ledger</h1>
+            <p className="mt-0.5 text-[13px] text-ink-soft">Full financial transaction history across all payment gateways.</p>
+          </div>
+        </div>
+        <Button size="sm" variant="secondary">
+          <Download size={14} strokeWidth={1.75} /> Export CSV
+        </Button>
+      </div>
+
+      <DataTable
+        columns={columns}
+        data={data ?? []}
+        isLoading={isLoading}
+        emptyTitle="No transactions found"
+        emptyDescription="Try adjusting your search or filters."
+        toolbar={
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
+            <div className="relative flex-1">
+              <Search size={15} strokeWidth={1.75} className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-ink-soft" />
+              <input
+                placeholder="Search by ID, course, learner, or instructor"
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                className="h-10 w-full rounded-control border border-line bg-card pl-9 pr-3 text-[13px] text-ink outline-none placeholder:text-ink-soft/60 focus:border-line-strong"
+              />
+            </div>
+            <div className="sm:w-[180px]">
+              <Select placeholder="All statuses" options={STATUS_OPTIONS} value={status} onChange={(e) => setStatus(e.target.value)} />
+            </div>
+            <div className="sm:w-[180px]">
+              <Select placeholder="All gateways" options={GATEWAY_OPTIONS} value={gateway} onChange={(e) => setGateway(e.target.value)} />
+            </div>
+          </div>
+        }
+      />
+    </main>
+  );
+}
+
+
+================================================================================
+FILE: apps\admin\app\(console)\marketing\banners\page.tsx
+================================================================================
+"use client";
+
+import { useState } from "react";
+import { Image as ImageIcon, Plus, Pencil, Trash2, ArrowUp, ArrowDown } from "lucide-react";
+import {
+  useAdminBanners,
+  useCreateBanner,
+  useUpdateBanner,
+  useDeleteBanner,
+  useReorderBanner,
+  type AdminBanner
+} from "@saachi/api-client";
+import { Button, Card, Input, Textarea, Select, Modal, StatusPill, ShimmerKpiCard, EmptyState } from "@saachi/ui";
+import { formatDate } from "@saachi/utils";
+
+const STATUS_OPTIONS = [
+  { label: "Draft", value: "draft" },
+  { label: "Scheduled", value: "scheduled" },
+  { label: "Active", value: "active" },
+  { label: "Expired", value: "expired" }
+];
+
+const STATUS_TONE: Record<AdminBanner["status"], "success" | "warning" | "error" | "info" | "neutral"> = {
+  active: "success",
+  scheduled: "info",
+  expired: "error",
+  draft: "neutral"
+};
+
+type FormState = {
+  title: string;
+  subtitle: string;
+  imageUrl: string;
+  linkUrl: string;
+  status: AdminBanner["status"];
+  startsAt: string;
+  endsAt: string;
+};
+
+const EMPTY_FORM: FormState = {
+  title: "",
+  subtitle: "",
+  imageUrl: "",
+  linkUrl: "",
+  status: "draft",
+  startsAt: new Date().toISOString().slice(0, 10),
+  endsAt: new Date(Date.now() + 14 * 24 * 60 * 60 * 1000).toISOString().slice(0, 10)
+};
+
+export default function HomepageBannersPage() {
+  const { data: banners, isLoading } = useAdminBanners();
+  const createBanner = useCreateBanner();
+  const updateBanner = useUpdateBanner();
+  const deleteBanner = useDeleteBanner();
+  const reorderBanner = useReorderBanner();
+
+  const [editing, setEditing] = useState<AdminBanner | null>(null);
+  const [showCreate, setShowCreate] = useState(false);
+  const [form, setForm] = useState<FormState>(EMPTY_FORM);
+  const [deleteTarget, setDeleteTarget] = useState<AdminBanner | null>(null);
+
+  const openCreate = () => {
+    setForm(EMPTY_FORM);
+    setShowCreate(true);
+  };
+
+  const openEdit = (banner: AdminBanner) => {
+    setEditing(banner);
+    setForm({
+      title: banner.title,
+      subtitle: banner.subtitle ?? "",
+      imageUrl: banner.imageUrl,
+      linkUrl: banner.linkUrl,
+      status: banner.status,
+      startsAt: banner.startsAt.slice(0, 10),
+      endsAt: banner.endsAt.slice(0, 10)
+    });
+  };
+
+  const closeModals = () => {
+    setShowCreate(false);
+    setEditing(null);
+  };
+
+  const handleSave = () => {
+    if (!form.title.trim()) return;
+    const payload = {
+      title: form.title.trim(),
+      subtitle: form.subtitle.trim() || undefined,
+      imageUrl: form.imageUrl.trim() || `https://picsum.photos/seed/${encodeURIComponent(form.title)}/1200/400`,
+      linkUrl: form.linkUrl.trim() || "/",
+      status: form.status,
+      startsAt: new Date(form.startsAt).toISOString(),
+      endsAt: new Date(form.endsAt).toISOString()
+    };
+    if (editing) {
+      updateBanner.mutate({ id: editing.id, ...payload });
+    } else {
+      createBanner.mutate(payload);
+    }
+    closeModals();
+  };
+
+  const handleDelete = () => {
+    if (!deleteTarget) return;
+    deleteBanner.mutate(deleteTarget.id);
+    setDeleteTarget(null);
+  };
+
+  const modalOpen = showCreate || Boolean(editing);
+
+  return (
+    <main className="mx-auto max-w-[1000px] px-4 py-8 md:px-8 md:py-10">
+      <div className="mb-6 flex items-center justify-between gap-3">
+        <div className="flex items-center gap-3">
+          <div className="flex h-10 w-10 items-center justify-center rounded-control border border-line text-ink">
+            <ImageIcon size={17} strokeWidth={1.75} />
+          </div>
+          <div>
+            <h1 className="text-[22px] font-semibold text-ink">Homepage Banners</h1>
+            <p className="mt-0.5 text-[13px] text-ink-soft">Create, schedule, and reorder homepage promotional banners.</p>
+          </div>
+        </div>
+        <Button size="sm" onClick={openCreate}>
+          <Plus size={14} strokeWidth={1.75} /> New banner
+        </Button>
+      </div>
+
+      {isLoading ? (
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+          {Array.from({ length: 4 }).map((_, i) => (
+            <ShimmerKpiCard key={i} />
+          ))}
+        </div>
+      ) : !banners || banners.length === 0 ? (
+        <EmptyState icon={<ImageIcon size={22} strokeWidth={1.75} />} title="No banners yet" description="Create your first homepage banner." />
+      ) : (
+        <div className="flex flex-col gap-3">
+          {banners.map((banner, index) => (
+            <Card key={banner.id} className="flex flex-col gap-4 p-4 sm:flex-row sm:items-center">
+              <div className="h-[64px] w-[140px] shrink-0 overflow-hidden rounded-control border border-line bg-paper-dim">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src={banner.imageUrl} alt={banner.title} className="h-full w-full object-cover" />
+              </div>
+
+              <div className="flex-1">
+                <div className="flex items-center gap-2.5">
+                  <p className="text-[14px] font-semibold text-ink">{banner.title}</p>
+                  <StatusPill label={banner.status} tone={STATUS_TONE[banner.status]} />
+                </div>
+                {banner.subtitle && <p className="mt-1 text-[12.5px] text-ink-soft">{banner.subtitle}</p>}
+                <p className="mt-1 text-[12px] text-ink-soft/70">
+                  {formatDate(banner.startsAt)} - {formatDate(banner.endsAt)} - links to {banner.linkUrl}
+                </p>
+              </div>
+
+              <div className="flex shrink-0 items-center gap-1.5">
+                <button
+                  type="button"
+                  disabled={index === 0}
+                  onClick={() => reorderBanner.mutate({ id: banner.id, direction: "up" })}
+                  className="flex h-8 w-8 items-center justify-center rounded-control text-ink-soft hover:bg-paper-dim hover:text-ink disabled:opacity-30"
+                >
+                  <ArrowUp size={14} strokeWidth={1.75} />
+                </button>
+                <button
+                  type="button"
+                  disabled={index === banners.length - 1}
+                  onClick={() => reorderBanner.mutate({ id: banner.id, direction: "down" })}
+                  className="flex h-8 w-8 items-center justify-center rounded-control text-ink-soft hover:bg-paper-dim hover:text-ink disabled:opacity-30"
+                >
+                  <ArrowDown size={14} strokeWidth={1.75} />
+                </button>
+                <button
+                  type="button"
+                  onClick={() => openEdit(banner)}
+                  className="flex h-8 w-8 items-center justify-center rounded-control text-ink-soft hover:bg-paper-dim hover:text-ink"
+                >
+                  <Pencil size={14} strokeWidth={1.75} />
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setDeleteTarget(banner)}
+                  className="flex h-8 w-8 items-center justify-center rounded-control text-ink-soft hover:bg-paper-dim hover:text-error"
+                >
+                  <Trash2 size={14} strokeWidth={1.75} />
+                </button>
+              </div>
+            </Card>
+          ))}
+        </div>
+      )}
+
+      <Modal
+        open={modalOpen}
+        onClose={closeModals}
+        title={editing ? "Edit banner" : "New banner"}
+        size="lg"
+        footer={
+          <>
+            <Button variant="ghost" onClick={closeModals}>
+              Cancel
+            </Button>
+            <Button onClick={handleSave} disabled={!form.title.trim() || createBanner.isPending || updateBanner.isPending}>
+              {editing ? "Save changes" : "Create banner"}
+            </Button>
+          </>
+        }
+      >
+        <div className="flex flex-col gap-4">
+          <Input label="Title" value={form.title} onChange={(e) => setForm({ ...form, title: e.target.value })} placeholder="e.g. Founding Instructor Spots Open" />
+          <Textarea label="Subtitle" value={form.subtitle} onChange={(e) => setForm({ ...form, subtitle: e.target.value })} rows={2} placeholder="Optional supporting line" />
+          <Input label="Image URL" value={form.imageUrl} onChange={(e) => setForm({ ...form, imageUrl: e.target.value })} placeholder="Leave blank to use a placeholder image" />
+          <Input label="Link URL" value={form.linkUrl} onChange={(e) => setForm({ ...form, linkUrl: e.target.value })} placeholder="/courses" />
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+            <Select label="Status" options={STATUS_OPTIONS} value={form.status} onChange={(e) => setForm({ ...form, status: e.target.value as AdminBanner["status"] })} />
+            <Input label="Starts" type="date" value={form.startsAt} onChange={(e) => setForm({ ...form, startsAt: e.target.value })} />
+            <Input label="Ends" type="date" value={form.endsAt} onChange={(e) => setForm({ ...form, endsAt: e.target.value })} />
+          </div>
+        </div>
+      </Modal>
+
+      <Modal
+        open={Boolean(deleteTarget)}
+        onClose={() => setDeleteTarget(null)}
+        title="Delete banner?"
+        footer={
+          <>
+            <Button variant="ghost" onClick={() => setDeleteTarget(null)}>
+              Cancel
+            </Button>
+            <Button variant="danger" onClick={handleDelete} disabled={deleteBanner.isPending}>
+              Delete
+            </Button>
+          </>
+        }
+      >
+        <p className="text-[14px] text-ink-soft">
+          This will remove <span className="font-semibold text-ink">{deleteTarget?.title}</span> from the homepage rotation.
+        </p>
+      </Modal>
+    </main>
+  );
+}
+
+
+================================================================================
+FILE: apps\admin\app\(console)\marketing\coupons\page.tsx
+================================================================================
+"use client";
+
+import { useState } from "react";
+import { Ticket, Plus, Trash2, Search } from "lucide-react";
+import {
+  useAdminCoupons,
+  useCreateCoupon,
+  useToggleCouponActive,
+  useDeleteCoupon,
+  type AdminCoupon
+} from "@saachi/api-client";
+import { Button, Card, Input, Select, Modal, ShimmerTableRow, EmptyState } from "@saachi/ui";
+import { formatDate } from "@saachi/utils";
+
+const TYPE_OPTIONS = [
+  { label: "Percent off", value: "percent" },
+  { label: "Fixed amount off", value: "fixed" }
+];
+
+const SCOPE_OPTIONS = [
+  { label: "Platform-wide", value: "platform_wide" },
+  { label: "Category", value: "category" },
+  { label: "Course", value: "course" }
+];
+
+export default function CouponManagementPage() {
+  const [search, setSearch] = useState("");
+  const { data: coupons, isLoading } = useAdminCoupons({ search: search || undefined });
+  const createCoupon = useCreateCoupon();
+  const toggleActive = useToggleCouponActive();
+  const deleteCoupon = useDeleteCoupon();
+
+  const [showCreate, setShowCreate] = useState(false);
+  const [code, setCode] = useState("");
+  const [type, setType] = useState<AdminCoupon["type"]>("percent");
+  const [value, setValue] = useState(10);
+  const [scope, setScope] = useState<AdminCoupon["scope"]>("platform_wide");
+  const [usageLimit, setUsageLimit] = useState(100);
+  const [expiresAt, setExpiresAt] = useState(new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().slice(0, 10));
+  const [deleteTarget, setDeleteTarget] = useState<AdminCoupon | null>(null);
+
+  const resetForm = () => {
+    setCode("");
+    setType("percent");
+    setValue(10);
+    setScope("platform_wide");
+    setUsageLimit(100);
+    setExpiresAt(new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().slice(0, 10));
+  };
+
+  const handleCreate = () => {
+    if (!code.trim()) return;
+    createCoupon.mutate({
+      code: code.trim().toUpperCase(),
+      type,
+      value,
+      scope,
+      usageLimit,
+      expiresAt: new Date(expiresAt).toISOString(),
+      active: true
+    });
+    setShowCreate(false);
+    resetForm();
+  };
+
+  const handleDelete = () => {
+    if (!deleteTarget) return;
+    deleteCoupon.mutate(deleteTarget.id);
+    setDeleteTarget(null);
+  };
+
+  return (
+    <main className="mx-auto max-w-[1100px] px-4 py-8 md:px-8 md:py-10">
+      <div className="mb-6 flex items-center justify-between gap-3">
+        <div className="flex items-center gap-3">
+          <div className="flex h-10 w-10 items-center justify-center rounded-control border border-line text-ink">
+            <Ticket size={17} strokeWidth={1.75} />
+          </div>
+          <div>
+            <h1 className="text-[22px] font-semibold text-ink">Coupon Management</h1>
+            <p className="mt-0.5 text-[13px] text-ink-soft">Platform-wide and scoped promotional codes.</p>
+          </div>
+        </div>
+        <Button size="sm" onClick={() => setShowCreate(true)}>
+          <Plus size={14} strokeWidth={1.75} /> New coupon
+        </Button>
+      </div>
+
+      <div className="relative mb-5 max-w-[320px]">
+        <Search size={15} strokeWidth={1.75} className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-ink-soft" />
+        <input
+          placeholder="Search coupon code"
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          className="h-10 w-full rounded-control border border-line bg-card pl-9 pr-3 text-[13px] text-ink outline-none placeholder:text-ink-soft/60 focus:border-line-strong"
+        />
+      </div>
+
+      {isLoading ? (
+        <div className="overflow-hidden rounded-card border border-line bg-card">
+          {Array.from({ length: 4 }).map((_, i) => (
+            <ShimmerTableRow key={i} columns={5} />
+          ))}
+        </div>
+      ) : !coupons || coupons.length === 0 ? (
+        <EmptyState icon={<Ticket size={22} strokeWidth={1.75} />} title="No coupons found" description="Try a different search, or create a new coupon." />
+      ) : (
+        <div className="flex flex-col gap-3">
+          {coupons.map((coupon) => {
+            const usagePct = coupon.usageLimit > 0 ? Math.round((coupon.usageCount / coupon.usageLimit) * 100) : 0;
+            return (
+              <Card key={coupon.id} className="flex flex-col gap-4 p-4 sm:flex-row sm:items-center sm:justify-between">
+                <div>
+                  <div className="flex items-center gap-2.5">
+                    <span className="rounded-control border border-line-strong px-2.5 py-1 font-mono text-[13px] font-semibold text-ink">
+                      {coupon.code}
+                    </span>
+                    <span
+                      className={
+                        coupon.active
+                          ? "rounded-full bg-success-tint px-2.5 py-0.5 text-[11px] font-semibold text-success"
+                          : "rounded-full bg-paper-dim px-2.5 py-0.5 text-[11px] font-semibold text-ink-soft"
+                      }
+                    >
+                      {coupon.active ? "Active" : "Inactive"}
+                    </span>
+                  </div>
+                  <p className="mt-1.5 text-[12.5px] text-ink-soft">
+                    {coupon.type === "percent" ? `${coupon.value}% off` : `$${coupon.value} off`} - {coupon.scope.replace("_", " ")} -
+                    {" "}{coupon.usageCount}/{coupon.usageLimit} used ({usagePct}%) - expires {formatDate(coupon.expiresAt)}
+                  </p>
+                </div>
+
+                <div className="flex shrink-0 items-center gap-2">
+                  <Button size="sm" variant="secondary" onClick={() => toggleActive.mutate(coupon.id)}>
+                    {coupon.active ? "Deactivate" : "Activate"}
+                  </Button>
+                  <button
+                    type="button"
+                    onClick={() => setDeleteTarget(coupon)}
+                    className="flex h-9 w-9 items-center justify-center rounded-control text-ink-soft hover:bg-paper-dim hover:text-error"
+                  >
+                    <Trash2 size={15} strokeWidth={1.75} />
+                  </button>
+                </div>
+              </Card>
+            );
+          })}
+        </div>
+      )}
+
+      <Modal
+        open={showCreate}
+        onClose={() => setShowCreate(false)}
+        title="New coupon"
+        footer={
+          <>
+            <Button variant="ghost" onClick={() => setShowCreate(false)}>
+              Cancel
+            </Button>
+            <Button onClick={handleCreate} disabled={!code.trim() || createCoupon.isPending}>
+              Create coupon
+            </Button>
+          </>
+        }
+      >
+        <div className="flex flex-col gap-4">
+          <Input label="Coupon code" value={code} onChange={(e) => setCode(e.target.value.toUpperCase())} placeholder="e.g. SUMMER20" />
+          <div className="grid grid-cols-2 gap-4">
+            <Select label="Discount type" options={TYPE_OPTIONS} value={type} onChange={(e) => setType(e.target.value as AdminCoupon["type"])} />
+            <Input
+              label={type === "percent" ? "Percent off" : "Amount off ($)"}
+              type="number"
+              min={0}
+              value={value}
+              onChange={(e) => setValue(Number(e.target.value))}
+            />
+          </div>
+          <Select label="Scope" options={SCOPE_OPTIONS} value={scope} onChange={(e) => setScope(e.target.value as AdminCoupon["scope"])} />
+          <div className="grid grid-cols-2 gap-4">
+            <Input label="Usage limit" type="number" min={1} value={usageLimit} onChange={(e) => setUsageLimit(Number(e.target.value))} />
+            <Input label="Expires" type="date" value={expiresAt} onChange={(e) => setExpiresAt(e.target.value)} />
+          </div>
+        </div>
+      </Modal>
+
+      <Modal
+        open={Boolean(deleteTarget)}
+        onClose={() => setDeleteTarget(null)}
+        title="Delete coupon?"
+        footer={
+          <>
+            <Button variant="ghost" onClick={() => setDeleteTarget(null)}>
+              Cancel
+            </Button>
+            <Button variant="danger" onClick={handleDelete} disabled={deleteCoupon.isPending}>
+              Delete
+            </Button>
+          </>
+        }
+      >
+        <p className="text-[14px] text-ink-soft">
+          This will permanently remove <span className="font-semibold text-ink">{deleteTarget?.code}</span>. It can no
+          longer be applied at checkout.
+        </p>
+      </Modal>
+    </main>
+  );
+}
+
+
+================================================================================
+FILE: apps\admin\app\(console)\marketing\promotions\page.tsx
+================================================================================
+"use client";
+
+import { Megaphone, Crown } from "lucide-react";
+import { useAdminPromotionSales, type PromotionSale } from "@saachi/api-client";
+import { Card, StatusPill, ShimmerKpiCard, ShimmerTableRow, EmptyState } from "@saachi/ui";
+import { formatCurrency, formatDate } from "@saachi/utils";
+
+const TIER_TONE: Record<PromotionSale["tier"], "warning" | "info" | "success"> = {
+  bronze: "warning",
+  silver: "info",
+  gold: "success"
+};
+
+export default function PromotionSalesPage() {
+  const { data: sales, isLoading } = useAdminPromotionSales();
+
+  const now = Date.now();
+  const active = (sales ?? []).filter((s) => new Date(s.expiresAt).getTime() > now);
+  const totalRevenue = (sales ?? []).reduce((sum, s) => sum + s.amount, 0);
+  const tierCounts = {
+    gold: (sales ?? []).filter((s) => s.tier === "gold").length,
+    silver: (sales ?? []).filter((s) => s.tier === "silver").length,
+    bronze: (sales ?? []).filter((s) => s.tier === "bronze").length
+  };
+
+  return (
+    <main className="mx-auto max-w-[1100px] px-4 py-8 md:px-8 md:py-10">
+      <div className="mb-6 flex items-center gap-3">
+        <div className="flex h-10 w-10 items-center justify-center rounded-control border border-line text-ink">
+          <Megaphone size={17} strokeWidth={1.75} />
+        </div>
+        <div>
+          <h1 className="text-[22px] font-semibold text-ink">Promotion Package Sales</h1>
+          <p className="mt-0.5 text-[13px] text-ink-soft">Instructor purchases of Bronze/Silver/Gold visibility boosts.</p>
+        </div>
+      </div>
+
+      {isLoading ? (
+        <div className="mb-6 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          {Array.from({ length: 4 }).map((_, i) => (
+            <ShimmerKpiCard key={i} />
+          ))}
+        </div>
+      ) : (
+        <div className="mb-6 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          <Card className="p-5">
+            <p className="text-[12px] text-ink-soft">Total revenue</p>
+            <p className="mt-1 font-mono text-[22px] font-semibold text-ink">{formatCurrency(totalRevenue, "USD")}</p>
+          </Card>
+          <Card className="p-5">
+            <p className="text-[12px] text-ink-soft">Currently active</p>
+            <p className="mt-1 font-mono text-[22px] font-semibold text-ink">{active.length}</p>
+          </Card>
+          <Card className="p-5">
+            <p className="flex items-center gap-1.5 text-[12px] text-ink-soft">
+              <Crown size={12} strokeWidth={1.75} /> Gold sold
+            </p>
+            <p className="mt-1 font-mono text-[22px] font-semibold text-ink">{tierCounts.gold}</p>
+          </Card>
+          <Card className="p-5">
+            <p className="text-[12px] text-ink-soft">Silver + Bronze sold</p>
+            <p className="mt-1 font-mono text-[22px] font-semibold text-ink">{tierCounts.silver + tierCounts.bronze}</p>
+          </Card>
+        </div>
+      )}
+
+      {isLoading ? (
+        <div className="overflow-hidden rounded-card border border-line bg-card">
+          {Array.from({ length: 5 }).map((_, i) => (
+            <ShimmerTableRow key={i} columns={4} />
+          ))}
+        </div>
+      ) : !sales || sales.length === 0 ? (
+        <EmptyState icon={<Megaphone size={22} strokeWidth={1.75} />} title="No promotion sales yet" description="Boost package purchases will show up here." />
+      ) : (
+        <div className="flex flex-col gap-3">
+          {sales.map((sale) => {
+            const isActive = new Date(sale.expiresAt).getTime() > now;
+            return (
+              <Card key={sale.id} className="flex flex-col gap-3 p-4 sm:flex-row sm:items-center sm:justify-between">
+                <div className="min-w-0">
+                  <div className="flex items-center gap-2.5">
+                    <p className="truncate text-[14px] font-semibold text-ink">{sale.courseTitle}</p>
+                    <StatusPill label={sale.tier} tone={TIER_TONE[sale.tier]} />
+                    {!isActive && <span className="text-[11px] font-medium text-ink-soft">Expired</span>}
+                  </div>
+                  <p className="mt-1 text-[12.5px] text-ink-soft">
+                    {sale.instructorName} - purchased {formatDate(sale.purchasedAt)} - {isActive ? "expires" : "expired"} {formatDate(sale.expiresAt)}
+                  </p>
+                </div>
+                <span className="shrink-0 font-mono text-[15px] font-semibold text-ink">
+                  {formatCurrency(sale.amount, sale.currency)}
+                </span>
+              </Card>
+            );
+          })}
+        </div>
+      )}
+    </main>
+  );
+}
+
+
+================================================================================
+FILE: apps\admin\app\(console)\moderation\forum\page.tsx
+================================================================================
+"use client";
+
+import { useState } from "react";
+import { MessagesSquare, Trash2, ShieldAlert, CheckCircle2 } from "lucide-react";
+import { useFlaggedForumPosts, useResolveFlaggedForumPost, type FlaggedForumPost } from "@saachi/api-client";
+import { Button, Card, Select, StatusPill, ShimmerTableRow, EmptyState } from "@saachi/ui";
+import { formatRelativeTime } from "@saachi/utils";
+
+const STATUS_OPTIONS = [
+  { label: "Pending", value: "pending" },
+  { label: "Removed", value: "removed" },
+  { label: "Dismissed", value: "dismissed" },
+  { label: "Warned", value: "warned" }
+];
+
+const STATUS_TONE: Record<FlaggedForumPost["status"], "warning" | "error" | "neutral" | "info"> = {
+  pending: "warning",
+  removed: "error",
+  dismissed: "neutral",
+  warned: "info"
+};
+
+export default function FlaggedForumPostsPage() {
+  const [statusFilter, setStatusFilter] = useState("pending");
+  const { data: posts, isLoading } = useFlaggedForumPosts({ status: statusFilter || undefined });
+  const resolve = useResolveFlaggedForumPost();
+
+  return (
+    <main className="mx-auto max-w-[1000px] px-4 py-8 md:px-8 md:py-10">
+      <div className="mb-6 flex items-center justify-between gap-3">
+        <div className="flex items-center gap-3">
+          <div className="flex h-10 w-10 items-center justify-center rounded-control border border-line text-ink">
+            <MessagesSquare size={17} strokeWidth={1.75} />
+          </div>
+          <div>
+            <h1 className="text-[22px] font-semibold text-ink">Flagged Forum Posts</h1>
+            <p className="mt-0.5 text-[13px] text-ink-soft">Community Q&A posts reported for review.</p>
+          </div>
+        </div>
+        <div className="w-[180px]">
+          <Select placeholder="All statuses" options={STATUS_OPTIONS} value={statusFilter} onChange={(e) => setStatusFilter(e.target.value)} />
+        </div>
+      </div>
+
+      {isLoading ? (
+        <div className="overflow-hidden rounded-card border border-line bg-card">
+          {Array.from({ length: 4 }).map((_, i) => (
+            <ShimmerTableRow key={i} columns={4} />
+          ))}
+        </div>
+      ) : !posts || posts.length === 0 ? (
+        <EmptyState icon={<MessagesSquare size={22} strokeWidth={1.75} />} title="Nothing flagged" description="No forum posts match this filter." />
+      ) : (
+        <div className="flex flex-col gap-4">
+          {posts.map((post) => (
+            <Card key={post.id} className="flex flex-col gap-4 p-5">
+              <div>
+                <div className="flex items-center gap-2.5">
+                  <p className="text-[14px] font-semibold text-ink">{post.authorName}</p>
+                  <StatusPill label={post.status} tone={STATUS_TONE[post.status]} />
+                </div>
+                <p className="mt-1 text-[12.5px] text-ink-soft">
+                  in {post.courseTitle} - {formatRelativeTime(post.createdAt)}
+                </p>
+              </div>
+
+              <p className="rounded-control border border-line bg-paper-dim p-3.5 text-[13.5px] leading-relaxed text-ink">
+                {post.body}
+              </p>
+
+              <div className="flex items-center gap-2 text-[12.5px] text-ink-soft">
+                <ShieldAlert size={13} strokeWidth={1.75} className="shrink-0 text-error" />
+                Flagged by {post.flaggedBy} - reason: {post.flagReason}
+              </div>
+
+              {post.status === "pending" && (
+                <div className="flex flex-wrap gap-2">
+                  <Button size="sm" variant="secondary" onClick={() => resolve.mutate({ id: post.id, status: "dismissed" })}>
+                    <CheckCircle2 size={14} strokeWidth={1.75} /> Dismiss flag
+                  </Button>
+                  <Button size="sm" variant="secondary" onClick={() => resolve.mutate({ id: post.id, status: "warned" })}>
+                    Warn user
+                  </Button>
+                  <Button size="sm" variant="danger" onClick={() => resolve.mutate({ id: post.id, status: "removed" })}>
+                    <Trash2 size={14} strokeWidth={1.75} /> Remove post
+                  </Button>
+                </div>
+              )}
+            </Card>
+          ))}
+        </div>
+      )}
+    </main>
+  );
+}
+
+
+================================================================================
+FILE: apps\admin\app\(console)\moderation\reviews\page.tsx
+================================================================================
+"use client";
+
+import { useState } from "react";
+import { MessageSquareWarning, Trash2, ShieldAlert, CheckCircle2 } from "lucide-react";
+import { useFlaggedReviews, useResolveFlaggedReview, type FlaggedReview } from "@saachi/api-client";
+import { Button, Card, Select, StatusPill, ShimmerTableRow, EmptyState } from "@saachi/ui";
+import { formatRelativeTime } from "@saachi/utils";
+
+const STATUS_OPTIONS = [
+  { label: "Pending", value: "pending" },
+  { label: "Removed", value: "removed" },
+  { label: "Dismissed", value: "dismissed" },
+  { label: "Warned", value: "warned" }
+];
+
+const STATUS_TONE: Record<FlaggedReview["status"], "warning" | "error" | "neutral" | "info"> = {
+  pending: "warning",
+  removed: "error",
+  dismissed: "neutral",
+  warned: "info"
+};
+
+export default function FlaggedReviewsPage() {
+  const [statusFilter, setStatusFilter] = useState("pending");
+  const { data: reviews, isLoading } = useFlaggedReviews({ status: statusFilter || undefined });
+  const resolve = useResolveFlaggedReview();
+
+  return (
+    <main className="mx-auto max-w-[1000px] px-4 py-8 md:px-8 md:py-10">
+      <div className="mb-6 flex items-center justify-between gap-3">
+        <div className="flex items-center gap-3">
+          <div className="flex h-10 w-10 items-center justify-center rounded-control border border-line text-ink">
+            <MessageSquareWarning size={17} strokeWidth={1.75} />
+          </div>
+          <div>
+            <h1 className="text-[22px] font-semibold text-ink">Flagged Reviews</h1>
+            <p className="mt-0.5 text-[13px] text-ink-soft">Course reviews reported by instructors, learners, or automated filters.</p>
+          </div>
+        </div>
+        <div className="w-[180px]">
+          <Select placeholder="All statuses" options={STATUS_OPTIONS} value={statusFilter} onChange={(e) => setStatusFilter(e.target.value)} />
+        </div>
+      </div>
+
+      {isLoading ? (
+        <div className="overflow-hidden rounded-card border border-line bg-card">
+          {Array.from({ length: 4 }).map((_, i) => (
+            <ShimmerTableRow key={i} columns={4} />
+          ))}
+        </div>
+      ) : !reviews || reviews.length === 0 ? (
+        <EmptyState icon={<MessageSquareWarning size={22} strokeWidth={1.75} />} title="Nothing flagged" description="No reviews match this filter." />
+      ) : (
+        <div className="flex flex-col gap-4">
+          {reviews.map((review) => (
+            <Card key={review.id} className="flex flex-col gap-4 p-5">
+              <div className="flex flex-wrap items-start justify-between gap-3">
+                <div>
+                  <div className="flex items-center gap-2.5">
+                    <p className="text-[14px] font-semibold text-ink">{review.authorName}</p>
+                    <StatusPill label={review.status} tone={STATUS_TONE[review.status]} />
+                  </div>
+                  <p className="mt-1 text-[12.5px] text-ink-soft">
+                    on {review.courseTitle} - {"\u2605".repeat(review.rating)}{"\u2606".repeat(5 - review.rating)} - {formatRelativeTime(review.createdAt)}
+                  </p>
+                </div>
+              </div>
+
+              <p className="rounded-control border border-line bg-paper-dim p-3.5 text-[13.5px] leading-relaxed text-ink">
+                {review.comment}
+              </p>
+
+              <div className="flex items-center gap-2 text-[12.5px] text-ink-soft">
+                <ShieldAlert size={13} strokeWidth={1.75} className="shrink-0 text-error" />
+                Flagged by {review.flaggedBy} - reason: {review.flagReason}
+              </div>
+
+              {review.status === "pending" && (
+                <div className="flex flex-wrap gap-2">
+                  <Button size="sm" variant="secondary" onClick={() => resolve.mutate({ id: review.id, status: "dismissed" })}>
+                    <CheckCircle2 size={14} strokeWidth={1.75} /> Dismiss flag
+                  </Button>
+                  <Button size="sm" variant="secondary" onClick={() => resolve.mutate({ id: review.id, status: "warned" })}>
+                    Warn user
+                  </Button>
+                  <Button size="sm" variant="danger" onClick={() => resolve.mutate({ id: review.id, status: "removed" })}>
+                    <Trash2 size={14} strokeWidth={1.75} /> Remove review
+                  </Button>
+                </div>
+              )}
+            </Card>
+          ))}
+        </div>
+      )}
+    </main>
+  );
+}
+
+
+================================================================================
+FILE: apps\admin\app\(console)\support\tickets\[id]\page.tsx
+================================================================================
+!! ERROR reading file: A parameter cannot be found that matches parameter name 'Raw'.
+
+
+================================================================================
+FILE: apps\admin\app\(console)\support\tickets\page.tsx
+================================================================================
+"use client";
+
+import { useMemo, useState } from "react";
+import { useRouter } from "next/navigation";
+import { Search, LifeBuoy, AlertTriangle } from "lucide-react";
+import type { ColumnDef } from "@tanstack/react-table";
+import { useAdminTickets, type SupportTicket } from "@saachi/api-client";
+import { DataTable, StatusPill, Select } from "@saachi/ui";
+import { formatRelativeTime } from "@saachi/utils";
+
+const STATUS_OPTIONS = [
+  { label: "Open", value: "open" },
+  { label: "In progress", value: "in_progress" },
+  { label: "Resolved", value: "resolved" },
+  { label: "Closed", value: "closed" }
+];
+
+const PRIORITY_OPTIONS = [
+  { label: "Low", value: "low" },
+  { label: "Medium", value: "medium" },
+  { label: "High", value: "high" },
+  { label: "Urgent", value: "urgent" }
+];
+
+const STATUS_TONE: Record<SupportTicket["status"], "warning" | "info" | "success" | "neutral"> = {
+  open: "warning",
+  in_progress: "info",
+  resolved: "success",
+  closed: "neutral"
+};
+
+const PRIORITY_TONE: Record<SupportTicket["priority"], "neutral" | "info" | "warning" | "error"> = {
+  low: "neutral",
+  medium: "info",
+  high: "warning",
+  urgent: "error"
+};
+
+export default function SupportTicketQueuePage() {
+  const router = useRouter();
+  const [search, setSearch] = useState("");
+  const [status, setStatus] = useState("");
+  const [priority, setPriority] = useState("");
+
+  const { data, isLoading } = useAdminTickets({
+    search: search || undefined,
+    status: status || undefined,
+    priority: priority || undefined
+  });
+
+  const columns = useMemo<ColumnDef<SupportTicket, any>[]>(
+    () => [
+      {
+        header: "Subject",
+        accessorKey: "subject",
+        cell: ({ row }) => (
+          <div className="max-w-[280px]">
+            <div className="truncate font-medium text-ink">{row.original.subject}</div>
+            <div className="text-[12px] text-ink-soft">{row.original.requesterName} - {row.original.category}</div>
+          </div>
+        )
+      },
+      {
+        header: "Priority",
+        accessorKey: "priority",
+        cell: ({ getValue }) => {
+          const value = getValue() as SupportTicket["priority"];
+          return <StatusPill label={value} tone={PRIORITY_TONE[value]} />;
+        }
+      },
+      {
+        header: "Status",
+        accessorKey: "status",
+        cell: ({ getValue }) => {
+          const value = getValue() as SupportTicket["status"];
+          return <StatusPill label={value.replace("_", " ")} tone={STATUS_TONE[value]} />;
+        }
+      },
+      {
+        header: "Assigned to",
+        accessorKey: "assignedTo",
+        cell: ({ getValue }) => <span className="text-ink-soft">{(getValue() as string) ?? "Unassigned"}</span>
+      },
+      {
+        header: "SLA",
+        accessorKey: "slaDueAt",
+        cell: ({ row }) => {
+          const overdue = new Date(row.original.slaDueAt).getTime() < Date.now() && row.original.status !== "resolved" && row.original.status !== "closed";
+          return overdue ? (
+            <span className="flex items-center gap-1.5 font-medium text-error">
+              <AlertTriangle size={13} strokeWidth={1.75} /> Overdue
+            </span>
+          ) : (
+            <span className="text-ink-soft">{formatRelativeTime(row.original.slaDueAt)}</span>
+          );
+        }
+      },
+      {
+        header: "Created",
+        accessorKey: "createdAt",
+        cell: ({ getValue }) => <span className="text-ink-soft">{formatRelativeTime(getValue() as string)}</span>
+      }
+    ],
+    []
+  );
+
+  return (
+    <main className="mx-auto max-w-[1200px] px-4 py-8 md:px-8 md:py-10">
+      <div className="mb-6 flex items-center gap-3">
+        <div className="flex h-10 w-10 items-center justify-center rounded-control border border-line text-ink">
+          <LifeBuoy size={17} strokeWidth={1.75} />
+        </div>
+        <div>
+          <h1 className="text-[22px] font-semibold text-ink">Support Ticket Queue</h1>
+          <p className="mt-0.5 text-[13px] text-ink-soft">Learner and instructor support requests, tracked against SLA.</p>
+        </div>
+      </div>
+
+      <DataTable
+        columns={columns}
+        data={data ?? []}
+        isLoading={isLoading}
+        emptyTitle="No tickets found"
+        emptyDescription="Try adjusting your search or filters."
+        onRowClick={(row) => router.push(`/support/tickets/${row.id}`)}
+        toolbar={
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
+            <div className="relative flex-1">
+              <Search size={15} strokeWidth={1.75} className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-ink-soft" />
+              <input
+                placeholder="Search by subject or requester"
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                className="h-10 w-full rounded-control border border-line bg-card pl-9 pr-3 text-[13px] text-ink outline-none placeholder:text-ink-soft/60 focus:border-line-strong"
+              />
+            </div>
+            <div className="sm:w-[180px]">
+              <Select placeholder="All statuses" options={STATUS_OPTIONS} value={status} onChange={(e) => setStatus(e.target.value)} />
+            </div>
+            <div className="sm:w-[180px]">
+              <Select placeholder="All priorities" options={PRIORITY_OPTIONS} value={priority} onChange={(e) => setPriority(e.target.value)} />
+            </div>
+          </div>
+        }
+      />
     </main>
   );
 }
@@ -6450,6 +7798,550 @@ export function useDeleteCategory() {
 
 
 ================================================================================
+FILE: packages\api-client\src\hooks\useAdminFinance.ts
+================================================================================
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import {
+  ADMIN_DUMMY_TRANSACTIONS,
+  ADMIN_DUMMY_PAYOUTS,
+  ADMIN_DUMMY_REFUNDS,
+  ADMIN_DUMMY_TAX_RULES,
+  type AdminTransaction,
+  type AdminPayout,
+  type PayoutStatus,
+  type AdminRefund,
+  type RefundStatus,
+  type TaxRule
+} from "../dummy-data-admin-finance";
+
+function delay<T>(value: T, ms = 350): Promise<T> {
+  return new Promise((resolve) => setTimeout(() => resolve(value), ms));
+}
+
+// NOTE: demo-only, in-memory. Replace with real Finance/Payouts/Refunds/Tax API (Doc 3).
+let TRANSACTIONS_STATE: AdminTransaction[] = [...ADMIN_DUMMY_TRANSACTIONS];
+let PAYOUTS_STATE: AdminPayout[] = [...ADMIN_DUMMY_PAYOUTS];
+let REFUNDS_STATE: AdminRefund[] = [...ADMIN_DUMMY_REFUNDS];
+let TAX_RULES_STATE: TaxRule[] = [...ADMIN_DUMMY_TAX_RULES];
+
+export const adminFinanceKeys = {
+  all: ["admin", "finance"] as const,
+  transactions: (filters?: Record<string, unknown>) => ["admin", "finance", "transactions", filters] as const,
+  payouts: (filters?: Record<string, unknown>) => ["admin", "finance", "payouts", filters] as const,
+  refunds: (filters?: Record<string, unknown>) => ["admin", "finance", "refunds", filters] as const,
+  taxRules: ["admin", "finance", "tax-rules"] as const
+};
+
+export type TransactionFilters = {
+  search?: string;
+  status?: string;
+  gateway?: string;
+};
+
+export function useAdminTransactions(filters: TransactionFilters = {}) {
+  return useQuery({
+    queryKey: adminFinanceKeys.transactions(filters),
+    queryFn: async () => {
+      let items = [...TRANSACTIONS_STATE];
+      if (filters.search) {
+        const q = filters.search.toLowerCase();
+        items = items.filter(
+          (t) =>
+            t.courseTitle.toLowerCase().includes(q) ||
+            t.learnerName.toLowerCase().includes(q) ||
+            t.instructorName.toLowerCase().includes(q) ||
+            t.id.toLowerCase().includes(q)
+        );
+      }
+      if (filters.status) items = items.filter((t) => t.status === filters.status);
+      if (filters.gateway) items = items.filter((t) => t.gateway === filters.gateway);
+      return delay(items);
+    }
+  });
+}
+
+export type PayoutFilters = {
+  status?: string;
+};
+
+export function useAdminPayouts(filters: PayoutFilters = {}) {
+  return useQuery({
+    queryKey: adminFinanceKeys.payouts(filters),
+    queryFn: async () => {
+      let items = [...PAYOUTS_STATE];
+      if (filters.status) items = items.filter((p) => p.status === filters.status);
+      return delay(items);
+    }
+  });
+}
+
+export function useUpdatePayoutStatus() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async ({ id, status }: { id: string; status: PayoutStatus }) => {
+      PAYOUTS_STATE = PAYOUTS_STATE.map((p) =>
+        p.id === id
+          ? { ...p, status, processedAt: status === "paid" ? new Date().toISOString() : p.processedAt }
+          : p
+      );
+      return delay({ id, status }, 400);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: adminFinanceKeys.all });
+    }
+  });
+}
+
+export type RefundFilters = {
+  status?: string;
+};
+
+export function useAdminRefunds(filters: RefundFilters = {}) {
+  return useQuery({
+    queryKey: adminFinanceKeys.refunds(filters),
+    queryFn: async () => {
+      let items = [...REFUNDS_STATE];
+      if (filters.status) items = items.filter((r) => r.status === filters.status);
+      return delay(items);
+    }
+  });
+}
+
+export function useResolveRefund() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async ({ id, status }: { id: string; status: RefundStatus }) => {
+      REFUNDS_STATE = REFUNDS_STATE.map((r) => (r.id === id ? { ...r, status } : r));
+      if (status === "approved") {
+        const refund = REFUNDS_STATE.find((r) => r.id === id);
+        if (refund) {
+          TRANSACTIONS_STATE = TRANSACTIONS_STATE.map((t) =>
+            t.id === refund.transactionId ? { ...t, status: "refunded" as const } : t
+          );
+        }
+      }
+      return delay({ id, status }, 400);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: adminFinanceKeys.all });
+    }
+  });
+}
+
+export function useAdminTaxRules() {
+  return useQuery({
+    queryKey: adminFinanceKeys.taxRules,
+    queryFn: async () => delay([...TAX_RULES_STATE])
+  });
+}
+
+export function useUpdateTaxRule() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async ({ id, ratePercent, active }: { id: string; ratePercent: number; active: boolean }) => {
+      TAX_RULES_STATE = TAX_RULES_STATE.map((r) => (r.id === id ? { ...r, ratePercent, active } : r));
+      return delay({ id }, 300);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: adminFinanceKeys.taxRules });
+    }
+  });
+}
+
+export function useCreateTaxRule() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (input: { region: string; ratePercent: number; appliesTo: string }) => {
+      const created: TaxRule = {
+        id: `tax_${Math.random().toString(36).slice(2, 8)}`,
+        region: input.region,
+        ratePercent: input.ratePercent,
+        appliesTo: input.appliesTo,
+        active: true
+      };
+      TAX_RULES_STATE = [...TAX_RULES_STATE, created];
+      return delay(created, 300);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: adminFinanceKeys.taxRules });
+    }
+  });
+}
+
+
+================================================================================
+FILE: packages\api-client\src\hooks\useAdminMarketing.ts
+================================================================================
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import {
+  ADMIN_DUMMY_BANNERS,
+  ADMIN_DUMMY_COUPONS,
+  ADMIN_DUMMY_PROMOTION_SALES,
+  type AdminBanner,
+  type AdminCoupon,
+  type PromotionSale
+} from "../dummy-data-admin-marketing";
+
+function delay<T>(value: T, ms = 350): Promise<T> {
+  return new Promise((resolve) => setTimeout(() => resolve(value), ms));
+}
+
+// NOTE: demo-only, in-memory. Replace with real Marketing API (Doc 3) once available.
+let BANNERS_STATE: AdminBanner[] = [...ADMIN_DUMMY_BANNERS];
+let COUPONS_STATE: AdminCoupon[] = [...ADMIN_DUMMY_COUPONS];
+let PROMOTION_SALES_STATE: PromotionSale[] = [...ADMIN_DUMMY_PROMOTION_SALES];
+
+export const adminMarketingKeys = {
+  banners: ["admin", "marketing", "banners"] as const,
+  coupons: (filters?: Record<string, unknown>) => ["admin", "marketing", "coupons", filters] as const,
+  promotionSales: ["admin", "marketing", "promotion-sales"] as const
+};
+
+// ---------------------------------------------------------------------------
+// Banners
+// ---------------------------------------------------------------------------
+export function useAdminBanners() {
+  return useQuery({
+    queryKey: adminMarketingKeys.banners,
+    queryFn: async () => delay([...BANNERS_STATE].sort((a, b) => a.order - b.order))
+  });
+}
+
+export function useCreateBanner() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (input: Omit<AdminBanner, "id" | "order">) => {
+      const created: AdminBanner = {
+        ...input,
+        id: `ban_${Math.random().toString(36).slice(2, 8)}`,
+        order: BANNERS_STATE.length + 1
+      };
+      BANNERS_STATE = [...BANNERS_STATE, created];
+      return delay(created, 300);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: adminMarketingKeys.banners });
+    }
+  });
+}
+
+export function useUpdateBanner() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async ({ id, ...patch }: Partial<AdminBanner> & { id: string }) => {
+      BANNERS_STATE = BANNERS_STATE.map((b) => (b.id === id ? { ...b, ...patch } : b));
+      return delay({ id }, 300);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: adminMarketingKeys.banners });
+    }
+  });
+}
+
+export function useDeleteBanner() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (id: string) => {
+      BANNERS_STATE = BANNERS_STATE.filter((b) => b.id !== id);
+      return delay({ id }, 300);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: adminMarketingKeys.banners });
+    }
+  });
+}
+
+export function useReorderBanner() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async ({ id, direction }: { id: string; direction: "up" | "down" }) => {
+      const sorted = [...BANNERS_STATE].sort((a, b) => a.order - b.order);
+      const index = sorted.findIndex((b) => b.id === id);
+      const swapWith = direction === "up" ? index - 1 : index + 1;
+      if (swapWith < 0 || swapWith >= sorted.length) return delay({ id }, 100);
+      const a = sorted[index];
+      const b = sorted[swapWith];
+      const aOrder = a.order;
+      a.order = b.order;
+      b.order = aOrder;
+      BANNERS_STATE = sorted;
+      return delay({ id }, 250);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: adminMarketingKeys.banners });
+    }
+  });
+}
+
+// ---------------------------------------------------------------------------
+// Coupons
+// ---------------------------------------------------------------------------
+export type CouponFilters = {
+  search?: string;
+  active?: boolean;
+};
+
+export function useAdminCoupons(filters: CouponFilters = {}) {
+  return useQuery({
+    queryKey: adminMarketingKeys.coupons(filters),
+    queryFn: async () => {
+      let items = [...COUPONS_STATE];
+      if (filters.search) {
+        const q = filters.search.toLowerCase();
+        items = items.filter((c) => c.code.toLowerCase().includes(q));
+      }
+      if (typeof filters.active === "boolean") items = items.filter((c) => c.active === filters.active);
+      return delay(items);
+    }
+  });
+}
+
+export function useCreateCoupon() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (input: Omit<AdminCoupon, "id" | "usageCount">) => {
+      const created: AdminCoupon = {
+        ...input,
+        id: `cpn_${Math.random().toString(36).slice(2, 8)}`,
+        usageCount: 0
+      };
+      COUPONS_STATE = [...COUPONS_STATE, created];
+      return delay(created, 300);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["admin", "marketing", "coupons"] });
+    }
+  });
+}
+
+export function useToggleCouponActive() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (id: string) => {
+      COUPONS_STATE = COUPONS_STATE.map((c) => (c.id === id ? { ...c, active: !c.active } : c));
+      return delay({ id }, 200);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["admin", "marketing", "coupons"] });
+    }
+  });
+}
+
+export function useDeleteCoupon() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (id: string) => {
+      COUPONS_STATE = COUPONS_STATE.filter((c) => c.id !== id);
+      return delay({ id }, 300);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["admin", "marketing", "coupons"] });
+    }
+  });
+}
+
+// ---------------------------------------------------------------------------
+// Promotion package sales tracking
+// ---------------------------------------------------------------------------
+export function useAdminPromotionSales() {
+  return useQuery({
+    queryKey: adminMarketingKeys.promotionSales,
+    queryFn: async () => delay([...PROMOTION_SALES_STATE])
+  });
+}
+
+
+================================================================================
+FILE: packages\api-client\src\hooks\useAdminModeration.ts
+================================================================================
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import {
+  ADMIN_DUMMY_FLAGGED_REVIEWS,
+  ADMIN_DUMMY_FLAGGED_FORUM_POSTS,
+  type FlaggedReview,
+  type FlaggedForumPost,
+  type FlagStatus
+} from "../dummy-data-admin-mod-support";
+
+function delay<T>(value: T, ms = 350): Promise<T> {
+  return new Promise((resolve) => setTimeout(() => resolve(value), ms));
+}
+
+// NOTE: demo-only, in-memory. Replace with real Content Moderation API (Doc 3).
+let FLAGGED_REVIEWS_STATE: FlaggedReview[] = [...ADMIN_DUMMY_FLAGGED_REVIEWS];
+let FLAGGED_FORUM_STATE: FlaggedForumPost[] = [...ADMIN_DUMMY_FLAGGED_FORUM_POSTS];
+
+export const adminModerationKeys = {
+  reviews: (filters?: Record<string, unknown>) => ["admin", "moderation", "reviews", filters] as const,
+  forum: (filters?: Record<string, unknown>) => ["admin", "moderation", "forum", filters] as const
+};
+
+export type ModerationFilters = {
+  status?: string;
+};
+
+export function useFlaggedReviews(filters: ModerationFilters = {}) {
+  return useQuery({
+    queryKey: adminModerationKeys.reviews(filters),
+    queryFn: async () => {
+      let items = [...FLAGGED_REVIEWS_STATE];
+      if (filters.status) items = items.filter((r) => r.status === filters.status);
+      return delay(items);
+    }
+  });
+}
+
+export function useResolveFlaggedReview() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async ({ id, status }: { id: string; status: FlagStatus }) => {
+      FLAGGED_REVIEWS_STATE = FLAGGED_REVIEWS_STATE.map((r) => (r.id === id ? { ...r, status } : r));
+      return delay({ id, status }, 350);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["admin", "moderation", "reviews"] });
+    }
+  });
+}
+
+export function useFlaggedForumPosts(filters: ModerationFilters = {}) {
+  return useQuery({
+    queryKey: adminModerationKeys.forum(filters),
+    queryFn: async () => {
+      let items = [...FLAGGED_FORUM_STATE];
+      if (filters.status) items = items.filter((p) => p.status === filters.status);
+      return delay(items);
+    }
+  });
+}
+
+export function useResolveFlaggedForumPost() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async ({ id, status }: { id: string; status: FlagStatus }) => {
+      FLAGGED_FORUM_STATE = FLAGGED_FORUM_STATE.map((p) => (p.id === id ? { ...p, status } : p));
+      return delay({ id, status }, 350);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["admin", "moderation", "forum"] });
+    }
+  });
+}
+
+
+================================================================================
+FILE: packages\api-client\src\hooks\useAdminSupport.ts
+================================================================================
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import {
+  ADMIN_DUMMY_TICKETS,
+  type SupportTicket,
+  type TicketStatus,
+  type TicketMessage
+} from "../dummy-data-admin-mod-support";
+
+function delay<T>(value: T, ms = 350): Promise<T> {
+  return new Promise((resolve) => setTimeout(() => resolve(value), ms));
+}
+
+// NOTE: demo-only, in-memory. Replace with real Support/Helpdesk API (Doc 3).
+let TICKETS_STATE: SupportTicket[] = [...ADMIN_DUMMY_TICKETS];
+
+export const adminSupportKeys = {
+  list: (filters?: Record<string, unknown>) => ["admin", "support", "tickets", filters] as const,
+  detail: (id: string) => ["admin", "support", "tickets", "detail", id] as const
+};
+
+export type TicketFilters = {
+  search?: string;
+  status?: string;
+  priority?: string;
+};
+
+export function useAdminTickets(filters: TicketFilters = {}) {
+  return useQuery({
+    queryKey: adminSupportKeys.list(filters),
+    queryFn: async () => {
+      let items = [...TICKETS_STATE];
+      if (filters.search) {
+        const q = filters.search.toLowerCase();
+        items = items.filter(
+          (t) => t.subject.toLowerCase().includes(q) || t.requesterName.toLowerCase().includes(q)
+        );
+      }
+      if (filters.status) items = items.filter((t) => t.status === filters.status);
+      if (filters.priority) items = items.filter((t) => t.priority === filters.priority);
+      return delay(items);
+    }
+  });
+}
+
+export function useAdminTicketDetail(id: string) {
+  return useQuery({
+    queryKey: adminSupportKeys.detail(id),
+    queryFn: async () => {
+      const found = TICKETS_STATE.find((t) => t.id === id);
+      if (!found) throw new Error("Ticket not found");
+      return delay(found);
+    },
+    enabled: Boolean(id)
+  });
+}
+
+export function useUpdateTicketStatus() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async ({ id, status }: { id: string; status: TicketStatus }) => {
+      TICKETS_STATE = TICKETS_STATE.map((t) => (t.id === id ? { ...t, status } : t));
+      return delay({ id, status }, 300);
+    },
+    onSuccess: (_data, variables) => {
+      queryClient.invalidateQueries({ queryKey: ["admin", "support", "tickets"] });
+      queryClient.invalidateQueries({ queryKey: adminSupportKeys.detail(variables.id) });
+    }
+  });
+}
+
+export function useAssignTicket() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async ({ id, assignedTo }: { id: string; assignedTo: string }) => {
+      TICKETS_STATE = TICKETS_STATE.map((t) => (t.id === id ? { ...t, assignedTo } : t));
+      return delay({ id, assignedTo }, 300);
+    },
+    onSuccess: (_data, variables) => {
+      queryClient.invalidateQueries({ queryKey: ["admin", "support", "tickets"] });
+      queryClient.invalidateQueries({ queryKey: adminSupportKeys.detail(variables.id) });
+    }
+  });
+}
+
+export function useAddTicketMessage() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async ({ id, body, isInternal }: { id: string; body: string; isInternal: boolean }) => {
+      const message: TicketMessage = {
+        id: `m_${Math.random().toString(36).slice(2, 8)}`,
+        authorName: "Admin",
+        isInternal,
+        isStaff: true,
+        body,
+        createdAt: new Date().toISOString()
+      };
+      TICKETS_STATE = TICKETS_STATE.map((t) =>
+        t.id === id ? { ...t, messages: [...t.messages, message], status: t.status === "open" ? "in_progress" : t.status } : t
+      );
+      return delay(message, 300);
+    },
+    onSuccess: (_data, variables) => {
+      queryClient.invalidateQueries({ queryKey: ["admin", "support", "tickets"] });
+      queryClient.invalidateQueries({ queryKey: adminSupportKeys.detail(variables.id) });
+    }
+  });
+}
+
+
+================================================================================
 FILE: packages\api-client\src\hooks\useAdminUsers.ts
 ================================================================================
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
@@ -6984,6 +8876,344 @@ export const ADMIN_DUMMY_COURSES: AdminCourse[] = [
   { id: "crs_a10", title: "AI Video Scripts for YouTube Growth", instructorName: "Danish Raza", instructorId: "usr_1009", categoryId: "ai-marketing", price: 35, currency: "USD", status: "rejected", submittedAt: daysAgoIso(14), thumbnailUrl: img("ai-video-scripts"), featured: false, pinned: false, rating: 0, enrollmentCount: 0, rejectionReason: "Curriculum lacked hands-on exercises; resubmit with a project-based module." },
   { id: "crs_a11", title: "Midjourney for Product Mockups", instructorName: "Sara Iqbal", instructorId: "usr_1010", categoryId: "ai-design", price: 25, currency: "USD", status: "draft", submittedAt: daysAgoIso(0), thumbnailUrl: img("midjourney-product-mockups"), featured: false, pinned: false, rating: 0, enrollmentCount: 0 },
   { id: "crs_a12", title: "AI Resume & Interview Prep Toolkit", instructorName: "Hina Malik", instructorId: "usr_1003", categoryId: "ai-career", price: 19, currency: "USD", status: "archived", submittedAt: daysAgoIso(365), thumbnailUrl: img("ai-resume-toolkit"), featured: false, pinned: false, rating: 4.1, enrollmentCount: 210 }
+];
+
+
+================================================================================
+FILE: packages\api-client\src\dummy-data-admin-finance.ts
+================================================================================
+export type TransactionStatus = "completed" | "pending" | "failed" | "refunded";
+
+export type AdminTransaction = {
+  id: string;
+  courseTitle: string;
+  learnerName: string;
+  instructorName: string;
+  amount: number;
+  currency: string;
+  commission: number;
+  netToInstructor: number;
+  gateway: "stripe" | "paypal" | "easypaisa" | "jazzcash" | "bank_transfer";
+  status: TransactionStatus;
+  createdAt: string;
+};
+
+export type PayoutStatus = "pending" | "approved" | "paid" | "rejected";
+
+export type AdminPayout = {
+  id: string;
+  instructorName: string;
+  instructorId: string;
+  amount: number;
+  currency: string;
+  method: "bank_transfer" | "easypaisa" | "jazzcash" | "stripe_connect";
+  status: PayoutStatus;
+  requestedAt: string;
+  processedAt?: string;
+};
+
+export type RefundStatus = "pending" | "approved" | "rejected";
+
+export type AdminRefund = {
+  id: string;
+  transactionId: string;
+  courseTitle: string;
+  learnerName: string;
+  amount: number;
+  currency: string;
+  reason: string;
+  status: RefundStatus;
+  requestedAt: string;
+};
+
+export type TaxRule = {
+  id: string;
+  region: string;
+  ratePercent: number;
+  appliesTo: string;
+  active: boolean;
+};
+
+function daysAgoIso(n: number): string {
+  return new Date(Date.now() - n * 24 * 60 * 60 * 1000).toISOString();
+}
+
+export const ADMIN_DUMMY_TRANSACTIONS: AdminTransaction[] = [
+  { id: "txn_1001", courseTitle: "Prompt Engineering Fundamentals", learnerName: "Hina Malik", instructorName: "Sana Rizvi", amount: 29, currency: "USD", commission: 8.7, netToInstructor: 20.3, gateway: "stripe", status: "completed", createdAt: daysAgoIso(0) },
+  { id: "txn_1002", courseTitle: "AI-Powered Marketing Campaigns", learnerName: "Omar Sheikh", instructorName: "Zara Farooq", amount: 49, currency: "USD", commission: 14.7, netToInstructor: 34.3, gateway: "easypaisa", status: "completed", createdAt: daysAgoIso(0) },
+  { id: "txn_1003", courseTitle: "Automate Everything with n8n & AI", learnerName: "Fatima Noor", instructorName: "Ayesha Khan", amount: 39, currency: "USD", commission: 11.7, netToInstructor: 27.3, gateway: "jazzcash", status: "pending", createdAt: daysAgoIso(1) },
+  { id: "txn_1004", courseTitle: "Build a WhatsApp AI Auto-Responder", learnerName: "Sara Iqbal", instructorName: "Bilal Ahmed", amount: 59, currency: "USD", commission: 17.7, netToInstructor: 41.3, gateway: "stripe", status: "completed", createdAt: daysAgoIso(1) },
+  { id: "txn_1005", courseTitle: "Ship Your First AI-Powered Web App", learnerName: "Noor Fatima", instructorName: "Hamza Tariq", amount: 45, currency: "USD", commission: 13.5, netToInstructor: 31.5, gateway: "paypal", status: "failed", createdAt: daysAgoIso(2) },
+  { id: "txn_1006", courseTitle: "Integrating OpenAI & Claude APIs into Node.js Apps", learnerName: "Ali Raza", instructorName: "Usman Ali", amount: 65, currency: "USD", commission: 19.5, netToInstructor: 45.5, gateway: "bank_transfer", status: "completed", createdAt: daysAgoIso(3) },
+  { id: "txn_1007", courseTitle: "Prompt Engineering Fundamentals", learnerName: "Mahnoor Fatima", instructorName: "Sana Rizvi", amount: 29, currency: "USD", commission: 8.7, netToInstructor: 20.3, gateway: "stripe", status: "refunded", createdAt: daysAgoIso(5) },
+  { id: "txn_1008", courseTitle: "AI-Powered Marketing Campaigns", learnerName: "Danish Raza", instructorName: "Zara Farooq", amount: 49, currency: "USD", commission: 14.7, netToInstructor: 34.3, gateway: "easypaisa", status: "completed", createdAt: daysAgoIso(6) },
+  { id: "txn_1009", courseTitle: "Build a WhatsApp AI Auto-Responder", learnerName: "Hina Malik", instructorName: "Bilal Ahmed", amount: 59, currency: "USD", commission: 17.7, netToInstructor: 41.3, gateway: "jazzcash", status: "completed", createdAt: daysAgoIso(7) },
+  { id: "txn_1010", courseTitle: "Automate Everything with n8n & AI", learnerName: "Omar Sheikh", instructorName: "Ayesha Khan", amount: 39, currency: "USD", commission: 11.7, netToInstructor: 27.3, gateway: "stripe", status: "pending", createdAt: daysAgoIso(8) }
+];
+
+export const ADMIN_DUMMY_PAYOUTS: AdminPayout[] = [
+  { id: "po_2001", instructorName: "Ayesha Khan", instructorId: "usr_1001", amount: 420, currency: "USD", method: "bank_transfer", status: "pending", requestedAt: daysAgoIso(1) },
+  { id: "po_2002", instructorName: "Sana Rizvi", instructorId: "usr_1005", amount: 890, currency: "USD", method: "stripe_connect", status: "pending", requestedAt: daysAgoIso(2) },
+  { id: "po_2003", instructorName: "Bilal Ahmed", instructorId: "usr_1002", amount: 310, currency: "USD", method: "easypaisa", status: "approved", requestedAt: daysAgoIso(3) },
+  { id: "po_2004", instructorName: "Zara Farooq", instructorId: "usr_1008", amount: 560, currency: "USD", method: "jazzcash", status: "paid", requestedAt: daysAgoIso(10), processedAt: daysAgoIso(7) },
+  { id: "po_2005", instructorName: "Usman Ali", instructorId: "usr_1007", amount: 275, currency: "USD", method: "bank_transfer", status: "paid", requestedAt: daysAgoIso(20), processedAt: daysAgoIso(17) },
+  { id: "po_2006", instructorName: "Hamza Tariq", instructorId: "usr_1011", amount: 150, currency: "USD", method: "easypaisa", status: "rejected", requestedAt: daysAgoIso(15) }
+];
+
+export const ADMIN_DUMMY_REFUNDS: AdminRefund[] = [
+  { id: "rfd_3001", transactionId: "txn_1007", courseTitle: "Prompt Engineering Fundamentals", learnerName: "Mahnoor Fatima", amount: 29, currency: "USD", reason: "Course content did not match the description.", status: "approved", requestedAt: daysAgoIso(5) },
+  { id: "rfd_3002", transactionId: "txn_1002", courseTitle: "AI-Powered Marketing Campaigns", learnerName: "Omar Sheikh", amount: 49, currency: "USD", reason: "Purchased by mistake, requesting refund within policy window.", status: "pending", requestedAt: daysAgoIso(0) },
+  { id: "rfd_3003", transactionId: "txn_1009", courseTitle: "Build a WhatsApp AI Auto-Responder", learnerName: "Hina Malik", amount: 59, currency: "USD", reason: "Technical issues prevented course access.", status: "pending", requestedAt: daysAgoIso(1) },
+  { id: "rfd_3004", transactionId: "txn_1004", courseTitle: "Build a WhatsApp AI Auto-Responder", learnerName: "Sara Iqbal", amount: 59, currency: "USD", reason: "Requesting refund after completing 80% of the course.", status: "rejected", requestedAt: daysAgoIso(12) }
+];
+
+export const ADMIN_DUMMY_TAX_RULES: TaxRule[] = [
+  { id: "tax_pk", region: "Pakistan", ratePercent: 0, appliesTo: "All course sales", active: true },
+  { id: "tax_us", region: "United States", ratePercent: 0, appliesTo: "All course sales", active: true },
+  { id: "tax_eu", region: "European Union", ratePercent: 20, appliesTo: "Digital goods (VAT)", active: true },
+  { id: "tax_gb", region: "United Kingdom", ratePercent: 20, appliesTo: "Digital goods (VAT)", active: true },
+  { id: "tax_in", region: "India", ratePercent: 18, appliesTo: "Digital goods (GST)", active: false }
+];
+
+
+================================================================================
+FILE: packages\api-client\src\dummy-data-admin-marketing.ts
+================================================================================
+export type BannerStatus = "scheduled" | "active" | "expired" | "draft";
+
+export type AdminBanner = {
+  id: string;
+  title: string;
+  subtitle?: string;
+  imageUrl: string;
+  linkUrl: string;
+  status: BannerStatus;
+  startsAt: string;
+  endsAt: string;
+  order: number;
+};
+
+export type CouponType = "percent" | "fixed";
+
+export type AdminCoupon = {
+  id: string;
+  code: string;
+  type: CouponType;
+  value: number;
+  scope: "platform_wide" | "category" | "course";
+  usageLimit: number;
+  usageCount: number;
+  expiresAt: string;
+  active: boolean;
+};
+
+export type PromotionTier = "bronze" | "silver" | "gold";
+
+export type PromotionSale = {
+  id: string;
+  courseTitle: string;
+  instructorName: string;
+  tier: PromotionTier;
+  amount: number;
+  currency: string;
+  purchasedAt: string;
+  expiresAt: string;
+};
+
+function img(seed: string): string {
+  return `https://picsum.photos/seed/${encodeURIComponent(seed)}/1200/400`;
+}
+
+function daysAgoIso(n: number): string {
+  return new Date(Date.now() - n * 24 * 60 * 60 * 1000).toISOString();
+}
+
+function daysFromNowIso(n: number): string {
+  return new Date(Date.now() + n * 24 * 60 * 60 * 1000).toISOString();
+}
+
+export const ADMIN_DUMMY_BANNERS: AdminBanner[] = [
+  { id: "ban_1", title: "Founding Instructor Spots Open", subtitle: "Join early access and get featured placement", imageUrl: img("founding-instructor-banner"), linkUrl: "/register", status: "active", startsAt: daysAgoIso(5), endsAt: daysFromNowIso(10), order: 1 },
+  { id: "ban_2", title: "New: AI Automation Track", subtitle: "Five new n8n + AI courses just launched", imageUrl: img("automation-track-banner"), linkUrl: "/categories/ai-automation", status: "active", startsAt: daysAgoIso(2), endsAt: daysFromNowIso(12), order: 2 },
+  { id: "ban_3", title: "Ramadan Learning Sale", subtitle: "25% off with code SAACHI25", imageUrl: img("ramadan-sale-banner"), linkUrl: "/courses", status: "scheduled", startsAt: daysFromNowIso(20), endsAt: daysFromNowIso(35), order: 3 },
+  { id: "ban_4", title: "Saachi AI Pro Launch", subtitle: "Unlimited access to Standard-tier courses", imageUrl: img("pro-launch-banner"), linkUrl: "/pricing", status: "expired", startsAt: daysAgoIso(60), endsAt: daysAgoIso(30), order: 4 },
+  { id: "ban_5", title: "Corporate Team Plans", subtitle: "Bulk seats for your team - contact sales", imageUrl: img("corporate-banner"), linkUrl: "/contact", status: "draft", startsAt: daysFromNowIso(5), endsAt: daysFromNowIso(45), order: 5 }
+];
+
+export const ADMIN_DUMMY_COUPONS: AdminCoupon[] = [
+  { id: "cpn_1", code: "SAACHI10", type: "percent", value: 10, scope: "platform_wide", usageLimit: 1000, usageCount: 412, expiresAt: daysFromNowIso(60), active: true },
+  { id: "cpn_2", code: "SAACHI25", type: "percent", value: 25, scope: "platform_wide", usageLimit: 500, usageCount: 88, expiresAt: daysFromNowIso(15), active: true },
+  { id: "cpn_3", code: "AUTOMATE20", type: "percent", value: 20, scope: "category", usageLimit: 200, usageCount: 200, expiresAt: daysAgoIso(3), active: false },
+  { id: "cpn_4", code: "WELCOME5", type: "fixed", value: 5, scope: "platform_wide", usageLimit: 2000, usageCount: 1560, expiresAt: daysFromNowIso(90), active: true },
+  { id: "cpn_5", code: "WHATSAPP15", type: "fixed", value: 15, scope: "course", usageLimit: 100, usageCount: 34, expiresAt: daysFromNowIso(30), active: true }
+];
+
+export const ADMIN_DUMMY_PROMOTION_SALES: PromotionSale[] = [
+  { id: "ps_1", courseTitle: "Prompt Engineering Fundamentals", instructorName: "Sana Rizvi", tier: "gold", amount: 75, currency: "USD", purchasedAt: daysAgoIso(1), expiresAt: daysFromNowIso(13) },
+  { id: "ps_2", courseTitle: "Automate Everything with n8n & AI", instructorName: "Ayesha Khan", tier: "silver", amount: 35, currency: "USD", purchasedAt: daysAgoIso(3), expiresAt: daysFromNowIso(11) },
+  { id: "ps_3", courseTitle: "AI-Powered Marketing Campaigns", instructorName: "Zara Farooq", tier: "bronze", amount: 15, currency: "USD", purchasedAt: daysAgoIso(5), expiresAt: daysFromNowIso(9) },
+  { id: "ps_4", courseTitle: "Integrating OpenAI & Claude APIs into Node.js Apps", instructorName: "Usman Ali", tier: "gold", amount: 75, currency: "USD", purchasedAt: daysAgoIso(8), expiresAt: daysFromNowIso(6) },
+  { id: "ps_5", courseTitle: "Build a WhatsApp AI Auto-Responder", instructorName: "Bilal Ahmed", tier: "silver", amount: 35, currency: "USD", purchasedAt: daysAgoIso(20), expiresAt: daysAgoIso(6) },
+  { id: "ps_6", courseTitle: "Ship Your First AI-Powered Web App", instructorName: "Hamza Tariq", tier: "bronze", amount: 15, currency: "USD", purchasedAt: daysAgoIso(25), expiresAt: daysAgoIso(11) }
+];
+
+
+================================================================================
+FILE: packages\api-client\src\dummy-data-admin-mod-support.ts
+================================================================================
+export type FlagStatus = "pending" | "removed" | "dismissed" | "warned";
+
+export type FlaggedReview = {
+  id: string;
+  courseTitle: string;
+  authorName: string;
+  comment: string;
+  rating: number;
+  flagReason: string;
+  flaggedBy: string;
+  status: FlagStatus;
+  createdAt: string;
+};
+
+export type FlaggedForumPost = {
+  id: string;
+  courseTitle: string;
+  authorName: string;
+  body: string;
+  flagReason: string;
+  flaggedBy: string;
+  status: FlagStatus;
+  createdAt: string;
+};
+
+export type TicketStatus = "open" | "in_progress" | "resolved" | "closed";
+export type TicketPriority = "low" | "medium" | "high" | "urgent";
+
+export type TicketMessage = {
+  id: string;
+  authorName: string;
+  isInternal: boolean;
+  isStaff: boolean;
+  body: string;
+  createdAt: string;
+};
+
+export type SupportTicket = {
+  id: string;
+  subject: string;
+  requesterName: string;
+  requesterEmail: string;
+  category: string;
+  priority: TicketPriority;
+  status: TicketStatus;
+  assignedTo?: string;
+  createdAt: string;
+  slaDueAt: string;
+  messages: TicketMessage[];
+};
+
+function hoursAgoIso(n: number): string {
+  return new Date(Date.now() - n * 60 * 60 * 1000).toISOString();
+}
+
+function hoursFromNowIso(n: number): string {
+  return new Date(Date.now() + n * 60 * 60 * 1000).toISOString();
+}
+
+export const ADMIN_DUMMY_FLAGGED_REVIEWS: FlaggedReview[] = [
+  { id: "frv_1", courseTitle: "Prompt Engineering Fundamentals", authorName: "Danish Raza", comment: "This course is a scam, don't waste your money, the instructor never responds and it's all recycled content from free YouTube videos.", rating: 1, flagReason: "Potentially defamatory / unverified claims", flaggedBy: "Sana Rizvi (instructor)", status: "pending", createdAt: hoursAgoIso(6) },
+  { id: "frv_2", courseTitle: "AI-Powered Marketing Campaigns", authorName: "Anonymous User", comment: "Check out my own course instead, link in bio, way better content for half the price!", rating: 3, flagReason: "Self-promotion / spam", flaggedBy: "system", status: "pending", createdAt: hoursAgoIso(20) },
+  { id: "frv_3", courseTitle: "Build a WhatsApp AI Auto-Responder", authorName: "Omar Sheikh", comment: "Genuinely one of the worst experiences, the guy is an idiot and clearly doesn't know what he's teaching.", rating: 1, flagReason: "Harassment / abusive language toward instructor", flaggedBy: "Bilal Ahmed (instructor)", status: "pending", createdAt: hoursAgoIso(30) },
+  { id: "frv_4", courseTitle: "Automate Everything with n8n & AI", authorName: "Hina Malik", comment: "Solid course but the pricing section felt rushed.", rating: 4, flagReason: "Flagged in error by automated filter", flaggedBy: "system", status: "dismissed", createdAt: hoursAgoIso(72) }
+];
+
+export const ADMIN_DUMMY_FLAGGED_FORUM_POSTS: FlaggedForumPost[] = [
+  { id: "ffp_1", courseTitle: "Prompt Engineering Fundamentals", authorName: "Noor Fatima", body: "Does anyone want to share their personal WhatsApp number so we can form a study group outside the platform?", flagReason: "Requesting off-platform contact info", flaggedBy: "system", status: "pending", createdAt: hoursAgoIso(10) },
+  { id: "ffp_2", courseTitle: "AI Automation & Workflow Tools", authorName: "Ali Raza", body: "Here's a cracked version of the paid n8n cloud plan if anyone wants the download link.", flagReason: "Promoting pirated / unauthorized software", flaggedBy: "Ayesha Khan (instructor)", status: "pending", createdAt: hoursAgoIso(15) },
+  { id: "ffp_3", courseTitle: "Build a WhatsApp AI Auto-Responder", authorName: "Sara Iqbal", body: "This module completely contradicts what was taught earlier, is this course even reviewed before publishing?", flagReason: "Flagged in error - legitimate question", flaggedBy: "system", status: "dismissed", createdAt: hoursAgoIso(48) },
+  { id: "ffp_4", courseTitle: "AI-Powered Marketing Campaigns", authorName: "Fatima Noor", body: "Anyone else think the instructor is overselling results here? Feels dishonest tbh.", flagReason: "Reported by instructor as harassment", flaggedBy: "Zara Farooq (instructor)", status: "pending", createdAt: hoursAgoIso(5) }
+];
+
+export const ADMIN_DUMMY_TICKETS: SupportTicket[] = [
+  {
+    id: "tkt_5001",
+    subject: "Payment charged twice for the same course",
+    requesterName: "Hina Malik",
+    requesterEmail: "hina.malik@example.com",
+    category: "Billing",
+    priority: "urgent",
+    status: "open",
+    assignedTo: undefined,
+    createdAt: hoursAgoIso(2),
+    slaDueAt: hoursFromNowIso(2),
+    messages: [
+      { id: "m1", authorName: "Hina Malik", isInternal: false, isStaff: false, body: "I was charged twice for Prompt Engineering Fundamentals - $29 shows up twice on my card statement. Please refund the duplicate.", createdAt: hoursAgoIso(2) }
+    ]
+  },
+  {
+    id: "tkt_5002",
+    subject: "Can't access course after purchase",
+    requesterName: "Omar Sheikh",
+    requesterEmail: "omar.sheikh@example.com",
+    category: "Technical",
+    priority: "high",
+    status: "in_progress",
+    assignedTo: "admin@saachi.ai",
+    createdAt: hoursAgoIso(18),
+    slaDueAt: hoursFromNowIso(-2),
+    messages: [
+      { id: "m1", authorName: "Omar Sheikh", isInternal: false, isStaff: false, body: "I purchased AI-Powered Marketing Campaigns but my dashboard still shows it as locked.", createdAt: hoursAgoIso(18) },
+      { id: "m2", authorName: "Admin", isInternal: false, isStaff: true, body: "Thanks for flagging this - can you confirm the email used at checkout matches your account email?", createdAt: hoursAgoIso(16) },
+      { id: "m3", authorName: "Admin", isInternal: true, isStaff: true, body: "Checked transaction ledger - payment shows completed but enrollment record is missing. Escalating to backend team once available.", createdAt: hoursAgoIso(15) }
+    ]
+  },
+  {
+    id: "tkt_5003",
+    subject: "Question about instructor payout timeline",
+    requesterName: "Ayesha Khan",
+    requesterEmail: "ayesha.khan@example.com",
+    category: "Payouts",
+    priority: "medium",
+    status: "open",
+    assignedTo: undefined,
+    createdAt: hoursAgoIso(30),
+    slaDueAt: hoursFromNowIso(18),
+    messages: [
+      { id: "m1", authorName: "Ayesha Khan", isInternal: false, isStaff: false, body: "I requested a payout 5 days ago and haven't heard anything - what's the usual processing time?", createdAt: hoursAgoIso(30) }
+    ]
+  },
+  {
+    id: "tkt_5004",
+    subject: "Refund request follow-up",
+    requesterName: "Sara Iqbal",
+    requesterEmail: "sara.iqbal@example.com",
+    category: "Billing",
+    priority: "low",
+    status: "resolved",
+    assignedTo: "admin@saachi.ai",
+    createdAt: hoursAgoIso(96),
+    slaDueAt: hoursAgoIso(72),
+    messages: [
+      { id: "m1", authorName: "Sara Iqbal", isInternal: false, isStaff: false, body: "Following up on my refund request from last week.", createdAt: hoursAgoIso(96) },
+      { id: "m2", authorName: "Admin", isInternal: false, isStaff: true, body: "Your refund was approved and processed - you should see it in 5-7 business days.", createdAt: hoursAgoIso(90) }
+    ]
+  },
+  {
+    id: "tkt_5005",
+    subject: "How do I become a verified instructor?",
+    requesterName: "Hamza Tariq",
+    requesterEmail: "hamza.tariq@example.com",
+    category: "Instructor",
+    priority: "low",
+    status: "closed",
+    assignedTo: "admin@saachi.ai",
+    createdAt: hoursAgoIso(200),
+    slaDueAt: hoursAgoIso(176),
+    messages: [
+      { id: "m1", authorName: "Hamza Tariq", isInternal: false, isStaff: false, body: "What are the requirements to get the Verified Instructor badge?", createdAt: hoursAgoIso(200) },
+      { id: "m2", authorName: "Admin", isInternal: false, isStaff: true, body: "You'll need ID verification, 3+ published courses, and a 4.0+ average rating. You can submit documents from the Verification tab.", createdAt: hoursAgoIso(195) }
+    ]
+  }
 ];
 
 
@@ -7545,6 +9775,13 @@ export * from "./dummy-data-admin";
 export * from "./hooks/useAdminUsers";
 export * from "./dummy-data-admin-courses";
 export * from "./hooks/useAdminCourses";
+export * from "./dummy-data-admin-finance";
+export * from "./hooks/useAdminFinance";
+export * from "./dummy-data-admin-marketing";
+export * from "./hooks/useAdminMarketing";
+export * from "./dummy-data-admin-mod-support";
+export * from "./hooks/useAdminModeration";
+export * from "./hooks/useAdminSupport";
 export * from "./hooks/useAuth";
 export * from "./hooks/useCourses";
 
