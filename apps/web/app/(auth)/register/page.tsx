@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -7,7 +7,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { registerSchema, type RegisterInput } from "@saachi/utils";
 import { useRegister } from "@saachi/api-client";
-import { Button, Card, Input } from "@saachi/ui";
+import { Button, Card, Input, SocialLoginButtons } from "@saachi/ui";
 
 export default function RegisterPage() {
   const router = useRouter();
@@ -67,9 +67,20 @@ export default function RegisterPage() {
         {serverError && <p className="text-[13px] text-error">{serverError}</p>}
 
         <Button type="submit" size="lg" disabled={isSubmitting || registerMutation.isPending}>
-          {isSubmitting || registerMutation.isPending ? "Creating accountâ€¦" : "Create Account"}
+          {isSubmitting || registerMutation.isPending ? "Creating accountÃ¢â‚¬Â¦" : "Create Account"}
         </Button>
       </form>
+
+      <div className="mt-6">
+        <SocialLoginButtons
+          onGoogle={() =>
+            onSubmit({ fullName: "Google User", email: "demo.google@saachi.ai", password: "demo-oauth123", confirmPassword: "demo-oauth123", role: "learner" })
+          }
+          onMicrosoft={() =>
+            onSubmit({ fullName: "Microsoft User", email: "demo.microsoft@saachi.ai", password: "demo-oauth123", confirmPassword: "demo-oauth123", role: "learner" })
+          }
+        />
+      </div>
 
       <div className="mt-5 text-center text-[14px] text-ink-soft">
         Already have an account?{" "}

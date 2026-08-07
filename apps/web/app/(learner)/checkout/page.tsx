@@ -6,7 +6,7 @@ import Link from "next/link";
 import { CreditCard, Wallet, Building2, ShieldCheck } from "lucide-react";
 import { useCartStore, useEnrollmentStore, useOrderStore } from "@saachi/store";
 import { useSession } from "@saachi/api-client";
-import { Button, Card, Input, EmptyState } from "@saachi/ui";
+import { Button, Card, Input, EmptyState, Loading } from "@saachi/ui";
 import { formatCurrency } from "@saachi/utils";
 
 const PAYMENT_METHODS = [
@@ -151,9 +151,15 @@ export default function CheckoutPage() {
                 <span>{formatCurrency(cart.total(), currency)}</span>
               </div>
             </div>
-            <Button size="lg" className="w-full" onClick={handlePay} disabled={isPaying}>
-              {isPaying ? "Processing..." : `Pay ${formatCurrency(cart.total(), currency)}`}
-            </Button>
+            {isPaying ? (
+              <div className="mt-4">
+                <Loading size={72} label="Processing payment..." />
+              </div>
+            ) : (
+              <Button size="lg" className="w-full" onClick={handlePay}>
+                Pay {formatCurrency(cart.total(), currency)}
+              </Button>
+            )}
           </Card>
         </div>
       </div>

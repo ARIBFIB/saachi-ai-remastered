@@ -13,3 +13,5 @@ export * from "./components/CourseCard";
 export * from "./components/FilterSidebar";
 export * from "./components/Accordion";
 export * from "./components/ReviewCard";
+export * from "./components/SocialLoginButtons";
+export * from "./components/Loading";

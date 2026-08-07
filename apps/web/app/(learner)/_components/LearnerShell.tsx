@@ -18,7 +18,8 @@ import {
   Users2
 } from "lucide-react";
 import { useSession, useLogout } from "@saachi/api-client";
-import { useCartStore } from "@saachi/store";
+import { useCartStore, useNotificationStore } from "@saachi/store";
+import { useRealtimeNotifications } from "../../../hooks/useRealtimeNotifications";
 import { cn } from "@saachi/ui";
 
 const NAV_ITEMS = [
@@ -39,7 +40,10 @@ export function LearnerShell({ children }: { children: ReactNode }) {
   const { data: session } = useSession();
   const logout = useLogout();
   const cartCount = useCartStore((s) => s.items.length);
+  const unreadCount = useNotificationStore((s) => s.items.filter((n) => !n.read).length);
   const [mobileOpen, setMobileOpen] = useState(false);
+
+  useRealtimeNotifications(true);
 
   const handleLogout = async () => {
     await logout.mutateAsync();
@@ -73,6 +77,11 @@ export function LearnerShell({ children }: { children: ReactNode }) {
               {item.href === "/cart" && cartCount > 0 && (
                 <span className="ml-auto flex h-5 min-w-[20px] items-center justify-center rounded-full bg-gold px-1.5 text-[11px] font-bold text-ink">
                   {cartCount}
+                </span>
+              )}
+              {item.href === "/notifications" && unreadCount > 0 && (
+                <span className="ml-auto flex h-5 min-w-[20px] items-center justify-center rounded-full bg-error px-1.5 text-[11px] font-bold text-white">
+                  {unreadCount}
                 </span>
               )}
             </Link>

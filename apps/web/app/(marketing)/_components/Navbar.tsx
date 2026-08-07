@@ -3,9 +3,10 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { Menu, X, ShoppingCart } from "lucide-react";
+import { Menu, X, ShoppingCart, Search } from "lucide-react";
 import { Button } from "@saachi/ui";
 import { useSession, useLogout } from "@saachi/api-client";
+import { LocaleSwitcher } from "./LocaleSwitcher";
 
 const NAV_LINKS = [
   { label: "Explore Courses", href: "/courses" },
@@ -64,6 +65,14 @@ export function Navbar() {
         </nav>
 
         <div className="hidden items-center gap-3 md:flex">
+          <Link
+            href="/search"
+            aria-label="Search"
+            className="flex h-10 w-10 items-center justify-center rounded-full text-ink-soft transition-colors duration-150 ease-out hover:bg-paper-dim hover:text-ink"
+          >
+            <Search size={18} />
+          </Link>
+          <LocaleSwitcher />
           {session ? (
             <>
               <Link

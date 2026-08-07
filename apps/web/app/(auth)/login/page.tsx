@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -7,7 +7,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { loginSchema, type LoginInput } from "@saachi/utils";
 import { useLogin } from "@saachi/api-client";
-import { Button, Card, Input } from "@saachi/ui";
+import { Button, Card, Input, SocialLoginButtons } from "@saachi/ui";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -62,15 +62,22 @@ export default function LoginPage() {
         {serverError && <p className="text-[13px] text-error">{serverError}</p>}
 
         <Button type="submit" size="lg" disabled={isSubmitting || loginMutation.isPending}>
-          {isSubmitting || loginMutation.isPending ? "Logging inâ€¦" : "Log In"}
+          {isSubmitting || loginMutation.isPending ? "Logging inÃ¢â‚¬Â¦" : "Log In"}
         </Button>
       </form>
+
+      <div className="mt-6">
+        <SocialLoginButtons
+          onGoogle={() => onSubmit({ email: "demo.google@saachi.ai", password: "demo-oauth" })}
+          onMicrosoft={() => onSubmit({ email: "demo.microsoft@saachi.ai", password: "demo-oauth" })}
+        />
+      </div>
 
       <div className="mt-5 text-center text-[14px] text-ink-soft">
         <Link href="/forgot-password" className="hover:text-ink">
           Forgot password?
         </Link>
-        <span className="mx-2">Â·</span>
+        <span className="mx-2">Ã‚Â·</span>
         <Link href="/register" className="hover:text-ink">
           Create an account
         </Link>

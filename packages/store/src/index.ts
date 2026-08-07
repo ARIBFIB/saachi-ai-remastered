@@ -8,3 +8,4 @@ export * from "./useOrderStore";
 export * from "./useCommunityStore";
 export * from "./usePromotionStore";
 export * from "./useCorporateStore";
+export * from "./useLocaleStore";
