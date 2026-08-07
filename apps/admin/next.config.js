@@ -1,7 +1,7 @@
-﻿/** @type {import("next").NextConfig} */
+/** @type {import("next").NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
-  transpilePackages: ["@saachi/ui", "@saachi/api-client", "@saachi/utils"],
+  transpilePackages: ["@saachi/ui", "@saachi/api-client", "@saachi/utils", "@saachi/store"],
   async rewrites() {
     return [
       {

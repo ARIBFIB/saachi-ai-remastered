@@ -6,9 +6,11 @@
   "types": "./src/index.ts",
   "dependencies": {
     "clsx": "^2.1.0",
+    "@tanstack/react-table": "^8.20.0",
     "tailwind-merge": "^2.5.0",
     "lucide-react": "^0.445.0",
-    "lottie-react": "^2.4.0"
+    "lottie-react": "^2.4.0",
+    "@saachi/store": "workspace:*"
   },
   "peerDependencies": {
     "react": "^18.3.0"

@@ -1,31 +1,49 @@
-﻿export default function AdminLoginPage() {
+"use client";
+
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { ShieldCheck } from "lucide-react";
+import { Button, Card, Input, ThemeToggle } from "@saachi/ui";
+
+export default function AdminLoginPage() {
+  const router = useRouter();
+  const [loading, setLoading] = useState(false);
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+    document.cookie = "saachi_admin_session=demo_token; path=/; max-age=" + 60 * 60 * 24 * 7;
+    setTimeout(() => router.push("/dashboard"), 500);
+  };
+
   return (
-    <main
-      style={{
-        minHeight: "100vh",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        background: "var(--surface-bg)"
-      }}
-    >
-      <div
-        style={{
-          background: "var(--surface-card)",
-          padding: "40px",
-          borderRadius: "16px",
-          boxShadow: "0 4px 20px rgba(30,64,175,0.10)",
-          width: "360px"
-        }}
-      >
-        <h1 style={{ fontSize: "22px", fontWeight: 600, marginBottom: "8px" }}>
-          Saachi AI - Admin
-        </h1>
-        <p style={{ color: "var(--text-secondary)", fontSize: "14px", marginBottom: "24px" }}>
-          Internal staff access only. 2FA required.
-        </p>
-        {/* Login form + 2FA step to be wired in a later step */}
+    <main className="flex min-h-screen items-center justify-center bg-paper px-4">
+      <div className="absolute right-5 top-5">
+        <ThemeToggle />
       </div>
+
+      <Card className="w-full max-w-[400px] p-8">
+        <div className="mb-6 flex flex-col items-center text-center">
+          <span className="mb-4 flex h-11 w-11 items-center justify-center rounded-full border border-ink text-[15px] font-bold text-ink">
+            S
+          </span>
+          <h1 className="text-[20px] font-semibold text-ink">Saachi AI - Admin</h1>
+          <p className="mt-1.5 text-[13px] text-ink-soft">Internal staff access only. 2FA required.</p>
+        </div>
+
+        <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+          <Input label="Email" type="email" placeholder="you@saachi.ai" required />
+          <Input label="Password" type="password" placeholder="********" required />
+          <Button type="submit" size="lg" disabled={loading}>
+            {loading ? "Verifying..." : "Continue"}
+          </Button>
+        </form>
+
+        <div className="mt-5 flex items-center justify-center gap-1.5 text-[12px] text-ink-soft">
+          <ShieldCheck size={13} strokeWidth={1.75} />
+          Protected by mandatory two-factor authentication
+        </div>
+      </Card>
     </main>
   );
 }

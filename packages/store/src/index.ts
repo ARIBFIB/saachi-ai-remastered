@@ -9,3 +9,4 @@ export * from "./useCommunityStore";
 export * from "./usePromotionStore";
 export * from "./useCorporateStore";
 export * from "./useLocaleStore";
+export * from "./useThemeStore";
