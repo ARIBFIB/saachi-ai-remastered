@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { DollarSign, Repeat, GraduationCap, Undo2 } from "lucide-react";
 import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid } from "recharts";
-import { KpiCard, ShimmerKpiCard, ShimmerChart } from "@saachi/ui";
+import { KpiCard, ShimmerKpiCard, ShimmerChart , HelpTooltip } from "@saachi/ui";
 import { formatCurrency } from "@saachi/utils";
 
 const GMV_TREND = [
@@ -33,7 +33,7 @@ export default function AnalyticsOverviewPage() {
   return (
     <main className="mx-auto max-w-[1200px] px-4 py-8 md:px-8 md:py-10">
       <div className="mb-8">
-        <h1 className="text-[22px] font-semibold text-ink">Analytics Overview</h1>
+        <div className="flex items-center gap-1.5"><h1 className="text-[22px] font-semibold text-ink">Analytics Overview</h1><HelpTooltip text="Platform-wide financial and engagement metrics: Gross Merchandise Value, subscription revenue, course completion, and refund rates." /></div>
         <p className="mt-1 text-[13px] text-ink-soft">Platform-wide GMV, subscription revenue, completion, and refund metrics.</p>
       </div>
 

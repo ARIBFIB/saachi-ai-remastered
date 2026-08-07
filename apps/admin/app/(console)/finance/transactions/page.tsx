@@ -4,7 +4,7 @@ import { useMemo, useState } from "react";
 import { Search, Receipt, Download } from "lucide-react";
 import type { ColumnDef } from "@tanstack/react-table";
 import { useAdminTransactions, type AdminTransaction } from "@saachi/api-client";
-import { DataTable, StatusPill, Select, Button , RefreshButton } from "@saachi/ui";
+import { DataTable, StatusPill, Select, Button , RefreshButton , HelpTooltip } from "@saachi/ui";
 import { formatCurrency, formatDate } from "@saachi/utils";
 
 const STATUS_OPTIONS = [
@@ -110,7 +110,7 @@ export default function TransactionsLedgerPage() {
             <Receipt size={17} strokeWidth={1.75} />
           </div>
           <div>
-            <h1 className="text-[22px] font-semibold text-ink">Transactions Ledger</h1>
+            <div className="flex items-center gap-1.5"><h1 className="text-[22px] font-semibold text-ink">Transactions Ledger</h1><HelpTooltip text="A complete record of every payment processed through the platform, including the commission taken and which gateway was used." /></div>
             <p className="mt-0.5 text-[13px] text-ink-soft">Full financial transaction history across all payment gateways.</p>
           </div>
         </div>

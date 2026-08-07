@@ -9,7 +9,7 @@ import {
   useDeleteCategory,
   type AdminCategory
 } from "@saachi/api-client";
-import { Button, Card, Input, Modal, ShimmerTableRow, Badge } from "@saachi/ui";
+import { Button, Card, Input, Modal, ShimmerTableRow, Badge , HelpTooltip } from "@saachi/ui";
 
 export default function CategoryManagementPage() {
   const { data: categories, isLoading } = useAdminCategoryList();
@@ -72,7 +72,7 @@ export default function CategoryManagementPage() {
             <Tags size={17} strokeWidth={1.75} />
           </div>
           <div>
-            <h1 className="text-[22px] font-semibold text-ink">Category & Tag Management</h1>
+            <div className="flex items-center gap-1.5"><h1 className="text-[22px] font-semibold text-ink">Category & Tag Management</h1><HelpTooltip text="The taxonomy used across the marketplace and course builder. Deleting a category will require recategorizing any courses assigned to it." /></div>
             <p className="mt-0.5 text-[13px] text-ink-soft">Taxonomy used across the marketplace and course builder.</p>
           </div>
         </div>

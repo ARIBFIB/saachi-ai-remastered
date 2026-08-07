@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { MessageSquareWarning, Trash2, ShieldAlert, CheckCircle2 } from "lucide-react";
 import { useFlaggedReviews, useResolveFlaggedReview, type FlaggedReview } from "@saachi/api-client";
-import { Button, Card, Select, StatusPill, ShimmerTableRow, EmptyState } from "@saachi/ui";
+import { Button, Card, Select, StatusPill, ShimmerTableRow, EmptyState , HelpTooltip } from "@saachi/ui";
 import { formatRelativeTime } from "@saachi/utils";
 
 const STATUS_OPTIONS = [
@@ -33,7 +33,7 @@ export default function FlaggedReviewsPage() {
             <MessageSquareWarning size={17} strokeWidth={1.75} />
           </div>
           <div>
-            <h1 className="text-[22px] font-semibold text-ink">Flagged Reviews</h1>
+            <div className="flex items-center gap-1.5"><h1 className="text-[22px] font-semibold text-ink">Flagged Reviews</h1><HelpTooltip text="Course reviews that have been flagged by users or automated filters. Dismiss the flag, warn the author, or remove the review." /></div>
             <p className="mt-0.5 text-[13px] text-ink-soft">Course reviews reported by instructors, learners, or automated filters.</p>
           </div>
         </div>

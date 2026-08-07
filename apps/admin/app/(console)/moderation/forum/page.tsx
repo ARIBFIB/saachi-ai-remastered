@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { MessagesSquare, Trash2, ShieldAlert, CheckCircle2 } from "lucide-react";
 import { useFlaggedForumPosts, useResolveFlaggedForumPost, type FlaggedForumPost } from "@saachi/api-client";
-import { Button, Card, Select, StatusPill, ShimmerTableRow, EmptyState } from "@saachi/ui";
+import { Button, Card, Select, StatusPill, ShimmerTableRow, EmptyState , HelpTooltip } from "@saachi/ui";
 import { formatRelativeTime } from "@saachi/utils";
 
 const STATUS_OPTIONS = [
@@ -33,7 +33,7 @@ export default function FlaggedForumPostsPage() {
             <MessagesSquare size={17} strokeWidth={1.75} />
           </div>
           <div>
-            <h1 className="text-[22px] font-semibold text-ink">Flagged Forum Posts</h1>
+            <div className="flex items-center gap-1.5"><h1 className="text-[22px] font-semibold text-ink">Flagged Forum Posts</h1><HelpTooltip text="Community Q&A posts that have been reported. Dismiss the flag, warn the author, or remove the post." /></div>
             <p className="mt-0.5 text-[13px] text-ink-soft">Community Q&A posts reported for review.</p>
           </div>
         </div>

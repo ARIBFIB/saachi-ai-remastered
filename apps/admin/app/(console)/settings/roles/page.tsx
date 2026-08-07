@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { ShieldCheck, Plus, Check, X } from "lucide-react";
-import { Button, Card, Input, Select, Modal, Badge, ShimmerTableRow } from "@saachi/ui";
+import { Button, Card, Input, Select, Modal, Badge, ShimmerTableRow , HelpTooltip } from "@saachi/ui";
 
 type StaffRole = "super_admin" | "admin" | "finance_officer" | "support_officer";
 
@@ -77,7 +77,7 @@ export default function RolesPermissionsPage() {
             <ShieldCheck size={17} strokeWidth={1.75} />
           </div>
           <div>
-            <h1 className="text-[22px] font-semibold text-ink">Roles & Permissions</h1>
+            <div className="flex items-center gap-1.5"><h1 className="text-[22px] font-semibold text-ink">Roles & Permissions</h1><HelpTooltip text="Internal staff accounts and what each role is permitted to do, shown in the permission matrix below." /></div>
             <p className="mt-0.5 text-[13px] text-ink-soft">Internal staff accounts and their permission scope.</p>
           </div>
         </div>

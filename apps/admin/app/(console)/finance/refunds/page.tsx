@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { Undo2, CheckCircle2, XCircle } from "lucide-react";
 import { useAdminRefunds, useResolveRefund, type AdminRefund } from "@saachi/api-client";
-import { Button, Card, Select, StatusPill, ShimmerTableRow, EmptyState, Modal } from "@saachi/ui";
+import { Button, Card, Select, StatusPill, ShimmerTableRow, EmptyState, Modal , HelpTooltip } from "@saachi/ui";
 import { formatCurrency, formatDate } from "@saachi/utils";
 
 const STATUS_OPTIONS = [
@@ -32,7 +32,7 @@ export default function RefundManagementPage() {
             <Undo2 size={17} strokeWidth={1.75} />
           </div>
           <div>
-            <h1 className="text-[22px] font-semibold text-ink">Refund Management</h1>
+            <div className="flex items-center gap-1.5"><h1 className="text-[22px] font-semibold text-ink">Refund Management</h1><HelpTooltip text="Learner-initiated refund requests. Approving a refund reverses the transaction and claws back the instructor's earned balance." /></div>
             <p className="mt-0.5 text-[13px] text-ink-soft">Learner refund requests - approving reverses the transaction and clawbacks instructor earnings.</p>
           </div>
         </div>

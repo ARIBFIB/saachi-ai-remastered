@@ -22,3 +22,5 @@ export * from "./components/DataTable";
 export * from "./components/StatusPill";
 
 export * from "./RefreshButton";
+
+export * from "./HelpTooltip";

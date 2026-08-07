@@ -9,7 +9,7 @@ import {
   useDeleteCoupon,
   type AdminCoupon
 } from "@saachi/api-client";
-import { Button, Card, Input, Select, Modal, ShimmerTableRow, EmptyState } from "@saachi/ui";
+import { Button, Card, Input, Select, Modal, ShimmerTableRow, EmptyState , HelpTooltip } from "@saachi/ui";
 import { formatDate } from "@saachi/utils";
 
 const TYPE_OPTIONS = [
@@ -77,7 +77,7 @@ export default function CouponManagementPage() {
             <Ticket size={17} strokeWidth={1.75} />
           </div>
           <div>
-            <h1 className="text-[22px] font-semibold text-ink">Coupon Management</h1>
+            <div className="flex items-center gap-1.5"><h1 className="text-[22px] font-semibold text-ink">Coupon Management</h1><HelpTooltip text="Platform-wide or scoped discount codes learners can apply at checkout. Track usage against each coupon's limit here." /></div>
             <p className="mt-0.5 text-[13px] text-ink-soft">Platform-wide and scoped promotional codes.</p>
           </div>
         </div>

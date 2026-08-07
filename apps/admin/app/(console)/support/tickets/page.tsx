@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { Search, LifeBuoy, AlertTriangle } from "lucide-react";
 import type { ColumnDef } from "@tanstack/react-table";
 import { useAdminTickets, type SupportTicket } from "@saachi/api-client";
-import { DataTable, StatusPill, Select , RefreshButton } from "@saachi/ui";
+import { DataTable, StatusPill, Select , RefreshButton , HelpTooltip } from "@saachi/ui";
 import { formatRelativeTime } from "@saachi/utils";
 
 const STATUS_OPTIONS = [
@@ -111,7 +111,7 @@ export default function SupportTicketQueuePage() {
           <LifeBuoy size={17} strokeWidth={1.75} />
         </div>
         <div>
-          <h1 className="text-[22px] font-semibold text-ink">Support Ticket Queue</h1>
+          <div className="flex items-center gap-1.5"><h1 className="text-[22px] font-semibold text-ink">Support Ticket Queue</h1><HelpTooltip text="Learner and instructor support requests tracked against their SLA due time. Overdue tickets are highlighted in red." /></div>
           <p className="mt-0.5 text-[13px] text-ink-soft">Learner and instructor support requests, tracked against SLA.</p>
         </div>
       </div>

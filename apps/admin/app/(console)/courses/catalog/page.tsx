@@ -9,7 +9,7 @@ import {
   useToggleCourseFlag,
   type AdminCourse
 } from "@saachi/api-client";
-import { DataTable, StatusPill, Select , RefreshButton } from "@saachi/ui";
+import { DataTable, StatusPill, Select , RefreshButton , HelpTooltip } from "@saachi/ui";
 import { formatCurrency, formatDate } from "@saachi/utils";
 
 const STATUS_OPTIONS = [
@@ -143,7 +143,7 @@ export default function CourseCatalogPage() {
           <LibraryBig size={17} strokeWidth={1.75} />
         </div>
         <div>
-          <h1 className="text-[22px] font-semibold text-ink">Course Catalog</h1>
+          <div className="flex items-center gap-1.5"><h1 className="text-[22px] font-semibold text-ink">Course Catalog</h1><HelpTooltip text="Every course on the platform regardless of status. Use the star and pin icons to feature or pin a course for homepage curation." /></div>
           <p className="mt-0.5 text-[13px] text-ink-soft">Full catalog across every status - feature or pin courses for curation.</p>
         </div>
       </div>

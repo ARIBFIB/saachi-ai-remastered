@@ -4,7 +4,7 @@ import { useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Search, History, ArrowLeft } from "lucide-react";
 import type { ColumnDef } from "@tanstack/react-table";
-import { DataTable, Select, StatusPill } from "@saachi/ui";
+import { DataTable, Select, StatusPill , RefreshButton } from "@saachi/ui";
 import { formatRelativeTime } from "@saachi/utils";
 
 type ActivityRow = {
@@ -145,6 +145,7 @@ export default function DashboardActivityPage() {
           <p className="mt-0.5 text-[13px] text-ink-soft">Full activity log across transactions, courses, tickets, and users.</p>
         </div>
       </div>
+      <div className="mb-3 flex justify-end"><RefreshButton /></div>
 
       <DataTable
         columns={columns}

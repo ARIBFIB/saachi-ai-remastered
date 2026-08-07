@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { Layers } from "lucide-react";
-import { Shimmer } from "@saachi/ui";
+import { Shimmer , HelpTooltip } from "@saachi/ui";
 
 type CohortRow = {
   cohort: string;
@@ -37,7 +37,7 @@ export default function CohortAnalysisPage() {
           <Layers size={17} strokeWidth={1.75} />
         </div>
         <div>
-          <h1 className="text-[22px] font-semibold text-ink">Cohort Analysis</h1>
+          <div className="flex items-center gap-1.5"><h1 className="text-[22px] font-semibold text-ink">Cohort Analysis</h1><HelpTooltip text="Shows what percentage of each signup cohort remains active week over week. Higher retention across later weeks means learners keep coming back." /></div>
           <p className="mt-0.5 text-[13px] text-ink-soft">Weekly retention percentage by learner signup cohort.</p>
         </div>
       </div>

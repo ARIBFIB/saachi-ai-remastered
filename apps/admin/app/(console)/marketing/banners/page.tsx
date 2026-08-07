@@ -10,7 +10,7 @@ import {
   useReorderBanner,
   type AdminBanner
 } from "@saachi/api-client";
-import { Button, Card, Input, Textarea, Select, Modal, StatusPill, ShimmerKpiCard, EmptyState } from "@saachi/ui";
+import { Button, Card, Input, Textarea, Select, Modal, StatusPill, ShimmerKpiCard, EmptyState , HelpTooltip } from "@saachi/ui";
 import { formatDate } from "@saachi/utils";
 
 const STATUS_OPTIONS = [
@@ -117,7 +117,7 @@ export default function HomepageBannersPage() {
             <ImageIcon size={17} strokeWidth={1.75} />
           </div>
           <div>
-            <h1 className="text-[22px] font-semibold text-ink">Homepage Banners</h1>
+            <div className="flex items-center gap-1.5"><h1 className="text-[22px] font-semibold text-ink">Homepage Banners</h1><HelpTooltip text="Promotional banners shown on the homepage. Use the arrows to reorder, and schedule start/end dates to control when each one is active." /></div>
             <p className="mt-0.5 text-[13px] text-ink-soft">Create, schedule, and reorder homepage promotional banners.</p>
           </div>
         </div>

@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { Percent, Plus, Pencil, Check, X } from "lucide-react";
 import { useAdminTaxRules, useUpdateTaxRule, useCreateTaxRule, type TaxRule } from "@saachi/api-client";
-import { Button, Card, Input, Modal, ShimmerTableRow } from "@saachi/ui";
+import { Button, Card, Input, Modal, ShimmerTableRow , HelpTooltip } from "@saachi/ui";
 
 export default function TaxSettingsPage() {
   const { data: rules, isLoading } = useAdminTaxRules();
@@ -48,7 +48,7 @@ export default function TaxSettingsPage() {
             <Percent size={17} strokeWidth={1.75} />
           </div>
           <div>
-            <h1 className="text-[22px] font-semibold text-ink">Tax / VAT Settings</h1>
+            <div className="flex items-center gap-1.5"><h1 className="text-[22px] font-semibold text-ink">Tax / VAT Settings</h1><HelpTooltip text="Region-based tax rules that are applied automatically at checkout based on the buyer's location." /></div>
             <p className="mt-0.5 text-[13px] text-ink-soft">Region-based tax rules applied at checkout.</p>
           </div>
         </div>

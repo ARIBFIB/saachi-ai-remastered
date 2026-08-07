@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { CheckCircle2, XCircle, ClipboardCheck, User, Tag } from "lucide-react";
 import { useAdminModerationQueue, useModerateCourse, type AdminCourse } from "@saachi/api-client";
-import { Button, Card, Textarea, Modal, EmptyState, ShimmerKpiCard } from "@saachi/ui";
+import { Button, Card, Textarea, Modal, EmptyState, ShimmerKpiCard , HelpTooltip } from "@saachi/ui";
 import { formatCurrency, formatDate } from "@saachi/utils";
 
 export default function CourseModerationQueuePage() {
@@ -30,7 +30,7 @@ export default function CourseModerationQueuePage() {
           <ClipboardCheck size={17} strokeWidth={1.75} />
         </div>
         <div>
-          <h1 className="text-[22px] font-semibold text-ink">Course Moderation Queue</h1>
+          <div className="flex items-center gap-1.5"><h1 className="text-[22px] font-semibold text-ink">Course Moderation Queue</h1><HelpTooltip text="Courses submitted by instructors that are waiting for approval before they go live. Approve to publish, or reject with feedback so the instructor can revise." /></div>
           <p className="mt-0.5 text-[13px] text-ink-soft">Review newly submitted courses before they go live.</p>
         </div>
       </div>

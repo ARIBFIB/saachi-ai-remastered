@@ -4,7 +4,7 @@ import { useMemo, useState } from "react";
 import { Search, Receipt, Download } from "lucide-react";
 import type { ColumnDef } from "@tanstack/react-table";
 import { useAdminTransactions, type AdminTransaction } from "@saachi/api-client";
-import { DataTable, StatusPill, Select, Button } from "@saachi/ui";
+import { DataTable, StatusPill, Select, Button , RefreshButton } from "@saachi/ui";
 import { formatCurrency, formatDate } from "@saachi/utils";
 
 const STATUS_OPTIONS = [
@@ -118,6 +118,7 @@ export default function TransactionsLedgerPage() {
           <Download size={14} strokeWidth={1.75} /> Export CSV
         </Button>
       </div>
+      <div className="mb-3 flex justify-end"><RefreshButton /></div>
 
       <DataTable
         columns={columns}

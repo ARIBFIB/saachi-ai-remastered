@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { Search, UserCog } from "lucide-react";
 import type { ColumnDef } from "@tanstack/react-table";
 import { useAdminUserList, type AdminUser } from "@saachi/api-client";
-import { DataTable, StatusPill, Select , RefreshButton } from "@saachi/ui";
+import { DataTable, StatusPill, Select , RefreshButton , HelpTooltip } from "@saachi/ui";
 import { formatDate } from "@saachi/utils";
 
 const ROLE_OPTIONS = [
@@ -102,7 +102,7 @@ export default function AdminUsersPage() {
           <UserCog size={17} strokeWidth={1.75} />
         </div>
         <div>
-          <h1 className="text-[22px] font-semibold text-ink">User Management</h1>
+          <div className="flex items-center gap-1.5"><h1 className="text-[22px] font-semibold text-ink">User Management</h1><HelpTooltip text="All learners, instructors, and corporate accounts on the platform. Click a row to view full profile, activity, and moderation controls." /></div>
           <p className="mt-0.5 text-[13px] text-ink-soft">Learners, instructors, and corporate accounts.</p>
         </div>
       </div>

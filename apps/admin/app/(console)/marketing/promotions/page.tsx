@@ -2,7 +2,7 @@
 
 import { Megaphone, Crown } from "lucide-react";
 import { useAdminPromotionSales, type PromotionSale } from "@saachi/api-client";
-import { Card, StatusPill, ShimmerKpiCard, ShimmerTableRow, EmptyState } from "@saachi/ui";
+import { Card, StatusPill, ShimmerKpiCard, ShimmerTableRow, EmptyState , HelpTooltip } from "@saachi/ui";
 import { formatCurrency, formatDate } from "@saachi/utils";
 
 const TIER_TONE: Record<PromotionSale["tier"], "warning" | "info" | "success"> = {
@@ -30,7 +30,7 @@ export default function PromotionSalesPage() {
           <Megaphone size={17} strokeWidth={1.75} />
         </div>
         <div>
-          <h1 className="text-[22px] font-semibold text-ink">Promotion Package Sales</h1>
+          <div className="flex items-center gap-1.5"><h1 className="text-[22px] font-semibold text-ink">Promotion Package Sales</h1><HelpTooltip text="Revenue and activity from instructors purchasing Bronze/Silver/Gold visibility boosts for their courses." /></div>
           <p className="mt-0.5 text-[13px] text-ink-soft">Instructor purchases of Bronze/Silver/Gold visibility boosts.</p>
         </div>
       </div>

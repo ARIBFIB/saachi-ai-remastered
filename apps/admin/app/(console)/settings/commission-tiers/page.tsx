@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { Landmark, Save } from "lucide-react";
-import { Button, Card, Input, ShimmerKpiCard } from "@saachi/ui";
+import { Button, Card, Input, ShimmerKpiCard , HelpTooltip } from "@saachi/ui";
 
 type Tier = {
   id: string;
@@ -49,7 +49,7 @@ export default function CommissionTierConfigurationPage() {
             <Landmark size={17} strokeWidth={1.75} />
           </div>
           <div>
-            <h1 className="text-[22px] font-semibold text-ink">Commission Tier Configuration</h1>
+            <div className="flex items-center gap-1.5"><h1 className="text-[22px] font-semibold text-ink">Commission Tier Configuration</h1><HelpTooltip text="The commission percentage the platform retains from each course sale, based on the instructor's trust tier." /></div>
             <p className="mt-0.5 text-[13px] text-ink-soft">Trust-tier commission rates applied to instructor course sales.</p>
           </div>
         </div>

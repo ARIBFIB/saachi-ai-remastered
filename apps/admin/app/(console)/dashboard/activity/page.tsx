@@ -4,7 +4,7 @@ import { useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Search, History, ArrowLeft } from "lucide-react";
 import type { ColumnDef } from "@tanstack/react-table";
-import { DataTable, Select, StatusPill , RefreshButton } from "@saachi/ui";
+import { DataTable, Select, StatusPill , RefreshButton , HelpTooltip } from "@saachi/ui";
 import { formatRelativeTime } from "@saachi/utils";
 
 type ActivityRow = {
@@ -141,7 +141,7 @@ export default function DashboardActivityPage() {
           <History size={17} strokeWidth={1.75} />
         </div>
         <div>
-          <h1 className="text-[22px] font-semibold text-ink">Recent Activity</h1>
+          <div className="flex items-center gap-1.5"><h1 className="text-[22px] font-semibold text-ink">Recent Activity</h1><HelpTooltip text="The full activity log across transactions, course submissions, support tickets, and new user signups." /></div>
           <p className="mt-0.5 text-[13px] text-ink-soft">Full activity log across transactions, courses, tickets, and users.</p>
         </div>
       </div>

@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { ScrollText, Pencil, History } from "lucide-react";
-import { Button, Card, Textarea, Modal, ShimmerTableRow } from "@saachi/ui";
+import { Button, Card, Textarea, Modal, ShimmerTableRow , HelpTooltip } from "@saachi/ui";
 import { formatDate } from "@saachi/utils";
 
 type LegalDoc = {
@@ -57,7 +57,7 @@ export default function LegalDocumentManagementPage() {
           <ScrollText size={17} strokeWidth={1.75} />
         </div>
         <div>
-          <h1 className="text-[22px] font-semibold text-ink">Legal Document Management</h1>
+          <div className="flex items-center gap-1.5"><h1 className="text-[22px] font-semibold text-ink">Legal Document Management</h1><HelpTooltip text="Versioned legal documents shown to users. Publishing an edit bumps the version number and updates the live copy." /></div>
           <p className="mt-0.5 text-[13px] text-ink-soft">Versioned editor for Terms, Privacy, Refund Policy, and Instructor Agreement.</p>
         </div>
       </div>

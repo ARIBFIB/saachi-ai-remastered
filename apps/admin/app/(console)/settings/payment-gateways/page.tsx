@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { CreditCard, Pencil, Eye, EyeOff } from "lucide-react";
-import { Button, Card, Input, Modal } from "@saachi/ui";
+import { Button, Card, Input, Modal , HelpTooltip } from "@saachi/ui";
 
 type Gateway = {
   id: string;
@@ -50,7 +50,7 @@ export default function PaymentGatewayConfigurationPage() {
           <CreditCard size={17} strokeWidth={1.75} />
         </div>
         <div>
-          <h1 className="text-[22px] font-semibold text-ink">Payment Gateway Configuration</h1>
+          <div className="flex items-center gap-1.5"><h1 className="text-[22px] font-semibold text-ink">Payment Gateway Configuration</h1><HelpTooltip text="Enable or disable payment gateways and manage their API keys. Keys are masked once saved." /></div>
           <p className="mt-0.5 text-[13px] text-ink-soft">Enable gateways and manage API keys (masked at rest).</p>
         </div>
       </div>
