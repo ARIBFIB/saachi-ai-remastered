@@ -1,101 +1,1118 @@
 ﻿================================================================================
 PROJECT CODE EXPORT
-Generated: 2026-08-07 15:02:36
-Total Files: 135
+Generated: 2026-08-07 15:38:51
+Total Files: 152
 ================================================================================
 
 
 ================================================================================
-FILE: apps\admin\app\dashboard\page.tsx
+FILE: apps\admin\app\(console)\courses\catalog\page.tsx
 ================================================================================
-export default function AdminDashboardPage() {
+"use client";
+
+import { useMemo, useState } from "react";
+import { Search, LibraryBig, Star, Pin } from "lucide-react";
+import type { ColumnDef } from "@tanstack/react-table";
+import {
+  useAdminCourseCatalog,
+  useAdminCategoryList,
+  useToggleCourseFlag,
+  type AdminCourse
+} from "@saachi/api-client";
+import { DataTable, StatusPill, Select } from "@saachi/ui";
+import { formatCurrency, formatDate } from "@saachi/utils";
+
+const STATUS_OPTIONS = [
+  { label: "Draft", value: "draft" },
+  { label: "Pending review", value: "pending_review" },
+  { label: "Published", value: "published" },
+  { label: "Rejected", value: "rejected" },
+  { label: "Archived", value: "archived" }
+];
+
+const STATUS_TONE: Record<AdminCourse["status"], "success" | "warning" | "error" | "info" | "neutral"> = {
+  draft: "neutral",
+  pending_review: "warning",
+  published: "success",
+  rejected: "error",
+  archived: "info"
+};
+
+export default function CourseCatalogPage() {
+  const [search, setSearch] = useState("");
+  const [categoryId, setCategoryId] = useState("");
+  const [status, setStatus] = useState("");
+
+  const { data: categories } = useAdminCategoryList();
+  const { data, isLoading } = useAdminCourseCatalog({
+    search: search || undefined,
+    categoryId: categoryId || undefined,
+    status: status || undefined
+  });
+  const toggleFlag = useToggleCourseFlag();
+
+  const categoryOptions = useMemo(
+    () => (categories ?? []).map((c) => ({ label: c.name, value: c.id })),
+    [categories]
+  );
+
+  const columns = useMemo<ColumnDef<AdminCourse, any>[]>(
+    () => [
+      {
+        header: "Course",
+        accessorKey: "title",
+        cell: ({ row }) => (
+          <div className="flex items-center gap-3">
+            <div className="h-9 w-16 shrink-0 overflow-hidden rounded-control border border-line bg-paper-dim">
+              {row.original.thumbnailUrl && (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img src={row.original.thumbnailUrl} alt={row.original.title} className="h-full w-full object-cover" />
+              )}
+            </div>
+            <div className="max-w-[260px]">
+              <div className="truncate font-medium text-ink">{row.original.title}</div>
+              <div className="text-[12px] text-ink-soft">{row.original.instructorName}</div>
+            </div>
+          </div>
+        )
+      },
+      {
+        header: "Category",
+        accessorKey: "categoryId",
+        cell: ({ getValue }) => <span className="text-ink-soft">{getValue()}</span>
+      },
+      {
+        header: "Price",
+        accessorKey: "price",
+        cell: ({ row }) => (
+          <span className="font-mono font-semibold text-ink">
+            {formatCurrency(row.original.price, row.original.currency)}
+          </span>
+        )
+      },
+      {
+        header: "Status",
+        accessorKey: "status",
+        cell: ({ getValue }) => {
+          const value = getValue() as AdminCourse["status"];
+          return <StatusPill label={value.replace("_", " ")} tone={STATUS_TONE[value]} />;
+        }
+      },
+      {
+        header: "Enrollments",
+        accessorKey: "enrollmentCount",
+        cell: ({ getValue }) => <span className="font-mono text-ink-soft">{(getValue() as number).toLocaleString()}</span>
+      },
+      {
+        header: "Submitted",
+        accessorKey: "submittedAt",
+        cell: ({ getValue }) => <span className="text-ink-soft">{formatDate(getValue() as string)}</span>
+      },
+      {
+        header: "Curate",
+        id: "curate",
+        cell: ({ row }) => (
+          <div className="flex items-center gap-1.5">
+            <button
+              type="button"
+              onClick={(e) => {
+                e.stopPropagation();
+                toggleFlag.mutate({ id: row.original.id, field: "featured" });
+              }}
+              title="Toggle featured"
+              className={`flex h-7 w-7 items-center justify-center rounded-control border transition-colors duration-150 ease-out ${
+                row.original.featured ? "border-ink bg-ink text-paper" : "border-line text-ink-soft hover:text-ink"
+              }`}
+            >
+              <Star size={13} strokeWidth={1.75} />
+            </button>
+            <button
+              type="button"
+              onClick={(e) => {
+                e.stopPropagation();
+                toggleFlag.mutate({ id: row.original.id, field: "pinned" });
+              }}
+              title="Toggle pinned"
+              className={`flex h-7 w-7 items-center justify-center rounded-control border transition-colors duration-150 ease-out ${
+                row.original.pinned ? "border-ink bg-ink text-paper" : "border-line text-ink-soft hover:text-ink"
+              }`}
+            >
+              <Pin size={13} strokeWidth={1.75} />
+            </button>
+          </div>
+        )
+      }
+    ],
+    [toggleFlag]
+  );
+
   return (
-    <main style={{ padding: "32px" }}>
-      <h1 style={{ fontSize: "24px", fontWeight: 700 }}>Admin Dashboard</h1>
-      <p style={{ color: "var(--text-secondary)", marginTop: "8px" }}>
-        KPI cards, moderation queue, and finance widgets will be wired here.
-      </p>
+    <main className="mx-auto max-w-[1200px] px-4 py-8 md:px-8 md:py-10">
+      <div className="mb-6 flex items-center gap-3">
+        <div className="flex h-10 w-10 items-center justify-center rounded-control border border-line text-ink">
+          <LibraryBig size={17} strokeWidth={1.75} />
+        </div>
+        <div>
+          <h1 className="text-[22px] font-semibold text-ink">Course Catalog</h1>
+          <p className="mt-0.5 text-[13px] text-ink-soft">Full catalog across every status - feature or pin courses for curation.</p>
+        </div>
+      </div>
+
+      <DataTable
+        columns={columns}
+        data={data ?? []}
+        isLoading={isLoading}
+        emptyTitle="No courses found"
+        emptyDescription="Try adjusting your search or filters."
+        toolbar={
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
+            <div className="relative flex-1">
+              <Search size={15} strokeWidth={1.75} className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-ink-soft" />
+              <input
+                placeholder="Search by title or instructor"
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                className="h-10 w-full rounded-control border border-line bg-card pl-9 pr-3 text-[13px] text-ink outline-none placeholder:text-ink-soft/60 focus:border-line-strong"
+              />
+            </div>
+            <div className="sm:w-[220px]">
+              <Select placeholder="All categories" options={categoryOptions} value={categoryId} onChange={(e) => setCategoryId(e.target.value)} />
+            </div>
+            <div className="sm:w-[180px]">
+              <Select placeholder="All statuses" options={STATUS_OPTIONS} value={status} onChange={(e) => setStatus(e.target.value)} />
+            </div>
+          </div>
+        }
+      />
     </main>
   );
 }
 
 
+================================================================================
+FILE: apps\admin\app\(console)\courses\categories\page.tsx
+================================================================================
+"use client";
+
+import { useState } from "react";
+import { Tags, Plus, Pencil, Trash2, X } from "lucide-react";
+import {
+  useAdminCategoryList,
+  useCreateCategory,
+  useUpdateCategory,
+  useDeleteCategory,
+  type AdminCategory
+} from "@saachi/api-client";
+import { Button, Card, Input, Modal, ShimmerTableRow, Badge } from "@saachi/ui";
+
+export default function CategoryManagementPage() {
+  const { data: categories, isLoading } = useAdminCategoryList();
+  const createCategory = useCreateCategory();
+  const updateCategory = useUpdateCategory();
+  const deleteCategory = useDeleteCategory();
+
+  const [editing, setEditing] = useState<AdminCategory | null>(null);
+  const [showCreate, setShowCreate] = useState(false);
+  const [name, setName] = useState("");
+  const [tagInput, setTagInput] = useState("");
+  const [tags, setTags] = useState<string[]>([]);
+  const [deleteTarget, setDeleteTarget] = useState<AdminCategory | null>(null);
+
+  const openCreate = () => {
+    setName("");
+    setTags([]);
+    setTagInput("");
+    setShowCreate(true);
+  };
+
+  const openEdit = (category: AdminCategory) => {
+    setEditing(category);
+    setName(category.name);
+    setTags(category.tags);
+    setTagInput("");
+  };
+
+  const addTag = () => {
+    const value = tagInput.trim().toLowerCase();
+    if (!value || tags.includes(value)) return;
+    setTags((prev) => [...prev, value]);
+    setTagInput("");
+  };
+
+  const handleSave = () => {
+    if (!name.trim()) return;
+    if (editing) {
+      updateCategory.mutate({ id: editing.id, name: name.trim(), tags });
+      setEditing(null);
+    } else {
+      createCategory.mutate({ name: name.trim(), tags });
+      setShowCreate(false);
+    }
+  };
+
+  const handleDelete = () => {
+    if (!deleteTarget) return;
+    deleteCategory.mutate(deleteTarget.id);
+    setDeleteTarget(null);
+  };
+
+  const modalOpen = showCreate || Boolean(editing);
+
+  return (
+    <main className="mx-auto max-w-[900px] px-4 py-8 md:px-8 md:py-10">
+      <div className="mb-6 flex items-center justify-between gap-3">
+        <div className="flex items-center gap-3">
+          <div className="flex h-10 w-10 items-center justify-center rounded-control border border-line text-ink">
+            <Tags size={17} strokeWidth={1.75} />
+          </div>
+          <div>
+            <h1 className="text-[22px] font-semibold text-ink">Category & Tag Management</h1>
+            <p className="mt-0.5 text-[13px] text-ink-soft">Taxonomy used across the marketplace and course builder.</p>
+          </div>
+        </div>
+        <Button size="sm" onClick={openCreate}>
+          <Plus size={14} strokeWidth={1.75} /> New category
+        </Button>
+      </div>
+
+      <div className="overflow-hidden rounded-card border border-line bg-card">
+        {isLoading ? (
+          Array.from({ length: 5 }).map((_, i) => <ShimmerTableRow key={i} columns={3} />)
+        ) : (
+          categories?.map((category) => (
+            <div key={category.id} className="flex flex-col gap-3 border-b border-line px-5 py-4 last:border-0 sm:flex-row sm:items-center sm:justify-between">
+              <div>
+                <div className="flex items-center gap-2.5">
+                  <p className="text-[14px] font-semibold text-ink">{category.name}</p>
+                  <span className="text-[12px] text-ink-soft">/{category.slug}</span>
+                </div>
+                <div className="mt-2 flex flex-wrap gap-1.5">
+                  {category.tags.map((tag) => (
+                    <Badge key={tag}>{tag}</Badge>
+                  ))}
+                </div>
+              </div>
+              <div className="flex shrink-0 items-center gap-4">
+                <span className="text-[12px] text-ink-soft">{category.courseCount} courses</span>
+                <div className="flex gap-1.5">
+                  <button
+                    type="button"
+                    onClick={() => openEdit(category)}
+                    className="flex h-8 w-8 items-center justify-center rounded-control text-ink-soft hover:bg-paper-dim hover:text-ink"
+                  >
+                    <Pencil size={14} strokeWidth={1.75} />
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setDeleteTarget(category)}
+                    className="flex h-8 w-8 items-center justify-center rounded-control text-ink-soft hover:bg-paper-dim hover:text-error"
+                  >
+                    <Trash2 size={14} strokeWidth={1.75} />
+                  </button>
+                </div>
+              </div>
+            </div>
+          ))
+        )}
+      </div>
+
+      <Modal
+        open={modalOpen}
+        onClose={() => {
+          setShowCreate(false);
+          setEditing(null);
+        }}
+        title={editing ? "Edit category" : "New category"}
+        footer={
+          <>
+            <Button
+              variant="ghost"
+              onClick={() => {
+                setShowCreate(false);
+                setEditing(null);
+              }}
+            >
+              Cancel
+            </Button>
+            <Button onClick={handleSave} disabled={!name.trim() || createCategory.isPending || updateCategory.isPending}>
+              {editing ? "Save changes" : "Create category"}
+            </Button>
+          </>
+        }
+      >
+        <div className="flex flex-col gap-4">
+          <Input label="Category name" value={name} onChange={(e) => setName(e.target.value)} placeholder="e.g. AI for Careers & Job Search" />
+          <div>
+            <label className="mb-1.5 block text-[13px] font-semibold text-ink">Tags</label>
+            <div className="mb-2 flex flex-wrap gap-1.5">
+              {tags.map((tag) => (
+                <span key={tag} className="flex items-center gap-1.5 rounded-full border border-line-strong px-2.5 py-1 text-[12px] text-ink">
+                  {tag}
+                  <button type="button" onClick={() => setTags((prev) => prev.filter((t) => t !== tag))} className="text-ink-soft hover:text-error">
+                    <X size={11} strokeWidth={2} />
+                  </button>
+                </span>
+              ))}
+            </div>
+            <div className="flex gap-2">
+              <Input
+                placeholder="Add a tag and press Enter"
+                value={tagInput}
+                onChange={(e) => setTagInput(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") {
+                    e.preventDefault();
+                    addTag();
+                  }
+                }}
+                className="h-10 flex-1"
+              />
+              <Button type="button" size="sm" variant="secondary" onClick={addTag}>
+                Add
+              </Button>
+            </div>
+          </div>
+        </div>
+      </Modal>
+
+      <Modal
+        open={Boolean(deleteTarget)}
+        onClose={() => setDeleteTarget(null)}
+        title="Delete category?"
+        footer={
+          <>
+            <Button variant="ghost" onClick={() => setDeleteTarget(null)}>
+              Cancel
+            </Button>
+            <Button variant="danger" onClick={handleDelete} disabled={deleteCategory.isPending}>
+              Delete
+            </Button>
+          </>
+        }
+      >
+        <p className="text-[14px] text-ink-soft">
+          This will remove <span className="font-semibold text-ink">{deleteTarget?.name}</span> from the taxonomy.
+          Courses already assigned to it will need to be recategorized.
+        </p>
+      </Modal>
+    </main>
+  );
+}
+
 
 ================================================================================
-FILE: apps\admin\app\login\page.tsx
+FILE: apps\admin\app\(console)\courses\moderation\page.tsx
 ================================================================================
-export default function AdminLoginPage() {
+"use client";
+
+import { useState } from "react";
+import { CheckCircle2, XCircle, ClipboardCheck, User, Tag } from "lucide-react";
+import { useAdminModerationQueue, useModerateCourse, type AdminCourse } from "@saachi/api-client";
+import { Button, Card, Textarea, Modal, EmptyState, ShimmerKpiCard } from "@saachi/ui";
+import { formatCurrency, formatDate } from "@saachi/utils";
+
+export default function CourseModerationQueuePage() {
+  const { data: queue, isLoading } = useAdminModerationQueue();
+  const moderate = useModerateCourse();
+  const [rejectTarget, setRejectTarget] = useState<AdminCourse | null>(null);
+  const [reason, setReason] = useState("");
+
+  const handleApprove = (course: AdminCourse) => {
+    moderate.mutate({ id: course.id, decision: "published" });
+  };
+
+  const handleRejectSubmit = () => {
+    if (!rejectTarget) return;
+    moderate.mutate({ id: rejectTarget.id, decision: "rejected", reason });
+    setRejectTarget(null);
+    setReason("");
+  };
+
   return (
-    <main
-      style={{
-        minHeight: "100vh",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        background: "var(--surface-bg)"
-      }}
-    >
-      <div
-        style={{
-          background: "var(--surface-card)",
-          padding: "40px",
-          borderRadius: "16px",
-          boxShadow: "0 4px 20px rgba(30,64,175,0.10)",
-          width: "360px"
-        }}
+    <main className="mx-auto max-w-[1100px] px-4 py-8 md:px-8 md:py-10">
+      <div className="mb-6 flex items-center gap-3">
+        <div className="flex h-10 w-10 items-center justify-center rounded-control border border-line text-ink">
+          <ClipboardCheck size={17} strokeWidth={1.75} />
+        </div>
+        <div>
+          <h1 className="text-[22px] font-semibold text-ink">Course Moderation Queue</h1>
+          <p className="mt-0.5 text-[13px] text-ink-soft">Review newly submitted courses before they go live.</p>
+        </div>
+      </div>
+
+      {isLoading ? (
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+          {Array.from({ length: 3 }).map((_, i) => (
+            <ShimmerKpiCard key={i} />
+          ))}
+        </div>
+      ) : !queue || queue.length === 0 ? (
+        <EmptyState
+          icon={<ClipboardCheck size={22} strokeWidth={1.75} />}
+          title="Queue is clear"
+          description="No courses are currently pending review."
+        />
+      ) : (
+        <div className="flex flex-col gap-4">
+          {queue.map((course) => (
+            <Card key={course.id} className="flex flex-col gap-4 p-5 sm:flex-row sm:items-center">
+              <div className="h-[90px] w-[160px] shrink-0 overflow-hidden rounded-control border border-line bg-paper-dim">
+                {course.thumbnailUrl && (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img src={course.thumbnailUrl} alt={course.title} className="h-full w-full object-cover" />
+                )}
+              </div>
+
+              <div className="flex-1">
+                <h3 className="text-[15px] font-semibold text-ink">{course.title}</h3>
+                <div className="mt-1.5 flex flex-wrap items-center gap-x-4 gap-y-1 text-[12.5px] text-ink-soft">
+                  <span className="flex items-center gap-1.5">
+                    <User size={13} strokeWidth={1.75} /> {course.instructorName}
+                  </span>
+                  <span className="flex items-center gap-1.5">
+                    <Tag size={13} strokeWidth={1.75} /> {course.categoryId}
+                  </span>
+                  <span>Submitted {formatDate(course.submittedAt)}</span>
+                  <span className="font-mono font-semibold text-ink">
+                    {formatCurrency(course.price, course.currency)}
+                  </span>
+                </div>
+              </div>
+
+              <div className="flex shrink-0 gap-2">
+                <Button size="sm" variant="secondary" onClick={() => setRejectTarget(course)}>
+                  <XCircle size={14} strokeWidth={1.75} /> Reject
+                </Button>
+                <Button size="sm" onClick={() => handleApprove(course)} disabled={moderate.isPending}>
+                  <CheckCircle2 size={14} strokeWidth={1.75} /> Approve
+                </Button>
+              </div>
+            </Card>
+          ))}
+        </div>
+      )}
+
+      <Modal
+        open={Boolean(rejectTarget)}
+        onClose={() => setRejectTarget(null)}
+        title="Reject course submission"
+        footer={
+          <>
+            <Button variant="ghost" onClick={() => setRejectTarget(null)}>
+              Cancel
+            </Button>
+            <Button variant="danger" onClick={handleRejectSubmit} disabled={!reason.trim() || moderate.isPending}>
+              {moderate.isPending ? "Sending..." : "Send feedback & reject"}
+            </Button>
+          </>
+        }
       >
-        <h1 style={{ fontSize: "22px", fontWeight: 600, marginBottom: "8px" }}>
-          Saachi AI - Admin
-        </h1>
-        <p style={{ color: "var(--text-secondary)", fontSize: "14px", marginBottom: "24px" }}>
-          Internal staff access only. 2FA required.
+        <p className="mb-4 text-[13px] text-ink-soft">
+          Rejecting <span className="font-semibold text-ink">{rejectTarget?.title}</span>. This feedback is sent to
+          the instructor so they can revise and resubmit.
         </p>
-        {/* Login form + 2FA step to be wired in a later step */}
+        <Textarea
+          label="Feedback for instructor"
+          placeholder="Explain what needs to change before this course can be approved..."
+          rows={5}
+          value={reason}
+          onChange={(e) => setReason(e.target.value)}
+        />
+      </Modal>
+    </main>
+  );
+}
+
+
+================================================================================
+FILE: apps\admin\app\(console)\dashboard\page.tsx
+================================================================================
+"use client";
+
+import { useEffect, useState } from "react";
+import {
+  Users,
+  DollarSign,
+  ClipboardCheck,
+  LifeBuoy,
+  ArrowRight
+} from "lucide-react";
+import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid } from "recharts";
+import Link from "next/link";
+import { KpiCard, StatusPill, ShimmerKpiCard, ShimmerChart, Shimmer } from "@saachi/ui";
+
+const REVENUE_TREND = [
+  { day: "Mon", revenue: 1240 },
+  { day: "Tue", revenue: 1890 },
+  { day: "Wed", revenue: 1510 },
+  { day: "Thu", revenue: 2230 },
+  { day: "Fri", revenue: 2670 },
+  { day: "Sat", revenue: 1980 },
+  { day: "Sun", revenue: 2410 }
+];
+
+const ALERT_FEED = [
+  { id: "al_1", label: "3 courses pending moderation review", tone: "warning" as const, href: "/courses/moderation" },
+  { id: "al_2", label: "1 refund request awaiting approval", tone: "error" as const, href: "/finance/refunds" },
+  { id: "al_3", label: "2 support tickets breaching SLA", tone: "error" as const, href: "/support/tickets" },
+  { id: "al_4", label: "Weekly payout batch ready to process", tone: "info" as const, href: "/finance/payouts" }
+];
+
+export default function AdminDashboardPage() {
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const t = setTimeout(() => setIsLoading(false), 700);
+    return () => clearTimeout(t);
+  }, []);
+
+  const kpis = [
+    { label: "New signups today", value: "142", icon: Users, delta: { value: "+12%", direction: "up" as const } },
+    { label: "Revenue today", value: "$4,380", icon: DollarSign, delta: { value: "+8%", direction: "up" as const } },
+    { label: "Pending approvals", value: "3", icon: ClipboardCheck, delta: { value: "-2", direction: "down" as const } },
+    { label: "Open tickets", value: "7", icon: LifeBuoy, delta: { value: "+1", direction: "up" as const } }
+  ];
+
+  return (
+    <main className="mx-auto max-w-[1200px] px-4 py-8 md:px-8 md:py-10">
+      <div className="mb-8">
+        <h1 className="text-[24px] font-semibold text-ink">Dashboard</h1>
+        <p className="mt-1 text-[13px] text-ink-soft">Platform-wide overview and pending operational items.</p>
+      </div>
+
+      <div className="mb-8 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        {isLoading
+          ? Array.from({ length: 4 }).map((_, i) => <ShimmerKpiCard key={i} />)
+          : kpis.map((kpi) => <KpiCard key={kpi.label} {...kpi} />)}
+      </div>
+
+      <div className="mb-8 grid grid-cols-1 gap-6 lg:grid-cols-[1.4fr_1fr]">
+        {isLoading ? (
+          <ShimmerChart />
+        ) : (
+          <div className="rounded-card border border-line bg-card p-6">
+            <div className="mb-1 text-[14px] font-semibold text-ink">Revenue - last 7 days</div>
+            <p className="mb-5 text-[12px] text-ink-soft">Gross transaction volume across all payment gateways.</p>
+            <ResponsiveContainer width="100%" height={220}>
+              <LineChart data={REVENUE_TREND}>
+                <CartesianGrid strokeDasharray="3 3" stroke="var(--color-line)" />
+                <XAxis dataKey="day" stroke="var(--color-ink-soft)" fontSize={12} tickLine={false} axisLine={false} />
+                <YAxis stroke="var(--color-ink-soft)" fontSize={12} tickLine={false} axisLine={false} />
+                <Tooltip
+                  contentStyle={{
+                    background: "var(--color-card)",
+                    border: "1px solid var(--color-line)",
+                    borderRadius: 10,
+                    fontSize: 12,
+                    color: "var(--color-ink)"
+                  }}
+                />
+                <Line type="monotone" dataKey="revenue" stroke="var(--color-ink)" strokeWidth={2} dot={false} />
+              </LineChart>
+            </ResponsiveContainer>
+          </div>
+        )}
+
+        <div className="rounded-card border border-line bg-card p-6">
+          <div className="mb-4 text-[14px] font-semibold text-ink">Needs attention</div>
+          {isLoading ? (
+            <div className="flex flex-col gap-3">
+              {Array.from({ length: 4 }).map((_, i) => (
+                <Shimmer key={i} className="h-11 w-full" />
+              ))}
+            </div>
+          ) : (
+            <div className="flex flex-col gap-2">
+              {ALERT_FEED.map((alert) => (
+                <Link
+                  key={alert.id}
+                  href={alert.href}
+                  className="flex items-center justify-between gap-3 rounded-control border border-line px-3.5 py-3 text-[13px] text-ink transition-colors duration-150 ease-out hover:bg-paper-dim"
+                >
+                  <div className="flex items-center gap-2.5">
+                    <StatusPill label={alert.tone} tone={alert.tone} />
+                    <span className="text-[12.5px]">{alert.label}</span>
+                  </div>
+                  <ArrowRight size={14} strokeWidth={1.75} className="shrink-0 text-ink-soft" />
+                </Link>
+              ))}
+            </div>
+          )}
+        </div>
       </div>
     </main>
   );
 }
 
 
+================================================================================
+FILE: apps\admin\app\(console)\users\[id]\page.tsx
+================================================================================
+!! ERROR reading file: A parameter cannot be found that matches parameter name 'Raw'.
+
+
+================================================================================
+FILE: apps\admin\app\(console)\users\page.tsx
+================================================================================
+"use client";
+
+import { useMemo, useState } from "react";
+import { useRouter } from "next/navigation";
+import { Search, UserCog } from "lucide-react";
+import type { ColumnDef } from "@tanstack/react-table";
+import { useAdminUserList, type AdminUser } from "@saachi/api-client";
+import { DataTable, StatusPill, Select } from "@saachi/ui";
+import { formatDate } from "@saachi/utils";
+
+const ROLE_OPTIONS = [
+  { label: "Learner", value: "learner" },
+  { label: "Instructor", value: "instructor" },
+  { label: "Corporate", value: "corporate" },
+  { label: "Admin", value: "admin" }
+];
+
+const STATUS_OPTIONS = [
+  { label: "Active", value: "active" },
+  { label: "Suspended", value: "suspended" },
+  { label: "Banned", value: "banned" },
+  { label: "Pending", value: "pending" }
+];
+
+const STATUS_TONE: Record<AdminUser["status"], "success" | "warning" | "error" | "info"> = {
+  active: "success",
+  suspended: "warning",
+  banned: "error",
+  pending: "info"
+};
+
+export default function AdminUsersPage() {
+  const router = useRouter();
+  const [search, setSearch] = useState("");
+  const [role, setRole] = useState("");
+  const [status, setStatus] = useState("");
+
+  const { data, isLoading } = useAdminUserList({
+    search: search || undefined,
+    role: role || undefined,
+    status: status || undefined
+  });
+
+  const columns = useMemo<ColumnDef<AdminUser, any>[]>(
+    () => [
+      {
+        header: "Name",
+        accessorKey: "fullName",
+        cell: ({ row }) => (
+          <div className="flex items-center gap-3">
+            <div className="flex h-8 w-8 shrink-0 items-center justify-center overflow-hidden rounded-full border border-line bg-paper-dim text-[12px] font-semibold text-ink-soft">
+              {row.original.avatarUrl ? (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img src={row.original.avatarUrl} alt={row.original.fullName} className="h-full w-full object-cover" />
+              ) : (
+                row.original.fullName.charAt(0)
+              )}
+            </div>
+            <div>
+              <div className="font-medium text-ink">{row.original.fullName}</div>
+              <div className="text-[12px] text-ink-soft">{row.original.email}</div>
+            </div>
+          </div>
+        )
+      },
+      {
+        header: "Role",
+        accessorKey: "role",
+        cell: ({ getValue }) => <span className="capitalize text-ink-soft">{getValue()}</span>
+      },
+      {
+        header: "Status",
+        accessorKey: "status",
+        cell: ({ getValue }) => {
+          const value = getValue() as AdminUser["status"];
+          return <StatusPill label={value} tone={STATUS_TONE[value]} />;
+        }
+      },
+      {
+        header: "Location",
+        accessorKey: "location",
+        cell: ({ getValue }) => <span className="text-ink-soft">{getValue() ?? "-"}</span>
+      },
+      {
+        header: "Joined",
+        accessorKey: "joinedAt",
+        cell: ({ getValue }) => <span className="text-ink-soft">{formatDate(getValue() as string)}</span>
+      },
+      {
+        header: "Last active",
+        accessorKey: "lastActiveAt",
+        cell: ({ getValue }) => <span className="text-ink-soft">{formatDate(getValue() as string)}</span>
+      }
+    ],
+    []
+  );
+
+  return (
+    <main className="mx-auto max-w-[1200px] px-4 py-8 md:px-8 md:py-10">
+      <div className="mb-6 flex items-center gap-3">
+        <div className="flex h-10 w-10 items-center justify-center rounded-control border border-line text-ink">
+          <UserCog size={17} strokeWidth={1.75} />
+        </div>
+        <div>
+          <h1 className="text-[22px] font-semibold text-ink">User Management</h1>
+          <p className="mt-0.5 text-[13px] text-ink-soft">Learners, instructors, and corporate accounts.</p>
+        </div>
+      </div>
+
+      <DataTable
+        columns={columns}
+        data={data ?? []}
+        isLoading={isLoading}
+        emptyTitle="No users found"
+        emptyDescription="Try adjusting your search or filters."
+        onRowClick={(row) => router.push(`/users/${row.id}`)}
+        toolbar={
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
+            <div className="relative flex-1">
+              <Search size={15} strokeWidth={1.75} className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-ink-soft" />
+              <input
+                placeholder="Search by name or email"
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                className="h-10 w-full rounded-control border border-line bg-card pl-9 pr-3 text-[13px] text-ink outline-none placeholder:text-ink-soft/60 focus:border-line-strong"
+              />
+            </div>
+            <div className="sm:w-[180px]">
+              <Select placeholder="All roles" options={ROLE_OPTIONS} value={role} onChange={(e) => setRole(e.target.value)} />
+            </div>
+            <div className="sm:w-[180px]">
+              <Select placeholder="All statuses" options={STATUS_OPTIONS} value={status} onChange={(e) => setStatus(e.target.value)} />
+            </div>
+          </div>
+        }
+      />
+    </main>
+  );
+}
+
+
+================================================================================
+FILE: apps\admin\app\login\page.tsx
+================================================================================
+"use client";
+
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { ShieldCheck } from "lucide-react";
+import { Button, Card, Input, ThemeToggle } from "@saachi/ui";
+
+export default function AdminLoginPage() {
+  const router = useRouter();
+  const [loading, setLoading] = useState(false);
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+    document.cookie = "saachi_admin_session=demo_token; path=/; max-age=" + 60 * 60 * 24 * 7;
+    setTimeout(() => router.push("/dashboard"), 500);
+  };
+
+  return (
+    <main className="flex min-h-screen items-center justify-center bg-paper px-4">
+      <div className="absolute right-5 top-5">
+        <ThemeToggle />
+      </div>
+
+      <Card className="w-full max-w-[400px] p-8">
+        <div className="mb-6 flex flex-col items-center text-center">
+          <span className="mb-4 flex h-11 w-11 items-center justify-center rounded-full border border-ink text-[15px] font-bold text-ink">
+            S
+          </span>
+          <h1 className="text-[20px] font-semibold text-ink">Saachi AI - Admin</h1>
+          <p className="mt-1.5 text-[13px] text-ink-soft">Internal staff access only. 2FA required.</p>
+        </div>
+
+        <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+          <Input label="Email" type="email" placeholder="you@saachi.ai" required />
+          <Input label="Password" type="password" placeholder="********" required />
+          <Button type="submit" size="lg" disabled={loading}>
+            {loading ? "Verifying..." : "Continue"}
+          </Button>
+        </form>
+
+        <div className="mt-5 flex items-center justify-center gap-1.5 text-[12px] text-ink-soft">
+          <ShieldCheck size={13} strokeWidth={1.75} />
+          Protected by mandatory two-factor authentication
+        </div>
+      </Card>
+    </main>
+  );
+}
+
+
+================================================================================
+FILE: apps\admin\app\_components\AdminShell.tsx
+================================================================================
+"use client";
+
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { useState, type ReactNode } from "react";
+import { Menu, X, LogOut, Search, ChevronLeft, ChevronRight } from "lucide-react";
+import { ThemeToggle } from "@saachi/ui";
+import { ADMIN_NAV } from "../lib/nav-config";
+
+function cx(...parts: Array<string | false | undefined>) {
+  return parts.filter(Boolean).join(" ");
+}
+
+export function AdminShell({ children }: { children: ReactNode }) {
+  const pathname = usePathname();
+  const [mobileOpen, setMobileOpen] = useState(false);
+  const [collapsed, setCollapsed] = useState(false);
+
+  const sidebarContent = (
+    <div className="flex h-full flex-col">
+      <div className={cx("flex items-center gap-2.5 px-5 py-6", collapsed && "justify-center px-0")}>
+        <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-ink text-[13px] font-bold text-ink">
+          S
+        </span>
+        {!collapsed && (
+          <div>
+            <div className="text-[14px] font-semibold leading-none text-ink">Saachi AI</div>
+            <div className="mt-1 text-[10px] font-medium uppercase tracking-[0.08em] text-ink-soft">Admin</div>
+          </div>
+        )}
+      </div>
+
+      <nav className="flex flex-1 flex-col gap-5 overflow-y-auto px-3 pb-4">
+        {ADMIN_NAV.map((section) => (
+          <div key={section.title}>
+            {!collapsed && (
+              <div className="mb-1.5 px-2.5 text-[10px] font-semibold uppercase tracking-[0.08em] text-ink-soft/60">
+                {section.title}
+              </div>
+            )}
+            <div className="flex flex-col gap-0.5">
+              {section.items.map((item) => {
+                const active = pathname === item.href || Boolean(pathname?.startsWith(`${item.href}/`));
+                return (
+                  <Link
+                    key={item.href}
+                    href={item.href}
+                    onClick={() => setMobileOpen(false)}
+                    title={collapsed ? item.label : undefined}
+                    className={cx(
+                      "flex items-center gap-3 rounded-control px-2.5 py-2 text-[13px] font-medium transition-colors duration-150 ease-out",
+                      collapsed && "justify-center",
+                      active ? "bg-accent text-paper" : "text-ink-soft hover:bg-paper-dim hover:text-ink"
+                    )}
+                  >
+                    <item.icon size={16} strokeWidth={1.75} className="shrink-0" />
+                    {!collapsed && <span className="truncate">{item.label}</span>}
+                  </Link>
+                );
+              })}
+            </div>
+          </div>
+        ))}
+      </nav>
+
+      <div className="border-t border-line px-3 py-3">
+        <button
+          type="button"
+          onClick={() => setCollapsed((v) => !v)}
+          className={cx(
+            "mb-1 flex w-full items-center gap-3 rounded-control px-2.5 py-2 text-[13px] font-medium text-ink-soft transition-colors duration-150 ease-out hover:bg-paper-dim hover:text-ink",
+            collapsed && "justify-center"
+          )}
+        >
+          {collapsed ? <ChevronRight size={16} strokeWidth={1.75} /> : <ChevronLeft size={16} strokeWidth={1.75} />}
+          {!collapsed && "Collapse"}
+        </button>
+        <Link
+          href="/login"
+          className={cx(
+            "flex w-full items-center gap-3 rounded-control px-2.5 py-2 text-[13px] font-medium text-ink-soft transition-colors duration-150 ease-out hover:bg-paper-dim hover:text-error",
+            collapsed && "justify-center"
+          )}
+        >
+          <LogOut size={16} strokeWidth={1.75} />
+          {!collapsed && "Log out"}
+        </Link>
+      </div>
+    </div>
+  );
+
+  return (
+    <div className="min-h-screen bg-paper">
+      <div
+        className={cx(
+          "hidden shrink-0 border-r border-line bg-card transition-[width] duration-200 ease-out md:fixed md:inset-y-0 md:flex",
+          collapsed ? "w-[76px]" : "w-[248px]"
+        )}
+      >
+        {sidebarContent}
+      </div>
+
+      <div
+        className={cx(
+          "sticky top-0 z-40 flex items-center justify-between border-b border-line bg-card/95 px-4 py-3 backdrop-blur-sm transition-[padding] duration-200 ease-out md:px-6",
+          collapsed ? "md:pl-[76px]" : "md:pl-[248px]"
+        )}
+      >
+        <div className="flex items-center gap-3">
+          <button
+            type="button"
+            onClick={() => setMobileOpen(true)}
+            aria-label="Open menu"
+            className="flex h-9 w-9 items-center justify-center rounded-control text-ink md:hidden"
+          >
+            <Menu size={18} strokeWidth={1.75} />
+          </button>
+          <div className="relative hidden sm:block">
+            <Search size={15} strokeWidth={1.75} className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-ink-soft" />
+            <input
+              placeholder="Search users, courses, tickets..."
+              className="h-9 w-[280px] rounded-control border border-line bg-paper pl-9 pr-3 text-[13px] text-ink outline-none placeholder:text-ink-soft/60 focus:border-line-strong"
+            />
+          </div>
+        </div>
+
+        <div className="flex items-center gap-3">
+          <ThemeToggle />
+          <div className="flex h-9 w-9 items-center justify-center rounded-full border border-line text-[12px] font-semibold text-ink">
+            A
+          </div>
+        </div>
+      </div>
+
+      {mobileOpen && (
+        <div className="fixed inset-0 z-50 flex md:hidden">
+          <div className="absolute inset-0 bg-ink/40" onClick={() => setMobileOpen(false)} />
+          <div className="relative flex h-full w-[280px] flex-col bg-card">
+            <button
+              type="button"
+              onClick={() => setMobileOpen(false)}
+              aria-label="Close menu"
+              className="absolute right-3 top-3 flex h-9 w-9 items-center justify-center rounded-control text-ink"
+            >
+              <X size={18} strokeWidth={1.75} />
+            </button>
+            {sidebarContent}
+          </div>
+        </div>
+      )}
+
+      <div className={cx("transition-[padding] duration-200 ease-out", collapsed ? "md:pl-[76px]" : "md:pl-[248px]")}>
+        {children}
+      </div>
+    </div>
+  );
+}
+
 
 ================================================================================
 FILE: apps\admin\app\globals.css
 ================================================================================
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@500;600&display=swap");
 @import "tailwindcss";
 
-:root {
-  --blue-50:  #EFF6FF;
-  --blue-500: #3B82F6;
-  --blue-600: #2563EB;
-  --cyan-400: #22D3EE;
+@theme {
+  --color-ink: #14171a;
+  --color-ink-soft: #565b63;
 
-  --surface-bg:      #F8FAFC;
-  --surface-card:    #FFFFFF;
-  --surface-elevated: #F1F5F9;
-  --text-primary:    #0F172A;
-  --text-secondary:  #475569;
+  --color-paper: #f6f7f8;
+  --color-paper-dim: #eceef0;
+  --color-card: #ffffff;
 
-  --gradient-primary: linear-gradient(135deg, #2563EB 0%, #0EA5E9 50%, #22D3EE 100%);
+  --color-line: #e3e5e8;
+  --color-line-strong: #cfd3d8;
+
+  --color-accent: #14171a;
+  --color-accent-soft: #eceef0;
+
+  --color-success: #1c7a4d;
+  --color-success-tint: #e6f4ec;
+  --color-warning: #96650b;
+  --color-warning-tint: #fbf0dd;
+  --color-error: #b3392c;
+  --color-error-tint: #faeae8;
+  --color-info: #2453a6;
+  --color-info-tint: #e8eefb;
+
+  --font-body: "Inter", -apple-system, "Segoe UI", sans-serif;
+  --font-mono: "IBM Plex Mono", "SFMono-Regular", monospace;
+
+  --radius-card: 16px;
+  --radius-control: 10px;
+
+  --animate-shimmer: shimmer 1.6s ease-in-out infinite;
+}
+
+@keyframes shimmer {
+  100% { transform: translateX(100%); }
 }
 
 [data-theme="dark"] {
-  --surface-bg:   #0B1120;
-  --surface-card: #0F172A;
-  --surface-elevated: #131C31;
-  --text-primary: #F1F5F9;
-  --text-secondary: #94A3B8;
+  --color-ink: #f2f3f5;
+  --color-ink-soft: #9aa0a8;
+
+  --color-paper: #0d0f12;
+  --color-paper-dim: #16191d;
+  --color-card: #131619;
+
+  --color-line: #23272c;
+  --color-line-strong: #33383e;
+
+  --color-accent: #f2f3f5;
+  --color-accent-soft: #1c2026;
+
+  --color-success: #4ade95;
+  --color-success-tint: #10241a;
+  --color-warning: #f0b849;
+  --color-warning-tint: #2a2110;
+  --color-error: #f28b7d;
+  --color-error-tint: #2a1613;
+  --color-info: #7ea6ef;
+  --color-info-tint: #131f30;
 }
 
 * {
   box-sizing: border-box;
 }
 
-body {
-  background: var(--surface-bg);
-  color: var(--text-primary);
-  font-family: "Inter", -apple-system, "Segoe UI", Roboto, sans-serif;
+html {
+  color-scheme: light;
+}
+html[data-theme="dark"] {
+  color-scheme: dark;
 }
 
+body {
+  background: var(--color-paper);
+  color: var(--color-ink);
+  font-family: var(--font-body);
+  transition: background-color 150ms ease-out, color 150ms ease-out;
+}
+
+::selection {
+  background: var(--color-ink);
+  color: var(--color-paper);
+}
+
+/* Black & white icon rule: all lucide icons in the admin app are stroke-only,
+   inherit currentColor, no fills - keeps the interface monochrome. */
+svg {
+  color: inherit;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
 
 
 ================================================================================
@@ -123,6 +1140,116 @@ export function Providers({ children }: { children: React.ReactNode }) {
   return <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>;
 }
 
+
+
+================================================================================
+FILE: apps\admin\lib\nav-config.ts
+================================================================================
+import type { LucideIcon } from "lucide-react";
+import {
+  LayoutDashboard,
+  Users,
+  ClipboardCheck,
+  LibraryBig,
+  Tags,
+  Receipt,
+  Banknote,
+  Undo2,
+  Percent,
+  Image,
+  Ticket,
+  Megaphone,
+  MessageSquareWarning,
+  MessagesSquare,
+  LifeBuoy,
+  BarChart3,
+  Layers,
+  SlidersHorizontal,
+  Landmark,
+  CreditCard,
+  ScrollText,
+  ShieldCheck,
+  History
+} from "lucide-react";
+
+export type AdminNavItem = {
+  label: string;
+  href: string;
+  icon: LucideIcon;
+};
+
+export type AdminNavSection = {
+  title: string;
+  items: AdminNavItem[];
+};
+
+export const ADMIN_NAV: AdminNavSection[] = [
+  {
+    title: "Overview",
+    items: [{ label: "Dashboard", href: "/dashboard", icon: LayoutDashboard }]
+  },
+  {
+    title: "Users",
+    items: [{ label: "User Management", href: "/users", icon: Users }]
+  },
+  {
+    title: "Courses",
+    items: [
+      { label: "Moderation Queue", href: "/courses/moderation", icon: ClipboardCheck },
+      { label: "Course Catalog", href: "/courses/catalog", icon: LibraryBig },
+      { label: "Categories & Tags", href: "/courses/categories", icon: Tags }
+    ]
+  },
+  {
+    title: "Finance",
+    items: [
+      { label: "Transactions", href: "/finance/transactions", icon: Receipt },
+      { label: "Payouts", href: "/finance/payouts", icon: Banknote },
+      { label: "Refunds", href: "/finance/refunds", icon: Undo2 },
+      { label: "Tax / VAT Settings", href: "/finance/tax-settings", icon: Percent }
+    ]
+  },
+  {
+    title: "Marketing",
+    items: [
+      { label: "Homepage Banners", href: "/marketing/banners", icon: Image },
+      { label: "Coupons", href: "/marketing/coupons", icon: Ticket },
+      { label: "Promotion Sales", href: "/marketing/promotions", icon: Megaphone }
+    ]
+  },
+  {
+    title: "Moderation",
+    items: [
+      { label: "Flagged Reviews", href: "/moderation/reviews", icon: MessageSquareWarning },
+      { label: "Flagged Forum Posts", href: "/moderation/forum", icon: MessagesSquare }
+    ]
+  },
+  {
+    title: "Support",
+    items: [{ label: "Ticket Queue", href: "/support/tickets", icon: LifeBuoy }]
+  },
+  {
+    title: "Analytics",
+    items: [
+      { label: "Overview", href: "/analytics/overview", icon: BarChart3 },
+      { label: "Cohort Analysis", href: "/analytics/cohorts", icon: Layers }
+    ]
+  },
+  {
+    title: "Settings",
+    items: [
+      { label: "Platform Settings", href: "/settings/platform", icon: SlidersHorizontal },
+      { label: "Commission Tiers", href: "/settings/commission-tiers", icon: Landmark },
+      { label: "Payment Gateways", href: "/settings/payment-gateways", icon: CreditCard },
+      { label: "Legal Documents", href: "/settings/legal-documents", icon: ScrollText },
+      { label: "Roles & Permissions", href: "/settings/roles", icon: ShieldCheck }
+    ]
+  },
+  {
+    title: "System",
+    items: [{ label: "Audit Log", href: "/logs/audit", icon: History }]
+  }
+];
 
 
 ================================================================================
@@ -180,7 +1307,7 @@ FILE: apps\admin\next.config.js
 /** @type {import("next").NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
-  transpilePackages: ["@saachi/ui", "@saachi/api-client", "@saachi/utils"],
+  transpilePackages: ["@saachi/ui", "@saachi/api-client", "@saachi/utils", "@saachi/store"],
   async rewrites() {
     return [
       {
@@ -216,6 +1343,10 @@ FILE: apps\admin\package.json
     "@tanstack/react-query": "^5.56.0",
     "@tanstack/react-table": "^8.20.0",
     "zustand": "^4.5.0",
+    "@saachi/ui": "workspace:*",
+    "@saachi/store": "workspace:*",
+    "@saachi/utils": "workspace:*",
+    "@saachi/api-client": "workspace:*",
     "react-hook-form": "^7.53.0",
     "@hookform/resolvers": "^3.9.0",
     "zod": "^3.23.0",
@@ -284,7 +1415,9 @@ FILE: apps\admin\tsconfig.json
       "@saachi/api-client": ["../../packages/api-client/src"],
       "@saachi/api-client/*": ["../../packages/api-client/src/*"],
       "@saachi/utils": ["../../packages/utils/src"],
-      "@saachi/utils/*": ["../../packages/utils/src/*"]
+      "@saachi/utils/*": ["../../packages/utils/src/*"],
+      "@saachi/store": ["../../packages/store/src"],
+      "@saachi/store/*": ["../../packages/store/src/*"]
     }
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
@@ -5176,6 +6309,251 @@ FILE: assets\animation\loading.json
 
 
 ================================================================================
+FILE: packages\api-client\src\hooks\useAdminCourses.ts
+================================================================================
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import {
+  ADMIN_DUMMY_COURSES,
+  ADMIN_DUMMY_CATEGORIES,
+  type AdminCourse,
+  type AdminCourseStatus,
+  type AdminCategory
+} from "../dummy-data-admin-courses";
+
+function delay<T>(value: T, ms = 350): Promise<T> {
+  return new Promise((resolve) => setTimeout(() => resolve(value), ms));
+}
+
+// NOTE: demo-only, in-memory. Replace with real Admin-Courses / Categories API (Doc 3).
+let COURSES_STATE: AdminCourse[] = [...ADMIN_DUMMY_COURSES];
+let CATEGORIES_STATE: AdminCategory[] = [...ADMIN_DUMMY_CATEGORIES];
+
+export const adminCourseKeys = {
+  all: ["admin", "courses"] as const,
+  moderationQueue: ["admin", "courses", "moderation-queue"] as const,
+  catalog: (filters?: Record<string, unknown>) => ["admin", "courses", "catalog", filters] as const,
+  categories: ["admin", "categories"] as const
+};
+
+export function useAdminModerationQueue() {
+  return useQuery({
+    queryKey: adminCourseKeys.moderationQueue,
+    queryFn: async () => delay(COURSES_STATE.filter((c) => c.status === "pending_review"))
+  });
+}
+
+export type AdminCourseCatalogFilters = {
+  search?: string;
+  categoryId?: string;
+  status?: string;
+};
+
+export function useAdminCourseCatalog(filters: AdminCourseCatalogFilters = {}) {
+  return useQuery({
+    queryKey: adminCourseKeys.catalog(filters),
+    queryFn: async () => {
+      let items = [...COURSES_STATE];
+      if (filters.search) {
+        const q = filters.search.toLowerCase();
+        items = items.filter((c) => c.title.toLowerCase().includes(q) || c.instructorName.toLowerCase().includes(q));
+      }
+      if (filters.categoryId) items = items.filter((c) => c.categoryId === filters.categoryId);
+      if (filters.status) items = items.filter((c) => c.status === filters.status);
+      return delay(items);
+    }
+  });
+}
+
+export function useModerateCourse() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async ({
+      id,
+      decision,
+      reason
+    }: {
+      id: string;
+      decision: "published" | "rejected";
+      reason?: string;
+    }) => {
+      COURSES_STATE = COURSES_STATE.map((c) =>
+        c.id === id ? { ...c, status: decision as AdminCourseStatus, rejectionReason: reason } : c
+      );
+      return delay({ id, decision }, 400);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: adminCourseKeys.all });
+    }
+  });
+}
+
+export function useToggleCourseFlag() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async ({ id, field }: { id: string; field: "featured" | "pinned" }) => {
+      COURSES_STATE = COURSES_STATE.map((c) => (c.id === id ? { ...c, [field]: !c[field] } : c));
+      return delay({ id, field }, 200);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: adminCourseKeys.all });
+    }
+  });
+}
+
+export function useAdminCategoryList() {
+  return useQuery({
+    queryKey: adminCourseKeys.categories,
+    queryFn: async () => delay([...CATEGORIES_STATE])
+  });
+}
+
+export function useCreateCategory() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (input: { name: string; tags: string[] }) => {
+      const slug = input.name.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
+      const created: AdminCategory = { id: slug, name: input.name, slug, courseCount: 0, tags: input.tags };
+      CATEGORIES_STATE = [...CATEGORIES_STATE, created];
+      return delay(created, 300);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: adminCourseKeys.categories });
+    }
+  });
+}
+
+export function useUpdateCategory() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async ({ id, name, tags }: { id: string; name: string; tags: string[] }) => {
+      CATEGORIES_STATE = CATEGORIES_STATE.map((c) => (c.id === id ? { ...c, name, tags } : c));
+      return delay({ id }, 300);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: adminCourseKeys.categories });
+    }
+  });
+}
+
+export function useDeleteCategory() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (id: string) => {
+      CATEGORIES_STATE = CATEGORIES_STATE.filter((c) => c.id !== id);
+      return delay({ id }, 300);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: adminCourseKeys.categories });
+    }
+  });
+}
+
+
+================================================================================
+FILE: packages\api-client\src\hooks\useAdminUsers.ts
+================================================================================
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import {
+  ADMIN_DUMMY_USERS,
+  getAdminActivityLog,
+  getAdminAuditLog,
+  type AdminUser,
+  type AdminUserStatus
+} from "../dummy-data-admin";
+
+function delay<T>(value: T, ms = 350): Promise<T> {
+  return new Promise((resolve) => setTimeout(() => resolve(value), ms));
+}
+
+// NOTE: demo-only, in-memory. Replace with real Admin-Users API (Doc 3) once available.
+let USERS_STATE: AdminUser[] = [...ADMIN_DUMMY_USERS];
+
+export const adminUserKeys = {
+  all: ["admin", "users"] as const,
+  list: (filters?: Record<string, unknown>) => ["admin", "users", "list", filters] as const,
+  detail: (id: string) => ["admin", "users", "detail", id] as const,
+  activity: (id: string) => ["admin", "users", "activity", id] as const,
+  audit: (id: string) => ["admin", "users", "audit", id] as const
+};
+
+export type AdminUserListFilters = {
+  search?: string;
+  role?: string;
+  status?: string;
+};
+
+export function useAdminUserList(filters: AdminUserListFilters = {}) {
+  return useQuery({
+    queryKey: adminUserKeys.list(filters),
+    queryFn: async () => {
+      let items = [...USERS_STATE];
+      if (filters.search) {
+        const q = filters.search.toLowerCase();
+        items = items.filter((u) => u.fullName.toLowerCase().includes(q) || u.email.toLowerCase().includes(q));
+      }
+      if (filters.role) items = items.filter((u) => u.role === filters.role);
+      if (filters.status) items = items.filter((u) => u.status === filters.status);
+      return delay(items);
+    }
+  });
+}
+
+export function useAdminUserDetail(id: string) {
+  return useQuery({
+    queryKey: adminUserKeys.detail(id),
+    queryFn: async () => {
+      const found = USERS_STATE.find((u) => u.id === id);
+      if (!found) throw new Error("User not found");
+      return delay(found);
+    },
+    enabled: Boolean(id)
+  });
+}
+
+export function useAdminUserActivity(id: string) {
+  return useQuery({
+    queryKey: adminUserKeys.activity(id),
+    queryFn: async () => delay(getAdminActivityLog(id)),
+    enabled: Boolean(id)
+  });
+}
+
+export function useAdminUserAudit(id: string) {
+  return useQuery({
+    queryKey: adminUserKeys.audit(id),
+    queryFn: async () => delay(getAdminAuditLog(id)),
+    enabled: Boolean(id)
+  });
+}
+
+export function useUpdateAdminUserStatus() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async ({ id, status }: { id: string; status: AdminUserStatus }) => {
+      USERS_STATE = USERS_STATE.map((u) => (u.id === id ? { ...u, status } : u));
+      return delay({ id, status }, 300);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: adminUserKeys.all });
+    }
+  });
+}
+
+export function useUpdateAdminUserRole() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async ({ id, role }: { id: string; role: AdminUser["role"] }) => {
+      USERS_STATE = USERS_STATE.map((u) => (u.id === id ? { ...u, role } : u));
+      return delay({ id, role }, 300);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: adminUserKeys.all });
+    }
+  });
+}
+
+
+================================================================================
 FILE: packages\api-client\src\hooks\useAuth.ts
 ================================================================================
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
@@ -5541,6 +6919,154 @@ export type Paginated<T> = {
   pageSize: number;
 };
 
+
+
+================================================================================
+FILE: packages\api-client\src\dummy-data-admin-courses.ts
+================================================================================
+export type AdminCourseStatus = "draft" | "pending_review" | "published" | "rejected" | "archived";
+
+export type AdminCourse = {
+  id: string;
+  title: string;
+  instructorName: string;
+  instructorId: string;
+  categoryId: string;
+  price: number;
+  currency: string;
+  status: AdminCourseStatus;
+  submittedAt: string;
+  thumbnailUrl?: string;
+  featured: boolean;
+  pinned: boolean;
+  rating: number;
+  enrollmentCount: number;
+  rejectionReason?: string;
+};
+
+export type AdminCategory = {
+  id: string;
+  name: string;
+  slug: string;
+  courseCount: number;
+  tags: string[];
+};
+
+function img(seed: string): string {
+  return `https://picsum.photos/seed/${encodeURIComponent(seed)}/400/225`;
+}
+
+function daysAgoIso(n: number): string {
+  return new Date(Date.now() - n * 24 * 60 * 60 * 1000).toISOString();
+}
+
+export const ADMIN_DUMMY_CATEGORIES: AdminCategory[] = [
+  { id: "ai-fundamentals", name: "AI Fundamentals & Prompt Engineering", slug: "ai-fundamentals", courseCount: 14, tags: ["prompting", "chatgpt", "beginner"] },
+  { id: "ai-marketing", name: "AI for Marketing & Sales", slug: "ai-marketing", courseCount: 9, tags: ["copywriting", "ads", "leadgen"] },
+  { id: "ai-automation", name: "AI Automation & Workflow Tools", slug: "ai-automation", courseCount: 11, tags: ["n8n", "zapier", "make.com"] },
+  { id: "ai-support", name: "AI Customer Support & Communication", slug: "ai-support", courseCount: 6, tags: ["whatsapp", "chatbot", "callcenter"] },
+  { id: "ai-dev", name: "AI Website & App Development", slug: "ai-dev", courseCount: 8, tags: ["nocode", "builder", "scaffolding"] },
+  { id: "ai-integration", name: "AI Integration for Developers", slug: "ai-integration", courseCount: 7, tags: ["api", "openai", "nodejs"] },
+  { id: "ai-design", name: "AI Design & Creative Tools", slug: "ai-design", courseCount: 5, tags: ["midjourney", "figma", "dalle"] },
+  { id: "ai-career", name: "AI for Careers & Job Search", slug: "ai-career", courseCount: 3, tags: ["resume", "interview"] }
+];
+
+export const ADMIN_DUMMY_COURSES: AdminCourse[] = [
+  { id: "crs_a1", title: "WhatsApp AI Auto-Responder for Local Retailers", instructorName: "Bilal Ahmed", instructorId: "usr_1002", categoryId: "ai-support", price: 59, currency: "USD", status: "pending_review", submittedAt: daysAgoIso(1), thumbnailUrl: img("whatsapp-ai-retail"), featured: false, pinned: false, rating: 0, enrollmentCount: 0 },
+  { id: "crs_a2", title: "Cold Email Sequences with Claude & GPT-4", instructorName: "Zara Farooq", instructorId: "usr_1008", categoryId: "ai-marketing", price: 39, currency: "USD", status: "pending_review", submittedAt: daysAgoIso(2), thumbnailUrl: img("cold-email-ai"), featured: false, pinned: false, rating: 0, enrollmentCount: 0 },
+  { id: "crs_a3", title: "n8n + OpenAI: Five Production Automations", instructorName: "Ayesha Khan", instructorId: "usr_1001", categoryId: "ai-automation", price: 45, currency: "USD", status: "pending_review", submittedAt: daysAgoIso(3), thumbnailUrl: img("n8n-openai-automations"), featured: false, pinned: false, rating: 0, enrollmentCount: 0 },
+  { id: "crs_a4", title: "Prompt Engineering Fundamentals", instructorName: "Sana Rizvi", instructorId: "usr_1005", categoryId: "ai-fundamentals", price: 29, currency: "USD", status: "published", submittedAt: daysAgoIso(180), thumbnailUrl: img("prompt-engineering-fundamentals"), featured: true, pinned: true, rating: 4.8, enrollmentCount: 1240 },
+  { id: "crs_a5", title: "AI-Powered Marketing Campaigns", instructorName: "Zara Farooq", instructorId: "usr_1008", categoryId: "ai-marketing", price: 49, currency: "USD", status: "published", submittedAt: daysAgoIso(150), thumbnailUrl: img("ai-powered-marketing-campaigns"), featured: false, pinned: false, rating: 4.6, enrollmentCount: 812 },
+  { id: "crs_a6", title: "Automate Everything with n8n & AI", instructorName: "Ayesha Khan", instructorId: "usr_1001", categoryId: "ai-automation", price: 39, currency: "USD", status: "published", submittedAt: daysAgoIso(140), thumbnailUrl: img("automate-everything-with-n8n-and-ai"), featured: true, pinned: false, rating: 4.7, enrollmentCount: 654 },
+  { id: "crs_a7", title: "Build a WhatsApp AI Auto-Responder", instructorName: "Bilal Ahmed", instructorId: "usr_1002", categoryId: "ai-support", price: 59, currency: "USD", status: "published", submittedAt: daysAgoIso(120), thumbnailUrl: img("build-a-whatsapp-ai-auto-responder"), featured: false, pinned: false, rating: 4.9, enrollmentCount: 401 },
+  { id: "crs_a8", title: "Ship Your First AI-Powered Web App", instructorName: "Hamza Tariq", instructorId: "usr_1011", categoryId: "ai-dev", price: 45, currency: "USD", status: "published", submittedAt: daysAgoIso(100), thumbnailUrl: img("ship-your-first-ai-powered-web-app"), featured: false, pinned: false, rating: 4.5, enrollmentCount: 588 },
+  { id: "crs_a9", title: "Integrating OpenAI & Claude APIs into Node.js Apps", instructorName: "Usman Ali", instructorId: "usr_1007", categoryId: "ai-integration", price: 65, currency: "USD", status: "published", submittedAt: daysAgoIso(90), thumbnailUrl: img("integrating-openai-and-claude-apis-into-node"), featured: true, pinned: false, rating: 4.9, enrollmentCount: 320 },
+  { id: "crs_a10", title: "AI Video Scripts for YouTube Growth", instructorName: "Danish Raza", instructorId: "usr_1009", categoryId: "ai-marketing", price: 35, currency: "USD", status: "rejected", submittedAt: daysAgoIso(14), thumbnailUrl: img("ai-video-scripts"), featured: false, pinned: false, rating: 0, enrollmentCount: 0, rejectionReason: "Curriculum lacked hands-on exercises; resubmit with a project-based module." },
+  { id: "crs_a11", title: "Midjourney for Product Mockups", instructorName: "Sara Iqbal", instructorId: "usr_1010", categoryId: "ai-design", price: 25, currency: "USD", status: "draft", submittedAt: daysAgoIso(0), thumbnailUrl: img("midjourney-product-mockups"), featured: false, pinned: false, rating: 0, enrollmentCount: 0 },
+  { id: "crs_a12", title: "AI Resume & Interview Prep Toolkit", instructorName: "Hina Malik", instructorId: "usr_1003", categoryId: "ai-career", price: 19, currency: "USD", status: "archived", submittedAt: daysAgoIso(365), thumbnailUrl: img("ai-resume-toolkit"), featured: false, pinned: false, rating: 4.1, enrollmentCount: 210 }
+];
+
+
+================================================================================
+FILE: packages\api-client\src\dummy-data-admin.ts
+================================================================================
+export type AdminUserRole = "learner" | "instructor" | "corporate" | "admin";
+export type AdminUserStatus = "active" | "suspended" | "banned" | "pending";
+
+export type AdminUser = {
+  id: string;
+  fullName: string;
+  email: string;
+  avatarUrl?: string;
+  role: AdminUserRole;
+  status: AdminUserStatus;
+  joinedAt: string;
+  lastActiveAt: string;
+  coursesEnrolled?: number;
+  coursesPublished?: number;
+  totalSpend?: number;
+  totalEarnings?: number;
+  location?: string;
+};
+
+export type AdminActivityLogEntry = {
+  id: string;
+  action: string;
+  detail: string;
+  createdAt: string;
+};
+
+export type AdminAuditLogEntry = {
+  id: string;
+  actor: string;
+  action: string;
+  target: string;
+  createdAt: string;
+  ip: string;
+};
+
+function img(seed: string): string {
+  return `https://picsum.photos/seed/${encodeURIComponent(seed)}/150/150`;
+}
+
+function daysAgo(n: number): string {
+  return new Date(Date.now() - n * 24 * 60 * 60 * 1000).toISOString();
+}
+
+export const ADMIN_DUMMY_USERS: AdminUser[] = [
+  { id: "usr_1001", fullName: "Ayesha Khan", email: "ayesha.khan@example.com", avatarUrl: img("ayesha-khan-instructor"), role: "instructor", status: "active", joinedAt: daysAgo(210), lastActiveAt: daysAgo(0), coursesPublished: 3, totalEarnings: 4620, location: "Lahore, PK" },
+  { id: "usr_1002", fullName: "Bilal Ahmed", email: "bilal.ahmed@example.com", avatarUrl: img("bilal-ahmed-instructor"), role: "instructor", status: "active", joinedAt: daysAgo(180), lastActiveAt: daysAgo(1), coursesPublished: 1, totalEarnings: 1450, location: "Karachi, PK" },
+  { id: "usr_1003", fullName: "Hina Malik", email: "hina.malik@example.com", avatarUrl: img("hina-malik"), role: "learner", status: "active", joinedAt: daysAgo(95), lastActiveAt: daysAgo(0), coursesEnrolled: 4, totalSpend: 186, location: "Islamabad, PK" },
+  { id: "usr_1004", fullName: "Omar Sheikh", email: "omar.sheikh@example.com", avatarUrl: img("omar-sheikh"), role: "learner", status: "active", joinedAt: daysAgo(60), lastActiveAt: daysAgo(3), coursesEnrolled: 2, totalSpend: 78, location: "Rawalpindi, PK" },
+  { id: "usr_1005", fullName: "Sana Rizvi", email: "sana.rizvi@example.com", avatarUrl: img("sana-rizvi"), role: "instructor", status: "active", joinedAt: daysAgo(300), lastActiveAt: daysAgo(0), coursesPublished: 4, totalEarnings: 8300, location: "Lahore, PK" },
+  { id: "usr_1006", fullName: "Fatima Noor", email: "fatima.noor@example.com", avatarUrl: img("fatima-noor"), role: "learner", status: "suspended", joinedAt: daysAgo(140), lastActiveAt: daysAgo(21), coursesEnrolled: 1, totalSpend: 39, location: "Multan, PK" },
+  { id: "usr_1007", fullName: "Usman Ali", email: "usman.ali@example.com", avatarUrl: img("usman-ali"), role: "instructor", status: "pending", joinedAt: daysAgo(5), lastActiveAt: daysAgo(1), coursesPublished: 0, totalEarnings: 0, location: "Faisalabad, PK" },
+  { id: "usr_1008", fullName: "Zara Farooq", email: "zara.farooq@example.com", avatarUrl: img("zara-farooq"), role: "instructor", status: "active", joinedAt: daysAgo(260), lastActiveAt: daysAgo(2), coursesPublished: 2, totalEarnings: 3100, location: "Karachi, PK" },
+  { id: "usr_1009", fullName: "Danish Raza", email: "danish.raza@example.com", avatarUrl: img("danish-raza"), role: "learner", status: "banned", joinedAt: daysAgo(400), lastActiveAt: daysAgo(90), coursesEnrolled: 6, totalSpend: 340, location: "Lahore, PK" },
+  { id: "usr_1010", fullName: "Sara Iqbal", email: "sara.iqbal@example.com", avatarUrl: img("sara-iqbal"), role: "learner", status: "active", joinedAt: daysAgo(30), lastActiveAt: daysAgo(0), coursesEnrolled: 1, totalSpend: 59, location: "Islamabad, PK" },
+  { id: "usr_1011", fullName: "Hamza Tariq", email: "hamza.tariq@example.com", avatarUrl: img("hamza-tariq"), role: "instructor", status: "active", joinedAt: daysAgo(150), lastActiveAt: daysAgo(4), coursesPublished: 2, totalEarnings: 2900, location: "Peshawar, PK" },
+  { id: "usr_1012", fullName: "Noor Fatima", email: "noor.fatima@example.com", avatarUrl: img("noor-fatima"), role: "learner", status: "active", joinedAt: daysAgo(12), lastActiveAt: daysAgo(0), coursesEnrolled: 3, totalSpend: 124, location: "Islamabad, PK" },
+  { id: "usr_1013", fullName: "Acme Agency", email: "billing@acmeagency.com", role: "corporate", status: "active", joinedAt: daysAgo(500), lastActiveAt: daysAgo(2), location: "Lahore, PK" },
+  { id: "usr_1014", fullName: "Mahnoor Fatima", email: "mahnoor.f@example.com", avatarUrl: img("mahnoor-fatima"), role: "learner", status: "pending", joinedAt: daysAgo(1), lastActiveAt: daysAgo(1), coursesEnrolled: 0, totalSpend: 0, location: "Quetta, PK" },
+  { id: "usr_1015", fullName: "Ali Raza", email: "ali.raza@example.com", avatarUrl: img("ali-raza"), role: "learner", status: "active", joinedAt: daysAgo(80), lastActiveAt: daysAgo(5), coursesEnrolled: 2, totalSpend: 88, location: "Sialkot, PK" }
+];
+
+export function getAdminActivityLog(userId: string): AdminActivityLogEntry[] {
+  return [
+    { id: `${userId}_a1`, action: "Logged in", detail: "Signed in from a new device (Chrome, Windows)", createdAt: daysAgo(0) },
+    { id: `${userId}_a2`, action: "Profile updated", detail: "Changed display name and avatar", createdAt: daysAgo(4) },
+    { id: `${userId}_a3`, action: "Course enrolled", detail: "Enrolled in \"Prompt Engineering Fundamentals\"", createdAt: daysAgo(10) },
+    { id: `${userId}_a4`, action: "Payment completed", detail: "Order ORD-8H2K1 - $29.00 via Stripe", createdAt: daysAgo(10) },
+    { id: `${userId}_a5`, action: "Account created", detail: "Registered via email/password", createdAt: daysAgo(95) }
+  ];
+}
+
+export function getAdminAuditLog(userId: string): AdminAuditLogEntry[] {
+  return [
+    { id: `${userId}_l1`, actor: "system", action: "flagged for review", target: userId, createdAt: daysAgo(21), ip: "10.4.2.19" },
+    { id: `${userId}_l2`, actor: "admin@saachi.ai", action: "sent warning email", target: userId, createdAt: daysAgo(20), ip: "internal" }
+  ];
+}
 
 
 ================================================================================
@@ -6015,6 +7541,10 @@ export * from "./http-client";
 export * from "./query-keys";
 export * from "./types";
 export * from "./dummy-data";
+export * from "./dummy-data-admin";
+export * from "./hooks/useAdminUsers";
+export * from "./dummy-data-admin-courses";
+export * from "./hooks/useAdminCourses";
 export * from "./hooks/useAuth";
 export * from "./hooks/useCourses";
 
@@ -6157,6 +7687,7 @@ export * from "./useCommunityStore";
 export * from "./usePromotionStore";
 export * from "./useCorporateStore";
 export * from "./useLocaleStore";
+export * from "./useThemeStore";
 
 
 ================================================================================
@@ -6765,6 +8296,32 @@ export const usePromotionStore = create<PromotionState>()(
 
 
 ================================================================================
+FILE: packages\store\src\useThemeStore.ts
+================================================================================
+import { create } from "zustand";
+import { persist } from "zustand/middleware";
+
+export type ThemeMode = "light" | "dark";
+
+type ThemeState = {
+  theme: ThemeMode;
+  setTheme: (theme: ThemeMode) => void;
+  toggleTheme: () => void;
+};
+
+export const useThemeStore = create<ThemeState>()(
+  persist(
+    (set, get) => ({
+      theme: "light",
+      setTheme: (theme) => set({ theme }),
+      toggleTheme: () => set({ theme: get().theme === "light" ? "dark" : "light" })
+    }),
+    { name: "saachi-theme" }
+  )
+);
+
+
+================================================================================
 FILE: packages\store\src\useWishlistStore.ts
 ================================================================================
 import { create } from "zustand";
@@ -7151,6 +8708,161 @@ export function CourseCard({
 
 
 ================================================================================
+FILE: packages\ui\src\components\DataTable.tsx
+================================================================================
+"use client";
+
+import type { ReactNode } from "react";
+import { ChevronUp, ChevronDown, ChevronsUpDown } from "lucide-react";
+import {
+  flexRender,
+  getCoreRowModel,
+  getPaginationRowModel,
+  getSortedRowModel,
+  useReactTable,
+  type ColumnDef,
+  type SortingState
+} from "@tanstack/react-table";
+import { useState } from "react";
+import { cn } from "../cn";
+import { ShimmerTable } from "./Shimmer";
+import { EmptyState } from "./EmptyState";
+import { Button } from "./Button";
+
+export type DataTableProps<T> = {
+  columns: ColumnDef<T, any>[];
+  data: T[];
+  isLoading?: boolean;
+  emptyTitle?: string;
+  emptyDescription?: string;
+  pageSize?: number;
+  toolbar?: ReactNode;
+  onRowClick?: (row: T) => void;
+};
+
+export function DataTable<T>({
+  columns,
+  data,
+  isLoading,
+  emptyTitle = "Nothing here yet",
+  emptyDescription,
+  pageSize = 10,
+  toolbar,
+  onRowClick
+}: DataTableProps<T>) {
+  const [sorting, setSorting] = useState<SortingState>([]);
+
+  const table = useReactTable({
+    data,
+    columns,
+    state: { sorting },
+    onSortingChange: setSorting,
+    getCoreRowModel: getCoreRowModel(),
+    getSortedRowModel: getSortedRowModel(),
+    getPaginationRowModel: getPaginationRowModel(),
+    initialState: { pagination: { pageSize } }
+  });
+
+  if (isLoading) {
+    return (
+      <div className="flex flex-col gap-4">
+        {toolbar}
+        <ShimmerTable rows={6} columns={columns.length} />
+      </div>
+    );
+  }
+
+  if (data.length === 0) {
+    return (
+      <div className="flex flex-col gap-4">
+        {toolbar}
+        <EmptyState title={emptyTitle} description={emptyDescription} />
+      </div>
+    );
+  }
+
+  return (
+    <div className="flex flex-col gap-4">
+      {toolbar}
+      <div className="overflow-hidden rounded-card border border-line bg-card">
+        <div className="overflow-x-auto">
+          <table className="w-full text-left text-[13px]">
+            <thead className="border-b border-line bg-paper-dim">
+              {table.getHeaderGroups().map((headerGroup) => (
+                <tr key={headerGroup.id}>
+                  {headerGroup.headers.map((header) => {
+                    const sortState = header.column.getIsSorted();
+                    return (
+                      <th key={header.id} className="whitespace-nowrap px-4 py-3 font-semibold text-ink-soft">
+                        {header.isPlaceholder ? null : (
+                          <button
+                            type="button"
+                            onClick={header.column.getToggleSortingHandler()}
+                            className={cn(
+                              "flex items-center gap-1.5",
+                              header.column.getCanSort() ? "cursor-pointer select-none hover:text-ink" : "cursor-default"
+                            )}
+                          >
+                            {flexRender(header.column.columnDef.header, header.getContext())}
+                            {header.column.getCanSort() &&
+                              (sortState === "asc" ? (
+                                <ChevronUp size={13} />
+                              ) : sortState === "desc" ? (
+                                <ChevronDown size={13} />
+                              ) : (
+                                <ChevronsUpDown size={13} className="opacity-40" />
+                              ))}
+                          </button>
+                        )}
+                      </th>
+                    );
+                  })}
+                </tr>
+              ))}
+            </thead>
+            <tbody>
+              {table.getRowModel().rows.map((row) => (
+                <tr
+                  key={row.id}
+                  onClick={() => onRowClick?.(row.original)}
+                  className={cn(
+                    "border-b border-line last:border-0",
+                    onRowClick && "cursor-pointer transition-colors duration-150 ease-out hover:bg-paper-dim"
+                  )}
+                >
+                  {row.getVisibleCells().map((cell) => (
+                    <td key={cell.id} className="whitespace-nowrap px-4 py-3.5 text-ink">
+                      {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                    </td>
+                  ))}
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      {table.getPageCount() > 1 && (
+        <div className="flex items-center justify-between px-1">
+          <span className="text-[12px] text-ink-soft">
+            Page {table.getState().pagination.pageIndex + 1} of {table.getPageCount()}
+          </span>
+          <div className="flex gap-2">
+            <Button size="sm" variant="secondary" onClick={() => table.previousPage()} disabled={!table.getCanPreviousPage()}>
+              Previous
+            </Button>
+            <Button size="sm" variant="secondary" onClick={() => table.nextPage()} disabled={!table.getCanNextPage()}>
+              Next
+            </Button>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+
+================================================================================
 FILE: packages\ui\src\components\EmptyState.tsx
 ================================================================================
 import type { ReactNode } from "react";
@@ -7316,6 +9028,47 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
   }
 );
 Input.displayName = "Input";
+
+
+================================================================================
+FILE: packages\ui\src\components\KpiCard.tsx
+================================================================================
+import type { LucideIcon } from "lucide-react";
+import { ArrowUpRight, ArrowDownRight } from "lucide-react";
+import { cn } from "../cn";
+
+export type KpiCardProps = {
+  label: string;
+  value: string;
+  icon: LucideIcon;
+  delta?: { value: string; direction: "up" | "down" };
+  className?: string;
+};
+
+export function KpiCard({ label, value, icon: Icon, delta, className }: KpiCardProps) {
+  return (
+    <div className={cn("rounded-card border border-line bg-card p-5", className)}>
+      <div className="mb-4 flex h-9 w-9 items-center justify-center rounded-full border border-line text-ink">
+        <Icon size={16} strokeWidth={1.75} />
+      </div>
+      <div className="font-mono text-[22px] font-semibold leading-none text-ink">{value}</div>
+      <div className="mt-2 flex items-center gap-2">
+        <span className="text-[13px] text-ink-soft">{label}</span>
+        {delta && (
+          <span
+            className={cn(
+              "flex items-center gap-0.5 text-[12px] font-semibold",
+              delta.direction === "up" ? "text-success" : "text-error"
+            )}
+          >
+            {delta.direction === "up" ? <ArrowUpRight size={12} /> : <ArrowDownRight size={12} />}
+            {delta.value}
+          </span>
+        )}
+      </div>
+    </div>
+  );
+}
 
 
 ================================================================================
@@ -7552,6 +9305,80 @@ Select.displayName = "Select";
 
 
 ================================================================================
+FILE: packages\ui\src\components\Shimmer.tsx
+================================================================================
+import type { HTMLAttributes } from "react";
+import { cn } from "../cn";
+
+export type ShimmerProps = HTMLAttributes<HTMLDivElement>;
+
+/** Base shimmer block - grayscale sweep, works in light + dark theme. */
+export function Shimmer({ className, ...props }: ShimmerProps) {
+  return (
+    <div
+      className={cn(
+        "relative overflow-hidden rounded-control bg-paper-dim",
+        "before:absolute before:inset-0 before:-translate-x-full",
+        "before:bg-gradient-to-r before:from-transparent before:via-white/60 before:to-transparent",
+        "before:animate-shimmer dark:before:via-white/10",
+        className
+      )}
+      {...props}
+    />
+  );
+}
+
+export function ShimmerText({ lines = 3, lastLineWidth = "60%" }: { lines?: number; lastLineWidth?: string }) {
+  return (
+    <div className="flex flex-col gap-2">
+      {Array.from({ length: lines }).map((_, i) => (
+        <Shimmer key={i} className="h-3.5" style={{ width: i === lines - 1 ? lastLineWidth : "100%" }} />
+      ))}
+    </div>
+  );
+}
+
+export function ShimmerKpiCard() {
+  return (
+    <div className="rounded-card border border-line bg-card p-5">
+      <Shimmer className="mb-4 h-9 w-9 rounded-full" />
+      <Shimmer className="mb-2 h-6 w-20" />
+      <Shimmer className="h-3.5 w-28" />
+    </div>
+  );
+}
+
+export function ShimmerTableRow({ columns = 5 }: { columns?: number }) {
+  return (
+    <div className="flex items-center gap-4 border-b border-line px-4 py-3.5">
+      {Array.from({ length: columns }).map((_, i) => (
+        <Shimmer key={i} className="h-3.5 flex-1" />
+      ))}
+    </div>
+  );
+}
+
+export function ShimmerTable({ rows = 6, columns = 5 }: { rows?: number; columns?: number }) {
+  return (
+    <div className="overflow-hidden rounded-card border border-line bg-card">
+      {Array.from({ length: rows }).map((_, i) => (
+        <ShimmerTableRow key={i} columns={columns} />
+      ))}
+    </div>
+  );
+}
+
+export function ShimmerChart() {
+  return (
+    <div className="rounded-card border border-line bg-card p-6">
+      <Shimmer className="mb-6 h-4 w-32" />
+      <Shimmer className="h-[220px] w-full" />
+    </div>
+  );
+}
+
+
+================================================================================
 FILE: packages\ui\src\components\Skeleton.tsx
 ================================================================================
 import type { HTMLAttributes } from "react";
@@ -7631,6 +9458,43 @@ export function SocialLoginButtons({ onGoogle, onMicrosoft, label = "Or continue
 
 
 ================================================================================
+FILE: packages\ui\src\components\StatusPill.tsx
+================================================================================
+import { cn } from "../cn";
+
+type StatusTone = "neutral" | "success" | "warning" | "error" | "info";
+
+export type StatusPillProps = {
+  label: string;
+  tone?: StatusTone;
+  className?: string;
+};
+
+const toneStyles: Record<StatusTone, string> = {
+  neutral: "bg-paper-dim text-ink-soft border-line",
+  success: "bg-success-tint text-success border-success/20",
+  warning: "bg-warning-tint text-warning border-warning/20",
+  error: "bg-error-tint text-error border-error/20",
+  info: "bg-info-tint text-info border-info/20"
+};
+
+export function StatusPill({ label, tone = "neutral", className }: StatusPillProps) {
+  return (
+    <span
+      className={cn(
+        "inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-[12px] font-semibold capitalize",
+        toneStyles[tone],
+        className
+      )}
+    >
+      <span className="h-1.5 w-1.5 rounded-full bg-current" />
+      {label}
+    </span>
+  );
+}
+
+
+================================================================================
 FILE: packages\ui\src\components\Textarea.tsx
 ================================================================================
 import { forwardRef, type TextareaHTMLAttributes } from "react";
@@ -7679,6 +9543,47 @@ Textarea.displayName = "Textarea";
 
 
 ================================================================================
+FILE: packages\ui\src\components\ThemeToggle.tsx
+================================================================================
+"use client";
+
+import { useEffect, useState } from "react";
+import { Sun, Moon } from "lucide-react";
+import { useThemeStore } from "@saachi/store";
+import { cn } from "../cn";
+
+export function ThemeToggle({ className }: { className?: string }) {
+  const { theme, toggleTheme } = useThemeStore();
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => setMounted(true), []);
+
+  useEffect(() => {
+    if (!mounted) return;
+    document.documentElement.setAttribute("data-theme", theme);
+  }, [theme, mounted]);
+
+  if (!mounted) {
+    return <div className={cn("h-9 w-9 shrink-0 rounded-control", className)} />;
+  }
+
+  return (
+    <button
+      type="button"
+      onClick={toggleTheme}
+      aria-label={theme === "light" ? "Switch to dark mode" : "Switch to light mode"}
+      className={cn(
+        "flex h-9 w-9 shrink-0 items-center justify-center rounded-control border border-line text-ink transition-colors duration-150 ease-out hover:bg-paper-dim",
+        className
+      )}
+    >
+      {theme === "light" ? <Moon size={16} strokeWidth={1.75} /> : <Sun size={16} strokeWidth={1.75} />}
+    </button>
+  );
+}
+
+
+================================================================================
 FILE: packages\ui\src\cn.ts
 ================================================================================
 import { clsx, type ClassValue } from "clsx";
@@ -7710,6 +9615,11 @@ export * from "./components/Accordion";
 export * from "./components/ReviewCard";
 export * from "./components/SocialLoginButtons";
 export * from "./components/Loading";
+export * from "./components/ThemeToggle";
+export * from "./components/Shimmer";
+export * from "./components/KpiCard";
+export * from "./components/DataTable";
+export * from "./components/StatusPill";
 
 
 
@@ -7724,9 +9634,11 @@ FILE: packages\ui\package.json
   "types": "./src/index.ts",
   "dependencies": {
     "clsx": "^2.1.0",
+    "@tanstack/react-table": "^8.20.0",
     "tailwind-merge": "^2.5.0",
     "lucide-react": "^0.445.0",
-    "lottie-react": "^2.4.0"
+    "lottie-react": "^2.4.0",
+    "@saachi/store": "workspace:*"
   },
   "peerDependencies": {
     "react": "^18.3.0"
