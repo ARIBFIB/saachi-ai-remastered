@@ -1,116 +1,160 @@
 "use client";
 
-import { useState } from "react";
-import { Banknote, CheckCircle2, XCircle, Eye } from "lucide-react";
-import { useAdminPayouts, useUpdatePayoutStatus, type AdminPayout } from "@saachi/api-client";
-import { Button, Card, Select, StatusPill, ShimmerTableRow, EmptyState, Modal } from "@saachi/ui";
+import { useMemo, useState } from "react";
+import { Banknote, CheckCircle2, XCircle, Search } from "lucide-react";
+import {
+  useAdminPayouts,
+  useApprovePayout,
+  useRejectPayout,
+  useBatchApprovePayouts,
+  type AdminPayout
+} from "@saachi/api-client";
+import { Button, Card, Select, StatusPill, ShimmerTableRow, EmptyState, Modal, Checkbox } from "@saachi/ui";
 import { formatCurrency, formatDate } from "@saachi/utils";
 
 const STATUS_OPTIONS = [
   { label: "Pending", value: "pending" },
   { label: "Approved", value: "approved" },
-  { label: "Processing", value: "processing" },
-  { label: "Paid", value: "paid" },
-  { label: "Rejected", value: "rejected" }
+  { label: "Rejected", value: "rejected" },
+  { label: "Paid", value: "paid" }
 ];
 
-const STATUS_TONE: Record<AdminPayout["status"], "success" | "warning" | "error" | "info" | "neutral"> = {
+const METHOD_OPTIONS = [
+  { label: "Bank transfer", value: "bank_transfer" },
+  { label: "Easypaisa", value: "easypaisa" },
+  { label: "JazzCash", value: "jazzcash" },
+  { label: "Stripe Connect", value: "stripe_connect" }
+];
+
+const STATUS_TONE: Record<AdminPayout["status"], "success" | "warning" | "error" | "info"> = {
   pending: "warning",
   approved: "info",
-  processing: "info",
-  paid: "success",
-  rejected: "error"
+  rejected: "error",
+  paid: "success"
 };
 
 export default function PayoutProcessingQueuePage() {
-  const [statusFilter, setStatusFilter] = useState("pending");
-  const { data: payouts, isLoading } = useAdminPayouts({ status: statusFilter || undefined });
-  const updateStatus = useUpdatePayoutStatus();
-  const [viewTarget, setViewTarget] = useState<AdminPayout | null>(null);
+  const [search, setSearch] = useState("");
+  const [status, setStatus] = useState("pending");
+  const [method, setMethod] = useState("");
   const [selected, setSelected] = useState<string[]>([]);
+  const [rejectTarget, setRejectTarget] = useState<AdminPayout | null>(null);
 
-  const pendingIds = (payouts ?? []).filter((p) => p.status === "pending").map((p) => p.id);
-  const allSelected = pendingIds.length > 0 && pendingIds.every((id) => selected.includes(id));
+  const { data: payouts, isLoading } = useAdminPayouts({
+    search: search || undefined,
+    status: status || undefined,
+    method: method || undefined
+  });
+
+  const approvePayout = useApprovePayout();
+  const rejectPayout = useRejectPayout();
+  const batchApprove = useBatchApprovePayouts();
+
+  const pendingIds = useMemo(
+    () => (payouts ?? []).filter((p) => p.status === "pending").map((p) => p.id),
+    [payouts]
+  );
+
+  const allSelected = pendingIds.length > 0 && selected.length === pendingIds.length;
 
   const toggleAll = () => {
     setSelected(allSelected ? [] : pendingIds);
   };
 
   const toggleOne = (id: string) => {
-    setSelected((prev) => (prev.includes(id) ? prev.filter((s) => s !== id) : [...prev, id]));
+    setSelected((prev) => (prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]));
   };
 
   const handleBatchApprove = () => {
-    selected.forEach((id) => updateStatus.mutate({ id, status: "approved" }));
+    if (selected.length === 0) return;
+    batchApprove.mutate({ ids: selected });
     setSelected([]);
   };
 
-  const totalSelectedAmount = (payouts ?? [])
+  const handleReject = (reason: string) => {
+    if (!rejectTarget) return;
+    rejectPayout.mutate({ id: rejectTarget.id, reason });
+    setRejectTarget(null);
+  };
+
+  const selectedTotal = (payouts ?? [])
     .filter((p) => selected.includes(p.id))
     .reduce((sum, p) => sum + p.amount, 0);
 
   return (
     <main className="mx-auto max-w-[1100px] px-4 py-8 md:px-8 md:py-10">
-      <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+      <div className="mb-6 flex items-center justify-between gap-3">
         <div className="flex items-center gap-3">
           <div className="flex h-10 w-10 items-center justify-center rounded-control border border-line text-ink">
             <Banknote size={17} strokeWidth={1.75} />
           </div>
           <div>
             <h1 className="text-[22px] font-semibold text-ink">Payout Processing Queue</h1>
-            <p className="mt-0.5 text-[13px] text-ink-soft">Instructor payout requests awaiting Finance review and disbursement.</p>
+            <p className="mt-0.5 text-[13px] text-ink-soft">
+              Instructor payout requests - approve individually or in batch before disbursement.
+            </p>
           </div>
         </div>
-        <div className="w-[180px]">
-          <Select placeholder="All statuses" options={STATUS_OPTIONS} value={statusFilter} onChange={(e) => setStatusFilter(e.target.value)} />
-        </div>
+        {selected.length > 0 && (
+          <Button size="sm" onClick={handleBatchApprove} disabled={batchApprove.isPending}>
+            <CheckCircle2 size={14} strokeWidth={1.75} />
+            {batchApprove.isPending
+              ? "Approving..."
+              : `Approve ${selected.length} (${formatCurrency(selectedTotal, "USD")})`}
+          </Button>
+        )}
       </div>
 
-      {selected.length > 0 && (
-        <div className="mb-4 flex items-center justify-between rounded-control border border-line-strong bg-paper-dim px-4 py-3">
-          <span className="text-[13px] font-medium text-ink">
-            {selected.length} selected - {formatCurrency(totalSelectedAmount, "USD")}
-          </span>
-          <Button size="sm" onClick={handleBatchApprove} disabled={updateStatus.isPending}>
-            <CheckCircle2 size={14} strokeWidth={1.75} /> Batch approve
-          </Button>
+      <div className="mb-5 flex flex-col gap-3 sm:flex-row sm:items-center">
+        <div className="relative flex-1">
+          <Search size={15} strokeWidth={1.75} className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-ink-soft" />
+          <input
+            placeholder="Search by instructor name"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            className="h-10 w-full rounded-control border border-line bg-card pl-9 pr-3 text-[13px] text-ink outline-none placeholder:text-ink-soft/60 focus:border-line-strong"
+          />
         </div>
-      )}
+        <div className="sm:w-[180px]">
+          <Select placeholder="All statuses" options={STATUS_OPTIONS} value={status} onChange={(e) => setStatus(e.target.value)} />
+        </div>
+        <div className="sm:w-[180px]">
+          <Select placeholder="All methods" options={METHOD_OPTIONS} value={method} onChange={(e) => setMethod(e.target.value)} />
+        </div>
+      </div>
 
       {isLoading ? (
         <div className="overflow-hidden rounded-card border border-line bg-card">
           {Array.from({ length: 4 }).map((_, i) => (
-            <ShimmerTableRow key={i} columns={4} />
+            <ShimmerTableRow key={i} columns={5} />
           ))}
         </div>
       ) : !payouts || payouts.length === 0 ? (
-        <EmptyState icon={<Banknote size={22} strokeWidth={1.75} />} title="No payout requests found" description="Try a different status filter." />
+        <EmptyState icon={<Banknote size={22} strokeWidth={1.75} />} title="No payout requests found" description="Try a different filter." />
       ) : (
         <div className="flex flex-col gap-3">
           {pendingIds.length > 0 && (
             <label className="flex w-fit items-center gap-2 px-1 text-[12.5px] text-ink-soft">
-              <input type="checkbox" checked={allSelected} onChange={toggleAll} className="h-4 w-4 rounded border-line-strong" />
-              Select all pending
+              <Checkbox checked={allSelected} onChange={toggleAll} />
+              Select all pending ({pendingIds.length})
             </label>
           )}
+
           {payouts.map((payout) => (
             <Card key={payout.id} className="flex flex-col gap-4 p-5 sm:flex-row sm:items-center sm:justify-between">
-              <div className="flex items-center gap-3">
+              <div className="flex items-start gap-3">
                 {payout.status === "pending" && (
-                  <input
-                    type="checkbox"
-                    checked={selected.includes(payout.id)}
-                    onChange={() => toggleOne(payout.id)}
-                    className="h-4 w-4 shrink-0 rounded border-line-strong"
-                  />
+                  <div className="pt-0.5">
+                    <Checkbox checked={selected.includes(payout.id)} onChange={() => toggleOne(payout.id)} />
+                  </div>
                 )}
-                <div>
+                <div className="min-w-0">
                   <div className="flex items-center gap-2.5">
-                    <p className="text-[14px] font-semibold text-ink">{payout.instructorName}</p>
+                    <p className="truncate text-[14px] font-semibold text-ink">{payout.instructorName}</p>
                     <StatusPill label={payout.status} tone={STATUS_TONE[payout.status]} />
                   </div>
                   <p className="mt-1 text-[12.5px] text-ink-soft">
-                    {payout.method} - Requested {formatDate(payout.requestedAt)} - {payout.id}
+                    Requested {formatDate(payout.requestedAt)} - {payout.method.replace("_", " ")} - Balance: {formatCurrency(payout.walletBalance, payout.currency)}
                   </p>
                 </div>
               </div>
@@ -119,19 +163,12 @@ export default function PayoutProcessingQueuePage() {
                 <span className="font-mono text-[16px] font-semibold text-ink">
                   {formatCurrency(payout.amount, payout.currency)}
                 </span>
-                <button
-                  type="button"
-                  onClick={() => setViewTarget(payout)}
-                  className="flex h-8 w-8 items-center justify-center rounded-control text-ink-soft hover:bg-paper-dim hover:text-ink"
-                >
-                  <Eye size={14} strokeWidth={1.75} />
-                </button>
                 {payout.status === "pending" && (
                   <div className="flex gap-2">
-                    <Button size="sm" variant="secondary" onClick={() => updateStatus.mutate({ id: payout.id, status: "rejected" })}>
+                    <Button size="sm" variant="secondary" onClick={() => setRejectTarget(payout)}>
                       <XCircle size={14} strokeWidth={1.75} /> Reject
                     </Button>
-                    <Button size="sm" onClick={() => updateStatus.mutate({ id: payout.id, status: "approved" })}>
+                    <Button size="sm" onClick={() => approvePayout.mutate({ id: payout.id })} disabled={approvePayout.isPending}>
                       <CheckCircle2 size={14} strokeWidth={1.75} /> Approve
                     </Button>
                   </div>
@@ -142,16 +179,26 @@ export default function PayoutProcessingQueuePage() {
         </div>
       )}
 
-      <Modal open={Boolean(viewTarget)} onClose={() => setViewTarget(null)} title="Payout details">
-        {viewTarget && (
-          <div className="flex flex-col gap-3 text-[13.5px]">
-            <div className="flex justify-between"><span className="text-ink-soft">Instructor</span><span className="font-medium text-ink">{viewTarget.instructorName}</span></div>
-            <div className="flex justify-between"><span className="text-ink-soft">Amount</span><span className="font-mono font-medium text-ink">{formatCurrency(viewTarget.amount, viewTarget.currency)}</span></div>
-            <div className="flex justify-between"><span className="text-ink-soft">Method</span><span className="font-medium text-ink">{viewTarget.method}</span></div>
-            <div className="flex justify-between"><span className="text-ink-soft">Requested</span><span className="font-medium text-ink">{formatDate(viewTarget.requestedAt)}</span></div>
-            <div className="flex justify-between"><span className="text-ink-soft">Reference</span><span className="font-mono text-[12px] text-ink-soft">{viewTarget.id}</span></div>
-          </div>
-        )}
+      <Modal
+        open={Boolean(rejectTarget)}
+        onClose={() => setRejectTarget(null)}
+        title="Reject payout request"
+        footer={
+          <>
+            <Button variant="ghost" onClick={() => setRejectTarget(null)}>
+              Cancel
+            </Button>
+            <Button variant="danger" onClick={() => handleReject("Rejected by finance officer")} disabled={rejectPayout.isPending}>
+              {rejectPayout.isPending ? "Rejecting..." : "Reject request"}
+            </Button>
+          </>
+        }
+      >
+        <p className="text-[14px] text-ink-soft">
+          This will reject the payout request for{" "}
+          <span className="font-semibold text-ink">{rejectTarget?.instructorName}</span> and return the amount
+          to their wallet balance.
+        </p>
       </Modal>
     </main>
   );
