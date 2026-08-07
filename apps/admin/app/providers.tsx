@@ -23,6 +23,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
       {children}
       <Toaster
         position="top-right"
+        closeButton
         toastOptions={{
           style: {
             background: "var(--color-card)",

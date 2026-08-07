@@ -1,7 +1,7 @@
 ﻿================================================================================
 MODULE CODE EXPORT: Packages
-Generated: 2026-08-08 03:09:26
-Total Files: 70
+Generated: 2026-08-08 03:41:30
+Total Files: 72
 ================================================================================
 
 
@@ -685,6 +685,290 @@ export function useAddTicketMessage() {
     onSuccess: (_data, variables) => {
       queryClient.invalidateQueries({ queryKey: ["admin", "support", "tickets"] });
       queryClient.invalidateQueries({ queryKey: adminSupportKeys.detail(variables.id) });
+    }
+  });
+}
+
+
+================================================================================
+FILE: packages\api-client\src\hooks\useAdminTicketDetail.ts
+================================================================================
+"use client";
+
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+
+type TicketDetailStatus = "open" | "in_progress" | "resolved" | "closed";
+type TicketDetailPriority = "low" | "medium" | "high" | "urgent";
+type ThreadAuthorType = "requester" | "staff" | "internal_note";
+
+type TicketThreadEntry = {
+  id: string;
+  authorType: ThreadAuthorType;
+  authorName: string;
+  message: string;
+  createdAt: string;
+};
+
+type TicketDetailRecord = {
+  id: string;
+  subject: string;
+  requesterName: string;
+  category: string;
+  status: TicketDetailStatus;
+  priority: TicketDetailPriority;
+  assignedTo?: string;
+  slaDueAt: string;
+  createdAt: string;
+  thread: TicketThreadEntry[];
+};
+
+type CannedResponse = { title: string; body: string };
+
+const CANNED_RESPONSES: CannedResponse[] = [
+  { title: "Ack - looking into it", body: "Thanks for reaching out - we're looking into this now and will update you shortly." },
+  { title: "Resolved - closing", body: "This issue has been resolved on our end. Let us know if you run into it again." },
+  { title: "Need more info", body: "Could you share a bit more detail (screenshots, steps to reproduce) so we can help faster?" }
+];
+
+const MOCK_TICKETS: Record<string, TicketDetailRecord> = {};
+
+function buildFallbackTicket(id: string): TicketDetailRecord {
+  return {
+    id,
+    subject: "Support request",
+    requesterName: "Demo Requester",
+    category: "General",
+    status: "open",
+    priority: "medium",
+    slaDueAt: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(),
+    createdAt: new Date().toISOString(),
+    thread: []
+  };
+}
+
+let ticketStore: Record<string, TicketDetailRecord> = { ...MOCK_TICKETS };
+
+async function fetchTicketDetail(id: string): Promise<TicketDetailRecord> {
+  await new Promise((r) => setTimeout(r, 300));
+  if (!ticketStore[id]) {
+    ticketStore[id] = buildFallbackTicket(id);
+  }
+  return ticketStore[id];
+}
+
+export function useAdminTicketDetail(id: string) {
+  return useQuery({
+    queryKey: ["admin", "ticket-detail", id],
+    queryFn: () => fetchTicketDetail(id),
+    enabled: Boolean(id)
+  });
+}
+
+export function useAdminCannedResponses() {
+  return useQuery({
+    queryKey: ["admin", "canned-responses"],
+    queryFn: async () => {
+      await new Promise((r) => setTimeout(r, 100));
+      return CANNED_RESPONSES;
+    }
+  });
+}
+
+export function useReplyToTicket() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (input: { id: string; message: string }) => {
+      await new Promise((r) => setTimeout(r, 300));
+      const current = ticketStore[input.id] ?? buildFallbackTicket(input.id);
+      const updated: TicketDetailRecord = {
+        ...current,
+        status: current.status === "open" ? "in_progress" : current.status,
+        thread: [
+          ...current.thread,
+          { id: `msg_${Date.now()}`, authorType: "staff", authorName: "Admin", message: input.message, createdAt: new Date().toISOString() }
+        ]
+      };
+      ticketStore[input.id] = updated;
+      return updated;
+    },
+    onSuccess: (data) => {
+      queryClient.invalidateQueries({ queryKey: ["admin", "ticket-detail", data.id] });
+      queryClient.invalidateQueries({ queryKey: ["admin", "tickets"] });
+    }
+  });
+}
+
+export function useAddInternalNote() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (input: { id: string; note: string }) => {
+      await new Promise((r) => setTimeout(r, 300));
+      const current = ticketStore[input.id] ?? buildFallbackTicket(input.id);
+      const updated: TicketDetailRecord = {
+        ...current,
+        thread: [
+          ...current.thread,
+          { id: `note_${Date.now()}`, authorType: "internal_note", authorName: "Admin", message: input.note, createdAt: new Date().toISOString() }
+        ]
+      };
+      ticketStore[input.id] = updated;
+      return updated;
+    },
+    onSuccess: (data) => {
+      queryClient.invalidateQueries({ queryKey: ["admin", "ticket-detail", data.id] });
+    }
+  });
+}
+
+export function useResolveTicket() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (input: { id: string; status: TicketDetailStatus }) => {
+      await new Promise((r) => setTimeout(r, 250));
+      const current = ticketStore[input.id] ?? buildFallbackTicket(input.id);
+      const updated: TicketDetailRecord = { ...current, status: input.status };
+      ticketStore[input.id] = updated;
+      return updated;
+    },
+    onSuccess: (data) => {
+      queryClient.invalidateQueries({ queryKey: ["admin", "ticket-detail", data.id] });
+      queryClient.invalidateQueries({ queryKey: ["admin", "tickets"] });
+    }
+  });
+}
+
+
+================================================================================
+FILE: packages\api-client\src\hooks\useAdminUserDetail.ts
+================================================================================
+"use client";
+
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+
+type UserDetailRole = "learner" | "instructor" | "corporate" | "admin";
+type UserDetailStatus = "active" | "suspended" | "banned" | "pending";
+
+type UserActivityLogEntry = {
+  id: string;
+  description: string;
+  createdAt: string;
+};
+
+type UserDetailRecord = {
+  id: string;
+  fullName: string;
+  email: string;
+  avatarUrl?: string;
+  role: UserDetailRole;
+  status: UserDetailStatus;
+  location?: string;
+  joinedAt: string;
+  lastActiveAt: string;
+  activityLog: UserActivityLogEntry[];
+};
+
+const MOCK_USER_DETAILS: Record<string, UserDetailRecord> = {
+  usr_1001: {
+    id: "usr_1001",
+    fullName: "Hassan Raza",
+    email: "hassan.raza@example.com",
+    role: "instructor",
+    status: "active",
+    location: "Lahore, Pakistan",
+    joinedAt: "2026-02-14T00:00:00Z",
+    lastActiveAt: "2026-08-07T09:30:00Z",
+    activityLog: [
+      { id: "act_1", description: "Published course \"AI Automation with n8n\"", createdAt: "2026-07-30T10:00:00Z" },
+      { id: "act_2", description: "Requested payout PAYOUT-2026-0913", createdAt: "2026-08-05T10:12:00Z" },
+      { id: "act_3", description: "Responded to a learner review", createdAt: "2026-08-01T14:20:00Z" }
+    ]
+  }
+};
+
+function buildFallbackUser(id: string): UserDetailRecord {
+  return {
+    id,
+    fullName: "Demo User",
+    email: `${id}@example.com`,
+    role: "learner",
+    status: "active",
+    location: "Unknown",
+    joinedAt: "2026-01-01T00:00:00Z",
+    lastActiveAt: new Date().toISOString(),
+    activityLog: []
+  };
+}
+
+let userDetailStore: Record<string, UserDetailRecord> = { ...MOCK_USER_DETAILS };
+
+async function fetchUserDetail(id: string): Promise<UserDetailRecord> {
+  await new Promise((r) => setTimeout(r, 350));
+  if (!userDetailStore[id]) {
+    userDetailStore[id] = buildFallbackUser(id);
+  }
+  return userDetailStore[id];
+}
+
+export function useAdminUserDetail(id: string) {
+  return useQuery({
+    queryKey: ["admin", "user-detail", id],
+    queryFn: () => fetchUserDetail(id),
+    enabled: Boolean(id)
+  });
+}
+
+export function useUpdateUserStatus() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (input: { id: string; status: UserDetailStatus }) => {
+      await new Promise((r) => setTimeout(r, 300));
+      const current = userDetailStore[input.id] ?? buildFallbackUser(input.id);
+      const updated: UserDetailRecord = {
+        ...current,
+        status: input.status,
+        activityLog: [
+          {
+            id: `act_${Date.now()}`,
+            description: `Status changed to "${input.status}"`,
+            createdAt: new Date().toISOString()
+          },
+          ...current.activityLog
+        ]
+      };
+      userDetailStore[input.id] = updated;
+      return updated;
+    },
+    onSuccess: (data) => {
+      queryClient.invalidateQueries({ queryKey: ["admin", "user-detail", data.id] });
+      queryClient.invalidateQueries({ queryKey: ["admin", "users"] });
+    }
+  });
+}
+
+export function useUpdateUserRole() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (input: { id: string; role: UserDetailRole }) => {
+      await new Promise((r) => setTimeout(r, 300));
+      const current = userDetailStore[input.id] ?? buildFallbackUser(input.id);
+      const updated: UserDetailRecord = {
+        ...current,
+        role: input.role,
+        activityLog: [
+          {
+            id: `act_${Date.now()}`,
+            description: `Role changed to "${input.role}"`,
+            createdAt: new Date().toISOString()
+          },
+          ...current.activityLog
+        ]
+      };
+      userDetailStore[input.id] = updated;
+      return updated;
+    },
+    onSuccess: (data) => {
+      queryClient.invalidateQueries({ queryKey: ["admin", "user-detail", data.id] });
+      queryClient.invalidateQueries({ queryKey: ["admin", "users"] });
     }
   });
 }
@@ -2134,6 +2418,8 @@ export * from "./hooks/useAdminSupport";
 export * from "./hooks/useAuth";
 export * from "./hooks/useCourses";
 export * from "./hooks/useAdminPayouts";
+export * from "./hooks/useAdminUserDetail";
+export * from "./hooks/useAdminTicketDetail";
 
 
 
