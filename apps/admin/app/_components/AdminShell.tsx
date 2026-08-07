@@ -2,7 +2,8 @@
 
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { useEffect, useMemo, useRef, useState, type ReactNode } from "react";
+import { useEffect, useRef, useState, type ReactNode } from "react";
+import { toast } from "sonner";
 import {
   Menu,
   X,
@@ -14,7 +15,8 @@ import {
   User,
   Settings,
   ChevronDown,
-  Command
+  Command,
+  Check
 } from "lucide-react";
 import { ThemeToggle } from "@saachi/ui";
 import { ADMIN_NAV } from "../../lib/nav-config";
@@ -44,19 +46,23 @@ const TONE_DOT: Record<NotificationItem["tone"], string> = {
   info: "bg-info"
 };
 
-function usePageTitle(pathname: string | null) {
-  return useMemo(() => {
-    if (!pathname) return { section: "", label: "Dashboard" };
-    for (const section of ADMIN_NAV) {
-      for (const item of section.items) {
-        if (pathname === item.href || pathname.startsWith(`${item.href}/`)) {
-          return { section: section.title, label: item.label };
-        }
-      }
-    }
-    return { section: "", label: "Admin" };
-  }, [pathname]);
-}
+type StaffRole = "super_admin" | "admin" | "finance_officer" | "support_officer";
+
+const ROLE_LABEL: Record<StaffRole, string> = {
+  super_admin: "Super Admin",
+  admin: "Admin",
+  finance_officer: "Finance Officer",
+  support_officer: "Support Officer"
+};
+
+const ROLE_LIST: StaffRole[] = ["super_admin", "admin", "finance_officer", "support_officer"];
+
+const CURRENT_USER = {
+  name: "Abdul Rehman Irfan",
+  email: "abdulrehman@saachi.ai"
+};
+
+const ROLE_STORAGE_KEY = "saachi_admin_role";
 
 export function AdminShell({ children }: { children: ReactNode }) {
   const pathname = usePathname();
@@ -64,17 +70,23 @@ export function AdminShell({ children }: { children: ReactNode }) {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [collapsed, setCollapsed] = useState(false);
   const [notifOpen, setNotifOpen] = useState(false);
-  const [avatarOpen, setAvatarOpen] = useState(false);
+  const [userMenuOpen, setUserMenuOpen] = useState(false);
+  const [currentRole, setCurrentRole] = useState<StaffRole>("super_admin");
 
   const notifRef = useRef<HTMLDivElement>(null);
-  const avatarRef = useRef<HTMLDivElement>(null);
+  const userMenuRef = useRef<HTMLDivElement>(null);
 
-  const { section, label } = usePageTitle(pathname);
+  useEffect(() => {
+    const stored = window.localStorage.getItem(ROLE_STORAGE_KEY) as StaffRole | null;
+    if (stored && ROLE_LIST.includes(stored)) {
+      setCurrentRole(stored);
+    }
+  }, []);
 
   useEffect(() => {
     function handleClickOutside(e: MouseEvent) {
       if (notifRef.current && !notifRef.current.contains(e.target as Node)) setNotifOpen(false);
-      if (avatarRef.current && !avatarRef.current.contains(e.target as Node)) setAvatarOpen(false);
+      if (userMenuRef.current && !userMenuRef.current.contains(e.target as Node)) setUserMenuOpen(false);
     }
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
@@ -85,21 +97,18 @@ export function AdminShell({ children }: { children: ReactNode }) {
     router.push("/login");
   };
 
-  const sidebarContent = (
-    <div className="flex h-full flex-col">
-      <div className={cx("flex items-center gap-2.5 px-5 py-6", collapsed && "justify-center px-0")}>
-        <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-ink text-[13px] font-bold text-ink">
-          S
-        </span>
-        {!collapsed && (
-          <div>
-            <div className="text-[14px] font-semibold leading-none text-ink">Saachi AI</div>
-            <div className="mt-1 text-[10px] font-medium uppercase tracking-[0.08em] text-ink-soft">Admin</div>
-          </div>
-        )}
-      </div>
+  const handleSwitchRole = (role: StaffRole) => {
+    setCurrentRole(role);
+    window.localStorage.setItem(ROLE_STORAGE_KEY, role);
+    setUserMenuOpen(false);
+    toast.success(`Switched to ${ROLE_LABEL[role]}`, {
+      description: "Your view now reflects this role's permissions."
+    });
+  };
 
-      <nav className="flex flex-1 flex-col gap-5 overflow-y-auto px-3 pb-4">
+  const sidebarContent = (
+    <div className="flex h-full flex-col pt-[65px]">
+      <nav className="flex flex-1 flex-col gap-5 overflow-y-auto px-3 pb-4 pt-4">
         {ADMIN_NAV.map((navSection) => (
           <div key={navSection.title}>
             {!collapsed && (
@@ -172,12 +181,7 @@ export function AdminShell({ children }: { children: ReactNode }) {
         {sidebarContent}
       </div>
 
-      <div
-        className={cx(
-          "sticky top-0 z-40 flex items-center justify-between gap-3 border-b border-line bg-card/95 px-4 py-3 backdrop-blur-sm transition-[padding] duration-200 ease-out md:px-6",
-          collapsed ? "md:pl-[76px]" : "md:pl-[248px]"
-        )}
-      >
+      <div className="sticky top-0 z-40 flex items-center justify-between gap-3 border-b border-line bg-card/95 px-4 py-3 backdrop-blur-sm md:px-6">
         <div className="flex min-w-0 items-center gap-3">
           <button
             type="button"
@@ -188,16 +192,85 @@ export function AdminShell({ children }: { children: ReactNode }) {
             <Menu size={18} strokeWidth={1.75} />
           </button>
 
-          <div className="min-w-0">
-            <div className="flex items-center gap-1.5 text-[11px] text-ink-soft">
-              {section && (
-                <>
-                  <span className="truncate">{section}</span>
-                  <span className="text-ink-soft/50">/</span>
-                </>
-              )}
-            </div>
-            <div className="truncate text-[15px] font-semibold text-ink">{label}</div>
+          <div className="hidden shrink-0 items-center gap-2 sm:flex">
+            <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-ink text-[12px] font-bold text-ink">
+              S
+            </span>
+            <span className="whitespace-nowrap text-[14px] font-semibold text-ink">Saachi Admin</span>
+          </div>
+
+          <div className="hidden h-6 w-px shrink-0 bg-line sm:block" />
+
+          <div className="relative min-w-0" ref={userMenuRef}>
+            <button
+              type="button"
+              onClick={() => setUserMenuOpen((v) => !v)}
+              className="flex min-w-0 items-center gap-2 rounded-control px-1.5 py-1 transition-colors duration-150 ease-out hover:bg-paper-dim"
+            >
+              <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-line text-[12px] font-semibold text-ink">
+                {CURRENT_USER.name.charAt(0)}
+              </div>
+              <div className="hidden min-w-0 text-left sm:block">
+                <div className="truncate text-[12.5px] font-semibold leading-tight text-ink">{CURRENT_USER.name}</div>
+                <div className="truncate text-[11px] leading-tight text-ink-soft">{ROLE_LABEL[currentRole]}</div>
+              </div>
+              <ChevronDown size={13} strokeWidth={1.75} className="hidden shrink-0 text-ink-soft sm:block" />
+            </button>
+
+            {userMenuOpen && (
+              <div className="absolute left-0 top-[calc(100%+8px)] w-[260px] overflow-hidden rounded-card border border-line bg-card shadow-lg">
+                <div className="border-b border-line px-4 py-3">
+                  <p className="truncate text-[13px] font-semibold text-ink">{CURRENT_USER.name}</p>
+                  <p className="truncate text-[12px] text-ink-soft">{CURRENT_USER.email}</p>
+                </div>
+
+                <div className="border-b border-line px-4 py-3">
+                  <p className="mb-2 text-[10.5px] font-semibold uppercase tracking-[0.06em] text-ink-soft/70">
+                    Switch role
+                  </p>
+                  <div className="flex flex-col gap-0.5">
+                    {ROLE_LIST.map((role) => (
+                      <button
+                        key={role}
+                        type="button"
+                        onClick={() => handleSwitchRole(role)}
+                        className={cx(
+                          "flex items-center justify-between gap-2 rounded-control px-2.5 py-1.5 text-left text-[12.5px] transition-colors duration-100 ease-out",
+                          role === currentRole ? "bg-paper-dim text-ink" : "text-ink-soft hover:bg-paper-dim hover:text-ink"
+                        )}
+                      >
+                        {ROLE_LABEL[role]}
+                        {role === currentRole && <Check size={13} strokeWidth={2} className="shrink-0 text-ink" />}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="flex flex-col p-1.5">
+                  <Link
+                    href="/settings/roles"
+                    onClick={() => setUserMenuOpen(false)}
+                    className="flex items-center gap-2.5 rounded-control px-3 py-2 text-[13px] text-ink transition-colors duration-100 ease-out hover:bg-paper-dim"
+                  >
+                    <User size={14} strokeWidth={1.75} /> Profile
+                  </Link>
+                  <Link
+                    href="/settings/platform"
+                    onClick={() => setUserMenuOpen(false)}
+                    className="flex items-center gap-2.5 rounded-control px-3 py-2 text-[13px] text-ink transition-colors duration-100 ease-out hover:bg-paper-dim"
+                  >
+                    <Settings size={14} strokeWidth={1.75} /> Settings
+                  </Link>
+                  <button
+                    type="button"
+                    onClick={handleLogout}
+                    className="flex items-center gap-2.5 rounded-control px-3 py-2 text-left text-[13px] text-error transition-colors duration-100 ease-out hover:bg-error-tint"
+                  >
+                    <LogOut size={14} strokeWidth={1.75} /> Log out
+                  </button>
+                </div>
+              </div>
+            )}
           </div>
         </div>
 
@@ -252,51 +325,6 @@ export function AdminShell({ children }: { children: ReactNode }) {
           </div>
 
           <ThemeToggle />
-
-          <div className="relative" ref={avatarRef}>
-            <button
-              type="button"
-              onClick={() => setAvatarOpen((v) => !v)}
-              className="flex items-center gap-1.5 rounded-control px-1.5 py-1 transition-colors duration-150 ease-out hover:bg-paper-dim"
-            >
-              <div className="flex h-8 w-8 items-center justify-center rounded-full border border-line text-[12px] font-semibold text-ink">
-                A
-              </div>
-              <ChevronDown size={13} strokeWidth={1.75} className="hidden text-ink-soft sm:block" />
-            </button>
-
-            {avatarOpen && (
-              <div className="absolute right-0 top-[calc(100%+8px)] w-[200px] overflow-hidden rounded-card border border-line bg-card shadow-lg">
-                <div className="border-b border-line px-4 py-3">
-                  <p className="text-[13px] font-semibold text-ink">Admin</p>
-                  <p className="text-[12px] text-ink-soft">abdulrehman@saachi.ai</p>
-                </div>
-                <div className="flex flex-col p-1.5">
-                  <Link
-                    href="/settings/roles"
-                    onClick={() => setAvatarOpen(false)}
-                    className="flex items-center gap-2.5 rounded-control px-3 py-2 text-[13px] text-ink transition-colors duration-100 ease-out hover:bg-paper-dim"
-                  >
-                    <User size={14} strokeWidth={1.75} /> Profile
-                  </Link>
-                  <Link
-                    href="/settings/platform"
-                    onClick={() => setAvatarOpen(false)}
-                    className="flex items-center gap-2.5 rounded-control px-3 py-2 text-[13px] text-ink transition-colors duration-100 ease-out hover:bg-paper-dim"
-                  >
-                    <Settings size={14} strokeWidth={1.75} /> Settings
-                  </Link>
-                  <button
-                    type="button"
-                    onClick={handleLogout}
-                    className="flex items-center gap-2.5 rounded-control px-3 py-2 text-left text-[13px] text-error transition-colors duration-100 ease-out hover:bg-error-tint"
-                  >
-                    <LogOut size={14} strokeWidth={1.75} /> Log out
-                  </button>
-                </div>
-              </div>
-            )}
-          </div>
         </div>
       </div>
 
