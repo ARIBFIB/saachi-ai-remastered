@@ -11,45 +11,34 @@ export type ButtonProps = ButtonHTMLAttributes<HTMLButtonElement> & {
 };
 
 const variantStyles: Record<ButtonVariant, string> = {
-  primary:
-    "text-white shadow-[0_4px_20px_rgba(30,64,175,0.10)] hover:shadow-[0_0_32px_rgba(59,130,246,0.35)]",
-  secondary:
-    "border border-[var(--border-hairline,rgba(15,23,42,0.14))] bg-transparent hover:border-blue-400",
-  ghost: "bg-transparent text-[var(--text-secondary,#475569)] hover:bg-[var(--surface-elevated,#F1F5F9)]",
-  danger: "bg-red-500 text-white hover:bg-red-600"
+  primary: "bg-gold text-ink hover:bg-gold-dark",
+  secondary: "border border-line-strong bg-card text-ink hover:border-ink",
+  ghost: "bg-transparent text-ink-soft hover:bg-paper-dim",
+  danger: "bg-error text-white hover:bg-[#a53931]"
 };
 
 const sizeStyles: Record<ButtonSize, string> = {
   sm: "h-9 px-4 text-sm",
   md: "h-11 px-5 text-[15px]",
-  lg: "h-13 px-6 text-[17px]"
+  lg: "h-[52px] px-7 text-[16px]"
 };
 
 export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
-  ({ className, variant = "primary", size = "md", loading, disabled, children, style, ...props }, ref) => {
-    const isPrimary = variant === "primary";
+  ({ className, variant = "primary", size = "md", loading, disabled, children, ...props }, ref) => {
     return (
       <button
         ref={ref}
         disabled={disabled || loading}
         className={cn(
-          "inline-flex items-center justify-center rounded-full font-medium transition-all duration-200 ease-out disabled:opacity-60 disabled:pointer-events-none",
+          "inline-flex items-center justify-center gap-2 rounded-full font-semibold tracking-[-0.01em]",
+          "transition-colors duration-150 ease-out disabled:opacity-50 disabled:pointer-events-none",
           variantStyles[variant],
           sizeStyles[size],
           className
         )}
-        style={
-          isPrimary
-            ? {
-                background:
-                  "linear-gradient(135deg, #2563EB 0%, #0EA5E9 50%, #22D3EE 100%)",
-                ...style
-              }
-            : style
-        }
         {...props}
       >
-        {loading ? "..." : children}
+        {loading ? "Workingâ€¦" : children}
       </button>
     );
   }

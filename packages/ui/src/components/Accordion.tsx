@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useState, type ReactNode } from "react";
 import { ChevronDown } from "lucide-react";
@@ -21,17 +21,11 @@ export function Accordion({ items, defaultOpenId, className }: AccordionProps) {
   const [openId, setOpenId] = useState<string | null>(defaultOpenId ?? null);
 
   return (
-    <div
-      className={cn(
-        "flex flex-col overflow-hidden rounded-2xl border border-[var(--border-hairline,rgba(15,23,42,0.08))]",
-        "divide-y divide-[var(--border-hairline,rgba(15,23,42,0.08))]",
-        className
-      )}
-    >
+    <div className={cn("flex flex-col overflow-hidden rounded-card border border-line divide-y divide-line", className)}>
       {items.map((item) => {
         const isOpen = openId === item.id;
         return (
-          <div key={item.id} className="bg-[var(--surface-card,#FFFFFF)]">
+          <div key={item.id} className="bg-card">
             <button
               type="button"
               onClick={() => setOpenId(isOpen ? null : item.id)}
@@ -39,16 +33,14 @@ export function Accordion({ items, defaultOpenId, className }: AccordionProps) {
               aria-expanded={isOpen}
             >
               <div className="flex flex-1 items-center gap-3">
-                <span className="text-[15px] font-semibold text-[var(--text-primary,#0F172A)]">
-                  {item.title}
-                </span>
+                <span className="text-[15px] font-semibold text-ink">{item.title}</span>
                 {item.meta}
               </div>
               <ChevronDown
                 size={18}
                 className={cn(
-                  "shrink-0 text-[var(--text-secondary,#475569)] transition-transform duration-200 ease-out",
-                  isOpen && "rotate-180 text-[var(--blue-600,#2563EB)]"
+                  "shrink-0 text-ink-soft transition-transform duration-200 ease-out",
+                  isOpen && "rotate-180 text-gold-dark"
                 )}
               />
             </button>
@@ -59,9 +51,7 @@ export function Accordion({ items, defaultOpenId, className }: AccordionProps) {
               )}
             >
               <div className="overflow-hidden">
-                <div className="px-5 pb-4 text-[14px] leading-relaxed text-[var(--text-secondary,#475569)]">
-                  {item.content}
-                </div>
+                <div className="px-5 pb-4 text-[14px] leading-relaxed text-ink-soft">{item.content}</div>
               </div>
             </div>
           </div>

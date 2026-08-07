@@ -1,4 +1,4 @@
-import Link from "next/link";
+﻿import Link from "next/link";
 import { Star } from "lucide-react";
 import { cn } from "../cn";
 
@@ -35,13 +35,12 @@ export function CourseCard({
     <Link
       href={`/courses/${slug}`}
       className={cn(
-        "group flex flex-col overflow-hidden rounded-2xl border bg-[var(--surface-card,#FFFFFF)]",
-        "border-[var(--border-hairline,rgba(15,23,42,0.08))] shadow-[0_2px_8px_rgba(30,64,175,0.06)]",
-        "transition-all duration-200 ease-out hover:-translate-y-0.5 hover:shadow-[0_4px_20px_rgba(30,64,175,0.10)] hover:border-[rgba(59,130,246,0.35)]",
+        "group flex flex-col overflow-hidden rounded-card border border-line bg-card",
+        "transition-all duration-200 ease-out hover:-translate-y-0.5 hover:border-gold-dark/40",
         className
       )}
     >
-      <div className="relative aspect-video w-full overflow-hidden bg-[var(--surface-elevated,#F1F5F9)]">
+      <div className="relative aspect-video w-full overflow-hidden bg-paper-dim">
         {thumbnailUrl ? (
           // eslint-disable-next-line @next/next/no-img-element
           <img
@@ -50,27 +49,23 @@ export function CourseCard({
             className="h-full w-full object-cover transition-transform duration-300 ease-out group-hover:scale-[1.02]"
           />
         ) : (
-          <div className="flex h-full w-full items-center justify-center text-[13px] text-[var(--text-muted,#94A3B8)]">
+          <div className="flex h-full w-full items-center justify-center text-[13px] text-ink-soft/60">
             No preview
           </div>
         )}
       </div>
 
       <div className="flex flex-1 flex-col gap-2 p-4">
-        <h3 className="line-clamp-2 text-[15px] font-semibold leading-snug text-[var(--text-primary,#0F172A)]">
-          {title}
-        </h3>
-        <p className="text-[13px] text-[var(--text-secondary,#475569)]">{instructorName}</p>
+        <h3 className="line-clamp-2 text-[15px] font-semibold leading-snug text-ink">{title}</h3>
+        <p className="text-[13px] text-ink-soft">{instructorName}</p>
 
         <div className="flex items-center gap-1.5 text-[13px]">
-          <Star size={14} className="fill-[var(--blue-500,#3B82F6)] text-[var(--blue-500,#3B82F6)]" />
-          <span className="font-semibold text-[var(--text-primary,#0F172A)]">{rating.toFixed(1)}</span>
-          <span className="text-[var(--text-muted,#94A3B8)]">({ratingCount.toLocaleString()})</span>
+          <Star size={14} className="fill-gold text-gold" />
+          <span className="font-semibold text-ink">{rating.toFixed(1)}</span>
+          <span className="text-ink-soft/60">({ratingCount.toLocaleString()})</span>
         </div>
 
-        <div className="mt-auto pt-2 text-[17px] font-bold text-[var(--text-primary,#0F172A)]">
-          {formattedPrice}
-        </div>
+        <div className="mt-auto pt-2 font-mono text-[17px] font-semibold text-ink">{formattedPrice}</div>
       </div>
     </Link>
   );

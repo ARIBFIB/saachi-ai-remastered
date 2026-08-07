@@ -1,4 +1,4 @@
-import { forwardRef, type SelectHTMLAttributes } from "react";
+﻿import { forwardRef, type SelectHTMLAttributes } from "react";
 import { ChevronDown } from "lucide-react";
 import { cn } from "../cn";
 
@@ -22,10 +22,7 @@ export const Select = forwardRef<HTMLSelectElement, SelectProps>(
     return (
       <div className="flex flex-col gap-1.5">
         {label && (
-          <label
-            htmlFor={selectId}
-            className="text-[13px] font-semibold text-[var(--text-primary,#0F172A)]"
-          >
+          <label htmlFor={selectId} className="text-[13px] font-semibold text-ink">
             {label}
           </label>
         )}
@@ -34,12 +31,9 @@ export const Select = forwardRef<HTMLSelectElement, SelectProps>(
             ref={ref}
             id={selectId}
             className={cn(
-              "h-11 w-full appearance-none rounded-[10px] border bg-[var(--surface-card,#FFFFFF)] px-3.5 pr-10 text-[15px]",
-              "border-[var(--border-hairline-strong,rgba(15,23,42,0.14))]",
-              "text-[var(--text-primary,#0F172A)]",
-              "outline-none transition-all duration-150 ease-out",
-              "focus:border-[var(--blue-500,#3B82F6)] focus:shadow-[0_0_16px_rgba(59,130,246,0.25)]",
-              error && "border-[#EF4444] focus:border-[#EF4444] focus:shadow-none",
+              "h-11 w-full appearance-none rounded-control border border-line-strong bg-card px-3.5 pr-10 text-[15px] text-ink",
+              "outline-none transition-colors duration-150 ease-out focus:border-gold",
+              error && "border-error focus:border-error",
               className
             )}
             aria-invalid={Boolean(error)}
@@ -58,13 +52,13 @@ export const Select = forwardRef<HTMLSelectElement, SelectProps>(
           </select>
           <ChevronDown
             size={18}
-            className="pointer-events-none absolute right-3.5 top-1/2 -translate-y-1/2 text-[var(--text-secondary,#475569)]"
+            className="pointer-events-none absolute right-3.5 top-1/2 -translate-y-1/2 text-ink-soft"
           />
         </div>
         {error ? (
-          <p className="text-[13px] text-[#EF4444]">{error}</p>
+          <p className="text-[13px] text-error">{error}</p>
         ) : helperText ? (
-          <p className="text-[13px] text-[var(--text-secondary,#475569)]">{helperText}</p>
+          <p className="text-[13px] text-ink-soft">{helperText}</p>
         ) : null}
       </div>
     );

@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { Checkbox } from "./Checkbox";
 import { Select } from "./Select";
@@ -36,15 +36,9 @@ export function FilterSidebar({
   };
 
   return (
-    <aside
-      className={cn(
-        "flex w-full flex-col gap-8 rounded-2xl border border-[var(--border-hairline,rgba(15,23,42,0.08))]",
-        "bg-[var(--surface-card,#FFFFFF)] p-6",
-        className
-      )}
-    >
+    <aside className={cn("flex w-full flex-col gap-8 rounded-card border border-line bg-card p-6", className)}>
       <div>
-        <h4 className="mb-3 text-[13px] font-semibold uppercase tracking-[0.06em] text-[var(--text-muted,#94A3B8)]">
+        <h4 className="mb-3 text-[13px] font-semibold uppercase tracking-[0.06em] text-ink-soft/70">
           Category
         </h4>
         <div className="flex flex-col gap-2.5">
@@ -59,30 +53,26 @@ export function FilterSidebar({
         </div>
       </div>
 
-      <div>
-        <Select
-          label="Skill level"
-          placeholder="All levels"
-          options={levelOptions}
-          value={value.level ?? ""}
-          onChange={(e) => onChange({ ...value, level: e.target.value || undefined })}
-        />
-      </div>
+      <Select
+        label="Skill level"
+        placeholder="All levels"
+        options={levelOptions}
+        value={value.level ?? ""}
+        onChange={(e) => onChange({ ...value, level: e.target.value || undefined })}
+      />
 
-      <div>
-        <Select
-          label="Language"
-          placeholder="All languages"
-          options={languageOptions}
-          value={value.language ?? ""}
-          onChange={(e) => onChange({ ...value, language: e.target.value || undefined })}
-        />
-      </div>
+      <Select
+        label="Language"
+        placeholder="All languages"
+        options={languageOptions}
+        value={value.language ?? ""}
+        onChange={(e) => onChange({ ...value, language: e.target.value || undefined })}
+      />
 
       <button
         type="button"
         onClick={() => onChange({ categories: [], level: undefined, language: undefined })}
-        className="text-left text-[13px] font-medium text-[var(--blue-600,#2563EB)] hover:underline"
+        className="text-left text-[13px] font-medium text-gold-dark hover:underline"
       >
         Clear all filters
       </button>

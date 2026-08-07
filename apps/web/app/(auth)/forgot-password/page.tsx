@@ -6,7 +6,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { forgotPasswordSchema, type ForgotPasswordInput } from "@saachi/utils";
 import { apiRequest } from "@saachi/api-client";
-import { Button, Card } from "@saachi/ui";
+import { Button, Card, Input } from "@saachi/ui";
 
 export default function ForgotPasswordPage() {
   const [sent, setSent] = useState(false);
@@ -32,57 +32,47 @@ export default function ForgotPasswordPage() {
 
   if (sent) {
     return (
-      <Card>
-        <h1 style={{ fontSize: "22px", fontWeight: 700, marginBottom: "8px" }}>Check your email</h1>
-        <p style={{ color: "var(--text-secondary)", fontSize: "14px" }}>
-          If an account exists for that email, we&apos;ve sent a password reset link.
+      <Card className="w-full max-w-[420px] p-8">
+        <h1 className="font-display text-[22px] font-semibold text-ink">Check your email</h1>
+        <p className="mt-2 text-[14px] text-ink-soft">
+          If an account exists for that email, we've sent a password reset link.
         </p>
-        <div style={{ marginTop: "20px" }}>
-          <Link href="/login">Back to login</Link>
+        <div className="mt-6">
+          <Link href="/login" className="text-[14px] font-semibold text-ink hover:text-gold-dark">
+            Back to login
+          </Link>
         </div>
       </Card>
     );
   }
 
   return (
-    <Card>
-      <h1 style={{ fontSize: "22px", fontWeight: 700, marginBottom: "4px" }}>Reset your password</h1>
-      <p style={{ color: "var(--text-secondary)", fontSize: "14px", marginBottom: "24px" }}>
-        Enter your email and we&apos;ll send you a reset link.
+    <Card className="w-full max-w-[420px] p-8">
+      <h1 className="font-display text-[22px] font-semibold text-ink">Reset your password</h1>
+      <p className="mb-6 mt-1 text-[14px] text-ink-soft">
+        Enter your email and we'll send you a reset link.
       </p>
 
-      <form onSubmit={handleSubmit(onSubmit)} style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
-        <div>
-          <label style={{ display: "block", fontSize: "13px", fontWeight: 600, marginBottom: "6px" }}>
-            Email
-          </label>
-          <input
-            type="email"
-            {...register("email")}
-            style={{
-              width: "100%",
-              height: "44px",
-              padding: "0 14px",
-              borderRadius: "10px",
-              border: "1px solid rgba(15,23,42,0.14)",
-              fontSize: "15px"
-            }}
-            placeholder="you@example.com"
-          />
-          {errors.email && (
-            <p style={{ color: "#EF4444", fontSize: "13px", marginTop: "4px" }}>{errors.email.message}</p>
-          )}
-        </div>
+      <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
+        <Input
+          label="Email"
+          type="email"
+          placeholder="you@example.com"
+          {...register("email")}
+          error={errors.email?.message}
+        />
 
-        {serverError && <p style={{ color: "#EF4444", fontSize: "13px" }}>{serverError}</p>}
+        {serverError && <p className="text-[13px] text-error">{serverError}</p>}
 
         <Button type="submit" size="lg" disabled={isSubmitting}>
-          {isSubmitting ? "Sending..." : "Send Reset Link"}
+          {isSubmitting ? "Sendingâ€¦" : "Send Reset Link"}
         </Button>
       </form>
 
-      <div style={{ marginTop: "20px", fontSize: "14px", textAlign: "center", color: "var(--text-secondary)" }}>
-        <Link href="/login">Back to login</Link>
+      <div className="mt-5 text-center text-[14px] text-ink-soft">
+        <Link href="/login" className="hover:text-ink">
+          Back to login
+        </Link>
       </div>
     </Card>
   );

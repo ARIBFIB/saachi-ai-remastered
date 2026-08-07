@@ -1,4 +1,4 @@
-﻿{
+{
   "compilerOptions": {
     "target": "ES2020",
     "lib": ["dom", "dom.iterable", "esnext"],
@@ -22,7 +22,9 @@
       "@saachi/api-client": ["../../packages/api-client/src"],
       "@saachi/api-client/*": ["../../packages/api-client/src/*"],
       "@saachi/utils": ["../../packages/utils/src"],
-      "@saachi/utils/*": ["../../packages/utils/src/*"]
+      "@saachi/utils/*": ["../../packages/utils/src/*"],
+      "@saachi/store": ["../../packages/store/src"],
+      "@saachi/store/*": ["../../packages/store/src/*"]
     }
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],

@@ -1,4 +1,4 @@
-import type { ReactNode } from "react";
+﻿import type { ReactNode } from "react";
 import { Inbox } from "lucide-react";
 import { cn } from "../cn";
 
@@ -14,20 +14,15 @@ export function EmptyState({ icon, title, description, action, className }: Empt
   return (
     <div
       className={cn(
-        "flex flex-col items-center justify-center gap-3 rounded-2xl border border-dashed",
-        "border-[var(--border-hairline-strong,rgba(15,23,42,0.14))] px-8 py-16 text-center",
+        "flex flex-col items-center justify-center gap-3 rounded-card border border-dashed border-line-strong px-8 py-16 text-center",
         className
       )}
     >
-      <div className="flex h-12 w-12 items-center justify-center rounded-full bg-[var(--blue-50,#EFF6FF)] text-[var(--blue-500,#3B82F6)]">
+      <div className="flex h-12 w-12 items-center justify-center rounded-full bg-gold-tint text-gold-dark">
         {icon ?? <Inbox size={22} />}
       </div>
-      <h3 className="text-[18px] font-semibold text-[var(--text-primary,#0F172A)]">{title}</h3>
-      {description && (
-        <p className="max-w-[420px] text-[14px] text-[var(--text-secondary,#475569)]">
-          {description}
-        </p>
-      )}
+      <h3 className="font-display text-[18px] font-semibold text-ink">{title}</h3>
+      {description && <p className="max-w-[420px] text-[14px] text-ink-soft">{description}</p>}
       {action && <div className="mt-2">{action}</div>}
     </div>
   );

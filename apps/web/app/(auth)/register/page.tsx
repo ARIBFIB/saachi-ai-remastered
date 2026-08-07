@@ -7,7 +7,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { registerSchema, type RegisterInput } from "@saachi/utils";
 import { useRegister } from "@saachi/api-client";
-import { Button, Card } from "@saachi/ui";
+import { Button, Card, Input } from "@saachi/ui";
 
 export default function RegisterPage() {
   const router = useRouter();
@@ -34,112 +34,48 @@ export default function RegisterPage() {
   };
 
   return (
-    <Card>
-      <h1 style={{ fontSize: "24px", fontWeight: 700, marginBottom: "4px" }}>Create your account</h1>
-      <p style={{ color: "var(--text-secondary)", fontSize: "14px", marginBottom: "24px" }}>
+    <Card className="w-full max-w-[440px] p-8">
+      <h1 className="font-display text-[24px] font-semibold text-ink">Create your account</h1>
+      <p className="mb-6 mt-1 text-[14px] text-ink-soft">
         Join Saachi AI as a learner. You can apply to become an instructor later.
       </p>
 
-      <form onSubmit={handleSubmit(onSubmit)} style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
-        <div>
-          <label style={{ display: "block", fontSize: "13px", fontWeight: 600, marginBottom: "6px" }}>
-            Full name
-          </label>
-          <input
-            type="text"
-            {...register("fullName")}
-            style={{
-              width: "100%",
-              height: "44px",
-              padding: "0 14px",
-              borderRadius: "10px",
-              border: "1px solid rgba(15,23,42,0.14)",
-              fontSize: "15px"
-            }}
-            placeholder="Your name"
-          />
-          {errors.fullName && (
-            <p style={{ color: "#EF4444", fontSize: "13px", marginTop: "4px" }}>{errors.fullName.message}</p>
-          )}
-        </div>
+      <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
+        <Input label="Full name" placeholder="Your name" {...register("fullName")} error={errors.fullName?.message} />
+        <Input
+          label="Email"
+          type="email"
+          placeholder="you@example.com"
+          {...register("email")}
+          error={errors.email?.message}
+        />
+        <Input
+          label="Password"
+          type="password"
+          placeholder="At least 8 characters"
+          {...register("password")}
+          error={errors.password?.message}
+        />
+        <Input
+          label="Confirm password"
+          type="password"
+          placeholder="Repeat your password"
+          {...register("confirmPassword")}
+          error={errors.confirmPassword?.message}
+        />
 
-        <div>
-          <label style={{ display: "block", fontSize: "13px", fontWeight: 600, marginBottom: "6px" }}>
-            Email
-          </label>
-          <input
-            type="email"
-            {...register("email")}
-            style={{
-              width: "100%",
-              height: "44px",
-              padding: "0 14px",
-              borderRadius: "10px",
-              border: "1px solid rgba(15,23,42,0.14)",
-              fontSize: "15px"
-            }}
-            placeholder="you@example.com"
-          />
-          {errors.email && (
-            <p style={{ color: "#EF4444", fontSize: "13px", marginTop: "4px" }}>{errors.email.message}</p>
-          )}
-        </div>
-
-        <div>
-          <label style={{ display: "block", fontSize: "13px", fontWeight: 600, marginBottom: "6px" }}>
-            Password
-          </label>
-          <input
-            type="password"
-            {...register("password")}
-            style={{
-              width: "100%",
-              height: "44px",
-              padding: "0 14px",
-              borderRadius: "10px",
-              border: "1px solid rgba(15,23,42,0.14)",
-              fontSize: "15px"
-            }}
-            placeholder="At least 8 characters"
-          />
-          {errors.password && (
-            <p style={{ color: "#EF4444", fontSize: "13px", marginTop: "4px" }}>{errors.password.message}</p>
-          )}
-        </div>
-
-        <div>
-          <label style={{ display: "block", fontSize: "13px", fontWeight: 600, marginBottom: "6px" }}>
-            Confirm password
-          </label>
-          <input
-            type="password"
-            {...register("confirmPassword")}
-            style={{
-              width: "100%",
-              height: "44px",
-              padding: "0 14px",
-              borderRadius: "10px",
-              border: "1px solid rgba(15,23,42,0.14)",
-              fontSize: "15px"
-            }}
-            placeholder="Repeat your password"
-          />
-          {errors.confirmPassword && (
-            <p style={{ color: "#EF4444", fontSize: "13px", marginTop: "4px" }}>
-              {errors.confirmPassword.message}
-            </p>
-          )}
-        </div>
-
-        {serverError && <p style={{ color: "#EF4444", fontSize: "13px" }}>{serverError}</p>}
+        {serverError && <p className="text-[13px] text-error">{serverError}</p>}
 
         <Button type="submit" size="lg" disabled={isSubmitting || registerMutation.isPending}>
-          {isSubmitting || registerMutation.isPending ? "Creating account..." : "Create Account"}
+          {isSubmitting || registerMutation.isPending ? "Creating accountâ€¦" : "Create Account"}
         </Button>
       </form>
 
-      <div style={{ marginTop: "20px", fontSize: "14px", textAlign: "center", color: "var(--text-secondary)" }}>
-        Already have an account? <Link href="/login">Log in</Link>
+      <div className="mt-5 text-center text-[14px] text-ink-soft">
+        Already have an account?{" "}
+        <Link href="/login" className="font-semibold text-ink hover:text-gold-dark">
+          Log in
+        </Link>
       </div>
     </Card>
   );

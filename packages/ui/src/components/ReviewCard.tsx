@@ -1,4 +1,4 @@
-import { Star, BadgeCheck } from "lucide-react";
+﻿import { Star, BadgeCheck } from "lucide-react";
 import { cn } from "../cn";
 
 export type ReviewCardProps = {
@@ -27,32 +27,17 @@ export function ReviewCard({
   }).format(new Date(createdAt));
 
   return (
-    <div
-      className={cn(
-        "rounded-2xl border border-[var(--border-hairline,rgba(15,23,42,0.08))] bg-[var(--surface-card,#FFFFFF)] p-6",
-        className
-      )}
-    >
+    <div className={cn("rounded-card border border-line bg-card p-6", className)}>
       <div className="mb-3 flex items-center gap-1">
         {Array.from({ length: 5 }).map((_, i) => (
-          <Star
-            key={i}
-            size={15}
-            className={
-              i < Math.round(rating)
-                ? "fill-[var(--blue-500,#3B82F6)] text-[var(--blue-500,#3B82F6)]"
-                : "text-[var(--border-hairline-strong,rgba(15,23,42,0.14))]"
-            }
-          />
+          <Star key={i} size={15} className={i < Math.round(rating) ? "fill-gold text-gold" : "text-line-strong"} />
         ))}
       </div>
 
-      <p className="mb-4 text-[15px] leading-relaxed text-[var(--text-primary,#0F172A)]">
-        {comment}
-      </p>
+      <p className="mb-4 text-[15px] leading-relaxed text-ink">{comment}</p>
 
       <div className="flex items-center gap-3">
-        <div className="flex h-9 w-9 items-center justify-center overflow-hidden rounded-full bg-[var(--blue-50,#EFF6FF)] text-[13px] font-semibold text-[var(--blue-600,#2563EB)]">
+        <div className="flex h-9 w-9 items-center justify-center overflow-hidden rounded-full bg-teal-light text-[13px] font-semibold text-teal">
           {authorAvatarUrl ? (
             // eslint-disable-next-line @next/next/no-img-element
             <img src={authorAvatarUrl} alt={authorName} className="h-full w-full object-cover" />
@@ -62,14 +47,10 @@ export function ReviewCard({
         </div>
         <div>
           <div className="flex items-center gap-1.5">
-            <span className="text-[13px] font-semibold text-[var(--text-primary,#0F172A)]">
-              {authorName}
-            </span>
-            {verifiedPurchase && (
-              <BadgeCheck size={14} className="text-[var(--success,#14B8A6)]" />
-            )}
+            <span className="text-[13px] font-semibold text-ink">{authorName}</span>
+            {verifiedPurchase && <BadgeCheck size={14} className="text-teal" />}
           </div>
-          <span className="text-[12px] text-[var(--text-muted,#94A3B8)]">{formattedDate}</span>
+          <span className="text-[12px] text-ink-soft/60">{formattedDate}</span>
         </div>
       </div>
     </div>

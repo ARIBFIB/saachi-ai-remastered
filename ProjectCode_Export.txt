@@ -1,7 +1,7 @@
 ﻿================================================================================
 PROJECT CODE EXPORT
-Generated: 2026-08-07 01:52:30
-Total Files: 67
+Generated: 2026-08-07 03:17:50
+Total Files: 72
 ================================================================================
 
 
@@ -304,7 +304,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { forgotPasswordSchema, type ForgotPasswordInput } from "@saachi/utils";
 import { apiRequest } from "@saachi/api-client";
-import { Button, Card } from "@saachi/ui";
+import { Button, Card, Input } from "@saachi/ui";
 
 export default function ForgotPasswordPage() {
   const [sent, setSent] = useState(false);
@@ -330,62 +330,51 @@ export default function ForgotPasswordPage() {
 
   if (sent) {
     return (
-      <Card>
-        <h1 style={{ fontSize: "22px", fontWeight: 700, marginBottom: "8px" }}>Check your email</h1>
-        <p style={{ color: "var(--text-secondary)", fontSize: "14px" }}>
-          If an account exists for that email, we&apos;ve sent a password reset link.
+      <Card className="w-full max-w-[420px] p-8">
+        <h1 className="font-display text-[22px] font-semibold text-ink">Check your email</h1>
+        <p className="mt-2 text-[14px] text-ink-soft">
+          If an account exists for that email, we've sent a password reset link.
         </p>
-        <div style={{ marginTop: "20px" }}>
-          <Link href="/login">Back to login</Link>
+        <div className="mt-6">
+          <Link href="/login" className="text-[14px] font-semibold text-ink hover:text-gold-dark">
+            Back to login
+          </Link>
         </div>
       </Card>
     );
   }
 
   return (
-    <Card>
-      <h1 style={{ fontSize: "22px", fontWeight: 700, marginBottom: "4px" }}>Reset your password</h1>
-      <p style={{ color: "var(--text-secondary)", fontSize: "14px", marginBottom: "24px" }}>
-        Enter your email and we&apos;ll send you a reset link.
+    <Card className="w-full max-w-[420px] p-8">
+      <h1 className="font-display text-[22px] font-semibold text-ink">Reset your password</h1>
+      <p className="mb-6 mt-1 text-[14px] text-ink-soft">
+        Enter your email and we'll send you a reset link.
       </p>
 
-      <form onSubmit={handleSubmit(onSubmit)} style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
-        <div>
-          <label style={{ display: "block", fontSize: "13px", fontWeight: 600, marginBottom: "6px" }}>
-            Email
-          </label>
-          <input
-            type="email"
-            {...register("email")}
-            style={{
-              width: "100%",
-              height: "44px",
-              padding: "0 14px",
-              borderRadius: "10px",
-              border: "1px solid rgba(15,23,42,0.14)",
-              fontSize: "15px"
-            }}
-            placeholder="you@example.com"
-          />
-          {errors.email && (
-            <p style={{ color: "#EF4444", fontSize: "13px", marginTop: "4px" }}>{errors.email.message}</p>
-          )}
-        </div>
+      <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
+        <Input
+          label="Email"
+          type="email"
+          placeholder="you@example.com"
+          {...register("email")}
+          error={errors.email?.message}
+        />
 
-        {serverError && <p style={{ color: "#EF4444", fontSize: "13px" }}>{serverError}</p>}
+        {serverError && <p className="text-[13px] text-error">{serverError}</p>}
 
         <Button type="submit" size="lg" disabled={isSubmitting}>
-          {isSubmitting ? "Sending..." : "Send Reset Link"}
+          {isSubmitting ? "Sendingâ€¦" : "Send Reset Link"}
         </Button>
       </form>
 
-      <div style={{ marginTop: "20px", fontSize: "14px", textAlign: "center", color: "var(--text-secondary)" }}>
-        <Link href="/login">Back to login</Link>
+      <div className="mt-5 text-center text-[14px] text-ink-soft">
+        <Link href="/login" className="hover:text-ink">
+          Back to login
+        </Link>
       </div>
     </Card>
   );
 }
-
 
 
 ================================================================================
@@ -400,7 +389,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { loginSchema, type LoginInput } from "@saachi/utils";
 import { useLogin } from "@saachi/api-client";
-import { Button, Card } from "@saachi/ui";
+import { Button, Card, Input } from "@saachi/ui";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -430,75 +419,47 @@ export default function LoginPage() {
   };
 
   return (
-    <Card>
-      <h1 style={{ fontSize: "24px", fontWeight: 700, marginBottom: "4px" }}>Welcome back</h1>
-      <p style={{ color: "var(--text-secondary)", fontSize: "14px", marginBottom: "24px" }}>
+    <Card className="w-full max-w-[420px] p-8">
+      <h1 className="font-display text-[24px] font-semibold text-ink">Welcome back</h1>
+      <p className="mb-6 mt-1 text-[14px] text-ink-soft">
         Log in to continue learning or teaching on Saachi AI.
       </p>
 
-      <form onSubmit={handleSubmit(onSubmit)} style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
-        <div>
-          <label style={{ display: "block", fontSize: "13px", fontWeight: 600, marginBottom: "6px" }}>
-            Email
-          </label>
-          <input
-            type="email"
-            {...register("email")}
-            style={{
-              width: "100%",
-              height: "44px",
-              padding: "0 14px",
-              borderRadius: "10px",
-              border: "1px solid rgba(15,23,42,0.14)",
-              fontSize: "15px"
-            }}
-            placeholder="you@example.com"
-          />
-          {errors.email && (
-            <p style={{ color: "#EF4444", fontSize: "13px", marginTop: "4px" }}>{errors.email.message}</p>
-          )}
-        </div>
+      <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
+        <Input
+          label="Email"
+          type="email"
+          placeholder="you@example.com"
+          {...register("email")}
+          error={errors.email?.message}
+        />
+        <Input
+          label="Password"
+          type="password"
+          placeholder="********"
+          {...register("password")}
+          error={errors.password?.message}
+        />
 
-        <div>
-          <label style={{ display: "block", fontSize: "13px", fontWeight: 600, marginBottom: "6px" }}>
-            Password
-          </label>
-          <input
-            type="password"
-            {...register("password")}
-            style={{
-              width: "100%",
-              height: "44px",
-              padding: "0 14px",
-              borderRadius: "10px",
-              border: "1px solid rgba(15,23,42,0.14)",
-              fontSize: "15px"
-            }}
-            placeholder="********"
-          />
-          {errors.password && (
-            <p style={{ color: "#EF4444", fontSize: "13px", marginTop: "4px" }}>{errors.password.message}</p>
-          )}
-        </div>
-
-        {serverError && (
-          <p style={{ color: "#EF4444", fontSize: "13px" }}>{serverError}</p>
-        )}
+        {serverError && <p className="text-[13px] text-error">{serverError}</p>}
 
         <Button type="submit" size="lg" disabled={isSubmitting || loginMutation.isPending}>
-          {isSubmitting || loginMutation.isPending ? "Logging in..." : "Log In"}
+          {isSubmitting || loginMutation.isPending ? "Logging inâ€¦" : "Log In"}
         </Button>
       </form>
 
-      <div style={{ marginTop: "20px", fontSize: "14px", textAlign: "center", color: "var(--text-secondary)" }}>
-        <Link href="/forgot-password">Forgot password?</Link>
-        <span style={{ margin: "0 8px" }}>&middot;</span>
-        <Link href="/register">Create an account</Link>
+      <div className="mt-5 text-center text-[14px] text-ink-soft">
+        <Link href="/forgot-password" className="hover:text-ink">
+          Forgot password?
+        </Link>
+        <span className="mx-2">Â·</span>
+        <Link href="/register" className="hover:text-ink">
+          Create an account
+        </Link>
       </div>
     </Card>
   );
 }
-
 
 
 ================================================================================
@@ -513,7 +474,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { registerSchema, type RegisterInput } from "@saachi/utils";
 import { useRegister } from "@saachi/api-client";
-import { Button, Card } from "@saachi/ui";
+import { Button, Card, Input } from "@saachi/ui";
 
 export default function RegisterPage() {
   const router = useRouter();
@@ -540,117 +501,261 @@ export default function RegisterPage() {
   };
 
   return (
-    <Card>
-      <h1 style={{ fontSize: "24px", fontWeight: 700, marginBottom: "4px" }}>Create your account</h1>
-      <p style={{ color: "var(--text-secondary)", fontSize: "14px", marginBottom: "24px" }}>
+    <Card className="w-full max-w-[440px] p-8">
+      <h1 className="font-display text-[24px] font-semibold text-ink">Create your account</h1>
+      <p className="mb-6 mt-1 text-[14px] text-ink-soft">
         Join Saachi AI as a learner. You can apply to become an instructor later.
       </p>
 
-      <form onSubmit={handleSubmit(onSubmit)} style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
-        <div>
-          <label style={{ display: "block", fontSize: "13px", fontWeight: 600, marginBottom: "6px" }}>
-            Full name
-          </label>
-          <input
-            type="text"
-            {...register("fullName")}
-            style={{
-              width: "100%",
-              height: "44px",
-              padding: "0 14px",
-              borderRadius: "10px",
-              border: "1px solid rgba(15,23,42,0.14)",
-              fontSize: "15px"
-            }}
-            placeholder="Your name"
-          />
-          {errors.fullName && (
-            <p style={{ color: "#EF4444", fontSize: "13px", marginTop: "4px" }}>{errors.fullName.message}</p>
-          )}
-        </div>
+      <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
+        <Input label="Full name" placeholder="Your name" {...register("fullName")} error={errors.fullName?.message} />
+        <Input
+          label="Email"
+          type="email"
+          placeholder="you@example.com"
+          {...register("email")}
+          error={errors.email?.message}
+        />
+        <Input
+          label="Password"
+          type="password"
+          placeholder="At least 8 characters"
+          {...register("password")}
+          error={errors.password?.message}
+        />
+        <Input
+          label="Confirm password"
+          type="password"
+          placeholder="Repeat your password"
+          {...register("confirmPassword")}
+          error={errors.confirmPassword?.message}
+        />
 
-        <div>
-          <label style={{ display: "block", fontSize: "13px", fontWeight: 600, marginBottom: "6px" }}>
-            Email
-          </label>
-          <input
-            type="email"
-            {...register("email")}
-            style={{
-              width: "100%",
-              height: "44px",
-              padding: "0 14px",
-              borderRadius: "10px",
-              border: "1px solid rgba(15,23,42,0.14)",
-              fontSize: "15px"
-            }}
-            placeholder="you@example.com"
-          />
-          {errors.email && (
-            <p style={{ color: "#EF4444", fontSize: "13px", marginTop: "4px" }}>{errors.email.message}</p>
-          )}
-        </div>
-
-        <div>
-          <label style={{ display: "block", fontSize: "13px", fontWeight: 600, marginBottom: "6px" }}>
-            Password
-          </label>
-          <input
-            type="password"
-            {...register("password")}
-            style={{
-              width: "100%",
-              height: "44px",
-              padding: "0 14px",
-              borderRadius: "10px",
-              border: "1px solid rgba(15,23,42,0.14)",
-              fontSize: "15px"
-            }}
-            placeholder="At least 8 characters"
-          />
-          {errors.password && (
-            <p style={{ color: "#EF4444", fontSize: "13px", marginTop: "4px" }}>{errors.password.message}</p>
-          )}
-        </div>
-
-        <div>
-          <label style={{ display: "block", fontSize: "13px", fontWeight: 600, marginBottom: "6px" }}>
-            Confirm password
-          </label>
-          <input
-            type="password"
-            {...register("confirmPassword")}
-            style={{
-              width: "100%",
-              height: "44px",
-              padding: "0 14px",
-              borderRadius: "10px",
-              border: "1px solid rgba(15,23,42,0.14)",
-              fontSize: "15px"
-            }}
-            placeholder="Repeat your password"
-          />
-          {errors.confirmPassword && (
-            <p style={{ color: "#EF4444", fontSize: "13px", marginTop: "4px" }}>
-              {errors.confirmPassword.message}
-            </p>
-          )}
-        </div>
-
-        {serverError && <p style={{ color: "#EF4444", fontSize: "13px" }}>{serverError}</p>}
+        {serverError && <p className="text-[13px] text-error">{serverError}</p>}
 
         <Button type="submit" size="lg" disabled={isSubmitting || registerMutation.isPending}>
-          {isSubmitting || registerMutation.isPending ? "Creating account..." : "Create Account"}
+          {isSubmitting || registerMutation.isPending ? "Creating accountâ€¦" : "Create Account"}
         </Button>
       </form>
 
-      <div style={{ marginTop: "20px", fontSize: "14px", textAlign: "center", color: "var(--text-secondary)" }}>
-        Already have an account? <Link href="/login">Log in</Link>
+      <div className="mt-5 text-center text-[14px] text-ink-soft">
+        Already have an account?{" "}
+        <Link href="/login" className="font-semibold text-ink hover:text-gold-dark">
+          Log in
+        </Link>
       </div>
     </Card>
   );
 }
 
+
+================================================================================
+FILE: apps\web\app\(learner)\dashboard\page.tsx
+================================================================================
+"use client";
+
+import Link from "next/link";
+import { useSession, useCourseList } from "@saachi/api-client";
+import { Button, Card, CourseCard, SkeletonCard } from "@saachi/ui";
+
+export default function LearnerDashboardPage() {
+  const { data: session } = useSession();
+  const { data, isLoading } = useCourseList({ sort: "popular" });
+
+  const courses = data?.items ?? [];
+
+  return (
+    <main className="mx-auto max-w-[1000px] px-6 py-10 md:px-10">
+      <div className="mb-10">
+        <h1 className="font-display text-[28px] font-semibold text-ink">
+          Welcome back{session?.fullName ? `, ${session.fullName.split(" ")[0]}` : ""}
+        </h1>
+        <p className="mt-1 text-[14px] text-ink-soft">
+          Pick up where you left off, or explore something new.
+        </p>
+      </div>
+
+      <Card className="mb-10 flex flex-col items-start gap-4 p-6 sm:flex-row sm:items-center sm:justify-between">
+        <div>
+          <h2 className="text-[16px] font-semibold text-ink">This is demo data</h2>
+          <p className="mt-1 text-[14px] text-ink-soft">
+            You are signed in with a local demo session - no backend or real account required yet.
+          </p>
+        </div>
+        <Link href="/courses">
+          <Button>Browse courses</Button>
+        </Link>
+      </Card>
+
+      <h2 className="mb-4 font-display text-[20px] font-semibold text-ink">Recommended for you</h2>
+      <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
+        {isLoading
+          ? Array.from({ length: 4 }).map((_, i) => <SkeletonCard key={i} />)
+          : courses.slice(0, 4).map((course) => (
+              <CourseCard
+                key={course.id}
+                slug={course.slug}
+                title={course.title}
+                thumbnailUrl={course.thumbnailUrl}
+                instructorName={course.instructor.fullName}
+                price={course.price}
+                currency={course.currency}
+                rating={course.rating}
+                ratingCount={course.ratingCount}
+              />
+            ))}
+      </div>
+    </main>
+  );
+}
+
+
+================================================================================
+FILE: apps\web\app\(learner)\_components\LearnerShell.tsx
+================================================================================
+"use client";
+
+import Link from "next/link";
+import { usePathname, useRouter } from "next/navigation";
+import { useState, type ReactNode } from "react";
+import {
+  LayoutDashboard,
+  BookOpen,
+  Heart,
+  ShoppingCart,
+  Award,
+  Bell,
+  Settings,
+  LogOut,
+  Menu,
+  X
+} from "lucide-react";
+import { useSession, useLogout } from "@saachi/api-client";
+import { cn } from "@saachi/ui";
+
+const NAV_ITEMS = [
+  { label: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
+  { label: "My Courses", href: "/my-courses", icon: BookOpen },
+  { label: "Wishlist", href: "/wishlist", icon: Heart },
+  { label: "Cart", href: "/cart", icon: ShoppingCart },
+  { label: "Certificates", href: "/certificates", icon: Award },
+  { label: "Notifications", href: "/notifications", icon: Bell },
+  { label: "Settings", href: "/settings/profile", icon: Settings }
+];
+
+export function LearnerShell({ children }: { children: ReactNode }) {
+  const pathname = usePathname();
+  const router = useRouter();
+  const { data: session } = useSession();
+  const logout = useLogout();
+  const [mobileOpen, setMobileOpen] = useState(false);
+
+  const handleLogout = async () => {
+    await logout.mutateAsync();
+    router.push("/");
+  };
+
+  const sidebarContent = (
+    <div className="flex h-full flex-col">
+      <Link href="/" className="flex items-center gap-2.5 px-6 py-6">
+        <span className="flex h-9 w-9 items-center justify-center rounded-full border-2 border-ink bg-gold font-display text-[15px] font-bold text-ink">
+          S
+        </span>
+        <span className="font-display text-[17px] font-semibold text-ink">Saachi AI</span>
+      </Link>
+
+      <nav className="flex flex-1 flex-col gap-1 px-3">
+        {NAV_ITEMS.map((item) => {
+          const active = pathname === item.href || Boolean(pathname && pathname.startsWith(`${item.href}/`));
+          return (
+            <Link
+              key={item.href}
+              href={item.href}
+              onClick={() => setMobileOpen(false)}
+              className={cn(
+                "flex items-center gap-3 rounded-control px-3.5 py-2.5 text-[14px] font-medium transition-colors duration-150 ease-out",
+                active ? "bg-gold-tint text-ink" : "text-ink-soft hover:bg-paper-dim hover:text-ink"
+              )}
+            >
+              <item.icon size={18} />
+              {item.label}
+            </Link>
+          );
+        })}
+      </nav>
+
+      <div className="border-t border-line px-3 py-4">
+        <div className="mb-3 flex items-center gap-3 px-3">
+          <div className="flex h-9 w-9 shrink-0 items-center justify-center overflow-hidden rounded-full bg-teal-light text-[13px] font-semibold text-teal">
+            {session?.avatarUrl ? (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img src={session.avatarUrl} alt={session.fullName} className="h-full w-full object-cover" />
+            ) : (
+              session?.fullName?.charAt(0) ?? "?"
+            )}
+          </div>
+          <div className="min-w-0">
+            <div className="truncate text-[13px] font-semibold text-ink">{session?.fullName ?? "Guest"}</div>
+            <div className="truncate text-[12px] text-ink-soft">{session?.email ?? ""}</div>
+          </div>
+        </div>
+        <button
+          type="button"
+          onClick={handleLogout}
+          disabled={logout.isPending}
+          className="flex w-full items-center gap-3 rounded-control px-3.5 py-2.5 text-[14px] font-medium text-ink-soft transition-colors duration-150 ease-out hover:bg-paper-dim hover:text-error"
+        >
+          <LogOut size={18} />
+          {logout.isPending ? "Logging out..." : "Log out"}
+        </button>
+      </div>
+    </div>
+  );
+
+  return (
+    <div className="min-h-screen bg-paper">
+      <div className="hidden w-[260px] shrink-0 border-r border-line bg-card md:fixed md:inset-y-0 md:flex">
+        {sidebarContent}
+      </div>
+
+      <div className="flex items-center justify-between border-b border-line bg-card px-4 py-3 md:hidden">
+        <Link href="/" className="flex items-center gap-2">
+          <span className="flex h-8 w-8 items-center justify-center rounded-full border-2 border-ink bg-gold font-display text-[13px] font-bold text-ink">
+            S
+          </span>
+          <span className="font-display text-[15px] font-semibold text-ink">Saachi AI</span>
+        </Link>
+        <button
+          type="button"
+          onClick={() => setMobileOpen(true)}
+          aria-label="Open menu"
+          className="flex h-9 w-9 items-center justify-center rounded-control text-ink"
+        >
+          <Menu size={20} />
+        </button>
+      </div>
+
+      {mobileOpen && (
+        <div className="fixed inset-0 z-50 flex md:hidden">
+          <div className="absolute inset-0 bg-ink/40" onClick={() => setMobileOpen(false)} />
+          <div className="relative flex h-full w-[280px] flex-col bg-card">
+            <button
+              type="button"
+              onClick={() => setMobileOpen(false)}
+              aria-label="Close menu"
+              className="absolute right-3 top-3 flex h-9 w-9 items-center justify-center rounded-control text-ink"
+            >
+              <X size={20} />
+            </button>
+            {sidebarContent}
+          </div>
+        </div>
+      )}
+
+      <div className="md:pl-[260px]">{children}</div>
+    </div>
+  );
+}
 
 
 ================================================================================
@@ -669,6 +774,8 @@ import { Search } from "lucide-react";
 import { useCourseList } from "@saachi/api-client";
 import { Input, Select, EmptyState, SkeletonCard, CourseCard, FilterSidebar } from "@saachi/ui";
 import type { FilterSidebarValue } from "@saachi/ui";
+import { Navbar } from "../_components/Navbar";
+import { Footer } from "../_components/Footer";
 
 const CATEGORY_OPTIONS = [
   { label: "AI Fundamentals & Prompt Engineering", value: "ai-fundamentals" },
@@ -723,230 +830,794 @@ export default function CourseMarketplacePage() {
   const courses = data?.items ?? [];
 
   return (
-    <main className="mx-auto max-w-[1120px] px-6 py-16">
-      <div className="mb-10">
-        <h1 className="text-[32px] font-bold text-[var(--text-primary,#0F172A)]">
-          Explore courses
-        </h1>
-        <p className="mt-2 text-[15px] text-[var(--text-secondary,#475569)]">
-          Practical AI skills, taught by practitioners who use them every day.
-        </p>
-      </div>
-
-      <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-center">
-        <div className="relative flex-1">
-          <Search
-            size={18}
-            className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-[var(--text-muted,#94A3B8)]"
-          />
-          <Input
-            placeholder="Search courses, e.g. 'n8n automation'"
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            className="pl-10"
-          />
+    <>
+      <Navbar />
+      <main className="mx-auto max-w-[1140px] px-6 py-16">
+        <div className="mb-10">
+          <h1 className="font-display text-[32px] font-semibold text-ink">Explore courses</h1>
+          <p className="mt-2 text-[15px] text-ink-soft">
+            Practical AI skills, taught by practitioners who use them every day.
+          </p>
         </div>
-        <div className="sm:w-[240px]">
-          <Select
-            options={SORT_OPTIONS}
-            value={sort}
-            onChange={(e) => setSort(e.target.value)}
-          />
+
+        <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-center">
+          <div className="relative flex-1">
+            <Search
+              size={18}
+              className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-ink-soft/60"
+            />
+            <Input
+              placeholder="Search courses, e.g. 'n8n automation'"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              className="pl-10"
+            />
+          </div>
+          <div className="sm:w-[240px]">
+            <Select options={SORT_OPTIONS} value={sort} onChange={(e) => setSort(e.target.value)} />
+          </div>
         </div>
-      </div>
 
-      <div className="grid grid-cols-1 gap-8 lg:grid-cols-[260px_1fr]">
-        <FilterSidebar
-          categoryOptions={CATEGORY_OPTIONS}
-          levelOptions={LEVEL_OPTIONS}
-          languageOptions={LANGUAGE_OPTIONS}
-          value={filters}
-          onChange={setFilters}
-        />
+        <div className="grid grid-cols-1 gap-8 lg:grid-cols-[260px_1fr]">
+          <FilterSidebar
+            categoryOptions={CATEGORY_OPTIONS}
+            levelOptions={LEVEL_OPTIONS}
+            languageOptions={LANGUAGE_OPTIONS}
+            value={filters}
+            onChange={setFilters}
+          />
 
-        <section>
-          {isLoading && (
-            <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 xl:grid-cols-3">
-              {Array.from({ length: 6 }).map((_, i) => (
-                <SkeletonCard key={i} />
-              ))}
-            </div>
-          )}
+          <section>
+            {isLoading && (
+              <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 xl:grid-cols-3">
+                {Array.from({ length: 6 }).map((_, i) => (
+                  <SkeletonCard key={i} />
+                ))}
+              </div>
+            )}
 
-          {isError && (
-            <EmptyState
-              title="Couldn't load courses"
-              description="Something went wrong while fetching the course list. Please try again."
-            />
-          )}
+            {isError && (
+              <EmptyState
+                title="Couldn't load courses"
+                description="Something went wrong while fetching the course list. Please try again."
+              />
+            )}
 
-          {!isLoading && !isError && courses.length === 0 && (
-            <EmptyState
-              title="No courses found"
-              description="Try adjusting your filters or search terms."
-            />
-          )}
+            {!isLoading && !isError && courses.length === 0 && (
+              <EmptyState
+                title="No courses found"
+                description="Try adjusting your filters or search terms."
+              />
+            )}
 
-          {!isLoading && !isError && courses.length > 0 && (
-            <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 xl:grid-cols-3">
-              {courses.map((course) => (
-                <CourseCard
-                  key={course.id}
-                  slug={course.slug}
-                  title={course.title}
-                  thumbnailUrl={course.thumbnailUrl}
-                  instructorName={course.instructor.fullName}
-                  price={course.price}
-                  currency={course.currency}
-                  rating={course.rating}
-                  ratingCount={course.ratingCount}
-                />
-              ))}
-            </div>
-          )}
-        </section>
-      </div>
-    </main>
+            {!isLoading && !isError && courses.length > 0 && (
+              <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 xl:grid-cols-3">
+                {courses.map((course) => (
+                  <CourseCard
+                    key={course.id}
+                    slug={course.slug}
+                    title={course.title}
+                    thumbnailUrl={course.thumbnailUrl}
+                    instructorName={course.instructor.fullName}
+                    price={course.price}
+                    currency={course.currency}
+                    rating={course.rating}
+                    ratingCount={course.ratingCount}
+                  />
+                ))}
+              </div>
+            )}
+          </section>
+        </div>
+      </main>
+      <Footer />
+    </>
   );
 }
 
+
+================================================================================
+FILE: apps\web\app\(marketing)\_components\Footer.tsx
+================================================================================
+import Link from "next/link";
+import { Twitter, Linkedin, Youtube } from "lucide-react";
+
+const FOOTER_COLUMNS = [
+  {
+    title: "Platform",
+    links: [
+      { label: "Explore Courses", href: "/courses" },
+      { label: "Become an Instructor", href: "/register" },
+      { label: "Pricing", href: "/pricing" },
+      { label: "Mentorship", href: "/mentorship" }
+    ]
+  },
+  {
+    title: "Company",
+    links: [
+      { label: "About Us", href: "/about" },
+      { label: "Careers", href: "/about" },
+      { label: "Contact", href: "/contact" }
+    ]
+  },
+  {
+    title: "Legal",
+    links: [
+      { label: "Terms & Conditions", href: "/legal/terms" },
+      { label: "Privacy Policy", href: "/legal/privacy" },
+      { label: "Refund Policy", href: "/legal/refund-policy" },
+      { label: "Instructor Agreement", href: "/legal/instructor-agreement" }
+    ]
+  }
+];
+
+export function Footer() {
+  return (
+    <footer className="bg-ink text-[#9AA0AE]">
+      <div className="mx-auto max-w-[1140px] px-6 py-20">
+        <div className="grid grid-cols-1 gap-12 md:grid-cols-[1.4fr_1fr_1fr_1fr] md:gap-8">
+          <div>
+            <div className="flex items-center gap-2.5">
+              <span className="flex h-9 w-9 items-center justify-center rounded-full border-2 border-gold font-display text-[15px] font-bold text-gold">
+                S
+              </span>
+              <span className="font-display text-[17px] font-semibold text-white">Saachi AI</span>
+            </div>
+            <p className="mt-4 max-w-[280px] text-[14px] leading-relaxed">
+              A skills exchange for the AI era. Learn to build with AI, and sell what you know.
+            </p>
+            <div className="mt-6 flex items-center gap-3">
+              {[Twitter, Linkedin, Youtube].map((Icon, i) => (
+                <a
+                  key={i}
+                  href="#"
+                  aria-label="Social link"
+                  className="flex h-9 w-9 items-center justify-center rounded-full border border-white/10 text-[#9AA0AE] transition-colors duration-150 ease-out hover:border-gold hover:text-gold"
+                >
+                  <Icon size={16} />
+                </a>
+              ))}
+            </div>
+          </div>
+
+          {FOOTER_COLUMNS.map((col) => (
+            <div key={col.title}>
+              <h4 className="text-[13px] font-semibold uppercase tracking-[0.06em] text-[#6B7280]">
+                {col.title}
+              </h4>
+              <ul className="mt-4 flex flex-col gap-3">
+                {col.links.map((link) => (
+                  <li key={link.label}>
+                    <Link href={link.href} className="text-[14px] transition-colors duration-150 ease-out hover:text-gold">
+                      {link.label}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ))}
+        </div>
+
+        <div className="mt-16 flex flex-col gap-6 border-t border-white/10 pt-8 md:flex-row md:items-center md:justify-between">
+          <p className="text-[13px]">Â© {new Date().getFullYear()} Saachi AI. All rights reserved.</p>
+
+          <form className="flex w-full max-w-[360px] items-center gap-2">
+            <input
+              type="email"
+              placeholder="Your email"
+              className="h-11 w-full rounded-full border border-white/10 bg-white/5 px-4 text-[14px] text-white placeholder:text-[#6B7280] outline-none focus:border-gold"
+            />
+            <button
+              type="submit"
+              className="h-11 shrink-0 rounded-full bg-gold px-5 text-[14px] font-semibold text-ink transition-colors duration-150 ease-out hover:bg-gold-dark"
+            >
+              Subscribe
+            </button>
+          </form>
+        </div>
+      </div>
+    </footer>
+  );
+}
+
+
+================================================================================
+FILE: apps\web\app\(marketing)\_components\Navbar.tsx
+================================================================================
+"use client";
+
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
+import { Menu, X, ShoppingCart } from "lucide-react";
+import { Button } from "@saachi/ui";
+import { useSession, useLogout } from "@saachi/api-client";
+
+const NAV_LINKS = [
+  { label: "Explore Courses", href: "/courses" },
+  { label: "Become an Instructor", href: "/register" },
+  { label: "Pricing", href: "/pricing" },
+  { label: "About", href: "/about" }
+];
+
+export function Navbar() {
+  const router = useRouter();
+  const [scrolled, setScrolled] = useState(false);
+  const [mobileOpen, setMobileOpen] = useState(false);
+  const { data: session } = useSession();
+  const logout = useLogout();
+
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 24);
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
+  const handleLogout = async () => {
+    await logout.mutateAsync();
+    setMobileOpen(false);
+    router.push("/");
+  };
+
+  return (
+    <header
+      className={[
+        "sticky top-0 z-50 w-full border-b transition-colors duration-200 ease-out",
+        scrolled ? "border-line bg-paper/95 backdrop-blur-sm" : "border-transparent bg-paper"
+      ].join(" ")}
+    >
+      <div className="mx-auto flex h-[72px] max-w-[1140px] items-center justify-between px-6">
+        <Link href="/" className="flex items-center gap-2.5">
+          <span className="flex h-9 w-9 items-center justify-center rounded-full border-2 border-ink bg-gold font-display text-[15px] font-bold text-ink">
+            S
+          </span>
+          <span className="font-display text-[18px] font-semibold tracking-[-0.01em] text-ink">
+            Saachi AI
+          </span>
+        </Link>
+
+        <nav className="hidden items-center gap-8 md:flex">
+          {NAV_LINKS.map((link) => (
+            <Link
+              key={link.href}
+              href={link.href}
+              className="text-[14px] font-medium text-ink-soft transition-colors duration-150 ease-out hover:text-ink"
+            >
+              {link.label}
+            </Link>
+          ))}
+        </nav>
+
+        <div className="hidden items-center gap-3 md:flex">
+          {session ? (
+            <>
+              <Link
+                href="/cart"
+                aria-label="Cart"
+                className="flex h-10 w-10 items-center justify-center rounded-full text-ink-soft transition-colors duration-150 ease-out hover:bg-paper-dim hover:text-ink"
+              >
+                <ShoppingCart size={19} />
+              </Link>
+              <Link
+                href="/dashboard"
+                className="flex items-center gap-2 rounded-full border border-line-strong bg-card py-1.5 pl-1.5 pr-4 transition-colors duration-150 ease-out hover:border-ink"
+              >
+                <span className="flex h-7 w-7 items-center justify-center overflow-hidden rounded-full bg-teal-light text-[12px] font-semibold text-teal">
+                  {session.avatarUrl ? (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img src={session.avatarUrl} alt={session.fullName} className="h-full w-full object-cover" />
+                  ) : (
+                    session.fullName.charAt(0)
+                  )}
+                </span>
+                <span className="text-[13px] font-semibold text-ink">{session.fullName.split(" ")[0]}</span>
+              </Link>
+              <Button variant="ghost" size="sm" onClick={handleLogout} disabled={logout.isPending}>
+                {logout.isPending ? "..." : "Log out"}
+              </Button>
+            </>
+          ) : (
+            <>
+              <Link href="/login">
+                <Button variant="ghost" size="sm">
+                  Log in
+                </Button>
+              </Link>
+              <Link href="/register">
+                <Button variant="primary" size="sm">
+                  Get Started
+                </Button>
+              </Link>
+            </>
+          )}
+        </div>
+
+        <button
+          type="button"
+          onClick={() => setMobileOpen((v) => !v)}
+          className="flex h-10 w-10 items-center justify-center rounded-control text-ink md:hidden"
+          aria-label="Toggle menu"
+        >
+          {mobileOpen ? <X size={22} /> : <Menu size={22} />}
+        </button>
+      </div>
+
+      {mobileOpen && (
+        <div className="border-t border-line bg-paper px-6 py-6 md:hidden">
+          <nav className="flex flex-col gap-4">
+            {NAV_LINKS.map((link) => (
+              <Link
+                key={link.href}
+                href={link.href}
+                onClick={() => setMobileOpen(false)}
+                className="text-[15px] font-medium text-ink"
+              >
+                {link.label}
+              </Link>
+            ))}
+          </nav>
+          <div className="mt-6 flex flex-col gap-3">
+            {session ? (
+              <>
+                <Link href="/dashboard" onClick={() => setMobileOpen(false)}>
+                  <Button variant="secondary" size="md" className="w-full">
+                    Dashboard
+                  </Button>
+                </Link>
+                <Link href="/cart" onClick={() => setMobileOpen(false)}>
+                  <Button variant="secondary" size="md" className="w-full">
+                    Cart
+                  </Button>
+                </Link>
+                <Button
+                  variant="ghost"
+                  size="md"
+                  className="w-full"
+                  onClick={handleLogout}
+                  disabled={logout.isPending}
+                >
+                  {logout.isPending ? "Logging out..." : "Log out"}
+                </Button>
+              </>
+            ) : (
+              <>
+                <Link href="/login" onClick={() => setMobileOpen(false)}>
+                  <Button variant="secondary" size="md" className="w-full">
+                    Log in
+                  </Button>
+                </Link>
+                <Link href="/register" onClick={() => setMobileOpen(false)}>
+                  <Button variant="primary" size="md" className="w-full">
+                    Get Started
+                  </Button>
+                </Link>
+              </>
+            )}
+          </div>
+        </div>
+      )}
+    </header>
+  );
+}
 
 
 ================================================================================
 FILE: apps\web\app\(marketing)\page.tsx
 ================================================================================
 import Link from "next/link";
-import { Button, Card, Badge } from "@saachi/ui";
+import {
+  ArrowRight,
+  Megaphone,
+  Workflow,
+  MessageSquareText,
+  Code2,
+  Wand2,
+  Sparkles,
+  Star,
+  CheckCircle2,
+  PlayCircle,
+  Users,
+  BookOpen,
+  Award,
+  TrendingUp,
+  BadgeCheck
+} from "lucide-react";
+import { Button } from "@saachi/ui";
+import { Navbar } from "./_components/Navbar";
+import { Footer } from "./_components/Footer";
 
-const categories = [
-  { title: "AI Automation & Workflow Tools", desc: "n8n, Zapier, Make.com" },
-  { title: "AI for Marketing & Sales", desc: "Ad copy, lead gen, campaigns" },
-  { title: "AI Website & App Development", desc: "Build with AI-assisted tools" },
-  { title: "AI Integration for Developers", desc: "OpenAI, Claude, Gemini APIs" }
+const CATEGORIES = [
+  {
+    icon: Sparkles,
+    title: "AI Fundamentals & Prompt Engineering",
+    desc: "Go from zero to confident Ã¢â‚¬â€ prompt engineering basics and everyday AI literacy.",
+    featured: true
+  },
+  {
+    icon: Megaphone,
+    title: "AI for Marketing & Sales",
+    desc: "AI-powered campaigns, ad copy, and lead generation that actually converts."
+  },
+  {
+    icon: Workflow,
+    title: "AI Automation & Workflow Tools",
+    desc: "n8n, Zapier, Make.com Ã¢â‚¬â€ connect AI models into no-code automations."
+  },
+  {
+    icon: MessageSquareText,
+    title: "AI Customer Support & Communication",
+    desc: "Build WhatsApp auto-responders and AI call-center response systems."
+  },
+  {
+    icon: Code2,
+    title: "AI Integration for Developers",
+    desc: "Wire OpenAI, Claude, and Gemini APIs into real production apps."
+  },
+  {
+    icon: Wand2,
+    title: "AI Design & Creative Tools",
+    desc: "Generate graphics, logos, and UI with Midjourney, DALLÃ‚Â·E, and Figma AI."
+  }
+];
+
+const STATS = [
+  { value: "12,000+", label: "Learners building with AI" },
+  { value: "600+", label: "Practical, outcome-based courses" },
+  { value: "4.8/5", label: "Average course rating" },
+  { value: "$2.1M+", label: "Paid out to instructors" }
+];
+
+const TESTIMONIALS = [
+  {
+    quote:
+      "I packaged the exact automation workflow I use for client work into a course. Three months later it's paying my rent Ã¢â‚¬â€ something YouTube never did.",
+    name: "Ayesha Khan",
+    role: "Freelance Automation Consultant"
+  },
+  {
+    quote:
+      "Every course here is built to produce something real. I didn't just watch a WhatsApp bot get built Ã¢â‚¬â€ I shipped my own by the end of the week.",
+    name: "Bilal Ahmed",
+    role: "Learner, AI Customer Support track"
+  },
+  {
+    quote:
+      "The certification actually means something because it's tied to a real deliverable, not a quiz. Clients recognize that.",
+    name: "Sana Rizvi",
+    role: "AI Marketing Instructor"
+  }
+];
+
+const WHY_CARDS = [
+  {
+    icon: CheckCircle2,
+    title: "Outcome-based, not watch-time",
+    desc: "Every course is built around a real, reproducible result Ã¢â‚¬â€ not passive viewing."
+  },
+  {
+    icon: Users,
+    title: "Learn from practitioners",
+    desc: "Instructors are freelancers, agency owners, and developers using AI in real work today."
+  },
+  {
+    icon: Award,
+    title: "Certification that verifies skill",
+    desc: "Completion requires the actual outcome, with a publicly verifiable certificate ID."
+  },
+  {
+    icon: TrendingUp,
+    title: "A path to income, both ways",
+    desc: "Learn a skill, then package your own expertise and sell it to the next learner."
+  }
 ];
 
 export default function HomePage() {
   return (
     <main>
-      {/* Hero */}
-      <section
-        style={{
-          textAlign: "center",
-          padding: "96px 24px 64px",
-          background:
-            "radial-gradient(ellipse 60% 50% at 50% 0%, rgba(59,130,246,0.12), transparent 70%)"
-        }}
-      >
-        <Badge variant="info">Now in early access</Badge>
-        <h1
-          style={{
-            fontSize: "48px",
-            fontWeight: 700,
-            lineHeight: 1.12,
-            marginTop: "20px",
-            maxWidth: "760px",
-            marginLeft: "auto",
-            marginRight: "auto"
-          }}
-        >
-          Learn practical{" "}
-          <span
-            style={{
-              background: "linear-gradient(90deg, #60A5FA 0%, #22D3EE 50%, #818CF8 100%)",
-              WebkitBackgroundClip: "text",
-              backgroundClip: "text",
-              color: "transparent"
-            }}
-          >
-            AI skills
-          </span>
-          . Build real things. Get paid to teach.
-        </h1>
-        <p
-          style={{
-            color: "var(--text-secondary)",
-            fontSize: "18px",
-            maxWidth: "600px",
-            margin: "24px auto 32px"
-          }}
-        >
-          Saachi AI is a skills-first marketplace where practitioners teach and learners build,
-          not just watch.
-        </p>
-        <div style={{ display: "flex", gap: "16px", justifyContent: "center" }}>
-          <Link href="/register">
-            <Button size="lg">Get Started</Button>
-          </Link>
-          <Link href="/courses">
-            <Button size="lg" variant="secondary">
-              Browse Courses
-            </Button>
-          </Link>
+      <Navbar />
+
+      {/* ---------- Hero ---------- */}
+      <section className="relative overflow-hidden px-6 pb-24 pt-20 md:pb-32 md:pt-28">
+        <div className="relative mx-auto flex max-w-[880px] flex-col items-center text-center">
+          <div className="inline-flex items-center gap-2 rounded-full border border-line px-4 py-2 text-[13px] font-medium text-ink-soft">
+            <span className="flex h-2 w-2 rounded-full bg-gold" />
+            Now in early access Ã¢â‚¬â€ founding instructor spots open
+          </div>
+
+          <h1 className="mt-8 font-display text-[40px] font-semibold leading-[1.1] tracking-[-0.02em] text-ink md:text-[68px]">
+            Learn practical AI skills.
+            <br />
+            Build real things. <span className="italic text-gold-dark">Get paid</span> to teach.
+          </h1>
+
+          <p className="mt-6 max-w-[620px] text-[17px] leading-[1.6] text-ink-soft md:text-[18px]">
+            Saachi AI is a skills-first marketplace for applied AI Ã¢â‚¬â€ practitioners teach the
+            exact workflows they use for real work, and learners walk away with something
+            they built, not just something they watched.
+          </p>
+
+          <div className="mt-8 flex flex-col items-center gap-4 sm:flex-row">
+            <Link href="/register">
+              <Button size="lg">
+                Get Started Free <ArrowRight size={17} />
+              </Button>
+            </Link>
+            <Link href="/courses">
+              <Button size="lg" variant="secondary">
+                <PlayCircle size={18} /> Browse Courses
+              </Button>
+            </Link>
+          </div>
+
+          {/* Signature seal + product mockup */}
+          <div className="relative mt-16 w-full max-w-[1000px]">
+            <div className="absolute -top-8 right-6 z-10 hidden h-24 w-24 rotate-6 items-center justify-center rounded-full border-2 border-dashed border-gold-dark bg-paper text-center md:flex">
+              <div className="flex flex-col items-center gap-0.5">
+                <BadgeCheck size={20} className="text-teal" />
+                <span className="font-display text-[10px] font-semibold uppercase leading-tight tracking-[0.08em] text-ink">
+                  Verified
+                  <br />
+                  skill
+                </span>
+              </div>
+            </div>
+            <div className="overflow-hidden rounded-card border border-line bg-card">
+              <div className="flex items-center gap-1.5 border-b border-line bg-paper-dim px-4 py-3">
+                <span className="h-2.5 w-2.5 rounded-full bg-error/50" />
+                <span className="h-2.5 w-2.5 rounded-full bg-gold/60" />
+                <span className="h-2.5 w-2.5 rounded-full bg-teal/50" />
+              </div>
+              <div className="grid grid-cols-1 gap-4 p-6 sm:grid-cols-3">
+                {CATEGORIES.slice(0, 3).map((cat) => (
+                  <div key={cat.title} className="rounded-control border border-line bg-paper p-4 text-left">
+                    <div className="mb-3 flex h-9 w-9 items-center justify-center rounded-control bg-gold-tint">
+                      <cat.icon size={17} className="text-gold-dark" />
+                    </div>
+                    <p className="text-[13px] font-semibold leading-snug text-ink">{cat.title}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          <div className="mt-12 flex flex-wrap items-center justify-center gap-x-10 gap-y-4 text-[13px] font-medium uppercase tracking-[0.06em] text-ink-soft">
+            <span className="opacity-60 transition-opacity hover:opacity-100">Built for freelancers</span>
+            <span className="opacity-60 transition-opacity hover:opacity-100">Trusted by agencies</span>
+            <span className="opacity-60 transition-opacity hover:opacity-100">Local payment rails</span>
+            <span className="opacity-60 transition-opacity hover:opacity-100">Certified outcomes</span>
+          </div>
         </div>
       </section>
 
-      {/* Category grid */}
-      <section style={{ padding: "64px 24px", maxWidth: "1120px", margin: "0 auto" }}>
-        <h2 style={{ fontSize: "28px", fontWeight: 700, textAlign: "center", marginBottom: "40px" }}>
-          Explore top categories
-        </h2>
-        <div
-          style={{
-            display: "grid",
-            gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))",
-            gap: "24px"
-          }}
-        >
-          {categories.map((c) => (
-            <Card key={c.title}>
-              <h3 style={{ fontSize: "18px", fontWeight: 600, marginBottom: "8px" }}>{c.title}</h3>
-              <p style={{ color: "var(--text-secondary)", fontSize: "14px" }}>{c.desc}</p>
-            </Card>
+      {/* ---------- Why Saachi AI ---------- */}
+      <section className="bg-paper-dim px-6 py-16 md:py-24">
+        <div className="mx-auto max-w-[1140px]">
+          <div className="mx-auto mb-14 max-w-[640px] text-center">
+            <span className="text-[13px] font-semibold uppercase tracking-[0.06em] text-gold-dark">
+              Why Saachi AI
+            </span>
+            <h2 className="mt-3 font-display text-[28px] font-semibold leading-[1.2] text-ink md:text-[36px]">
+              Not a video platform. A skills exchange.
+            </h2>
+          </div>
+
+          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
+            {WHY_CARDS.map((card) => (
+              <div
+                key={card.title}
+                className="rounded-card border border-line bg-card p-6 transition-all duration-200 ease-out hover:-translate-y-1 hover:border-gold-dark/40"
+              >
+                <div className="mb-4 flex h-11 w-11 items-center justify-center rounded-control bg-teal-light">
+                  <card.icon size={19} className="text-teal" />
+                </div>
+                <h3 className="mb-2 text-[16px] font-semibold text-ink">{card.title}</h3>
+                <p className="text-[14px] leading-relaxed text-ink-soft">{card.desc}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ---------- Category grid ---------- */}
+      <section className="px-6 py-16 md:py-24">
+        <div className="mx-auto max-w-[1140px]">
+          <div className="mx-auto mb-14 max-w-[640px] text-center">
+            <span className="text-[13px] font-semibold uppercase tracking-[0.06em] text-gold-dark">
+              Explore
+            </span>
+            <h2 className="mt-3 font-display text-[28px] font-semibold leading-[1.2] text-ink md:text-[36px]">
+              Practical AI, organized by outcome
+            </h2>
+            <p className="mt-4 text-[16px] leading-relaxed text-ink-soft">
+              Ten focused tracks, each built around what you can actually ship afterward.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            {CATEGORIES.map((cat) => (
+              <div
+                key={cat.title}
+                className={
+                  cat.featured
+                    ? "rounded-card border-2 border-ink bg-gold-tint p-6"
+                    : "rounded-card border border-line bg-card p-6 transition-all duration-200 ease-out hover:-translate-y-1 hover:border-gold-dark/40"
+                }
+              >
+                <div className="mb-4 flex h-11 w-11 items-center justify-center rounded-control bg-ink/5">
+                  <cat.icon size={19} className="text-ink" />
+                </div>
+                <h3 className="mb-2 text-[17px] font-semibold text-ink">{cat.title}</h3>
+                <p className="mb-4 text-[14px] leading-relaxed text-ink-soft">{cat.desc}</p>
+                <Link
+                  href="/courses"
+                  className="inline-flex items-center gap-1 text-[13px] font-semibold text-gold-dark transition-colors hover:text-ink"
+                >
+                  Explore track <ArrowRight size={14} />
+                </Link>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ---------- Stat banner ---------- */}
+      <section className="bg-ink px-6 py-16 md:py-24">
+        <div className="mx-auto grid max-w-[1140px] grid-cols-2 gap-8 text-center md:grid-cols-4">
+          {STATS.map((stat) => (
+            <div key={stat.label}>
+              <div className="font-mono text-[30px] font-semibold text-gold md:text-[40px]">{stat.value}</div>
+              <p className="mt-2 text-[13px] text-white/60 md:text-[14px]">{stat.label}</p>
+            </div>
           ))}
         </div>
       </section>
+
+      {/* ---------- Testimonials ---------- */}
+      <section className="px-6 py-16 md:py-24">
+        <div className="mx-auto max-w-[1140px]">
+          <div className="mx-auto mb-14 max-w-[640px] text-center">
+            <span className="text-[13px] font-semibold uppercase tracking-[0.06em] text-gold-dark">
+              Real outcomes
+            </span>
+            <h2 className="mt-3 font-display text-[28px] font-semibold leading-[1.2] text-ink md:text-[36px]">
+              Learners and instructors, in their own words
+            </h2>
+          </div>
+
+          <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
+            {TESTIMONIALS.map((t) => (
+              <div key={t.name} className="rounded-card border border-line bg-card p-6">
+                <div className="mb-4 flex items-center gap-1">
+                  {Array.from({ length: 5 }).map((_, i) => (
+                    <Star key={i} size={14} className="fill-gold text-gold" />
+                  ))}
+                </div>
+                <p className="mb-6 text-[15px] leading-relaxed text-ink">{t.quote}</p>
+                <div className="flex items-center gap-3">
+                  <div className="flex h-10 w-10 items-center justify-center overflow-hidden rounded-full bg-teal-light text-[14px] font-semibold text-teal">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img
+                      src={`https://picsum.photos/seed/${encodeURIComponent(t.name)}/100/100`}
+                      alt={t.name}
+                      className="h-full w-full object-cover"
+                    />
+                  </div>
+                  <div>
+                    <div className="text-[13px] font-semibold text-ink">{t.name}</div>
+                    <div className="text-[12px] text-ink-soft">{t.role}</div>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ---------- Become an instructor CTA ---------- */}
+      <section className="px-6 py-16 md:py-24">
+        <div className="mx-auto max-w-[1140px]">
+          <div className="flex flex-col items-center gap-6 rounded-card border-2 border-ink bg-gold px-8 py-16 text-center md:px-16">
+            <div className="inline-flex items-center gap-2 rounded-full border border-ink/20 bg-paper px-4 py-2 text-[13px] font-medium text-ink">
+              <BookOpen size={14} />
+              For practitioners
+            </div>
+            <h2 className="max-w-[640px] font-display text-[28px] font-semibold leading-[1.2] text-ink md:text-[40px]">
+              Have practical AI skills? Turn them into income.
+            </h2>
+            <p className="max-w-[560px] text-[16px] leading-relaxed text-ink/80">
+              Package the exact workflow you already use for real work into a course, and
+              start earning from learners who want to build it too.
+            </p>
+            <Link href="/register">
+              <Button size="lg" variant="secondary" className="mt-2 border-ink bg-ink text-white hover:bg-ink-soft">
+                Become an Instructor <ArrowRight size={17} />
+              </Button>
+            </Link>
+          </div>
+        </div>
+      </section>
+
+      <Footer />
     </main>
   );
 }
 
 
-
 ================================================================================
 FILE: apps\web\app\globals.css
 ================================================================================
+@import url("https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap");
 @import "tailwindcss";
 
-:root {
-  --blue-50:  #EFF6FF;
-  --blue-500: #3B82F6;
-  --blue-600: #2563EB;
-  --cyan-400: #22D3EE;
+@theme {
+  /* Ink / text */
+  --color-ink: #14171f;
+  --color-ink-soft: #3a3f4c;
 
-  --surface-bg:      #F8FAFC;
-  --surface-card:    #FFFFFF;
-  --text-primary:    #0F172A;
-  --text-secondary:  #475569;
+  /* Surfaces */
+  --color-paper: #faf8f3;
+  --color-paper-dim: #f1ece0;
+  --color-card: #ffffff;
 
-  --gradient-primary: linear-gradient(135deg, #2563EB 0%, #0EA5E9 50%, #22D3EE 100%);
-}
+  /* Lines */
+  --color-line: #e7e1d3;
+  --color-line-strong: #d8cfb8;
 
-[data-theme="dark"] {
-  --surface-bg:   #0B1120;
-  --surface-card: #0F172A;
-  --text-primary: #F1F5F9;
-  --text-secondary: #94A3B8;
+  /* Primary accent - "hallmark gold" */
+  --color-gold: #e2992f;
+  --color-gold-dark: #b9761b;
+  --color-gold-tint: #fbead0;
+
+  /* Secondary accent - "verified" teal */
+  --color-teal: #1f4b47;
+  --color-teal-light: #dceae8;
+
+  /* Status */
+  --color-error: #c1443b;
+  --color-error-tint: #f8e4e2;
+
+  /* Type */
+  --font-display: "Fraunces", "Georgia", serif;
+  --font-body: "Inter", -apple-system, "Segoe UI", sans-serif;
+  --font-mono: "IBM Plex Mono", "SFMono-Regular", monospace;
+
+  /* Radius */
+  --radius-card: 20px;
+  --radius-control: 12px;
 }
 
 * {
   box-sizing: border-box;
 }
 
-body {
-  background: var(--surface-bg);
-  color: var(--text-primary);
-  font-family: "Inter", -apple-system, "Segoe UI", Roboto, sans-serif;
+html {
+  scroll-behavior: smooth;
 }
 
+body {
+  background: var(--color-paper);
+  color: var(--color-ink);
+  font-family: var(--font-body);
+}
+
+h1, h2, h3 {
+  font-family: var(--font-display);
+}
+
+::selection {
+  background: var(--color-gold-tint);
+  color: var(--color-ink);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
 
 
 ================================================================================
@@ -1157,16 +1828,57 @@ FILE: apps\web\tsconfig.json
 FILE: packages\api-client\src\hooks\useAuth.ts
 ================================================================================
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { apiRequest } from "../http-client";
 import { authKeys } from "../query-keys";
 import type { Session } from "../types";
 import type { LoginInput, RegisterInput } from "@saachi/utils";
+import { DUMMY_SESSION } from "../dummy-data";
+
+const SESSION_COOKIE = "saachi_session";
+const SESSION_STORAGE_KEY = "saachi_demo_session";
+
+function setSessionCookie() {
+  if (typeof document === "undefined") return;
+  document.cookie = `${SESSION_COOKIE}=demo_token; path=/; max-age=${60 * 60 * 24 * 7}`;
+}
+
+function clearSessionCookie() {
+  if (typeof document === "undefined") return;
+  document.cookie = `${SESSION_COOKIE}=; path=/; max-age=0`;
+}
+
+function readStoredSession(): Session | null {
+  if (typeof window === "undefined") return null;
+  const raw = window.localStorage.getItem(SESSION_STORAGE_KEY);
+  if (!raw) return null;
+  try {
+    return JSON.parse(raw) as Session;
+  } catch {
+    return null;
+  }
+}
+
+function storeSession(session: Session) {
+  if (typeof window === "undefined") return;
+  window.localStorage.setItem(SESSION_STORAGE_KEY, JSON.stringify(session));
+}
+
+function clearStoredSession() {
+  if (typeof window === "undefined") return;
+  window.localStorage.removeItem(SESSION_STORAGE_KEY);
+}
+
+function delay<T>(value: T, ms = 500): Promise<T> {
+  return new Promise((resolve) => setTimeout(() => resolve(value), ms));
+}
+
+// NOTE: Demo mode. There is no backend yet, so login/register accept ANY
+// email/password and create a local mock session. Swap these mutationFns
+// for real apiRequest(...) calls once the NestJS backend is available.
 
 export function useSession() {
   return useQuery({
     queryKey: authKeys.session,
-    queryFn: () => apiRequest<Session>("/auth/session"),
-    retry: false,
+    queryFn: async () => readStoredSession(),
     staleTime: 60 * 1000
   });
 }
@@ -1174,13 +1886,17 @@ export function useSession() {
 export function useLogin() {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: (input: LoginInput) =>
-      apiRequest<Session | { requires2fa: true }>("/auth/login", {
-        method: "POST",
-        body: input
-      }),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: authKeys.session });
+    mutationFn: async (input: LoginInput) => {
+      const session: Session = {
+        ...DUMMY_SESSION,
+        email: input.email || DUMMY_SESSION.email
+      };
+      return delay(session);
+    },
+    onSuccess: (session) => {
+      storeSession(session);
+      setSessionCookie();
+      queryClient.setQueryData(authKeys.session, session);
     }
   });
 }
@@ -1188,10 +1904,19 @@ export function useLogin() {
 export function useRegister() {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: (input: RegisterInput) =>
-      apiRequest<Session>("/auth/register", { method: "POST", body: input }),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: authKeys.session });
+    mutationFn: async (input: RegisterInput) => {
+      const session: Session = {
+        ...DUMMY_SESSION,
+        fullName: input.fullName,
+        email: input.email,
+        role: input.role === "instructor" ? "instructor" : "learner"
+      };
+      return delay(session);
+    },
+    onSuccess: (session) => {
+      storeSession(session);
+      setSessionCookie();
+      queryClient.setQueryData(authKeys.session, session);
     }
   });
 }
@@ -1199,7 +1924,11 @@ export function useRegister() {
 export function useLogout() {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: () => apiRequest<void>("/auth/logout", { method: "POST" }),
+    mutationFn: async () => {
+      clearStoredSession();
+      clearSessionCookie();
+      return delay(undefined, 200);
+    },
     onSuccess: () => {
       queryClient.clear();
     }
@@ -1207,14 +1936,13 @@ export function useLogout() {
 }
 
 
-
 ================================================================================
 FILE: packages\api-client\src\hooks\useCourses.ts
 ================================================================================
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { apiRequest } from "../http-client";
 import { courseKeys } from "../query-keys";
 import type { Course, CourseDetail, Paginated } from "../types";
+import { DUMMY_COURSES, type DummyCourse } from "../dummy-data";
 
 export type CourseListFilters = {
   category?: string;
@@ -1227,18 +1955,96 @@ export type CourseListFilters = {
   page?: number;
 };
 
+function delay<T>(value: T, ms = 400): Promise<T> {
+  return new Promise((resolve) => setTimeout(() => resolve(value), ms));
+}
+
+function toSummary(course: DummyCourse): Course {
+  return {
+    id: course.id,
+    slug: course.slug,
+    title: course.title,
+    subtitle: course.subtitle,
+    thumbnailUrl: course.thumbnailUrl,
+    price: course.price,
+    currency: course.currency,
+    rating: course.rating,
+    ratingCount: course.ratingCount,
+    instructor: course.instructor,
+    status: course.status
+  };
+}
+
 export function useCourseList(filters: CourseListFilters = {}) {
   return useQuery({
     queryKey: courseKeys.list(filters),
-    queryFn: () =>
-      apiRequest<Paginated<Course>>("/courses", { params: filters as Record<string, any> })
+    queryFn: async () => {
+      let items = [...DUMMY_COURSES];
+
+      if (filters.search) {
+        const q = filters.search.toLowerCase();
+        items = items.filter(
+          (c) => c.title.toLowerCase().includes(q) || c.instructor.fullName.toLowerCase().includes(q)
+        );
+      }
+      if (filters.category) {
+        items = items.filter((c) => c.categoryId === filters.category);
+      }
+      if (filters.level) {
+        items = items.filter((c) => c.level === filters.level);
+      }
+      if (filters.language) {
+        items = items.filter((c) => c.language === filters.language);
+      }
+      if (typeof filters.priceMin === "number") {
+        items = items.filter((c) => c.price >= (filters.priceMin as number));
+      }
+      if (typeof filters.priceMax === "number") {
+        items = items.filter((c) => c.price <= (filters.priceMax as number));
+      }
+
+      switch (filters.sort) {
+        case "newest":
+          items = [...items].reverse();
+          break;
+        case "price_asc":
+          items = [...items].sort((a, b) => a.price - b.price);
+          break;
+        case "price_desc":
+          items = [...items].sort((a, b) => b.price - a.price);
+          break;
+        case "rating":
+          items = [...items].sort((a, b) => b.rating - a.rating);
+          break;
+        case "popular":
+        default:
+          items = [...items].sort((a, b) => b.ratingCount - a.ratingCount);
+      }
+
+      const page = filters.page ?? 1;
+      const pageSize = 12;
+      const start = (page - 1) * pageSize;
+      const pageItems = items.slice(start, start + pageSize).map(toSummary);
+
+      return delay<Paginated<Course>>({
+        items: pageItems,
+        total: items.length,
+        page,
+        pageSize
+      });
+    }
   });
 }
 
 export function useCourseDetail(idOrSlug: string) {
   return useQuery({
     queryKey: courseKeys.detail(idOrSlug),
-    queryFn: () => apiRequest<CourseDetail>(`/courses/${idOrSlug}`),
+    queryFn: async () => {
+      const found = DUMMY_COURSES.find((c) => c.slug === idOrSlug || c.id === idOrSlug);
+      if (!found) throw new Error("Course not found");
+      const { categoryId, level, language, ...detail } = found;
+      return delay<CourseDetail>(detail);
+    },
     enabled: Boolean(idOrSlug)
   });
 }
@@ -1246,8 +2052,20 @@ export function useCourseDetail(idOrSlug: string) {
 export function useCreateCourse() {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: (input: Partial<Course>) =>
-      apiRequest<Course>("/courses", { method: "POST", body: input }),
+    mutationFn: async (input: Partial<Course>) => {
+      const created: Course = {
+        id: `crs_${Math.random().toString(36).slice(2, 8)}`,
+        slug: (input.slug as string) ?? "new-course",
+        title: input.title ?? "Untitled course",
+        price: input.price ?? 0,
+        currency: input.currency ?? "USD",
+        rating: 0,
+        ratingCount: 0,
+        instructor: input.instructor ?? { id: "ins_demo", fullName: "Demo Instructor" },
+        status: "draft"
+      };
+      return delay(created);
+    },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: courseKeys.all });
     }
@@ -1257,15 +2075,30 @@ export function useCreateCourse() {
 export function useUpdateCourse(id: string) {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: (input: Partial<Course>) =>
-      apiRequest<Course>(`/courses/${id}`, { method: "PATCH", body: input }),
+    mutationFn: async (input: Partial<Course>) => {
+      const existing = DUMMY_COURSES.find((c) => c.id === id);
+      const base: Course = existing
+        ? toSummary(existing)
+        : {
+            id,
+            slug: id,
+            title: "Untitled",
+            price: 0,
+            currency: "USD",
+            rating: 0,
+            ratingCount: 0,
+            instructor: { id: "ins_demo", fullName: "Demo Instructor" },
+            status: "draft"
+          };
+      const updated: Course = { ...base, ...input };
+      return delay(updated);
+    },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: courseKeys.detail(id) });
       queryClient.invalidateQueries({ queryKey: courseKeys.all });
     }
   });
 }
-
 
 
 ================================================================================
@@ -1360,6 +2193,398 @@ export type Paginated<T> = {
 
 
 ================================================================================
+FILE: packages\api-client\src\dummy-data.ts
+================================================================================
+import type { Course, CourseDetail, Session } from "./types";
+
+function img(seed: string, w: number, h: number): string {
+  return `https://picsum.photos/seed/${encodeURIComponent(seed)}/${w}/${h}`;
+}
+
+export const DUMMY_SESSION: Session = {
+  id: "usr_demo_001",
+  fullName: "Ayesha Khan",
+  email: "demo@saachi.ai",
+  role: "learner",
+  avatarUrl: img("ayesha-khan-demo", 150, 150)
+};
+
+export type DummyCourse = CourseDetail & {
+  categoryId: string;
+  level: "beginner" | "intermediate" | "advanced";
+  language: "en" | "ur";
+};
+
+function toCourseSummary(course: DummyCourse): Course {
+  return {
+    id: course.id,
+    slug: course.slug,
+    title: course.title,
+    subtitle: course.subtitle,
+    thumbnailUrl: course.thumbnailUrl,
+    price: course.price,
+    currency: course.currency,
+    rating: course.rating,
+    ratingCount: course.ratingCount,
+    instructor: course.instructor,
+    status: course.status
+  };
+}
+
+const BASE_COURSES: DummyCourse[] = [
+  {
+    id: "crs_001",
+    slug: "prompt-engineering-fundamentals",
+    title: "Prompt Engineering Fundamentals",
+    subtitle: "Go from zero to confident with ChatGPT, Claude, and Gemini.",
+    price: 29,
+    currency: "USD",
+    rating: 4.8,
+    ratingCount: 1240,
+    categoryId: "ai-fundamentals",
+    level: "beginner",
+    language: "en",
+    status: "published",
+    thumbnailUrl: img("prompt-engineering-fundamentals", 800, 450),
+    instructor: { id: "ins_001", fullName: "Sana Rizvi", avatarUrl: img("sana-rizvi", 150, 150) },
+    description:
+      "Learn how to write prompts that actually get useful, reliable output from modern AI models. You will practice on real business tasks - writing, research, summarization, and structured data extraction - and finish with a personal prompt library you can reuse on the job.",
+    instructorBio: "AI marketing consultant and instructor with 6+ years teaching applied AI workflows.",
+    instructorCourseCount: 4,
+    instructorStudentCount: 8300,
+    curriculum: [
+      {
+        id: "mod_1",
+        title: "Getting Started",
+        lessons: [
+          { id: "les_1", title: "Why prompting is a skill", type: "video", durationSeconds: 420, isPreview: true },
+          { id: "les_2", title: "Setting up your workspace", type: "text", durationSeconds: 180 }
+        ]
+      },
+      {
+        id: "mod_2",
+        title: "Core Prompting Techniques",
+        lessons: [
+          { id: "les_3", title: "Instructions vs. context", type: "video", durationSeconds: 540 },
+          { id: "les_4", title: "Few-shot examples", type: "video", durationSeconds: 480 },
+          { id: "les_5", title: "Knowledge check", type: "quiz" }
+        ]
+      },
+      {
+        id: "mod_3",
+        title: "Applying It To Real Work",
+        lessons: [
+          { id: "les_6", title: "Writing a research prompt", type: "video", durationSeconds: 600 },
+          { id: "les_7", title: "Prompt library template", type: "resource" }
+        ]
+      }
+    ],
+    ratingBreakdown: { 5: 900, 4: 250, 3: 60, 2: 20, 1: 10 },
+    reviews: [
+      {
+        id: "rev_1",
+        authorName: "Bilal Ahmed",
+        authorAvatarUrl: img("bilal-ahmed", 100, 100),
+        rating: 5,
+        comment: "Clear, practical, and I actually use the prompt library every week now.",
+        createdAt: "2026-06-12T10:00:00.000Z",
+        verifiedPurchase: true
+      },
+      {
+        id: "rev_2",
+        authorName: "Hina Malik",
+        authorAvatarUrl: img("hina-malik", 100, 100),
+        rating: 4,
+        comment: "Great intro course. Wish there was more on API usage, but perfect for beginners.",
+        createdAt: "2026-05-28T10:00:00.000Z",
+        verifiedPurchase: true
+      }
+    ],
+    faq: [
+      { id: "faq_1", question: "Do I need any prior experience?", answer: "No - this course starts from zero." },
+      { id: "faq_2", question: "Which AI tools does it cover?", answer: "ChatGPT, Claude, and Gemini, with transferable techniques for any model." }
+    ]
+  },
+  {
+    id: "crs_002",
+    slug: "ai-powered-marketing-campaigns",
+    title: "AI-Powered Marketing Campaigns",
+    subtitle: "Plan, write, and launch full campaigns with AI copilots.",
+    price: 49,
+    currency: "USD",
+    rating: 4.6,
+    ratingCount: 812,
+    categoryId: "ai-marketing",
+    level: "intermediate",
+    language: "en",
+    status: "published",
+    thumbnailUrl: img("ai-powered-marketing-campaigns", 800, 450),
+    instructor: { id: "ins_002", fullName: "Zara Farooq", avatarUrl: img("zara-farooq", 150, 150) },
+    description:
+      "A hands-on workflow for using AI to plan a campaign calendar, generate ad copy variants, draft email sequences, and analyze performance - the exact process working marketers use for client accounts.",
+    instructorBio: "Runs a 4-person AI-first marketing agency serving South Asian SMEs.",
+    instructorCourseCount: 2,
+    instructorStudentCount: 3100,
+    curriculum: [
+      {
+        id: "mod_1",
+        title: "Campaign Planning with AI",
+        lessons: [
+          { id: "les_1", title: "Building a campaign brief", type: "video", durationSeconds: 500, isPreview: true },
+          { id: "les_2", title: "Audience research prompts", type: "video", durationSeconds: 420 }
+        ]
+      },
+      {
+        id: "mod_2",
+        title: "Content Generation",
+        lessons: [
+          { id: "les_3", title: "Ad copy variants at scale", type: "video", durationSeconds: 460 },
+          { id: "les_4", title: "Email sequence workflow", type: "text", durationSeconds: 300 }
+        ]
+      }
+    ],
+    ratingBreakdown: { 5: 560, 4: 180, 3: 50, 2: 15, 1: 7 },
+    reviews: [
+      {
+        id: "rev_1",
+        authorName: "Omar Sheikh",
+        authorAvatarUrl: img("omar-sheikh", 100, 100),
+        rating: 5,
+        comment: "Cut my campaign prep time in half. Worth every rupee.",
+        createdAt: "2026-06-02T10:00:00.000Z",
+        verifiedPurchase: true
+      }
+    ],
+    faq: [
+      { id: "faq_1", question: "Which AI tools are used?", answer: "ChatGPT and Claude, plus a spreadsheet template - no paid tools required." }
+    ]
+  },
+  {
+    id: "crs_003",
+    slug: "automate-everything-with-n8n-and-ai",
+    title: "Automate Everything with n8n & AI",
+    subtitle: "Connect AI models into no-code workflows that run themselves.",
+    price: 39,
+    currency: "USD",
+    rating: 4.7,
+    ratingCount: 654,
+    categoryId: "ai-automation",
+    level: "intermediate",
+    language: "en",
+    status: "published",
+    thumbnailUrl: img("automate-everything-with-n8n-and-ai", 800, 450),
+    instructor: { id: "ins_003", fullName: "Ayesha Khan", avatarUrl: img("ayesha-khan-instructor", 150, 150) },
+    description:
+      "Build five real automations step by step: lead qualification, content repurposing, invoice parsing, support ticket routing, and a daily AI digest - all inside n8n, wired up to OpenAI.",
+    instructorBio: "Freelance automation consultant, builds n8n workflows for e-commerce clients.",
+    instructorCourseCount: 3,
+    instructorStudentCount: 5200,
+    curriculum: [
+      {
+        id: "mod_1",
+        title: "n8n Basics",
+        lessons: [
+          { id: "les_1", title: "Installing and connecting n8n", type: "video", durationSeconds: 380, isPreview: true },
+          { id: "les_2", title: "Your first AI node", type: "video", durationSeconds: 340 }
+        ]
+      },
+      {
+        id: "mod_2",
+        title: "Five Real Automations",
+        lessons: [
+          { id: "les_3", title: "Lead qualification bot", type: "video", durationSeconds: 620 },
+          { id: "les_4", title: "Invoice parsing pipeline", type: "video", durationSeconds: 580 },
+          { id: "les_5", title: "Starter workflow files", type: "resource" }
+        ]
+      }
+    ],
+    ratingBreakdown: { 5: 460, 4: 140, 3: 35, 2: 12, 1: 7 },
+    reviews: [
+      {
+        id: "rev_1",
+        authorName: "Fatima Noor",
+        authorAvatarUrl: img("fatima-noor", 100, 100),
+        rating: 5,
+        comment: "The invoice parsing workflow alone paid for the course.",
+        createdAt: "2026-05-15T10:00:00.000Z",
+        verifiedPurchase: true
+      }
+    ],
+    faq: [
+      { id: "faq_1", question: "Is n8n free to use?", answer: "Yes, the self-hosted version is free and used throughout this course." }
+    ]
+  },
+  {
+    id: "crs_004",
+    slug: "build-a-whatsapp-ai-auto-responder",
+    title: "Build a WhatsApp AI Auto-Responder",
+    subtitle: "Ship a working AI customer-support bot on WhatsApp.",
+    price: 59,
+    currency: "USD",
+    rating: 4.9,
+    ratingCount: 401,
+    categoryId: "ai-support",
+    level: "advanced",
+    language: "en",
+    status: "published",
+    thumbnailUrl: img("build-a-whatsapp-ai-auto-responder", 800, 450),
+    instructor: { id: "ins_004", fullName: "Bilal Ahmed", avatarUrl: img("bilal-ahmed-instructor", 150, 150) },
+    description:
+      "A complete build: connect the WhatsApp Business API, wire it to an AI model with your own knowledge base, and deploy a bot that can answer real customer questions and escalate to a human when needed.",
+    instructorBio: "Built AI support systems for three Pakistani D2C brands.",
+    instructorCourseCount: 1,
+    instructorStudentCount: 1450,
+    curriculum: [
+      {
+        id: "mod_1",
+        title: "WhatsApp API Setup",
+        lessons: [
+          { id: "les_1", title: "WhatsApp Business API basics", type: "video", durationSeconds: 400, isPreview: true },
+          { id: "les_2", title: "Webhook configuration", type: "text", durationSeconds: 260 }
+        ]
+      },
+      {
+        id: "mod_2",
+        title: "Building the AI Layer",
+        lessons: [
+          { id: "les_3", title: "Knowledge base + retrieval", type: "video", durationSeconds: 560 },
+          { id: "les_4", title: "Human handoff logic", type: "video", durationSeconds: 400 }
+        ]
+      }
+    ],
+    ratingBreakdown: { 5: 360, 4: 30, 3: 6, 2: 3, 1: 2 },
+    reviews: [
+      {
+        id: "rev_1",
+        authorName: "Sara Iqbal",
+        authorAvatarUrl: img("sara-iqbal", 100, 100),
+        rating: 5,
+        comment: "Most technical course on the platform, but explained really well.",
+        createdAt: "2026-06-20T10:00:00.000Z",
+        verifiedPurchase: true
+      }
+    ],
+    faq: [
+      { id: "faq_1", question: "Do I need coding experience?", answer: "Basic JavaScript helps, but each step is explained from scratch." }
+    ]
+  },
+  {
+    id: "crs_005",
+    slug: "ship-your-first-ai-powered-web-app",
+    title: "Ship Your First AI-Powered Web App",
+    subtitle: "From idea to a deployed app using AI-assisted development.",
+    price: 45,
+    currency: "USD",
+    rating: 4.5,
+    ratingCount: 588,
+    categoryId: "ai-dev",
+    level: "intermediate",
+    language: "en",
+    status: "published",
+    thumbnailUrl: img("ship-your-first-ai-powered-web-app", 800, 450),
+    instructor: { id: "ins_005", fullName: "Hamza Tariq", avatarUrl: img("hamza-tariq", 150, 150) },
+    description:
+      "Use AI coding tools to plan, build, and deploy a small full-stack app in a weekend - covering scaffolding, debugging with AI, and shipping to production.",
+    instructorBio: "Full-stack developer teaching AI-assisted development workflows.",
+    instructorCourseCount: 2,
+    instructorStudentCount: 2700,
+    curriculum: [
+      {
+        id: "mod_1",
+        title: "Planning with AI",
+        lessons: [
+          { id: "les_1", title: "Turning an idea into a spec", type: "video", durationSeconds: 360, isPreview: true }
+        ]
+      },
+      {
+        id: "mod_2",
+        title: "Build & Deploy",
+        lessons: [
+          { id: "les_2", title: "Scaffolding the app", type: "video", durationSeconds: 500 },
+          { id: "les_3", title: "Deploying to production", type: "video", durationSeconds: 320 }
+        ]
+      }
+    ],
+    ratingBreakdown: { 5: 400, 4: 140, 3: 35, 2: 8, 1: 5 },
+    reviews: [
+      {
+        id: "rev_1",
+        authorName: "Noor Fatima",
+        authorAvatarUrl: img("noor-fatima", 100, 100),
+        rating: 4,
+        comment: "Fast-paced but I had a working app by the end.",
+        createdAt: "2026-04-30T10:00:00.000Z",
+        verifiedPurchase: true
+      }
+    ],
+    faq: [
+      { id: "faq_1", question: "Which AI coding tool is used?", answer: "The course covers general techniques that work with any modern AI coding assistant." }
+    ]
+  },
+  {
+    id: "crs_006",
+    slug: "integrating-openai-and-claude-apis-into-node",
+    title: "Integrating OpenAI & Claude APIs into Node.js Apps",
+    subtitle: "Production patterns for adding AI features to real applications.",
+    price: 65,
+    currency: "USD",
+    rating: 4.9,
+    ratingCount: 320,
+    categoryId: "ai-integration",
+    level: "advanced",
+    language: "en",
+    status: "published",
+    thumbnailUrl: img("integrating-openai-and-claude-apis-into-node", 800, 450),
+    instructor: { id: "ins_006", fullName: "Usman Ali", avatarUrl: img("usman-ali", 150, 150) },
+    description:
+      "Covers authentication, streaming responses, function/tool calling, error handling, cost control, and testing - everything needed to ship an AI feature that survives production traffic.",
+    instructorBio: "Backend engineer, has shipped AI features at two Series-A startups.",
+    instructorCourseCount: 3,
+    instructorStudentCount: 1900,
+    curriculum: [
+      {
+        id: "mod_1",
+        title: "Foundations",
+        lessons: [
+          { id: "les_1", title: "Auth and API key management", type: "video", durationSeconds: 300, isPreview: true },
+          { id: "les_2", title: "Streaming responses", type: "video", durationSeconds: 420 }
+        ]
+      },
+      {
+        id: "mod_2",
+        title: "Production Concerns",
+        lessons: [
+          { id: "les_3", title: "Tool calling patterns", type: "video", durationSeconds: 540 },
+          { id: "les_4", title: "Cost control and rate limits", type: "text", durationSeconds: 260 }
+        ]
+      }
+    ],
+    ratingBreakdown: { 5: 290, 4: 22, 3: 5, 2: 2, 1: 1 },
+    reviews: [
+      {
+        id: "rev_1",
+        authorName: "Danish Raza",
+        authorAvatarUrl: img("danish-raza", 100, 100),
+        rating: 5,
+        comment: "Exactly the production-level detail I couldn't find anywhere else.",
+        createdAt: "2026-06-25T10:00:00.000Z",
+        verifiedPurchase: true
+      }
+    ],
+    faq: [
+      { id: "faq_1", question: "Is this course Python or Node.js?", answer: "Node.js / TypeScript throughout." }
+    ]
+  }
+];
+
+export const DUMMY_COURSES: DummyCourse[] = BASE_COURSES.map((course, index) => {
+  const others = BASE_COURSES.filter((c) => c.id !== course.id);
+  const related = [others[index % others.length], others[(index + 1) % others.length]].filter(Boolean);
+  return { ...course, relatedCourses: related.map(toCourseSummary) };
+});
+
+
+================================================================================
 FILE: packages\api-client\src\http-client.ts
 ================================================================================
 export type ApiError = {
@@ -1438,9 +2663,9 @@ FILE: packages\api-client\src\index.ts
 export * from "./http-client";
 export * from "./query-keys";
 export * from "./types";
+export * from "./dummy-data";
 export * from "./hooks/useAuth";
 export * from "./hooks/useCourses";
-
 
 
 ================================================================================
@@ -1593,17 +2818,11 @@ export function Accordion({ items, defaultOpenId, className }: AccordionProps) {
   const [openId, setOpenId] = useState<string | null>(defaultOpenId ?? null);
 
   return (
-    <div
-      className={cn(
-        "flex flex-col overflow-hidden rounded-2xl border border-[var(--border-hairline,rgba(15,23,42,0.08))]",
-        "divide-y divide-[var(--border-hairline,rgba(15,23,42,0.08))]",
-        className
-      )}
-    >
+    <div className={cn("flex flex-col overflow-hidden rounded-card border border-line divide-y divide-line", className)}>
       {items.map((item) => {
         const isOpen = openId === item.id;
         return (
-          <div key={item.id} className="bg-[var(--surface-card,#FFFFFF)]">
+          <div key={item.id} className="bg-card">
             <button
               type="button"
               onClick={() => setOpenId(isOpen ? null : item.id)}
@@ -1611,16 +2830,14 @@ export function Accordion({ items, defaultOpenId, className }: AccordionProps) {
               aria-expanded={isOpen}
             >
               <div className="flex flex-1 items-center gap-3">
-                <span className="text-[15px] font-semibold text-[var(--text-primary,#0F172A)]">
-                  {item.title}
-                </span>
+                <span className="text-[15px] font-semibold text-ink">{item.title}</span>
                 {item.meta}
               </div>
               <ChevronDown
                 size={18}
                 className={cn(
-                  "shrink-0 text-[var(--text-secondary,#475569)] transition-transform duration-200 ease-out",
-                  isOpen && "rotate-180 text-[var(--blue-600,#2563EB)]"
+                  "shrink-0 text-ink-soft transition-transform duration-200 ease-out",
+                  isOpen && "rotate-180 text-gold-dark"
                 )}
               />
             </button>
@@ -1631,9 +2848,7 @@ export function Accordion({ items, defaultOpenId, className }: AccordionProps) {
               )}
             >
               <div className="overflow-hidden">
-                <div className="px-5 pb-4 text-[14px] leading-relaxed text-[var(--text-secondary,#475569)]">
-                  {item.content}
-                </div>
+                <div className="px-5 pb-4 text-[14px] leading-relaxed text-ink-soft">{item.content}</div>
               </div>
             </div>
           </div>
@@ -1644,32 +2859,31 @@ export function Accordion({ items, defaultOpenId, className }: AccordionProps) {
 }
 
 
-
 ================================================================================
 FILE: packages\ui\src\components\Badge.tsx
 ================================================================================
 import type { HTMLAttributes } from "react";
 import { cn } from "../cn";
 
-type BadgeVariant = "default" | "success" | "warning" | "error" | "info";
+type BadgeVariant = "default" | "success" | "warning" | "error" | "gold";
 
 export type BadgeProps = HTMLAttributes<HTMLSpanElement> & {
   variant?: BadgeVariant;
 };
 
 const variantStyles: Record<BadgeVariant, string> = {
-  default: "bg-slate-100 text-slate-700",
-  success: "bg-teal-50 text-teal-700",
-  warning: "bg-amber-50 text-amber-700",
-  error: "bg-red-50 text-red-700",
-  info: "bg-blue-50 text-blue-700"
+  default: "bg-paper-dim text-ink-soft",
+  success: "bg-teal-light text-teal",
+  warning: "bg-gold-tint text-gold-dark",
+  error: "bg-error-tint text-error",
+  gold: "bg-gold text-ink"
 };
 
 export function Badge({ className, variant = "default", children, ...props }: BadgeProps) {
   return (
     <span
       className={cn(
-        "inline-flex items-center rounded-full px-3 py-1 text-xs font-medium",
+        "inline-flex items-center gap-1 rounded-full px-3 py-1 text-xs font-semibold",
         variantStyles[variant],
         className
       )}
@@ -1679,7 +2893,6 @@ export function Badge({ className, variant = "default", children, ...props }: Ba
     </span>
   );
 }
-
 
 
 ================================================================================
@@ -1698,51 +2911,39 @@ export type ButtonProps = ButtonHTMLAttributes<HTMLButtonElement> & {
 };
 
 const variantStyles: Record<ButtonVariant, string> = {
-  primary:
-    "text-white shadow-[0_4px_20px_rgba(30,64,175,0.10)] hover:shadow-[0_0_32px_rgba(59,130,246,0.35)]",
-  secondary:
-    "border border-[var(--border-hairline,rgba(15,23,42,0.14))] bg-transparent hover:border-blue-400",
-  ghost: "bg-transparent text-[var(--text-secondary,#475569)] hover:bg-[var(--surface-elevated,#F1F5F9)]",
-  danger: "bg-red-500 text-white hover:bg-red-600"
+  primary: "bg-gold text-ink hover:bg-gold-dark",
+  secondary: "border border-line-strong bg-card text-ink hover:border-ink",
+  ghost: "bg-transparent text-ink-soft hover:bg-paper-dim",
+  danger: "bg-error text-white hover:bg-[#a53931]"
 };
 
 const sizeStyles: Record<ButtonSize, string> = {
   sm: "h-9 px-4 text-sm",
   md: "h-11 px-5 text-[15px]",
-  lg: "h-13 px-6 text-[17px]"
+  lg: "h-[52px] px-7 text-[16px]"
 };
 
 export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
-  ({ className, variant = "primary", size = "md", loading, disabled, children, style, ...props }, ref) => {
-    const isPrimary = variant === "primary";
+  ({ className, variant = "primary", size = "md", loading, disabled, children, ...props }, ref) => {
     return (
       <button
         ref={ref}
         disabled={disabled || loading}
         className={cn(
-          "inline-flex items-center justify-center rounded-full font-medium transition-all duration-200 ease-out disabled:opacity-60 disabled:pointer-events-none",
+          "inline-flex items-center justify-center gap-2 rounded-full font-semibold tracking-[-0.01em]",
+          "transition-colors duration-150 ease-out disabled:opacity-50 disabled:pointer-events-none",
           variantStyles[variant],
           sizeStyles[size],
           className
         )}
-        style={
-          isPrimary
-            ? {
-                background:
-                  "linear-gradient(135deg, #2563EB 0%, #0EA5E9 50%, #22D3EE 100%)",
-                ...style
-              }
-            : style
-        }
         {...props}
       >
-        {loading ? "..." : children}
+        {loading ? "Workingâ€¦" : children}
       </button>
     );
   }
 );
 Button.displayName = "Button";
-
 
 
 ================================================================================
@@ -1761,8 +2962,9 @@ export const Card = forwardRef<HTMLDivElement, CardProps>(
       <div
         ref={ref}
         className={cn(
-          "rounded-2xl border border-[var(--border-hairline,rgba(15,23,42,0.08))] bg-[var(--surface-card,#FFFFFF)] p-6 shadow-[0_2px_8px_rgba(30,64,175,0.06)] transition-all duration-200 ease-out hover:-translate-y-0.5 hover:shadow-[0_4px_20px_rgba(30,64,175,0.10)]",
-          featured && "bg-gradient-to-br from-white to-blue-50",
+          "rounded-card border border-line bg-card p-6",
+          "transition-all duration-200 ease-out hover:-translate-y-0.5 hover:border-line-strong",
+          featured && "border-teal/20 bg-teal-light",
           className
         )}
         {...props}
@@ -1773,7 +2975,6 @@ export const Card = forwardRef<HTMLDivElement, CardProps>(
   }
 );
 Card.displayName = "Card";
-
 
 
 ================================================================================
@@ -1792,10 +2993,7 @@ export const Checkbox = forwardRef<HTMLInputElement, CheckboxProps>(
     const checkboxId = id ?? props.name;
 
     return (
-      <label
-        htmlFor={checkboxId}
-        className="inline-flex cursor-pointer items-center gap-2.5 select-none"
-      >
+      <label htmlFor={checkboxId} className="inline-flex cursor-pointer items-center gap-2.5 select-none">
         <span className="relative inline-flex h-[18px] w-[18px] shrink-0 items-center justify-center">
           <input
             ref={ref}
@@ -1804,26 +3002,16 @@ export const Checkbox = forwardRef<HTMLInputElement, CheckboxProps>(
             className={cn("peer absolute inset-0 h-full w-full cursor-pointer opacity-0", className)}
             {...props}
           />
-          <span
-            className={cn(
-              "flex h-[18px] w-[18px] items-center justify-center rounded-[5px] border transition-all duration-150 ease-out",
-              "border-[var(--border-hairline-strong,rgba(15,23,42,0.14))] bg-[var(--surface-card,#FFFFFF)]",
-              "peer-checked:border-transparent peer-checked:[background:var(--gradient-primary,linear-gradient(135deg,#2563EB_0%,#0EA5E9_50%,#22D3EE_100%))]",
-              "peer-focus-visible:shadow-[0_0_0_2px_rgba(59,130,246,0.35)]"
-            )}
-          >
-            <Check size={13} strokeWidth={3} className="text-white opacity-0 peer-checked:opacity-100" />
+          <span className="flex h-[18px] w-[18px] items-center justify-center rounded-[5px] border border-line-strong bg-card transition-colors duration-150 ease-out peer-checked:border-gold peer-checked:bg-gold peer-focus-visible:ring-2 peer-focus-visible:ring-gold/40">
+            <Check size={13} strokeWidth={3} className="text-ink opacity-0 peer-checked:opacity-100" />
           </span>
         </span>
-        {label && (
-          <span className="text-[14px] text-[var(--text-primary,#0F172A)]">{label}</span>
-        )}
+        {label && <span className="text-[14px] text-ink">{label}</span>}
       </label>
     );
   }
 );
 Checkbox.displayName = "Checkbox";
-
 
 
 ================================================================================
@@ -1866,13 +3054,12 @@ export function CourseCard({
     <Link
       href={`/courses/${slug}`}
       className={cn(
-        "group flex flex-col overflow-hidden rounded-2xl border bg-[var(--surface-card,#FFFFFF)]",
-        "border-[var(--border-hairline,rgba(15,23,42,0.08))] shadow-[0_2px_8px_rgba(30,64,175,0.06)]",
-        "transition-all duration-200 ease-out hover:-translate-y-0.5 hover:shadow-[0_4px_20px_rgba(30,64,175,0.10)] hover:border-[rgba(59,130,246,0.35)]",
+        "group flex flex-col overflow-hidden rounded-card border border-line bg-card",
+        "transition-all duration-200 ease-out hover:-translate-y-0.5 hover:border-gold-dark/40",
         className
       )}
     >
-      <div className="relative aspect-video w-full overflow-hidden bg-[var(--surface-elevated,#F1F5F9)]">
+      <div className="relative aspect-video w-full overflow-hidden bg-paper-dim">
         {thumbnailUrl ? (
           // eslint-disable-next-line @next/next/no-img-element
           <img
@@ -1881,32 +3068,27 @@ export function CourseCard({
             className="h-full w-full object-cover transition-transform duration-300 ease-out group-hover:scale-[1.02]"
           />
         ) : (
-          <div className="flex h-full w-full items-center justify-center text-[13px] text-[var(--text-muted,#94A3B8)]">
+          <div className="flex h-full w-full items-center justify-center text-[13px] text-ink-soft/60">
             No preview
           </div>
         )}
       </div>
 
       <div className="flex flex-1 flex-col gap-2 p-4">
-        <h3 className="line-clamp-2 text-[15px] font-semibold leading-snug text-[var(--text-primary,#0F172A)]">
-          {title}
-        </h3>
-        <p className="text-[13px] text-[var(--text-secondary,#475569)]">{instructorName}</p>
+        <h3 className="line-clamp-2 text-[15px] font-semibold leading-snug text-ink">{title}</h3>
+        <p className="text-[13px] text-ink-soft">{instructorName}</p>
 
         <div className="flex items-center gap-1.5 text-[13px]">
-          <Star size={14} className="fill-[var(--blue-500,#3B82F6)] text-[var(--blue-500,#3B82F6)]" />
-          <span className="font-semibold text-[var(--text-primary,#0F172A)]">{rating.toFixed(1)}</span>
-          <span className="text-[var(--text-muted,#94A3B8)]">({ratingCount.toLocaleString()})</span>
+          <Star size={14} className="fill-gold text-gold" />
+          <span className="font-semibold text-ink">{rating.toFixed(1)}</span>
+          <span className="text-ink-soft/60">({ratingCount.toLocaleString()})</span>
         </div>
 
-        <div className="mt-auto pt-2 text-[17px] font-bold text-[var(--text-primary,#0F172A)]">
-          {formattedPrice}
-        </div>
+        <div className="mt-auto pt-2 font-mono text-[17px] font-semibold text-ink">{formattedPrice}</div>
       </div>
     </Link>
   );
 }
-
 
 
 ================================================================================
@@ -1928,25 +3110,19 @@ export function EmptyState({ icon, title, description, action, className }: Empt
   return (
     <div
       className={cn(
-        "flex flex-col items-center justify-center gap-3 rounded-2xl border border-dashed",
-        "border-[var(--border-hairline-strong,rgba(15,23,42,0.14))] px-8 py-16 text-center",
+        "flex flex-col items-center justify-center gap-3 rounded-card border border-dashed border-line-strong px-8 py-16 text-center",
         className
       )}
     >
-      <div className="flex h-12 w-12 items-center justify-center rounded-full bg-[var(--blue-50,#EFF6FF)] text-[var(--blue-500,#3B82F6)]">
+      <div className="flex h-12 w-12 items-center justify-center rounded-full bg-gold-tint text-gold-dark">
         {icon ?? <Inbox size={22} />}
       </div>
-      <h3 className="text-[18px] font-semibold text-[var(--text-primary,#0F172A)]">{title}</h3>
-      {description && (
-        <p className="max-w-[420px] text-[14px] text-[var(--text-secondary,#475569)]">
-          {description}
-        </p>
-      )}
+      <h3 className="font-display text-[18px] font-semibold text-ink">{title}</h3>
+      {description && <p className="max-w-[420px] text-[14px] text-ink-soft">{description}</p>}
       {action && <div className="mt-2">{action}</div>}
     </div>
   );
 }
-
 
 
 ================================================================================
@@ -1990,15 +3166,9 @@ export function FilterSidebar({
   };
 
   return (
-    <aside
-      className={cn(
-        "flex w-full flex-col gap-8 rounded-2xl border border-[var(--border-hairline,rgba(15,23,42,0.08))]",
-        "bg-[var(--surface-card,#FFFFFF)] p-6",
-        className
-      )}
-    >
+    <aside className={cn("flex w-full flex-col gap-8 rounded-card border border-line bg-card p-6", className)}>
       <div>
-        <h4 className="mb-3 text-[13px] font-semibold uppercase tracking-[0.06em] text-[var(--text-muted,#94A3B8)]">
+        <h4 className="mb-3 text-[13px] font-semibold uppercase tracking-[0.06em] text-ink-soft/70">
           Category
         </h4>
         <div className="flex flex-col gap-2.5">
@@ -2013,37 +3183,32 @@ export function FilterSidebar({
         </div>
       </div>
 
-      <div>
-        <Select
-          label="Skill level"
-          placeholder="All levels"
-          options={levelOptions}
-          value={value.level ?? ""}
-          onChange={(e) => onChange({ ...value, level: e.target.value || undefined })}
-        />
-      </div>
+      <Select
+        label="Skill level"
+        placeholder="All levels"
+        options={levelOptions}
+        value={value.level ?? ""}
+        onChange={(e) => onChange({ ...value, level: e.target.value || undefined })}
+      />
 
-      <div>
-        <Select
-          label="Language"
-          placeholder="All languages"
-          options={languageOptions}
-          value={value.language ?? ""}
-          onChange={(e) => onChange({ ...value, language: e.target.value || undefined })}
-        />
-      </div>
+      <Select
+        label="Language"
+        placeholder="All languages"
+        options={languageOptions}
+        value={value.language ?? ""}
+        onChange={(e) => onChange({ ...value, language: e.target.value || undefined })}
+      />
 
       <button
         type="button"
         onClick={() => onChange({ categories: [], level: undefined, language: undefined })}
-        className="text-left text-[13px] font-medium text-[var(--blue-600,#2563EB)] hover:underline"
+        className="text-left text-[13px] font-medium text-gold-dark hover:underline"
       >
         Clear all filters
       </button>
     </aside>
   );
 }
-
 
 
 ================================================================================
@@ -2065,10 +3230,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
     return (
       <div className="flex flex-col gap-1.5">
         {label && (
-          <label
-            htmlFor={inputId}
-            className="text-[13px] font-semibold text-[var(--text-primary,#0F172A)]"
-          >
+          <label htmlFor={inputId} className="text-[13px] font-semibold text-ink">
             {label}
           </label>
         )}
@@ -2076,28 +3238,25 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
           ref={ref}
           id={inputId}
           className={cn(
-            "h-11 w-full rounded-[10px] border bg-[var(--surface-card,#FFFFFF)] px-3.5 text-[15px]",
-            "border-[var(--border-hairline-strong,rgba(15,23,42,0.14))]",
-            "text-[var(--text-primary,#0F172A)] placeholder:text-[var(--text-muted,#94A3B8)]",
-            "outline-none transition-all duration-150 ease-out",
-            "focus:border-[var(--blue-500,#3B82F6)] focus:shadow-[0_0_16px_rgba(59,130,246,0.25)]",
-            error && "border-[#EF4444] focus:border-[#EF4444] focus:shadow-none",
+            "h-11 w-full rounded-control border border-line-strong bg-card px-3.5 text-[15px] text-ink",
+            "placeholder:text-ink-soft/50 outline-none transition-colors duration-150 ease-out",
+            "focus:border-gold",
+            error && "border-error focus:border-error",
             className
           )}
           aria-invalid={Boolean(error)}
           {...props}
         />
         {error ? (
-          <p className="text-[13px] text-[#EF4444]">{error}</p>
+          <p className="text-[13px] text-error">{error}</p>
         ) : helperText ? (
-          <p className="text-[13px] text-[var(--text-secondary,#475569)]">{helperText}</p>
+          <p className="text-[13px] text-ink-soft">{helperText}</p>
         ) : null}
       </div>
     );
   }
 );
 Input.displayName = "Input";
-
 
 
 ================================================================================
@@ -2131,43 +3290,32 @@ export function Modal({ open, onClose, title, children, footer, size = "md" }: M
   if (!open) return null;
 
   return (
-    <div
-      className="fixed inset-0 z-50 flex items-center justify-center p-4"
-      role="dialog"
-      aria-modal="true"
-    >
-      <div
-        className="absolute inset-0 bg-[rgba(11,17,32,0.5)] backdrop-blur-[4px]"
-        onClick={onClose}
-      />
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4" role="dialog" aria-modal="true">
+      <div className="absolute inset-0 bg-ink/40" onClick={onClose} />
       <div
         className={cn(
-          "relative w-full rounded-[24px] bg-[var(--surface-overlay,var(--surface-card,#FFFFFF))] p-6 shadow-[0_24px_64px_rgba(30,64,175,0.18)]",
-          "animate-[modal-in_220ms_cubic-bezier(0.16,1,0.3,1)]",
+          "relative w-full rounded-card border border-line bg-card p-6",
           size === "lg" ? "max-w-[720px]" : "max-w-[520px]"
         )}
       >
         {title && (
           <div className="mb-4 flex items-center justify-between">
-            <h2 className="text-[20px] font-semibold text-[var(--text-primary,#0F172A)]">{title}</h2>
+            <h2 className="font-display text-[20px] font-semibold text-ink">{title}</h2>
             <button
               onClick={onClose}
               aria-label="Close"
-              className="flex h-9 w-9 items-center justify-center rounded-full text-[var(--text-secondary,#475569)] transition-colors hover:bg-[var(--surface-elevated,#F1F5F9)]"
+              className="flex h-9 w-9 items-center justify-center rounded-full text-ink-soft transition-colors hover:bg-paper-dim"
             >
               <X size={18} />
             </button>
           </div>
         )}
         <div>{children}</div>
-        {footer && (
-          <div className="mt-6 flex justify-end gap-3">{footer}</div>
-        )}
+        {footer && <div className="mt-6 flex justify-end gap-3">{footer}</div>}
       </div>
     </div>
   );
 }
-
 
 
 ================================================================================
@@ -2202,32 +3350,17 @@ export function ReviewCard({
   }).format(new Date(createdAt));
 
   return (
-    <div
-      className={cn(
-        "rounded-2xl border border-[var(--border-hairline,rgba(15,23,42,0.08))] bg-[var(--surface-card,#FFFFFF)] p-6",
-        className
-      )}
-    >
+    <div className={cn("rounded-card border border-line bg-card p-6", className)}>
       <div className="mb-3 flex items-center gap-1">
         {Array.from({ length: 5 }).map((_, i) => (
-          <Star
-            key={i}
-            size={15}
-            className={
-              i < Math.round(rating)
-                ? "fill-[var(--blue-500,#3B82F6)] text-[var(--blue-500,#3B82F6)]"
-                : "text-[var(--border-hairline-strong,rgba(15,23,42,0.14))]"
-            }
-          />
+          <Star key={i} size={15} className={i < Math.round(rating) ? "fill-gold text-gold" : "text-line-strong"} />
         ))}
       </div>
 
-      <p className="mb-4 text-[15px] leading-relaxed text-[var(--text-primary,#0F172A)]">
-        {comment}
-      </p>
+      <p className="mb-4 text-[15px] leading-relaxed text-ink">{comment}</p>
 
       <div className="flex items-center gap-3">
-        <div className="flex h-9 w-9 items-center justify-center overflow-hidden rounded-full bg-[var(--blue-50,#EFF6FF)] text-[13px] font-semibold text-[var(--blue-600,#2563EB)]">
+        <div className="flex h-9 w-9 items-center justify-center overflow-hidden rounded-full bg-teal-light text-[13px] font-semibold text-teal">
           {authorAvatarUrl ? (
             // eslint-disable-next-line @next/next/no-img-element
             <img src={authorAvatarUrl} alt={authorName} className="h-full w-full object-cover" />
@@ -2237,20 +3370,15 @@ export function ReviewCard({
         </div>
         <div>
           <div className="flex items-center gap-1.5">
-            <span className="text-[13px] font-semibold text-[var(--text-primary,#0F172A)]">
-              {authorName}
-            </span>
-            {verifiedPurchase && (
-              <BadgeCheck size={14} className="text-[var(--success,#14B8A6)]" />
-            )}
+            <span className="text-[13px] font-semibold text-ink">{authorName}</span>
+            {verifiedPurchase && <BadgeCheck size={14} className="text-teal" />}
           </div>
-          <span className="text-[12px] text-[var(--text-muted,#94A3B8)]">{formattedDate}</span>
+          <span className="text-[12px] text-ink-soft/60">{formattedDate}</span>
         </div>
       </div>
     </div>
   );
 }
-
 
 
 ================================================================================
@@ -2280,10 +3408,7 @@ export const Select = forwardRef<HTMLSelectElement, SelectProps>(
     return (
       <div className="flex flex-col gap-1.5">
         {label && (
-          <label
-            htmlFor={selectId}
-            className="text-[13px] font-semibold text-[var(--text-primary,#0F172A)]"
-          >
+          <label htmlFor={selectId} className="text-[13px] font-semibold text-ink">
             {label}
           </label>
         )}
@@ -2292,12 +3417,9 @@ export const Select = forwardRef<HTMLSelectElement, SelectProps>(
             ref={ref}
             id={selectId}
             className={cn(
-              "h-11 w-full appearance-none rounded-[10px] border bg-[var(--surface-card,#FFFFFF)] px-3.5 pr-10 text-[15px]",
-              "border-[var(--border-hairline-strong,rgba(15,23,42,0.14))]",
-              "text-[var(--text-primary,#0F172A)]",
-              "outline-none transition-all duration-150 ease-out",
-              "focus:border-[var(--blue-500,#3B82F6)] focus:shadow-[0_0_16px_rgba(59,130,246,0.25)]",
-              error && "border-[#EF4444] focus:border-[#EF4444] focus:shadow-none",
+              "h-11 w-full appearance-none rounded-control border border-line-strong bg-card px-3.5 pr-10 text-[15px] text-ink",
+              "outline-none transition-colors duration-150 ease-out focus:border-gold",
+              error && "border-error focus:border-error",
               className
             )}
             aria-invalid={Boolean(error)}
@@ -2316,20 +3438,19 @@ export const Select = forwardRef<HTMLSelectElement, SelectProps>(
           </select>
           <ChevronDown
             size={18}
-            className="pointer-events-none absolute right-3.5 top-1/2 -translate-y-1/2 text-[var(--text-secondary,#475569)]"
+            className="pointer-events-none absolute right-3.5 top-1/2 -translate-y-1/2 text-ink-soft"
           />
         </div>
         {error ? (
-          <p className="text-[13px] text-[#EF4444]">{error}</p>
+          <p className="text-[13px] text-error">{error}</p>
         ) : helperText ? (
-          <p className="text-[13px] text-[var(--text-secondary,#475569)]">{helperText}</p>
+          <p className="text-[13px] text-ink-soft">{helperText}</p>
         ) : null}
       </div>
     );
   }
 );
 Select.displayName = "Select";
-
 
 
 ================================================================================
@@ -2341,28 +3462,14 @@ import { cn } from "../cn";
 export type SkeletonProps = HTMLAttributes<HTMLDivElement>;
 
 export function Skeleton({ className, ...props }: SkeletonProps) {
-  return (
-    <div
-      className={cn(
-        "animate-pulse rounded-[10px] bg-[var(--surface-elevated,#F1F5F9)]",
-        "bg-[linear-gradient(90deg,var(--surface-elevated,#F1F5F9)_0%,rgba(96,165,250,0.12)_50%,var(--surface-elevated,#F1F5F9)_100%)]",
-        "bg-[length:200%_100%]",
-        className
-      )}
-      {...props}
-    />
-  );
+  return <div className={cn("animate-pulse rounded-control bg-paper-dim", className)} {...props} />;
 }
 
 export function SkeletonText({ lines = 3 }: { lines?: number }) {
   return (
     <div className="flex flex-col gap-2">
       {Array.from({ length: lines }).map((_, i) => (
-        <Skeleton
-          key={i}
-          className="h-4"
-          style={{ width: i === lines - 1 ? "60%" : "100%" }}
-        />
+        <Skeleton key={i} className="h-4" style={{ width: i === lines - 1 ? "60%" : "100%" }} />
       ))}
     </div>
   );
@@ -2370,14 +3477,13 @@ export function SkeletonText({ lines = 3 }: { lines?: number }) {
 
 export function SkeletonCard() {
   return (
-    <div className="rounded-2xl border border-[var(--border-hairline,rgba(15,23,42,0.08))] p-6">
+    <div className="rounded-card border border-line p-6">
       <Skeleton className="mb-4 h-40 w-full" />
       <Skeleton className="mb-2 h-5 w-3/4" />
       <SkeletonText lines={2} />
     </div>
   );
 }
-
 
 
 ================================================================================
@@ -2399,10 +3505,7 @@ export const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
     return (
       <div className="flex flex-col gap-1.5">
         {label && (
-          <label
-            htmlFor={textareaId}
-            className="text-[13px] font-semibold text-[var(--text-primary,#0F172A)]"
-          >
+          <label htmlFor={textareaId} className="text-[13px] font-semibold text-ink">
             {label}
           </label>
         )}
@@ -2411,28 +3514,24 @@ export const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
           id={textareaId}
           rows={rows}
           className={cn(
-            "w-full resize-y rounded-[10px] border bg-[var(--surface-card,#FFFFFF)] px-3.5 py-3 text-[15px] leading-[1.55]",
-            "border-[var(--border-hairline-strong,rgba(15,23,42,0.14))]",
-            "text-[var(--text-primary,#0F172A)] placeholder:text-[var(--text-muted,#94A3B8)]",
-            "outline-none transition-all duration-150 ease-out",
-            "focus:border-[var(--blue-500,#3B82F6)] focus:shadow-[0_0_16px_rgba(59,130,246,0.25)]",
-            error && "border-[#EF4444] focus:border-[#EF4444] focus:shadow-none",
+            "w-full resize-y rounded-control border border-line-strong bg-card px-3.5 py-3 text-[15px] leading-[1.55] text-ink",
+            "placeholder:text-ink-soft/50 outline-none transition-colors duration-150 ease-out focus:border-gold",
+            error && "border-error focus:border-error",
             className
           )}
           aria-invalid={Boolean(error)}
           {...props}
         />
         {error ? (
-          <p className="text-[13px] text-[#EF4444]">{error}</p>
+          <p className="text-[13px] text-error">{error}</p>
         ) : helperText ? (
-          <p className="text-[13px] text-[var(--text-secondary,#475569)]">{helperText}</p>
+          <p className="text-[13px] text-ink-soft">{helperText}</p>
         ) : null}
       </div>
     );
   }
 );
 Textarea.displayName = "Textarea";
-
 
 
 ================================================================================

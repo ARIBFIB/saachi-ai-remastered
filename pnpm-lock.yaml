@@ -93,6 +93,9 @@ importers:
       '@hookform/resolvers':
         specifier: ^3.9.0
         version: 3.10.0(react-hook-form@7.84.0(react@18.3.1))
+      '@saachi/store':
+        specifier: workspace:*
+        version: link:../../packages/store
       '@tanstack/react-query':
         specifier: ^5.56.0
         version: 5.101.4(react@18.3.1)
@@ -196,6 +199,16 @@ importers:
         version: 5.9.3
 
   packages/config: {}
+
+  packages/store:
+    dependencies:
+      zustand:
+        specifier: ^4.5.0
+        version: 4.5.7(@types/react@18.3.31)(react@18.3.1)
+    devDependencies:
+      typescript:
+        specifier: ^5.5.0
+        version: 5.9.3
 
   packages/ui:
     dependencies:

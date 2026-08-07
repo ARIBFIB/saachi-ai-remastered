@@ -7,7 +7,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { loginSchema, type LoginInput } from "@saachi/utils";
 import { useLogin } from "@saachi/api-client";
-import { Button, Card } from "@saachi/ui";
+import { Button, Card, Input } from "@saachi/ui";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -37,70 +37,43 @@ export default function LoginPage() {
   };
 
   return (
-    <Card>
-      <h1 style={{ fontSize: "24px", fontWeight: 700, marginBottom: "4px" }}>Welcome back</h1>
-      <p style={{ color: "var(--text-secondary)", fontSize: "14px", marginBottom: "24px" }}>
+    <Card className="w-full max-w-[420px] p-8">
+      <h1 className="font-display text-[24px] font-semibold text-ink">Welcome back</h1>
+      <p className="mb-6 mt-1 text-[14px] text-ink-soft">
         Log in to continue learning or teaching on Saachi AI.
       </p>
 
-      <form onSubmit={handleSubmit(onSubmit)} style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
-        <div>
-          <label style={{ display: "block", fontSize: "13px", fontWeight: 600, marginBottom: "6px" }}>
-            Email
-          </label>
-          <input
-            type="email"
-            {...register("email")}
-            style={{
-              width: "100%",
-              height: "44px",
-              padding: "0 14px",
-              borderRadius: "10px",
-              border: "1px solid rgba(15,23,42,0.14)",
-              fontSize: "15px"
-            }}
-            placeholder="you@example.com"
-          />
-          {errors.email && (
-            <p style={{ color: "#EF4444", fontSize: "13px", marginTop: "4px" }}>{errors.email.message}</p>
-          )}
-        </div>
+      <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
+        <Input
+          label="Email"
+          type="email"
+          placeholder="you@example.com"
+          {...register("email")}
+          error={errors.email?.message}
+        />
+        <Input
+          label="Password"
+          type="password"
+          placeholder="********"
+          {...register("password")}
+          error={errors.password?.message}
+        />
 
-        <div>
-          <label style={{ display: "block", fontSize: "13px", fontWeight: 600, marginBottom: "6px" }}>
-            Password
-          </label>
-          <input
-            type="password"
-            {...register("password")}
-            style={{
-              width: "100%",
-              height: "44px",
-              padding: "0 14px",
-              borderRadius: "10px",
-              border: "1px solid rgba(15,23,42,0.14)",
-              fontSize: "15px"
-            }}
-            placeholder="********"
-          />
-          {errors.password && (
-            <p style={{ color: "#EF4444", fontSize: "13px", marginTop: "4px" }}>{errors.password.message}</p>
-          )}
-        </div>
-
-        {serverError && (
-          <p style={{ color: "#EF4444", fontSize: "13px" }}>{serverError}</p>
-        )}
+        {serverError && <p className="text-[13px] text-error">{serverError}</p>}
 
         <Button type="submit" size="lg" disabled={isSubmitting || loginMutation.isPending}>
-          {isSubmitting || loginMutation.isPending ? "Logging in..." : "Log In"}
+          {isSubmitting || loginMutation.isPending ? "Logging inâ€¦" : "Log In"}
         </Button>
       </form>
 
-      <div style={{ marginTop: "20px", fontSize: "14px", textAlign: "center", color: "var(--text-secondary)" }}>
-        <Link href="/forgot-password">Forgot password?</Link>
-        <span style={{ margin: "0 8px" }}>&middot;</span>
-        <Link href="/register">Create an account</Link>
+      <div className="mt-5 text-center text-[14px] text-ink-soft">
+        <Link href="/forgot-password" className="hover:text-ink">
+          Forgot password?
+        </Link>
+        <span className="mx-2">Â·</span>
+        <Link href="/register" className="hover:text-ink">
+          Create an account
+        </Link>
       </div>
     </Card>
   );

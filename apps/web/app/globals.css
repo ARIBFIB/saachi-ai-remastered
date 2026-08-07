@@ -1,83 +1,41 @@
+﻿@import url("https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap");
 @import "tailwindcss";
 
-:root {
-  /* Core blue scale */
-  --blue-50:  #EFF6FF;
-  --blue-100: #DBEAFE;
-  --blue-200: #BFDBFE;
-  --blue-300: #93C5FD;
-  --blue-400: #60A5FA;
-  --blue-500: #3B82F6;
-  --blue-600: #2563EB;
-  --blue-700: #1D4ED8;
-  --blue-800: #1E40AF;
-  --blue-900: #1E3A8A;
-  --blue-950: #0B1120;
+@theme {
+  /* Ink / text */
+  --color-ink: #14171f;
+  --color-ink-soft: #3a3f4c;
 
-  --cyan-400: #22D3EE;
-  --cyan-500: #06B6D4;
-  --indigo-400: #818CF8;
-  --slate-ink: #0F172A;
+  /* Surfaces */
+  --color-paper: #faf8f3;
+  --color-paper-dim: #f1ece0;
+  --color-card: #ffffff;
 
-  --success: #14B8A6;
-  --success-bg: #ECFDF5;
-  --warning: #F59E0B;
-  --warning-bg: #FFFBEB;
-  --error: #EF4444;
-  --error-bg: #FEF2F2;
-  --info: #3B82F6;
+  /* Lines */
+  --color-line: #e7e1d3;
+  --color-line-strong: #d8cfb8;
 
-  /* Light theme surfaces */
-  --surface-bg:        #F8FAFC;
-  --surface-bg-tint:   #EFF6FF;
-  --surface-card:      #FFFFFF;
-  --surface-elevated:  #F1F5F9;
-  --surface-overlay:   #FFFFFF;
-  --border-hairline:        rgba(15, 23, 42, 0.08);
-  --border-hairline-strong: rgba(15, 23, 42, 0.14);
-  --text-primary:   #0F172A;
-  --text-secondary: #475569;
-  --text-muted:     #94A3B8;
+  /* Primary accent - "hallmark gold" */
+  --color-gold: #e2992f;
+  --color-gold-dark: #b9761b;
+  --color-gold-tint: #fbead0;
 
-  /* Gradients */
-  --gradient-primary: linear-gradient(135deg, #2563EB 0%, #0EA5E9 50%, #22D3EE 100%);
-  --gradient-text:    linear-gradient(90deg, #60A5FA 0%, #22D3EE 50%, #818CF8 100%);
-  --gradient-card-light: linear-gradient(160deg, #FFFFFF 0%, #EFF6FF 100%);
-  --gradient-card-dark:  linear-gradient(160deg, #131C31 0%, #0B1120 100%);
-  --gradient-glow-light: radial-gradient(ellipse 60% 50% at 50% 0%, rgba(59,130,246,0.18), transparent 70%);
-  --gradient-glow-dark:  radial-gradient(ellipse 60% 50% at 50% 0%, rgba(34,211,238,0.20), transparent 70%);
-  --gradient-banner: linear-gradient(135deg, #1E3A8A 0%, #1D4ED8 45%, #0891B2 100%);
+  /* Secondary accent - "verified" teal */
+  --color-teal: #1f4b47;
+  --color-teal-light: #dceae8;
 
-  /* Shadows */
-  --shadow-xs: 0 1px 2px rgba(15, 23, 42, 0.05);
-  --shadow-sm: 0 2px 8px rgba(30, 64, 175, 0.06);
-  --shadow-md: 0 4px 20px rgba(30, 64, 175, 0.10);
-  --shadow-lg: 0 16px 40px rgba(30, 64, 175, 0.14);
-  --shadow-xl: 0 24px 64px rgba(30, 64, 175, 0.18);
-  --shadow-glow-sm: 0 0 16px rgba(59, 130, 246, 0.25);
-  --shadow-glow-md: 0 0 32px rgba(59, 130, 246, 0.35);
-  --shadow-glow-lg: 0 0 56px rgba(34, 211, 238, 0.30);
+  /* Status */
+  --color-error: #c1443b;
+  --color-error-tint: #f8e4e2;
+
+  /* Type */
+  --font-display: "Fraunces", "Georgia", serif;
+  --font-body: "Inter", -apple-system, "Segoe UI", sans-serif;
+  --font-mono: "IBM Plex Mono", "SFMono-Regular", monospace;
 
   /* Radius */
-  --radius-sm: 10px;
-  --radius-md: 16px;
-  --radius-lg: 24px;
-  --radius-pill: 999px;
-}
-
-[data-theme="dark"] {
-  --surface-bg:       #0B1120;
-  --surface-bg-tint:  #0E1729;
-  --surface-card:     #0F172A;
-  --surface-elevated: #131C31;
-  --surface-overlay:  #16213A;
-  --border-hairline:        rgba(96, 165, 250, 0.14);
-  --border-hairline-strong: rgba(96, 165, 250, 0.24);
-  --text-primary:   #F1F5F9;
-  --text-secondary: #94A3B8;
-  --text-muted:     #64748B;
-  --shadow-md:      0 4px 24px rgba(0, 0, 0, 0.40);
-  --shadow-glow-md: 0 0 40px rgba(34, 211, 238, 0.28);
+  --radius-card: 20px;
+  --radius-control: 12px;
 }
 
 * {
@@ -89,86 +47,20 @@ html {
 }
 
 body {
-  background: var(--surface-bg);
-  color: var(--text-primary);
-  font-family: "Inter", -apple-system, "Segoe UI", Roboto, sans-serif;
+  background: var(--color-paper);
+  color: var(--color-ink);
+  font-family: var(--font-body);
 }
 
-/* ---- Gradient text utility ---- */
-.text-gradient {
-  background: var(--gradient-text);
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
+h1, h2, h3 {
+  font-family: var(--font-display);
 }
 
-/* ---- Glassmorphism ---- */
-.glass {
-  background: rgba(255, 255, 255, 0.65);
-  backdrop-filter: blur(16px) saturate(160%);
-  -webkit-backdrop-filter: blur(16px) saturate(160%);
-  border: 1px solid rgba(255, 255, 255, 0.4);
-}
-[data-theme="dark"] .glass {
-  background: rgba(15, 23, 42, 0.55);
-  backdrop-filter: blur(20px) saturate(160%);
-  -webkit-backdrop-filter: blur(20px) saturate(160%);
-  border: 1px solid rgba(96, 165, 250, 0.16);
+::selection {
+  background: var(--color-gold-tint);
+  color: var(--color-ink);
 }
 
-/* ---- Animated border-beam (use on exactly one featured element) ---- */
-.border-beam-card {
-  position: relative;
-  border-radius: var(--radius-lg);
-  background: var(--surface-card);
-  overflow: hidden;
-}
-.border-beam-card::before {
-  content: "";
-  position: absolute;
-  inset: -2px;
-  border-radius: inherit;
-  padding: 1.5px;
-  background: conic-gradient(
-    from var(--beam-angle, 0deg),
-    transparent 0%,
-    transparent 70%,
-    var(--cyan-400) 85%,
-    var(--blue-400) 92%,
-    #ffffff 96%,
-    var(--blue-400) 100%
-  );
-  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
-  -webkit-mask-composite: xor;
-  mask-composite: exclude;
-  animation: beam-rotate 4s linear infinite;
-  pointer-events: none;
-}
-@property --beam-angle {
-  syntax: ''<angle>'';
-  initial-value: 0deg;
-  inherits: false;
-}
-@keyframes beam-rotate {
-  to { --beam-angle: 360deg; }
-}
-
-/* ---- Floating animation (hero mockup / chips) ---- */
-@keyframes float {
-  0%, 100% { transform: translateY(0px); }
-  50%      { transform: translateY(-10px); }
-}
-
-/* ---- Entrance animation ---- */
-@keyframes fade-slide-up {
-  from { opacity: 0; transform: translateY(16px); }
-  to   { opacity: 1; transform: translateY(0); }
-}
-.animate-fade-slide-up {
-  animation: fade-slide-up 500ms cubic-bezier(0.16, 1, 0.3, 1) both;
-}
-
-/* ---- Reduced motion ---- */
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
     animation-duration: 0.01ms !important;
