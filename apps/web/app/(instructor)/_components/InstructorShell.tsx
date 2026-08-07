@@ -14,7 +14,10 @@ import {
   Settings,
   LogOut,
   Menu,
-  X
+  X,
+  Rocket,
+  Users2,
+  ShieldCheck
 } from "lucide-react";
 import { useSession, useLogout } from "@saachi/api-client";
 import { cn } from "@saachi/ui";
@@ -25,8 +28,11 @@ const NAV_ITEMS = [
   { label: "Create Course", href: "/instructor/courses/new", icon: PlusCircle },
   { label: "Analytics", href: "/instructor/analytics", icon: BarChart3 },
   { label: "Earnings & Payouts", href: "/instructor/earnings", icon: Wallet },
+  { label: "Promotions", href: "/instructor/promotions", icon: Rocket },
+  { label: "Mentorship", href: "/instructor/mentorship", icon: Users2 },
   { label: "Reviews", href: "/instructor/reviews", icon: Star },
   { label: "Students", href: "/instructor/students", icon: Users },
+  { label: "Verification", href: "/instructor/verification", icon: ShieldCheck },
   { label: "Settings", href: "/instructor/settings", icon: Settings }
 ];
 
