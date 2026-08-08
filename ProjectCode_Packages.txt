@@ -1,7 +1,7 @@
 ﻿================================================================================
 MODULE CODE EXPORT: Packages
-Generated: 2026-08-08 04:10:16
-Total Files: 72
+Generated: 2026-08-08 04:51:29
+Total Files: 76
 ================================================================================
 
 
@@ -4458,6 +4458,63 @@ export function ThemeToggle({ className }: { className?: string }) {
 
 
 ================================================================================
+FILE: packages\ui\src\Button.tsx
+================================================================================
+"use client";
+
+import { forwardRef } from "react";
+import type { ButtonHTMLAttributes } from "react";
+
+type ButtonVariant = "primary" | "secondary" | "ghost" | "danger";
+type ButtonSize = "sm" | "md" | "lg";
+
+type ButtonProps = ButtonHTMLAttributes<HTMLButtonElement> & {
+  variant?: ButtonVariant;
+  size?: ButtonSize;
+};
+
+const BASE =
+  "inline-flex items-center justify-center gap-1.5 rounded-control font-medium whitespace-nowrap " +
+  "transition-colors duration-150 ease-out outline-none " +
+  "focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-ink " +
+  "disabled:cursor-not-allowed disabled:opacity-45 " +
+  "active:enabled:scale-[0.97]";
+
+const SIZE_CLASSES: Record<ButtonSize, string> = {
+  sm: "h-8 px-3 text-[12.5px]",
+  md: "h-9 px-4 text-[13px]",
+  lg: "h-11 px-5 text-[14px]"
+};
+
+const VARIANT_CLASSES: Record<ButtonVariant, string> = {
+  primary:
+    "bg-ink text-paper border border-ink " +
+    "hover:enabled:bg-ink/90 " +
+    "[data-theme=dark]_&:hover:enabled:bg-ink/80",
+  secondary:
+    "bg-card text-ink border border-line-strong " +
+    "hover:enabled:bg-paper-dim hover:enabled:border-line-strong",
+  ghost:
+    "bg-transparent text-ink-soft border border-transparent " +
+    "hover:enabled:bg-paper-dim hover:enabled:text-ink",
+  danger:
+    "bg-error text-paper border border-error " +
+    "hover:enabled:bg-error/90"
+};
+
+export const Button = forwardRef<HTMLButtonElement, ButtonProps>(function Button(
+  { variant = "primary", size = "md", className = "", type = "button", ...props },
+  ref
+) {
+  const classes = [BASE, SIZE_CLASSES[size], VARIANT_CLASSES[variant], className]
+    .filter(Boolean)
+    .join(" ");
+
+  return <button ref={ref} type={type} className={classes} {...props} />;
+});
+
+
+================================================================================
 FILE: packages\ui\src\cn.ts
 ================================================================================
 import { clsx, type ClassValue } from "clsx";
@@ -4467,6 +4524,60 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
+
+
+================================================================================
+FILE: packages\ui\src\HelpTooltip.tsx
+================================================================================
+"use client";
+
+import { useEffect, useRef, useState } from "react";
+import { HelpCircle } from "lucide-react";
+
+type HelpTooltipProps = {
+  text: string;
+  className?: string;
+};
+
+export function HelpTooltip({ text, className = "" }: HelpTooltipProps) {
+  const [open, setOpen] = useState(false);
+  const ref = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    function handleClickOutside(e: MouseEvent) {
+      if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false);
+    }
+    if (open) document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, [open]);
+
+  return (
+    <div className={`relative inline-flex ${className}`} ref={ref}>
+      <button
+        type="button"
+        onClick={(e) => {
+          e.stopPropagation();
+          setOpen((v) => !v);
+        }}
+        onMouseEnter={() => setOpen(true)}
+        onMouseLeave={() => setOpen(false)}
+        className="flex h-6 w-6 items-center justify-center rounded-full text-ink-soft transition-colors duration-150 ease-out hover:bg-paper-dim hover:text-ink"
+        aria-label="Help"
+      >
+        <HelpCircle size={14} strokeWidth={1.75} />
+      </button>
+
+      {open && (
+        <div
+          onClick={(e) => e.stopPropagation()}
+          className="absolute left-0 top-[calc(100%+6px)] z-20 w-[260px] rounded-control border border-line bg-card p-3 text-[12px] leading-relaxed text-ink-soft shadow-lg"
+        >
+          {text}
+        </div>
+      )}
+    </div>
+  );
+}
 
 
 ================================================================================
@@ -4495,6 +4606,93 @@ export * from "./components/KpiCard";
 export * from "./components/DataTable";
 export * from "./components/StatusPill";
 
+export * from "./RefreshButton";
+
+export * from "./HelpTooltip";
+
+export * from "./Switch";
+
+export * from "./Button";
+
+
+
+================================================================================
+FILE: packages\ui\src\RefreshButton.tsx
+================================================================================
+"use client";
+
+import { useState } from "react";
+import { useQueryClient } from "@tanstack/react-query";
+import { RotateCw } from "lucide-react";
+
+type RefreshButtonProps = {
+  className?: string;
+  title?: string;
+};
+
+export function RefreshButton({ className = "", title = "Refresh" }: RefreshButtonProps) {
+  const queryClient = useQueryClient();
+  const [spinning, setSpinning] = useState(false);
+
+  const handleRefresh = async () => {
+    if (spinning) return;
+    setSpinning(true);
+    await queryClient.invalidateQueries();
+    window.setTimeout(() => setSpinning(false), 500);
+  };
+
+  return (
+    <button
+      type="button"
+      onClick={handleRefresh}
+      title={title}
+      aria-label={title}
+      className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-control border border-line text-ink-soft transition-colors duration-150 ease-out hover:border-line-strong hover:text-ink ${className}`}
+    >
+      <RotateCw size={15} strokeWidth={1.75} className={spinning ? "animate-spin" : ""} />
+    </button>
+  );
+}
+
+
+================================================================================
+FILE: packages\ui\src\Switch.tsx
+================================================================================
+"use client";
+
+type SwitchProps = {
+  checked: boolean;
+  onChange: () => void;
+  disabled?: boolean;
+  label?: string;
+  className?: string;
+};
+
+export function Switch({ checked, onChange, disabled = false, label, className = "" }: SwitchProps) {
+  return (
+    <button
+      type="button"
+      role="switch"
+      aria-checked={checked}
+      aria-label={label}
+      disabled={disabled}
+      onClick={onChange}
+      className={`relative inline-flex h-6 w-[44px] shrink-0 items-center rounded-full border outline-none
+        transition-colors duration-200 ease-out
+        focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-ink
+        disabled:cursor-not-allowed disabled:opacity-40
+        ${checked ? "bg-ink border-ink hover:bg-ink/85" : "bg-paper-dim border-line-strong hover:bg-line-strong/60"}
+        ${!disabled ? "cursor-pointer active:scale-[0.96]" : ""}
+        ${className}`}
+    >
+      <span
+        className={`inline-block h-[18px] w-[18px] transform rounded-full bg-paper shadow-md ring-1 ring-black/5
+          transition-transform duration-200 ease-out
+          ${checked ? "translate-x-[22px]" : "translate-x-[3px]"}`}
+      />
+    </button>
+  );
+}
 
 
 ================================================================================

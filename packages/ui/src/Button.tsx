@@ -1,7 +1,7 @@
 "use client";
 
-import { forwardRef } from "react";
-import type { ButtonHTMLAttributes } from "react";
+import { forwardRef, useState } from "react";
+import type { ButtonHTMLAttributes, CSSProperties } from "react";
 
 type ButtonVariant = "primary" | "secondary" | "ghost" | "danger";
 type ButtonSize = "sm" | "md" | "lg";
@@ -11,42 +11,92 @@ type ButtonProps = ButtonHTMLAttributes<HTMLButtonElement> & {
   size?: ButtonSize;
 };
 
-const BASE =
-  "inline-flex items-center justify-center gap-1.5 rounded-control font-medium whitespace-nowrap " +
-  "transition-colors duration-150 ease-out outline-none " +
-  "focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-ink " +
-  "disabled:cursor-not-allowed disabled:opacity-45 " +
-  "active:enabled:scale-[0.97]";
-
 const SIZE_CLASSES: Record<ButtonSize, string> = {
   sm: "h-8 px-3 text-[12.5px]",
   md: "h-9 px-4 text-[13px]",
   lg: "h-11 px-5 text-[14px]"
 };
 
-const VARIANT_CLASSES: Record<ButtonVariant, string> = {
-  primary:
-    "bg-ink text-paper border border-ink " +
-    "hover:enabled:bg-ink/90 " +
-    "[data-theme=dark]_&:hover:enabled:bg-ink/80",
-  secondary:
-    "bg-card text-ink border border-line-strong " +
-    "hover:enabled:bg-paper-dim hover:enabled:border-line-strong",
-  ghost:
-    "bg-transparent text-ink-soft border border-transparent " +
-    "hover:enabled:bg-paper-dim hover:enabled:text-ink",
-  danger:
-    "bg-error text-paper border border-error " +
-    "hover:enabled:bg-error/90"
+const VARIANT_STYLE: Record<ButtonVariant, { bg: string; hoverBg: string; text: string; border: string }> = {
+  primary: {
+    bg: "var(--color-ink)",
+    hoverBg: "var(--color-ink-soft)",
+    text: "var(--color-paper)",
+    border: "var(--color-ink)"
+  },
+  secondary: {
+    bg: "var(--color-card)",
+    hoverBg: "var(--color-paper-dim)",
+    text: "var(--color-ink)",
+    border: "var(--color-line-strong)"
+  },
+  ghost: {
+    bg: "transparent",
+    hoverBg: "var(--color-paper-dim)",
+    text: "var(--color-ink-soft)",
+    border: "transparent"
+  },
+  danger: {
+    bg: "var(--color-error)",
+    hoverBg: "var(--color-error)",
+    text: "var(--color-paper)",
+    border: "var(--color-error)"
+  }
 };
 
 export const Button = forwardRef<HTMLButtonElement, ButtonProps>(function Button(
-  { variant = "primary", size = "md", className = "", type = "button", ...props },
+  { variant = "primary", size = "md", className = "", type = "button", style, disabled, onMouseDown, onMouseUp, ...props },
   ref
 ) {
-  const classes = [BASE, SIZE_CLASSES[size], VARIANT_CLASSES[variant], className]
+  const [hover, setHover] = useState(false);
+  const [pressed, setPressed] = useState(false);
+
+  const v = VARIANT_STYLE[variant];
+
+  const dynamicStyle: CSSProperties = {
+    backgroundColor: disabled ? v.bg : hover ? v.hoverBg : v.bg,
+    color: v.text,
+    borderColor: v.border,
+    borderWidth: 1,
+    borderStyle: "solid",
+    opacity: disabled ? 0.45 : variant === "danger" && hover ? 0.9 : 1,
+    transform: !disabled && hover ? (pressed ? "translateY(0) scale(0.97)" : "translateY(-1px)") : "translateY(0)",
+    boxShadow: !disabled && hover ? "0 4px 10px rgba(0,0,0,0.18)" : "none",
+    transition: "background-color 150ms ease-out, transform 120ms ease-out, box-shadow 150ms ease-out, opacity 150ms ease-out",
+    cursor: disabled ? "not-allowed" : "pointer",
+    ...style
+  };
+
+  const classes = [
+    "inline-flex items-center justify-center gap-1.5 rounded-control font-medium whitespace-nowrap outline-none",
+    "focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-ink",
+    SIZE_CLASSES[size],
+    className
+  ]
     .filter(Boolean)
     .join(" ");
 
-  return <button ref={ref} type={type} className={classes} {...props} />;
+  return (
+    <button
+      ref={ref}
+      type={type}
+      disabled={disabled}
+      className={classes}
+      style={dynamicStyle}
+      onMouseEnter={() => setHover(true)}
+      onMouseLeave={() => {
+        setHover(false);
+        setPressed(false);
+      }}
+      onMouseDown={(e) => {
+        setPressed(true);
+        onMouseDown?.(e);
+      }}
+      onMouseUp={(e) => {
+        setPressed(false);
+        onMouseUp?.(e);
+      }}
+      {...props}
+    />
+  );
 });

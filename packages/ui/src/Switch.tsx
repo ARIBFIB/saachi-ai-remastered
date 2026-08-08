@@ -1,5 +1,7 @@
 "use client";
 
+import { useState } from "react";
+
 type SwitchProps = {
   checked: boolean;
   onChange: () => void;
@@ -9,6 +11,38 @@ type SwitchProps = {
 };
 
 export function Switch({ checked, onChange, disabled = false, label, className = "" }: SwitchProps) {
+  const [hover, setHover] = useState(false);
+
+  const trackStyle: React.CSSProperties = {
+    position: "relative",
+    display: "inline-flex",
+    alignItems: "center",
+    width: 44,
+    height: 24,
+    borderRadius: 999,
+    border: "1px solid",
+    borderColor: checked ? "var(--color-ink)" : "var(--color-line-strong)",
+    backgroundColor: checked ? "var(--color-ink)" : "var(--color-paper-dim)",
+    opacity: disabled ? 0.4 : hover ? 0.85 : 1,
+    cursor: disabled ? "not-allowed" : "pointer",
+    transition: "background-color 180ms ease-out, border-color 180ms ease-out, opacity 150ms ease-out",
+    outline: "none",
+    padding: 0,
+    flexShrink: 0
+  };
+
+  const knobStyle: React.CSSProperties = {
+    position: "absolute",
+    top: 2,
+    left: checked ? 22 : 2,
+    width: 18,
+    height: 18,
+    borderRadius: "50%",
+    backgroundColor: "var(--color-paper)",
+    boxShadow: "0 1px 3px rgba(0,0,0,0.35)",
+    transition: "left 180ms ease-out"
+  };
+
   return (
     <button
       type="button"
@@ -17,17 +51,12 @@ export function Switch({ checked, onChange, disabled = false, label, className =
       aria-label={label}
       disabled={disabled}
       onClick={onChange}
-      className={`relative h-6 w-11 shrink-0 rounded-full outline-none transition-colors duration-200 ease-out
-        focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-ink
-        disabled:cursor-not-allowed disabled:opacity-40
-        ${checked ? "bg-ink hover:bg-ink/85" : "bg-paper-dim hover:bg-line-strong"}
-        ${!disabled ? "cursor-pointer active:scale-[0.96]" : ""}
-        ${className}`}
+      onMouseEnter={() => setHover(true)}
+      onMouseLeave={() => setHover(false)}
+      style={trackStyle}
+      className={className}
     >
-      <span
-        className={`absolute top-0.5 h-5 w-5 rounded-full bg-paper shadow-sm transition-transform duration-200 ease-out
-          ${checked ? "translate-x-[22px]" : "translate-x-0.5"}`}
-      />
+      <span style={knobStyle} />
     </button>
   );
 }

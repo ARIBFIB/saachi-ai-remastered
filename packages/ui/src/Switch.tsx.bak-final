@@ -1,0 +1,35 @@
+"use client";
+
+type SwitchProps = {
+  checked: boolean;
+  onChange: () => void;
+  disabled?: boolean;
+  label?: string;
+  className?: string;
+};
+
+export function Switch({ checked, onChange, disabled = false, label, className = "" }: SwitchProps) {
+  return (
+    <button
+      type="button"
+      role="switch"
+      aria-checked={checked}
+      aria-label={label}
+      disabled={disabled}
+      onClick={onChange}
+      className={`relative inline-flex h-6 w-[44px] shrink-0 items-center rounded-full border outline-none
+        transition-colors duration-200 ease-out
+        focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-ink
+        disabled:cursor-not-allowed disabled:opacity-40
+        ${checked ? "bg-ink border-ink hover:bg-ink/85" : "bg-paper-dim border-line-strong hover:bg-line-strong/60"}
+        ${!disabled ? "cursor-pointer active:scale-[0.96]" : ""}
+        ${className}`}
+    >
+      <span
+        className={`inline-block h-[18px] w-[18px] transform rounded-full bg-paper shadow-md ring-1 ring-black/5
+          transition-transform duration-200 ease-out
+          ${checked ? "translate-x-[22px]" : "translate-x-[3px]"}`}
+      />
+    </button>
+  );
+}

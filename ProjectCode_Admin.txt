@@ -1,6 +1,6 @@
 ﻿================================================================================
 MODULE CODE EXPORT: Admin
-Generated: 2026-08-08 04:10:08
+Generated: 2026-08-08 04:51:18
 Total Files: 42
 ================================================================================
 
@@ -12,7 +12,7 @@ FILE: apps\admin\app\(console)\analytics\cohorts\page.tsx
 
 import { useEffect, useState } from "react";
 import { Layers } from "lucide-react";
-import { Shimmer } from "@saachi/ui";
+import { Shimmer , HelpTooltip } from "@saachi/ui";
 
 type CohortRow = {
   cohort: string;
@@ -47,7 +47,7 @@ export default function CohortAnalysisPage() {
           <Layers size={17} strokeWidth={1.75} />
         </div>
         <div>
-          <h1 className="text-[22px] font-semibold text-ink">Cohort Analysis</h1>
+          <div className="flex items-center gap-1.5"><h1 className="text-[22px] font-semibold text-ink">Cohort Analysis</h1><HelpTooltip text="Shows what percentage of each signup cohort remains active week over week. Higher retention across later weeks means learners keep coming back." /></div>
           <p className="mt-0.5 text-[13px] text-ink-soft">Weekly retention percentage by learner signup cohort.</p>
         </div>
       </div>
@@ -108,7 +108,7 @@ FILE: apps\admin\app\(console)\analytics\overview\page.tsx
 import { useEffect, useState } from "react";
 import { DollarSign, Repeat, GraduationCap, Undo2 } from "lucide-react";
 import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid } from "recharts";
-import { KpiCard, ShimmerKpiCard, ShimmerChart } from "@saachi/ui";
+import { KpiCard, ShimmerKpiCard, ShimmerChart , HelpTooltip } from "@saachi/ui";
 import { formatCurrency } from "@saachi/utils";
 
 const GMV_TREND = [
@@ -138,7 +138,7 @@ export default function AnalyticsOverviewPage() {
   return (
     <main className="mx-auto max-w-[1200px] px-4 py-8 md:px-8 md:py-10">
       <div className="mb-8">
-        <h1 className="text-[22px] font-semibold text-ink">Analytics Overview</h1>
+        <div className="flex items-center gap-1.5"><h1 className="text-[22px] font-semibold text-ink">Analytics Overview</h1><HelpTooltip text="Platform-wide financial and engagement metrics: Gross Merchandise Value, subscription revenue, course completion, and refund rates." /></div>
         <p className="mt-1 text-[13px] text-ink-soft">Platform-wide GMV, subscription revenue, completion, and refund metrics.</p>
       </div>
 
@@ -192,7 +192,7 @@ import {
   useToggleCourseFlag,
   type AdminCourse
 } from "@saachi/api-client";
-import { DataTable, StatusPill, Select } from "@saachi/ui";
+import { DataTable, StatusPill, Select , RefreshButton , HelpTooltip } from "@saachi/ui";
 import { formatCurrency, formatDate } from "@saachi/utils";
 
 const STATUS_OPTIONS = [
@@ -326,10 +326,11 @@ export default function CourseCatalogPage() {
           <LibraryBig size={17} strokeWidth={1.75} />
         </div>
         <div>
-          <h1 className="text-[22px] font-semibold text-ink">Course Catalog</h1>
+          <div className="flex items-center gap-1.5"><h1 className="text-[22px] font-semibold text-ink">Course Catalog</h1><HelpTooltip text="Every course on the platform regardless of status. Use the star and pin icons to feature or pin a course for homepage curation." /></div>
           <p className="mt-0.5 text-[13px] text-ink-soft">Full catalog across every status - feature or pin courses for curation.</p>
         </div>
       </div>
+      <div className="mb-3 flex justify-end"><RefreshButton /></div>
 
       <DataTable
         columns={columns}
@@ -376,7 +377,7 @@ import {
   useDeleteCategory,
   type AdminCategory
 } from "@saachi/api-client";
-import { Button, Card, Input, Modal, ShimmerTableRow, Badge } from "@saachi/ui";
+import { Button, Card, Input, Modal, ShimmerTableRow, Badge , HelpTooltip } from "@saachi/ui";
 
 export default function CategoryManagementPage() {
   const { data: categories, isLoading } = useAdminCategoryList();
@@ -439,7 +440,7 @@ export default function CategoryManagementPage() {
             <Tags size={17} strokeWidth={1.75} />
           </div>
           <div>
-            <h1 className="text-[22px] font-semibold text-ink">Category & Tag Management</h1>
+            <div className="flex items-center gap-1.5"><h1 className="text-[22px] font-semibold text-ink">Category & Tag Management</h1><HelpTooltip text="The taxonomy used across the marketplace and course builder. Deleting a category will require recategorizing any courses assigned to it." /></div>
             <p className="mt-0.5 text-[13px] text-ink-soft">Taxonomy used across the marketplace and course builder.</p>
           </div>
         </div>
@@ -581,7 +582,7 @@ FILE: apps\admin\app\(console)\courses\moderation\page.tsx
 import { useState } from "react";
 import { CheckCircle2, XCircle, ClipboardCheck, User, Tag } from "lucide-react";
 import { useAdminModerationQueue, useModerateCourse, type AdminCourse } from "@saachi/api-client";
-import { Button, Card, Textarea, Modal, EmptyState, ShimmerKpiCard } from "@saachi/ui";
+import { Button, Card, Textarea, Modal, EmptyState, ShimmerKpiCard , HelpTooltip } from "@saachi/ui";
 import { formatCurrency, formatDate } from "@saachi/utils";
 
 export default function CourseModerationQueuePage() {
@@ -608,7 +609,7 @@ export default function CourseModerationQueuePage() {
           <ClipboardCheck size={17} strokeWidth={1.75} />
         </div>
         <div>
-          <h1 className="text-[22px] font-semibold text-ink">Course Moderation Queue</h1>
+          <div className="flex items-center gap-1.5"><h1 className="text-[22px] font-semibold text-ink">Course Moderation Queue</h1><HelpTooltip text="Courses submitted by instructors that are waiting for approval before they go live. Approve to publish, or reject with feedback so the instructor can revise." /></div>
           <p className="mt-0.5 text-[13px] text-ink-soft">Review newly submitted courses before they go live.</p>
         </div>
       </div>
@@ -706,7 +707,7 @@ import { useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Search, History, ArrowLeft } from "lucide-react";
 import type { ColumnDef } from "@tanstack/react-table";
-import { DataTable, Select, StatusPill } from "@saachi/ui";
+import { DataTable, Select, StatusPill , RefreshButton , HelpTooltip } from "@saachi/ui";
 import { formatRelativeTime } from "@saachi/utils";
 
 type ActivityRow = {
@@ -843,10 +844,11 @@ export default function DashboardActivityPage() {
           <History size={17} strokeWidth={1.75} />
         </div>
         <div>
-          <h1 className="text-[22px] font-semibold text-ink">Recent Activity</h1>
+          <div className="flex items-center gap-1.5"><h1 className="text-[22px] font-semibold text-ink">Recent Activity</h1><HelpTooltip text="The full activity log across transactions, course submissions, support tickets, and new user signups." /></div>
           <p className="mt-0.5 text-[13px] text-ink-soft">Full activity log across transactions, courses, tickets, and users.</p>
         </div>
       </div>
+      <div className="mb-3 flex justify-end"><RefreshButton /></div>
 
       <DataTable
         columns={columns}
@@ -1385,7 +1387,7 @@ FILE: apps\admin\app\(console)\finance\refunds\page.tsx
 import { useState } from "react";
 import { Undo2, CheckCircle2, XCircle } from "lucide-react";
 import { useAdminRefunds, useResolveRefund, type AdminRefund } from "@saachi/api-client";
-import { Button, Card, Select, StatusPill, ShimmerTableRow, EmptyState, Modal } from "@saachi/ui";
+import { Button, Card, Select, StatusPill, ShimmerTableRow, EmptyState, Modal , HelpTooltip } from "@saachi/ui";
 import { formatCurrency, formatDate } from "@saachi/utils";
 
 const STATUS_OPTIONS = [
@@ -1414,7 +1416,7 @@ export default function RefundManagementPage() {
             <Undo2 size={17} strokeWidth={1.75} />
           </div>
           <div>
-            <h1 className="text-[22px] font-semibold text-ink">Refund Management</h1>
+            <div className="flex items-center gap-1.5"><h1 className="text-[22px] font-semibold text-ink">Refund Management</h1><HelpTooltip text="Learner-initiated refund requests. Approving a refund reverses the transaction and claws back the instructor's earned balance." /></div>
             <p className="mt-0.5 text-[13px] text-ink-soft">Learner refund requests - approving reverses the transaction and clawbacks instructor earnings.</p>
           </div>
         </div>
@@ -1489,7 +1491,7 @@ FILE: apps\admin\app\(console)\finance\tax-settings\page.tsx
 import { useState } from "react";
 import { Percent, Plus, Pencil, Check, X } from "lucide-react";
 import { useAdminTaxRules, useUpdateTaxRule, useCreateTaxRule, type TaxRule } from "@saachi/api-client";
-import { Button, Card, Input, Modal, ShimmerTableRow } from "@saachi/ui";
+import { Button, Card, Input, Modal, ShimmerTableRow , HelpTooltip } from "@saachi/ui";
 
 export default function TaxSettingsPage() {
   const { data: rules, isLoading } = useAdminTaxRules();
@@ -1534,7 +1536,7 @@ export default function TaxSettingsPage() {
             <Percent size={17} strokeWidth={1.75} />
           </div>
           <div>
-            <h1 className="text-[22px] font-semibold text-ink">Tax / VAT Settings</h1>
+            <div className="flex items-center gap-1.5"><h1 className="text-[22px] font-semibold text-ink">Tax / VAT Settings</h1><HelpTooltip text="Region-based tax rules that are applied automatically at checkout based on the buyer's location." /></div>
             <p className="mt-0.5 text-[13px] text-ink-soft">Region-based tax rules applied at checkout.</p>
           </div>
         </div>
@@ -1649,7 +1651,7 @@ import { useMemo, useState } from "react";
 import { Search, Receipt, Download } from "lucide-react";
 import type { ColumnDef } from "@tanstack/react-table";
 import { useAdminTransactions, type AdminTransaction } from "@saachi/api-client";
-import { DataTable, StatusPill, Select, Button } from "@saachi/ui";
+import { DataTable, StatusPill, Select, Button , RefreshButton , HelpTooltip } from "@saachi/ui";
 import { formatCurrency, formatDate } from "@saachi/utils";
 
 const STATUS_OPTIONS = [
@@ -1755,7 +1757,7 @@ export default function TransactionsLedgerPage() {
             <Receipt size={17} strokeWidth={1.75} />
           </div>
           <div>
-            <h1 className="text-[22px] font-semibold text-ink">Transactions Ledger</h1>
+            <div className="flex items-center gap-1.5"><h1 className="text-[22px] font-semibold text-ink">Transactions Ledger</h1><HelpTooltip text="A complete record of every payment processed through the platform, including the commission taken and which gateway was used." /></div>
             <p className="mt-0.5 text-[13px] text-ink-soft">Full financial transaction history across all payment gateways.</p>
           </div>
         </div>
@@ -1763,6 +1765,7 @@ export default function TransactionsLedgerPage() {
           <Download size={14} strokeWidth={1.75} /> Export CSV
         </Button>
       </div>
+      <div className="mb-3 flex justify-end"><RefreshButton /></div>
 
       <DataTable
         columns={columns}
@@ -1803,7 +1806,7 @@ FILE: apps\admin\app\(console)\logs\audit\page.tsx
 import { useMemo, useState } from "react";
 import { Search, History } from "lucide-react";
 import type { ColumnDef } from "@tanstack/react-table";
-import { DataTable, Select } from "@saachi/ui";
+import { DataTable, Select , RefreshButton , HelpTooltip } from "@saachi/ui";
 import { formatDate } from "@saachi/utils";
 
 type AuditEntry = {
@@ -1877,10 +1880,11 @@ export default function AuditLogViewerPage() {
           <History size={17} strokeWidth={1.75} />
         </div>
         <div>
-          <h1 className="text-[22px] font-semibold text-ink">Audit Log</h1>
+          <div className="flex items-center gap-1.5"><h1 className="text-[22px] font-semibold text-ink">Audit Log</h1><HelpTooltip text="A searchable, system-wide record of every action taken by internal staff, for accountability and compliance." /></div>
           <p className="mt-0.5 text-[13px] text-ink-soft">Searchable system-wide record of internal staff actions.</p>
         </div>
       </div>
+      <div className="mb-3 flex justify-end"><RefreshButton /></div>
 
       <DataTable
         columns={columns}
@@ -1925,7 +1929,7 @@ import {
   useReorderBanner,
   type AdminBanner
 } from "@saachi/api-client";
-import { Button, Card, Input, Textarea, Select, Modal, StatusPill, ShimmerKpiCard, EmptyState } from "@saachi/ui";
+import { Button, Card, Input, Textarea, Select, Modal, StatusPill, ShimmerKpiCard, EmptyState , HelpTooltip } from "@saachi/ui";
 import { formatDate } from "@saachi/utils";
 
 const STATUS_OPTIONS = [
@@ -2032,7 +2036,7 @@ export default function HomepageBannersPage() {
             <ImageIcon size={17} strokeWidth={1.75} />
           </div>
           <div>
-            <h1 className="text-[22px] font-semibold text-ink">Homepage Banners</h1>
+            <div className="flex items-center gap-1.5"><h1 className="text-[22px] font-semibold text-ink">Homepage Banners</h1><HelpTooltip text="Promotional banners shown on the homepage. Use the arrows to reorder, and schedule start/end dates to control when each one is active." /></div>
             <p className="mt-0.5 text-[13px] text-ink-soft">Create, schedule, and reorder homepage promotional banners.</p>
           </div>
         </div>
@@ -2173,7 +2177,7 @@ import {
   useDeleteCoupon,
   type AdminCoupon
 } from "@saachi/api-client";
-import { Button, Card, Input, Select, Modal, ShimmerTableRow, EmptyState } from "@saachi/ui";
+import { Button, Card, Input, Select, Modal, ShimmerTableRow, EmptyState , HelpTooltip } from "@saachi/ui";
 import { formatDate } from "@saachi/utils";
 
 const TYPE_OPTIONS = [
@@ -2241,7 +2245,7 @@ export default function CouponManagementPage() {
             <Ticket size={17} strokeWidth={1.75} />
           </div>
           <div>
-            <h1 className="text-[22px] font-semibold text-ink">Coupon Management</h1>
+            <div className="flex items-center gap-1.5"><h1 className="text-[22px] font-semibold text-ink">Coupon Management</h1><HelpTooltip text="Platform-wide or scoped discount codes learners can apply at checkout. Track usage against each coupon's limit here." /></div>
             <p className="mt-0.5 text-[13px] text-ink-soft">Platform-wide and scoped promotional codes.</p>
           </div>
         </div>
@@ -2380,7 +2384,7 @@ FILE: apps\admin\app\(console)\marketing\promotions\page.tsx
 
 import { Megaphone, Crown } from "lucide-react";
 import { useAdminPromotionSales, type PromotionSale } from "@saachi/api-client";
-import { Card, StatusPill, ShimmerKpiCard, ShimmerTableRow, EmptyState } from "@saachi/ui";
+import { Card, StatusPill, ShimmerKpiCard, ShimmerTableRow, EmptyState , HelpTooltip } from "@saachi/ui";
 import { formatCurrency, formatDate } from "@saachi/utils";
 
 const TIER_TONE: Record<PromotionSale["tier"], "warning" | "info" | "success"> = {
@@ -2408,7 +2412,7 @@ export default function PromotionSalesPage() {
           <Megaphone size={17} strokeWidth={1.75} />
         </div>
         <div>
-          <h1 className="text-[22px] font-semibold text-ink">Promotion Package Sales</h1>
+          <div className="flex items-center gap-1.5"><h1 className="text-[22px] font-semibold text-ink">Promotion Package Sales</h1><HelpTooltip text="Revenue and activity from instructors purchasing Bronze/Silver/Gold visibility boosts for their courses." /></div>
           <p className="mt-0.5 text-[13px] text-ink-soft">Instructor purchases of Bronze/Silver/Gold visibility boosts.</p>
         </div>
       </div>
@@ -2487,7 +2491,7 @@ FILE: apps\admin\app\(console)\moderation\forum\page.tsx
 import { useState } from "react";
 import { MessagesSquare, Trash2, ShieldAlert, CheckCircle2 } from "lucide-react";
 import { useFlaggedForumPosts, useResolveFlaggedForumPost, type FlaggedForumPost } from "@saachi/api-client";
-import { Button, Card, Select, StatusPill, ShimmerTableRow, EmptyState } from "@saachi/ui";
+import { Button, Card, Select, StatusPill, ShimmerTableRow, EmptyState , HelpTooltip } from "@saachi/ui";
 import { formatRelativeTime } from "@saachi/utils";
 
 const STATUS_OPTIONS = [
@@ -2517,7 +2521,7 @@ export default function FlaggedForumPostsPage() {
             <MessagesSquare size={17} strokeWidth={1.75} />
           </div>
           <div>
-            <h1 className="text-[22px] font-semibold text-ink">Flagged Forum Posts</h1>
+            <div className="flex items-center gap-1.5"><h1 className="text-[22px] font-semibold text-ink">Flagged Forum Posts</h1><HelpTooltip text="Community Q&A posts that have been reported. Dismiss the flag, warn the author, or remove the post." /></div>
             <p className="mt-0.5 text-[13px] text-ink-soft">Community Q&A posts reported for review.</p>
           </div>
         </div>
@@ -2587,7 +2591,7 @@ FILE: apps\admin\app\(console)\moderation\reviews\page.tsx
 import { useState } from "react";
 import { MessageSquareWarning, Trash2, ShieldAlert, CheckCircle2 } from "lucide-react";
 import { useFlaggedReviews, useResolveFlaggedReview, type FlaggedReview } from "@saachi/api-client";
-import { Button, Card, Select, StatusPill, ShimmerTableRow, EmptyState } from "@saachi/ui";
+import { Button, Card, Select, StatusPill, ShimmerTableRow, EmptyState , HelpTooltip } from "@saachi/ui";
 import { formatRelativeTime } from "@saachi/utils";
 
 const STATUS_OPTIONS = [
@@ -2617,7 +2621,7 @@ export default function FlaggedReviewsPage() {
             <MessageSquareWarning size={17} strokeWidth={1.75} />
           </div>
           <div>
-            <h1 className="text-[22px] font-semibold text-ink">Flagged Reviews</h1>
+            <div className="flex items-center gap-1.5"><h1 className="text-[22px] font-semibold text-ink">Flagged Reviews</h1><HelpTooltip text="Course reviews that have been flagged by users or automated filters. Dismiss the flag, warn the author, or remove the review." /></div>
             <p className="mt-0.5 text-[13px] text-ink-soft">Course reviews reported by instructors, learners, or automated filters.</p>
           </div>
         </div>
@@ -2689,7 +2693,7 @@ FILE: apps\admin\app\(console)\settings\commission-tiers\page.tsx
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { Landmark, Save } from "lucide-react";
-import { Button, Card, Input, ShimmerKpiCard } from "@saachi/ui";
+import { Button, Card, Input, ShimmerKpiCard , HelpTooltip } from "@saachi/ui";
 
 type Tier = {
   id: string;
@@ -2735,7 +2739,7 @@ export default function CommissionTierConfigurationPage() {
             <Landmark size={17} strokeWidth={1.75} />
           </div>
           <div>
-            <h1 className="text-[22px] font-semibold text-ink">Commission Tier Configuration</h1>
+            <div className="flex items-center gap-1.5"><h1 className="text-[22px] font-semibold text-ink">Commission Tier Configuration</h1><HelpTooltip text="The commission percentage the platform retains from each course sale, based on the instructor's trust tier." /></div>
             <p className="mt-0.5 text-[13px] text-ink-soft">Trust-tier commission rates applied to instructor course sales.</p>
           </div>
         </div>
@@ -2785,7 +2789,7 @@ FILE: apps\admin\app\(console)\settings\legal-documents\page.tsx
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { ScrollText, Pencil, History } from "lucide-react";
-import { Button, Card, Textarea, Modal, ShimmerTableRow } from "@saachi/ui";
+import { Button, Card, Textarea, Modal, ShimmerTableRow , HelpTooltip } from "@saachi/ui";
 import { formatDate } from "@saachi/utils";
 
 type LegalDoc = {
@@ -2839,7 +2843,7 @@ export default function LegalDocumentManagementPage() {
           <ScrollText size={17} strokeWidth={1.75} />
         </div>
         <div>
-          <h1 className="text-[22px] font-semibold text-ink">Legal Document Management</h1>
+          <div className="flex items-center gap-1.5"><h1 className="text-[22px] font-semibold text-ink">Legal Document Management</h1><HelpTooltip text="Versioned legal documents shown to users. Publishing an edit bumps the version number and updates the live copy." /></div>
           <p className="mt-0.5 text-[13px] text-ink-soft">Versioned editor for Terms, Privacy, Refund Policy, and Instructor Agreement.</p>
         </div>
       </div>
@@ -2897,7 +2901,7 @@ FILE: apps\admin\app\(console)\settings\payment-gateways\page.tsx
 
 import { useState } from "react";
 import { CreditCard, Pencil, Eye, EyeOff } from "lucide-react";
-import { Button, Card, Input, Modal } from "@saachi/ui";
+import { Button, Card, Input, Modal , HelpTooltip , Switch } from "@saachi/ui";
 
 type Gateway = {
   id: string;
@@ -2945,7 +2949,7 @@ export default function PaymentGatewayConfigurationPage() {
           <CreditCard size={17} strokeWidth={1.75} />
         </div>
         <div>
-          <h1 className="text-[22px] font-semibold text-ink">Payment Gateway Configuration</h1>
+          <div className="flex items-center gap-1.5"><h1 className="text-[22px] font-semibold text-ink">Payment Gateway Configuration</h1><HelpTooltip text="Enable or disable payment gateways and manage their API keys. Keys are masked once saved." /></div>
           <p className="mt-0.5 text-[13px] text-ink-soft">Enable gateways and manage API keys (masked at rest).</p>
         </div>
       </div>
@@ -2961,19 +2965,7 @@ export default function PaymentGatewayConfigurationPage() {
               <p className="mt-1 font-mono text-[12.5px] text-ink-soft">{gateway.apiKeyMasked}</p>
             </div>
             <div className="flex shrink-0 items-center gap-3">
-              <button
-                type="button"
-                onClick={() => toggleEnabled(gateway.id)}
-                className={`relative h-6 w-11 shrink-0 rounded-full transition-colors duration-150 ease-out ${
-                  gateway.enabled ? "bg-ink" : "bg-paper-dim"
-                }`}
-              >
-                <span
-                  className={`absolute top-0.5 h-5 w-5 rounded-full bg-paper transition-transform duration-150 ease-out ${
-                    gateway.enabled ? "translate-x-[22px]" : "translate-x-0.5"
-                  }`}
-                />
-              </button>
+              <Switch checked={gateway.enabled} onChange={() => toggleEnabled(gateway.id)} />
               <button
                 type="button"
                 onClick={() => openEdit(gateway)}
@@ -3026,7 +3018,7 @@ FILE: apps\admin\app\(console)\settings\platform\page.tsx
 
 import { useState } from "react";
 import { SlidersHorizontal, Save } from "lucide-react";
-import { Button, Card, Input, Select } from "@saachi/ui";
+import { Button, Card, Input, Select , HelpTooltip , Switch } from "@saachi/ui";
 
 const CURRENCY_OPTIONS = [
   { label: "USD - US Dollar", value: "USD" },
@@ -3066,7 +3058,7 @@ export default function PlatformSettingsPage() {
             <SlidersHorizontal size={17} strokeWidth={1.75} />
           </div>
           <div>
-            <h1 className="text-[22px] font-semibold text-ink">Platform Settings</h1>
+            <div className="flex items-center gap-1.5"><h1 className="text-[22px] font-semibold text-ink">Platform Settings</h1><HelpTooltip text="Site-wide identity settings, default currency, and feature flags that turn platform capabilities on or off." /></div>
             <p className="mt-0.5 text-[13px] text-ink-soft">Site identity, default currency, and feature flags.</p>
           </div>
         </div>
@@ -3091,19 +3083,7 @@ export default function PlatformSettingsPage() {
                 <p className="text-[13.5px] font-medium text-ink">{flag.label}</p>
                 <p className="mt-0.5 text-[12px] text-ink-soft">{flag.description}</p>
               </div>
-              <button
-                type="button"
-                onClick={() => toggleFlag(flag.key)}
-                className={`relative h-6 w-11 shrink-0 rounded-full transition-colors duration-150 ease-out ${
-                  flag.enabled ? "bg-ink" : "bg-paper-dim"
-                }`}
-              >
-                <span
-                  className={`absolute top-0.5 h-5 w-5 rounded-full bg-paper transition-transform duration-150 ease-out ${
-                    flag.enabled ? "translate-x-[22px]" : "translate-x-0.5"
-                  }`}
-                />
-              </button>
+              <Switch checked={flag.enabled} onChange={() => toggleFlag(flag.key)} />
             </div>
           ))}
         </div>
@@ -3121,7 +3101,7 @@ FILE: apps\admin\app\(console)\settings\roles\page.tsx
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { ShieldCheck, Plus, Check, X } from "lucide-react";
-import { Button, Card, Input, Select, Modal, Badge, ShimmerTableRow } from "@saachi/ui";
+import { Button, Card, Input, Select, Modal, Badge, ShimmerTableRow , HelpTooltip } from "@saachi/ui";
 
 type StaffRole = "super_admin" | "admin" | "finance_officer" | "support_officer";
 
@@ -3195,7 +3175,7 @@ export default function RolesPermissionsPage() {
             <ShieldCheck size={17} strokeWidth={1.75} />
           </div>
           <div>
-            <h1 className="text-[22px] font-semibold text-ink">Roles & Permissions</h1>
+            <div className="flex items-center gap-1.5"><h1 className="text-[22px] font-semibold text-ink">Roles & Permissions</h1><HelpTooltip text="Internal staff accounts and what each role is permitted to do, shown in the permission matrix below." /></div>
             <p className="mt-0.5 text-[13px] text-ink-soft">Internal staff accounts and their permission scope.</p>
           </div>
         </div>
@@ -3301,7 +3281,7 @@ import { useRouter } from "next/navigation";
 import { Search, LifeBuoy, AlertTriangle } from "lucide-react";
 import type { ColumnDef } from "@tanstack/react-table";
 import { useAdminTickets, type SupportTicket } from "@saachi/api-client";
-import { DataTable, StatusPill, Select } from "@saachi/ui";
+import { DataTable, StatusPill, Select , RefreshButton , HelpTooltip } from "@saachi/ui";
 import { formatRelativeTime } from "@saachi/utils";
 
 const STATUS_OPTIONS = [
@@ -3407,7 +3387,7 @@ export default function SupportTicketQueuePage() {
           <LifeBuoy size={17} strokeWidth={1.75} />
         </div>
         <div>
-          <h1 className="text-[22px] font-semibold text-ink">Support Ticket Queue</h1>
+          <div className="flex items-center gap-1.5"><h1 className="text-[22px] font-semibold text-ink">Support Ticket Queue</h1><HelpTooltip text="Learner and instructor support requests tracked against their SLA due time. Overdue tickets are highlighted in red." /></div>
           <p className="mt-0.5 text-[13px] text-ink-soft">Learner and instructor support requests, tracked against SLA.</p>
         </div>
       </div>
@@ -3459,7 +3439,7 @@ import { useRouter } from "next/navigation";
 import { Search, UserCog } from "lucide-react";
 import type { ColumnDef } from "@tanstack/react-table";
 import { useAdminUserList, type AdminUser } from "@saachi/api-client";
-import { DataTable, StatusPill, Select } from "@saachi/ui";
+import { DataTable, StatusPill, Select , RefreshButton , HelpTooltip } from "@saachi/ui";
 import { formatDate } from "@saachi/utils";
 
 const ROLE_OPTIONS = [
@@ -3556,7 +3536,7 @@ export default function AdminUsersPage() {
           <UserCog size={17} strokeWidth={1.75} />
         </div>
         <div>
-          <h1 className="text-[22px] font-semibold text-ink">User Management</h1>
+          <div className="flex items-center gap-1.5"><h1 className="text-[22px] font-semibold text-ink">User Management</h1><HelpTooltip text="All learners, instructors, and corporate accounts on the platform. Click a row to view full profile, activity, and moderation controls." /></div>
           <p className="mt-0.5 text-[13px] text-ink-soft">Learners, instructors, and corporate accounts.</p>
         </div>
       </div>
@@ -3768,20 +3748,8 @@ export function AdminShell({ children }: { children: ReactNode }) {
   };
 
   const sidebarContent = (
-    <div className="flex h-full flex-col">
-      <div className={cx("flex items-center gap-2.5 px-5 py-6", collapsed && "justify-center px-0")}>
-        <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-ink text-[13px] font-bold text-ink">
-          S
-        </span>
-        {!collapsed && (
-          <div>
-            <div className="text-[14px] font-semibold leading-none text-ink">Saachi AI</div>
-            <div className="mt-1 text-[10px] font-medium uppercase tracking-[0.08em] text-ink-soft">Admin</div>
-          </div>
-        )}
-      </div>
-
-      <nav className="flex flex-1 flex-col gap-5 overflow-y-auto px-3 pb-4">
+    <div className="flex h-full flex-col pt-[65px]">
+      <nav className="flex flex-1 flex-col gap-5 overflow-y-auto px-3 pb-4 pt-4">
         {ADMIN_NAV.map((navSection) => (
           <div key={navSection.title}>
             {!collapsed && (
@@ -3854,12 +3822,7 @@ export function AdminShell({ children }: { children: ReactNode }) {
         {sidebarContent}
       </div>
 
-      <div
-        className={cx(
-          "sticky top-0 z-40 flex items-center justify-between gap-3 border-b border-line bg-card/95 px-4 py-3 backdrop-blur-sm transition-[padding] duration-200 ease-out md:px-6",
-          collapsed ? "md:pl-[76px]" : "md:pl-[248px]"
-        )}
-      >
+      <div className="sticky top-0 z-40 flex items-center justify-between gap-3 border-b border-line bg-card/95 px-4 py-3 backdrop-blur-sm md:px-6">
         <div className="flex min-w-0 items-center gap-3">
           <button
             type="button"
@@ -4325,6 +4288,24 @@ svg {
 .admin-clickable-table table tbody tr:hover {
   background-color: var(--color-paper-dim);
 }
+/* global-button-feedback */
+button:not(:disabled) {
+  cursor: pointer;
+  transition: filter 120ms ease-out, transform 100ms ease-out, opacity 120ms ease-out;
+}
+button:not(:disabled):hover {
+  filter: brightness(0.94);
+}
+[data-theme="dark"] button:not(:disabled):hover {
+  filter: brightness(1.15);
+}
+button:not(:disabled):active {
+  transform: scale(0.97);
+}
+button:disabled {
+  cursor: not-allowed;
+}
+
 
 
 ================================================================================
