@@ -13,6 +13,7 @@ param(
 
 $configPath = Join-Path $ProjectRoot "apps\admin\next.config.js"
 
+
 if (-not (Test-Path $configPath)) {
     Write-Host "ERROR: $configPath not found." -ForegroundColor Red
     exit 1
