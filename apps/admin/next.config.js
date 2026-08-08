@@ -1,4 +1,6 @@
 /** @type {import("next").NextConfig} */
+const API_URL = process.env.NEXT_PUBLIC_API_URL || "https://api.saachi.ai";
+
 const nextConfig = {
   reactStrictMode: true,
   transpilePackages: ["@saachi/ui", "@saachi/api-client", "@saachi/utils", "@saachi/store"],
@@ -6,7 +8,7 @@ const nextConfig = {
     return [
       {
         source: "/api/proxy/:path*",
-        destination: `${process.env.NEXT_PUBLIC_API_URL}/admin/:path*`
+        destination: `${API_URL}/admin/:path*`
       }
     ];
   }
