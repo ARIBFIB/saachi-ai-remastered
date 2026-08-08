@@ -11,7 +11,13 @@ import {
   ArrowUpRight,
   HelpCircle,
   Bell,
-  ChevronRight
+  ChevronRight,
+  CheckCircle2,
+  Banknote,
+  Download,
+  Ticket as TicketIcon,
+  Activity,
+  Calendar
 } from "lucide-react";
 import {
   LineChart,
@@ -24,21 +30,62 @@ import {
   PieChart,
   Pie,
   Cell,
-  Legend
+  Legend,
+  BarChart,
+  Bar
 } from "recharts";
 import type { ColumnDef } from "@tanstack/react-table";
 import { Button, Modal, DataTable, ShimmerKpiCard, ShimmerChart, Shimmer } from "@saachi/ui";
 import { formatRelativeTime } from "@saachi/utils";
 
-const REVENUE_TREND = [
-  { day: "Mon", revenue: 1240 },
-  { day: "Tue", revenue: 1890 },
-  { day: "Wed", revenue: 1510 },
-  { day: "Thu", revenue: 2230 },
-  { day: "Fri", revenue: 2670 },
-  { day: "Sat", revenue: 1980 },
-  { day: "Sun", revenue: 2410 }
+const REVENUE_TREND: Record<string, { day: string; revenue: number }[]> = {
+  today: [
+    { day: "12am", revenue: 120 },
+    { day: "4am", revenue: 80 },
+    { day: "8am", revenue: 340 },
+    { day: "12pm", revenue: 610 },
+    { day: "4pm", revenue: 890 },
+    { day: "8pm", revenue: 720 }
+  ],
+  "7d": [
+    { day: "Mon", revenue: 1240 },
+    { day: "Tue", revenue: 1890 },
+    { day: "Wed", revenue: 1510 },
+    { day: "Thu", revenue: 2230 },
+    { day: "Fri", revenue: 2670 },
+    { day: "Sat", revenue: 1980 },
+    { day: "Sun", revenue: 2410 }
+  ],
+  "30d": [
+    { day: "W1", revenue: 9800 },
+    { day: "W2", revenue: 11200 },
+    { day: "W3", revenue: 10400 },
+    { day: "W4", revenue: 13600 }
+  ],
+  "90d": [
+    { day: "Jun", revenue: 28400 },
+    { day: "Jul", revenue: 31800 },
+    { day: "Aug", revenue: 35200 }
+  ]
+};
+
+const ENROLLMENTS_BY_CATEGORY = [
+  { category: "AI Automation", enrollments: 412 },
+  { category: "AI Marketing", enrollments: 318 },
+  { category: "AI Dev", enrollments: 276 },
+  { category: "AI Design", enrollments: 189 },
+  { category: "AI Careers", enrollments: 143 },
+  { category: "Prompt Eng.", enrollments: 224 }
 ];
+
+type DateRange = "today" | "7d" | "30d" | "90d";
+
+const RANGE_LABEL: Record<DateRange, string> = {
+  today: "Today",
+  "7d": "Last 7 days",
+  "30d": "Last 30 days",
+  "90d": "Last 90 days"
+};
 
 type PieView = "revenue" | "users" | "gateway";
 
@@ -165,12 +212,66 @@ type KpiDef = {
   help: string;
 };
 
+type QuickAction = {
+  id: string;
+  label: string;
+  icon: typeof CheckCircle2;
+  description: string;
+  confirmLabel: string;
+  href: string;
+};
+
+const QUICK_ACTIONS: QuickAction[] = [
+  {
+    id: "approve_queue",
+    label: "Approve Queue",
+    icon: CheckCircle2,
+    description: "Jump into the course moderation queue and review the 3 courses currently pending approval.",
+    confirmLabel: "Go to Moderation Queue",
+    href: "/courses/moderation"
+  },
+  {
+    id: "process_payouts",
+    label: "Process Payouts",
+    icon: Banknote,
+    description: "This week's instructor payout batch is calculated and ready for your review and approval.",
+    confirmLabel: "Go to Payouts",
+    href: "/finance/payouts"
+  },
+  {
+    id: "view_tickets",
+    label: "View Tickets",
+    icon: TicketIcon,
+    description: "2 support tickets have breached their SLA and need immediate attention.",
+    confirmLabel: "Go to Ticket Queue",
+    href: "/support/tickets"
+  },
+  {
+    id: "export_report",
+    label: "Export Report",
+    icon: Download,
+    description: "Export a CSV snapshot of today's platform-wide KPIs, revenue, and activity for offline reporting.",
+    confirmLabel: "Download CSV",
+    href: ""
+  }
+];
+
+const SYSTEM_STATUS = [
+  { id: "api", label: "API", ok: true, detail: "All admin API endpoints are responding normally. Average latency 118ms." },
+  { id: "db", label: "Database", ok: true, detail: "MongoDB cluster healthy. Read/write operations within normal thresholds." },
+  { id: "payments", label: "Payments", ok: true, detail: "Stripe, PayPal, Easypaisa, and JazzCash gateways are all reachable and processing." },
+  { id: "queue", label: "Job Queue", ok: true, detail: "Background jobs (payout batching, notification delivery) are processing with no backlog." }
+];
+
 export default function AdminDashboardPage() {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(true);
   const [pieView, setPieView] = useState<PieView>("revenue");
+  const [dateRange, setDateRange] = useState<DateRange>("7d");
   const [openHelp, setOpenHelp] = useState<string | null>(null);
   const [notifTarget, setNotifTarget] = useState<NotificationItem | null>(null);
+  const [actionTarget, setActionTarget] = useState<QuickAction | null>(null);
+  const [statusTarget, setStatusTarget] = useState<(typeof SYSTEM_STATUS)[number] | null>(null);
 
   useEffect(() => {
     const t = setTimeout(() => setIsLoading(false), 700);
@@ -265,12 +366,60 @@ export default function AdminDashboardPage() {
   );
 
   const activePie = PIE_DATASETS[pieView];
+  const activeRevenue = REVENUE_TREND[dateRange];
+
+  const handleActionConfirm = () => {
+    if (!actionTarget) return;
+    if (actionTarget.id === "export_report") {
+      toast.success("Report export started", { description: "Your CSV will download shortly." });
+    } else if (actionTarget.href) {
+      router.push(actionTarget.href);
+    }
+    setActionTarget(null);
+  };
 
   return (
     <main className="mx-auto max-w-[1200px] px-4 py-8 md:px-8 md:py-10">
-      <div className="mb-8">
-        <h1 className="text-[24px] font-semibold text-ink">Dashboard</h1>
-        <p className="mt-1 text-[13px] text-ink-soft">Platform-wide overview and pending operational items.</p>
+      <div className="mb-6 flex flex-wrap items-start justify-between gap-4">
+        <div>
+          <h1 className="text-[24px] font-semibold text-ink">Dashboard</h1>
+          <p className="mt-1 text-[13px] text-ink-soft">Platform-wide overview and pending operational items.</p>
+        </div>
+
+        <div className="flex items-center gap-1.5 rounded-control border border-line bg-card p-1">
+          <Calendar size={14} strokeWidth={1.75} className="ml-1.5 text-ink-soft" />
+          {(Object.keys(RANGE_LABEL) as DateRange[]).map((range) => (
+            <button
+              key={range}
+              type="button"
+              onClick={() => setDateRange(range)}
+              className={`rounded-control px-2.5 py-1.5 text-[12px] font-medium transition-colors duration-150 ease-out ${
+                dateRange === range ? "bg-ink text-paper" : "text-ink-soft hover:bg-paper-dim hover:text-ink"
+              }`}
+            >
+              {RANGE_LABEL[range]}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* System status strip */}
+      <div className="mb-6 flex flex-wrap items-center gap-2 rounded-control border border-line bg-card px-4 py-2.5">
+        <span className="flex items-center gap-1.5 text-[12px] font-semibold text-ink-soft">
+          <Activity size={13} strokeWidth={1.75} /> System status
+        </span>
+        <span className="h-4 w-px bg-line" />
+        {SYSTEM_STATUS.map((s) => (
+          <button
+            key={s.id}
+            type="button"
+            onClick={() => setStatusTarget(s)}
+            className="flex items-center gap-1.5 rounded-full border border-line px-2.5 py-1 text-[11.5px] font-medium text-ink-soft transition-colors duration-150 ease-out hover:border-line-strong hover:text-ink"
+          >
+            <span className={`h-1.5 w-1.5 rounded-full ${s.ok ? "bg-success" : "bg-error"}`} />
+            {s.label}
+          </button>
+        ))}
       </div>
 
       {/* KPI cards - click to open the related report, "?" opens an info box */}
@@ -336,16 +485,36 @@ export default function AdminDashboardPage() {
             ))}
       </div>
 
+      {/* Quick actions row */}
+      <div className="mb-8 rounded-card border border-line bg-card p-6">
+        <div className="mb-4 text-[14px] font-semibold text-ink">Quick actions</div>
+        <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+          {QUICK_ACTIONS.map((action) => (
+            <button
+              key={action.id}
+              type="button"
+              onClick={() => setActionTarget(action)}
+              className="flex flex-col items-start gap-2.5 rounded-control border border-line p-4 text-left transition-colors duration-150 ease-out hover:border-line-strong hover:bg-paper-dim"
+            >
+              <div className="flex h-9 w-9 items-center justify-center rounded-control border border-line text-ink">
+                <action.icon size={16} strokeWidth={1.75} />
+              </div>
+              <span className="text-[12.5px] font-medium text-ink">{action.label}</span>
+            </button>
+          ))}
+        </div>
+      </div>
+
       {/* Line chart + Pie chart with view switcher */}
       <div className="mb-8 grid grid-cols-1 gap-6 lg:grid-cols-[1.3fr_1fr]">
         {isLoading ? (
           <ShimmerChart />
         ) : (
           <div className="rounded-card border border-line bg-card p-6">
-            <div className="mb-1 text-[14px] font-semibold text-ink">Revenue - last 7 days</div>
+            <div className="mb-1 text-[14px] font-semibold text-ink">Revenue - {RANGE_LABEL[dateRange].toLowerCase()}</div>
             <p className="mb-5 text-[12px] text-ink-soft">Gross transaction volume across all payment gateways.</p>
             <ResponsiveContainer width="100%" height={220}>
-              <LineChart data={REVENUE_TREND}>
+              <LineChart data={activeRevenue}>
                 <CartesianGrid strokeDasharray="3 3" stroke="var(--color-line)" />
                 <XAxis dataKey="day" stroke="var(--color-ink-soft)" fontSize={12} tickLine={false} axisLine={false} />
                 <YAxis stroke="var(--color-ink-soft)" fontSize={12} tickLine={false} axisLine={false} />
@@ -408,6 +577,36 @@ export default function AdminDashboardPage() {
           </div>
         )}
       </div>
+
+      {/* Bar chart - enrollments by category */}
+      {isLoading ? (
+        <div className="mb-8">
+          <ShimmerChart />
+        </div>
+      ) : (
+        <div className="mb-8 rounded-card border border-line bg-card p-6">
+          <div className="mb-1 text-[14px] font-semibold text-ink">Enrollments by category</div>
+          <p className="mb-5 text-[12px] text-ink-soft">New course enrollments this period, grouped by top-level category.</p>
+          <ResponsiveContainer width="100%" height={240}>
+            <BarChart data={ENROLLMENTS_BY_CATEGORY}>
+              <CartesianGrid strokeDasharray="3 3" stroke="var(--color-line)" vertical={false} />
+              <XAxis dataKey="category" stroke="var(--color-ink-soft)" fontSize={11} tickLine={false} axisLine={false} />
+              <YAxis stroke="var(--color-ink-soft)" fontSize={12} tickLine={false} axisLine={false} />
+              <Tooltip
+                cursor={{ fill: "var(--color-paper-dim)" }}
+                contentStyle={{
+                  background: "var(--color-card)",
+                  border: "1px solid var(--color-line)",
+                  borderRadius: 10,
+                  fontSize: 12,
+                  color: "var(--color-ink)"
+                }}
+              />
+              <Bar dataKey="enrollments" fill="var(--color-ink)" radius={[6, 6, 0, 0]} maxBarSize={48} />
+            </BarChart>
+          </ResponsiveContainer>
+        </div>
+      )}
 
       {/* Notifications card - click a notification to see details */}
       <div className="mb-8 rounded-card border border-line bg-card p-6">
@@ -487,6 +686,29 @@ export default function AdminDashboardPage() {
             }}
           >
             Go to related page
+          </Button>
+        </div>
+      </Modal>
+
+      <Modal open={Boolean(actionTarget)} onClose={() => setActionTarget(null)} title={actionTarget?.label ?? ""}>
+        <p className="mb-5 text-[13.5px] leading-relaxed text-ink-soft">{actionTarget?.description}</p>
+        <div className="flex justify-end gap-2">
+          <Button variant="ghost" onClick={() => setActionTarget(null)}>
+            Cancel
+          </Button>
+          <Button onClick={handleActionConfirm}>{actionTarget?.confirmLabel}</Button>
+        </div>
+      </Modal>
+
+      <Modal open={Boolean(statusTarget)} onClose={() => setStatusTarget(null)} title={statusTarget?.label ?? ""}>
+        <div className="mb-5 flex items-center gap-2">
+          <span className={`h-2 w-2 rounded-full ${statusTarget?.ok ? "bg-success" : "bg-error"}`} />
+          <span className="text-[13px] font-medium text-ink">{statusTarget?.ok ? "Operational" : "Degraded"}</span>
+        </div>
+        <p className="text-[13.5px] leading-relaxed text-ink-soft">{statusTarget?.detail}</p>
+        <div className="mt-5 flex justify-end">
+          <Button variant="ghost" onClick={() => setStatusTarget(null)}>
+            Close
           </Button>
         </div>
       </Modal>
