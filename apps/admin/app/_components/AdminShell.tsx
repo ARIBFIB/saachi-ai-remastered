@@ -20,7 +20,19 @@ import {
 } from "lucide-react";
 import { ThemeToggle } from "@saachi/ui";
 import { ADMIN_NAV } from "../../lib/nav-config";
+import {
+  ROLE_LABEL,
+  getAllowedRolesForRoute,
+  isRouteAllowed,
+  getCurrentRole,
+  getCurrentName,
+  getCurrentEmail,
+  setCurrentRole,
+  clearAuthCookies,
+  type StaffRole
+} from "../../lib/permissions";
 import { CommandPalette } from "./CommandPalette";
+import { AccessDenied } from "./AccessDenied";
 
 function cx(...parts: Array<string | false | undefined>) {
   return parts.filter(Boolean).join(" ");
@@ -46,23 +58,7 @@ const TONE_DOT: Record<NotificationItem["tone"], string> = {
   info: "bg-info"
 };
 
-type StaffRole = "super_admin" | "admin" | "finance_officer" | "support_officer";
-
-const ROLE_LABEL: Record<StaffRole, string> = {
-  super_admin: "Super Admin",
-  admin: "Admin",
-  finance_officer: "Finance Officer",
-  support_officer: "Support Officer"
-};
-
 const ROLE_LIST: StaffRole[] = ["super_admin", "admin", "finance_officer", "support_officer"];
-
-const CURRENT_USER = {
-  name: "Abdul Rehman Irfan",
-  email: "abdulrehman@saachi.ai"
-};
-
-const ROLE_STORAGE_KEY = "saachi_admin_role";
 
 export function AdminShell({ children }: { children: ReactNode }) {
   const pathname = usePathname();
@@ -71,16 +67,19 @@ export function AdminShell({ children }: { children: ReactNode }) {
   const [collapsed, setCollapsed] = useState(false);
   const [notifOpen, setNotifOpen] = useState(false);
   const [userMenuOpen, setUserMenuOpen] = useState(false);
-  const [currentRole, setCurrentRole] = useState<StaffRole>("super_admin");
+  const [currentRole, setCurrentRoleState] = useState<StaffRole>("super_admin");
+  const [currentName, setCurrentName] = useState("Abdul Rehman Irfan");
+  const [currentEmail, setCurrentEmail] = useState("abdulrehman@saachi.ai");
+  const [mounted, setMounted] = useState(false);
 
   const notifRef = useRef<HTMLDivElement>(null);
   const userMenuRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    const stored = window.localStorage.getItem(ROLE_STORAGE_KEY) as StaffRole | null;
-    if (stored && ROLE_LIST.includes(stored)) {
-      setCurrentRole(stored);
-    }
+    setCurrentRoleState(getCurrentRole());
+    setCurrentName(getCurrentName());
+    setCurrentEmail(getCurrentEmail());
+    setMounted(true);
   }, []);
 
   useEffect(() => {
@@ -93,23 +92,31 @@ export function AdminShell({ children }: { children: ReactNode }) {
   }, []);
 
   const handleLogout = () => {
-    document.cookie = "saachi_admin_session=; path=/; max-age=0";
+    clearAuthCookies();
     router.push("/login");
   };
 
   const handleSwitchRole = (role: StaffRole) => {
+    setCurrentRoleState(role);
     setCurrentRole(role);
-    window.localStorage.setItem(ROLE_STORAGE_KEY, role);
     setUserMenuOpen(false);
     toast.success(`Switched to ${ROLE_LABEL[role]}`, {
       description: "Your view now reflects this role's permissions."
     });
+    if (!isRouteAllowed(pathname ?? "/dashboard", role)) {
+      router.push("/dashboard");
+    }
   };
+
+  const filteredNav = ADMIN_NAV.map((section) => ({
+    ...section,
+    items: section.items.filter((item) => getAllowedRolesForRoute(item.href).includes(currentRole))
+  })).filter((section) => section.items.length > 0);
 
   const sidebarContent = (
     <div className="flex h-full flex-col pt-[65px]">
       <nav className="flex flex-1 flex-col gap-5 overflow-y-auto px-3 pb-4 pt-4">
-        {ADMIN_NAV.map((navSection) => (
+        {filteredNav.map((navSection) => (
           <div key={navSection.title}>
             {!collapsed && (
               <div className="mb-1.5 px-2.5 text-[10px] font-semibold uppercase tracking-[0.08em] text-ink-soft/60">
@@ -168,6 +175,8 @@ export function AdminShell({ children }: { children: ReactNode }) {
     </div>
   );
 
+  const allowed = mounted ? isRouteAllowed(pathname ?? "/dashboard", currentRole) : true;
+
   return (
     <div className="min-h-screen bg-paper">
       <CommandPalette />
@@ -208,10 +217,10 @@ export function AdminShell({ children }: { children: ReactNode }) {
               className="flex min-w-0 items-center gap-2 rounded-control px-1.5 py-1 transition-colors duration-150 ease-out hover:bg-paper-dim"
             >
               <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-line text-[12px] font-semibold text-ink">
-                {CURRENT_USER.name.charAt(0)}
+                {currentName.charAt(0)}
               </div>
               <div className="hidden min-w-0 text-left sm:block">
-                <div className="truncate text-[12.5px] font-semibold leading-tight text-ink">{CURRENT_USER.name}</div>
+                <div className="truncate text-[12.5px] font-semibold leading-tight text-ink">{currentName}</div>
                 <div className="truncate text-[11px] leading-tight text-ink-soft">{ROLE_LABEL[currentRole]}</div>
               </div>
               <ChevronDown size={13} strokeWidth={1.75} className="hidden shrink-0 text-ink-soft sm:block" />
@@ -220,13 +229,13 @@ export function AdminShell({ children }: { children: ReactNode }) {
             {userMenuOpen && (
               <div className="absolute left-0 top-[calc(100%+8px)] w-[260px] overflow-hidden rounded-card border border-line bg-card shadow-lg">
                 <div className="border-b border-line px-4 py-3">
-                  <p className="truncate text-[13px] font-semibold text-ink">{CURRENT_USER.name}</p>
-                  <p className="truncate text-[12px] text-ink-soft">{CURRENT_USER.email}</p>
+                  <p className="truncate text-[13px] font-semibold text-ink">{currentName}</p>
+                  <p className="truncate text-[12px] text-ink-soft">{currentEmail}</p>
                 </div>
 
                 <div className="border-b border-line px-4 py-3">
                   <p className="mb-2 text-[10.5px] font-semibold uppercase tracking-[0.06em] text-ink-soft/70">
-                    Switch role
+                    Switch role (testing)
                   </p>
                   <div className="flex flex-col gap-0.5">
                     {ROLE_LIST.map((role) => (
@@ -247,20 +256,24 @@ export function AdminShell({ children }: { children: ReactNode }) {
                 </div>
 
                 <div className="flex flex-col p-1.5">
-                  <Link
-                    href="/settings/roles"
-                    onClick={() => setUserMenuOpen(false)}
-                    className="flex items-center gap-2.5 rounded-control px-3 py-2 text-[13px] text-ink transition-colors duration-100 ease-out hover:bg-paper-dim"
-                  >
-                    <User size={14} strokeWidth={1.75} /> Profile
-                  </Link>
-                  <Link
-                    href="/settings/platform"
-                    onClick={() => setUserMenuOpen(false)}
-                    className="flex items-center gap-2.5 rounded-control px-3 py-2 text-[13px] text-ink transition-colors duration-100 ease-out hover:bg-paper-dim"
-                  >
-                    <Settings size={14} strokeWidth={1.75} /> Settings
-                  </Link>
+                  {getAllowedRolesForRoute("/settings/roles").includes(currentRole) && (
+                    <Link
+                      href="/settings/roles"
+                      onClick={() => setUserMenuOpen(false)}
+                      className="flex items-center gap-2.5 rounded-control px-3 py-2 text-[13px] text-ink transition-colors duration-100 ease-out hover:bg-paper-dim"
+                    >
+                      <User size={14} strokeWidth={1.75} /> Profile
+                    </Link>
+                  )}
+                  {getAllowedRolesForRoute("/settings/platform").includes(currentRole) && (
+                    <Link
+                      href="/settings/platform"
+                      onClick={() => setUserMenuOpen(false)}
+                      className="flex items-center gap-2.5 rounded-control px-3 py-2 text-[13px] text-ink transition-colors duration-100 ease-out hover:bg-paper-dim"
+                    >
+                      <Settings size={14} strokeWidth={1.75} /> Settings
+                    </Link>
+                  )}
                   <button
                     type="button"
                     onClick={handleLogout}
@@ -346,7 +359,7 @@ export function AdminShell({ children }: { children: ReactNode }) {
       )}
 
       <div className={cx("transition-[padding] duration-200 ease-out", collapsed ? "md:pl-[76px]" : "md:pl-[248px]")}>
-        {children}
+        {allowed ? children : <AccessDenied role={currentRole} />}
       </div>
     </div>
   );
