@@ -28,3 +28,5 @@ export * from "./HelpTooltip";
 export * from "./Switch";
 
 export * from "./Button";
+
+export { RowActionsMenu } from "./RowActionsMenu";
