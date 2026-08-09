@@ -1,67 +1,13 @@
-"use client";
+﻿"use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useState } from "react";
 import { useParams, useRouter } from "next/navigation";
-import { toast } from "sonner";
-import {
-  ArrowLeft,
-  Send,
-  User,
-  Headset,
-  AlertTriangle,
-  CheckCircle2,
-  Clock,
-  Tag,
-  UserCog
-} from "lucide-react";
-import { Button, Card, Select, StatusPill, Textarea, ShimmerKpiCard } from "@saachi/ui";
+import { ArrowLeft, Send, CheckCircle2, Clock, AlertTriangle, StickyNote } from "lucide-react";
+import { Button, Card, StatusPill, Select, Textarea, Badge } from "@saachi/ui";
 import { formatDate, formatRelativeTime } from "@saachi/utils";
 
 type TicketStatus = "open" | "in_progress" | "resolved" | "closed";
 type TicketPriority = "low" | "medium" | "high" | "urgent";
-
-type ThreadEntry = {
-  id: string;
-  author: string;
-  authorType: "requester" | "staff";
-  body: string;
-  createdAt: string;
-};
-
-type TicketDetail = {
-  id: string;
-  subject: string;
-  requesterName: string;
-  requesterEmail: string;
-  category: string;
-  status: TicketStatus;
-  priority: TicketPriority;
-  assignedTo: string | null;
-  slaDueAt: string;
-  createdAt: string;
-  thread: ThreadEntry[];
-};
-
-const STATUS_OPTIONS = [
-  { label: "Open", value: "open" },
-  { label: "In progress", value: "in_progress" },
-  { label: "Resolved", value: "resolved" },
-  { label: "Closed", value: "closed" }
-];
-
-const PRIORITY_OPTIONS = [
-  { label: "Low", value: "low" },
-  { label: "Medium", value: "medium" },
-  { label: "High", value: "high" },
-  { label: "Urgent", value: "urgent" }
-];
-
-const ASSIGNEE_OPTIONS = [
-  { label: "Unassigned", value: "" },
-  { label: "Support Desk", value: "Support Desk" },
-  { label: "Finance Desk", value: "Finance Desk" },
-  { label: "Abdul Rehman Irfan", value: "Abdul Rehman Irfan" }
-];
 
 const STATUS_TONE: Record<TicketStatus, "warning" | "info" | "success" | "neutral"> = {
   open: "warning",
@@ -78,107 +24,79 @@ const PRIORITY_TONE: Record<TicketPriority, "neutral" | "info" | "warning" | "er
 };
 
 const CANNED_RESPONSES = [
-  "Thanks for reaching out - we're looking into this and will update you shortly.",
-  "This has been resolved on our end. Please let us know if the issue persists.",
-  "Could you share a screenshot or transaction ID so we can investigate further?"
+  { label: "Payout timing explanation", value: "Payouts are processed weekly in batches. Your request has been received and will be included in the next scheduled batch, typically disbursed within 3-5 business days after approval." },
+  { label: "Refund policy info", value: "Our refund policy allows requests within 7 days of purchase, provided less than 30% of the course has been completed. I've forwarded your request to our Finance team for review." },
+  { label: "Certificate not generated", value: "Certificates are generated automatically once all lessons and quizzes in a course are marked complete. Please confirm all sections show 100% and let us know if the issue persists." }
 ];
 
-function buildMockTicket(id: string): TicketDetail {
-  return {
-    id,
-    subject: "Payout not received for July batch",
-    requesterName: "Hassan Raza",
-    requesterEmail: "hassan.raza@example.com",
-    category: "Payouts",
-    status: "open",
-    priority: "high",
-    assignedTo: "Finance Desk",
-    slaDueAt: "2026-08-11T12:00:00Z",
-    createdAt: "2026-08-08T09:30:00Z",
-    thread: [
-      {
-        id: "t1",
-        author: "Hassan Raza",
-        authorType: "requester",
-        body: "Hi, I still haven't received my payout for the July batch. My payout method is set up correctly and my balance shows as paid out, but nothing has arrived in my bank account. Can someone check this?",
-        createdAt: "2026-08-08T09:30:00Z"
-      },
-      {
-        id: "t2",
-        author: "Finance Desk",
-        authorType: "staff",
-        body: "Thanks for flagging this, Hassan. We're checking with our payment processor for the July batch and will get back to you within 24 hours.",
-        createdAt: "2026-08-08T11:15:00Z"
-      }
-    ]
-  };
-}
+type Message = {
+  id: string;
+  author: string;
+  role: "requester" | "staff";
+  body: string;
+  createdAt: string;
+};
+
+const INITIAL_THREAD: Message[] = [
+  { id: "m1", author: "Ali Bukhari", role: "requester", body: "Hi, I requested a payout 5 days ago and haven't received it yet. Can someone check the status?", createdAt: "2026-08-07T22:15:00Z" },
+  { id: "m2", author: "Support Desk", role: "staff", body: "Thanks for reaching out - I can see your request in the queue. Let me check with the Finance team and get back to you shortly.", createdAt: "2026-08-08T08:30:00Z" }
+];
+
+const INTERNAL_NOTES_INITIAL = [
+  { id: "n1", author: "Support Desk", body: "Verified payout request PO-4471 is in this week's batch, pending Finance approval.", createdAt: "2026-08-08T08:32:00Z" }
+];
+
+// Dummy ticket - would normally be fetched by params.id
+const DUMMY_TICKET = {
+  subject: "Payout not received",
+  requesterName: "Ali Bukhari",
+  requesterEmail: "ali.bukhari@example.com",
+  category: "Payments",
+  priority: "high" as TicketPriority,
+  slaDueAt: "2026-08-10T22:15:00Z",
+  createdAt: "2026-08-07T22:15:00Z"
+};
 
 export default function SupportTicketDetailPage() {
-  const params = useParams<{ id: string }>();
+  const params = useParams();
   const router = useRouter();
-  const ticketId = params?.id ?? "";
+  const ticketId = params?.id as string;
 
-  const [isLoading, setIsLoading] = useState(true);
-  const [ticket, setTicket] = useState<TicketDetail | null>(null);
-  const [reply, setReply] = useState("");
-  const [sending, setSending] = useState(false);
-  const threadEndRef = useRef<HTMLDivElement>(null);
+  const [status, setStatus] = useState<TicketStatus>("in_progress");
+  const [thread, setThread] = useState(INITIAL_THREAD);
+  const [notes, setNotes] = useState(INTERNAL_NOTES_INITIAL);
+  const [replyText, setReplyText] = useState("");
+  const [noteText, setNoteText] = useState("");
+  const [cannedValue, setCannedValue] = useState("");
 
-  useEffect(() => {
-    const t = setTimeout(() => {
-      setTicket(buildMockTicket(ticketId));
-      setIsLoading(false);
-    }, 500);
-    return () => clearTimeout(t);
-  }, [ticketId]);
+  const isOverdue = new Date(DUMMY_TICKET.slaDueAt).getTime() < Date.now() && status !== "resolved" && status !== "closed";
 
-  useEffect(() => {
-    threadEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [ticket?.thread.length]);
-
-  const updateField = <K extends keyof TicketDetail>(key: K, value: TicketDetail[K]) => {
-    setTicket((prev) => (prev ? { ...prev, [key]: value } : prev));
+  const sendReply = () => {
+    if (!replyText.trim()) return;
+    setThread((prev) => [
+      ...prev,
+      { id: `m${prev.length + 1}`, author: "Support Desk", role: "staff", body: replyText.trim(), createdAt: new Date().toISOString() }
+    ]);
+    setReplyText("");
+    setCannedValue("");
+    if (status === "open") setStatus("in_progress");
   };
 
-  const handleSendReply = () => {
-    if (!ticket || !reply.trim()) return;
-    setSending(true);
-    setTimeout(() => {
-      const entry: ThreadEntry = {
-        id: `t${ticket.thread.length + 1}`,
-        author: "Support Desk",
-        authorType: "staff",
-        body: reply.trim(),
-        createdAt: new Date().toISOString()
-      };
-      setTicket({ ...ticket, thread: [...ticket.thread, entry], status: ticket.status === "open" ? "in_progress" : ticket.status });
-      setReply("");
-      setSending(false);
-      toast.success("Reply sent", { description: `${ticket.requesterName} will be notified by email.` });
-    }, 500);
+  const addNote = () => {
+    if (!noteText.trim()) return;
+    setNotes((prev) => [...prev, { id: `n${prev.length + 1}`, author: "Support Desk", body: noteText.trim(), createdAt: new Date().toISOString() }]);
+    setNoteText("");
   };
 
-  const handleResolve = () => {
-    if (!ticket) return;
-    updateField("status", "resolved");
-    toast.success("Ticket marked as resolved");
+  const resolveTicket = () => {
+    setStatus("resolved");
   };
 
-  if (isLoading || !ticket) {
-    return (
-      <main className="mx-auto max-w-[1000px] px-4 py-8 md:px-8 md:py-10">
-        <div className="flex flex-col gap-3">
-          {Array.from({ length: 4 }).map((_, i) => (
-            <ShimmerKpiCard key={i} />
-          ))}
-        </div>
-      </main>
-    );
-  }
-
-  const overdue =
-    new Date(ticket.slaDueAt).getTime() < Date.now() && ticket.status !== "resolved" && ticket.status !== "closed";
+  const applyCanned = (value: string) => {
+    setCannedValue(value);
+    const found = CANNED_RESPONSES.find((c) => c.value === value);
+    if (found) setReplyText(found.value);
+  };
 
   return (
     <main className="mx-auto max-w-[1000px] px-4 py-8 md:px-8 md:py-10">
@@ -187,120 +105,106 @@ export default function SupportTicketDetailPage() {
         onClick={() => router.push("/support/tickets")}
         className="mb-4 flex items-center gap-1.5 text-[12.5px] font-medium text-ink-soft transition-colors duration-150 ease-out hover:text-ink"
       >
-        <ArrowLeft size={14} strokeWidth={1.75} /> Back to Ticket Queue
+        <ArrowLeft size={14} strokeWidth={1.75} /> Back to ticket queue
       </button>
 
       <Card className="mb-6 flex flex-col gap-4 p-6">
-        <div className="flex flex-wrap items-start justify-between gap-3">
+        <div className="flex flex-wrap items-start justify-between gap-4">
           <div>
             <div className="flex flex-wrap items-center gap-2.5">
-              <h1 className="text-[19px] font-semibold text-ink">{ticket.subject}</h1>
-              <StatusPill label={ticket.status.replace("_", " ")} tone={STATUS_TONE[ticket.status]} />
-              <StatusPill label={ticket.priority} tone={PRIORITY_TONE[ticket.priority]} />
+              <h1 className="text-[19px] font-semibold text-ink">{DUMMY_TICKET.subject}</h1>
+              <StatusPill label={status.replace("_", " ")} tone={STATUS_TONE[status]} />
+              <StatusPill label={DUMMY_TICKET.priority} tone={PRIORITY_TONE[DUMMY_TICKET.priority]} />
             </div>
-            <div className="mt-2 flex flex-wrap items-center gap-x-4 gap-y-1 text-[12.5px] text-ink-soft">
-              <span className="flex items-center gap-1.5">
-                <User size={13} strokeWidth={1.75} /> {ticket.requesterName} ({ticket.requesterEmail})
-              </span>
-              <span className="flex items-center gap-1.5">
-                <Tag size={13} strokeWidth={1.75} /> {ticket.category}
-              </span>
-              <span className="flex items-center gap-1.5">
-                <Clock size={13} strokeWidth={1.75} /> Opened {formatRelativeTime(ticket.createdAt)}
-              </span>
-              {overdue ? (
-                <span className="flex items-center gap-1.5 font-medium text-error">
-                  <AlertTriangle size={13} strokeWidth={1.75} /> SLA overdue
-                </span>
-              ) : (
-                <span>SLA due {formatDate(ticket.slaDueAt)}</span>
-              )}
-            </div>
+            <p className="mt-1.5 text-[12.5px] text-ink-soft">
+              {DUMMY_TICKET.requesterName} ({DUMMY_TICKET.requesterEmail}) - {DUMMY_TICKET.category} - Ticket #{ticketId}
+            </p>
           </div>
-          {ticket.status !== "resolved" && ticket.status !== "closed" && (
-            <Button size="sm" variant="secondary" onClick={handleResolve}>
-              <CheckCircle2 size={14} strokeWidth={1.75} /> Mark resolved
-            </Button>
-          )}
+          <div className="flex shrink-0 items-center gap-2">
+            <div className="w-[160px]">
+              <Select
+                options={[
+                  { label: "Open", value: "open" },
+                  { label: "In progress", value: "in_progress" },
+                  { label: "Resolved", value: "resolved" },
+                  { label: "Closed", value: "closed" }
+                ]}
+                value={status}
+                onChange={(e) => setStatus(e.target.value as TicketStatus)}
+              />
+            </div>
+            {status !== "resolved" && status !== "closed" && (
+              <Button size="sm" onClick={resolveTicket}>
+                <CheckCircle2 size={14} strokeWidth={1.75} /> Resolve
+              </Button>
+            )}
+          </div>
         </div>
 
-        <div className="grid grid-cols-1 gap-3 border-t border-line pt-4 sm:grid-cols-3">
-          <Select
-            label="Status"
-            options={STATUS_OPTIONS}
-            value={ticket.status}
-            onChange={(e) => updateField("status", e.target.value as TicketStatus)}
-          />
-          <Select
-            label="Priority"
-            options={PRIORITY_OPTIONS}
-            value={ticket.priority}
-            onChange={(e) => updateField("priority", e.target.value as TicketPriority)}
-          />
-          <Select
-            label="Assigned to"
-            options={ASSIGNEE_OPTIONS}
-            value={ticket.assignedTo ?? ""}
-            onChange={(e) => updateField("assignedTo", e.target.value || null)}
-          />
+        <div className={`flex items-center gap-2 rounded-control border px-3.5 py-2.5 text-[12.5px] ${isOverdue ? "border-error bg-error-tint text-error" : "border-line text-ink-soft"}`}>
+          {isOverdue ? <AlertTriangle size={14} strokeWidth={1.75} /> : <Clock size={14} strokeWidth={1.75} />}
+          SLA due {formatDate(DUMMY_TICKET.slaDueAt)} - {isOverdue ? "overdue" : formatRelativeTime(DUMMY_TICKET.slaDueAt)}
         </div>
       </Card>
 
-      <Card className="mb-6 p-6">
-        <p className="mb-4 flex items-center gap-2 text-[14px] font-semibold text-ink">
-          <Headset size={15} strokeWidth={1.75} /> Conversation
-        </p>
-        <div className="mb-6 flex flex-col gap-3">
-          {ticket.thread.map((entry) => (
+      <div className="mb-6">
+        <p className="mb-3 text-[14px] font-semibold text-ink">Conversation</p>
+        <div className="flex flex-col gap-3">
+          {thread.map((msg) => (
             <div
-              key={entry.id}
+              key={msg.id}
               className={`max-w-[85%] rounded-card border p-4 ${
-                entry.authorType === "staff" ? "ml-auto border-line-strong bg-paper-dim" : "border-line bg-card"
+                msg.role === "staff" ? "ml-auto border-ink bg-paper-dim" : "border-line bg-card"
               }`}
             >
               <div className="mb-1.5 flex items-center justify-between gap-3">
-                <span className="flex items-center gap-1.5 text-[12.5px] font-semibold text-ink">
-                  {entry.authorType === "staff" ? (
-                    <UserCog size={13} strokeWidth={1.75} />
-                  ) : (
-                    <User size={13} strokeWidth={1.75} />
-                  )}
-                  {entry.author}
-                </span>
-                <span className="text-[11px] text-ink-soft">{formatRelativeTime(entry.createdAt)}</span>
+                <span className="text-[12.5px] font-semibold text-ink">{msg.author}</span>
+                <span className="text-[11px] text-ink-soft">{formatRelativeTime(msg.createdAt)}</span>
               </div>
-              <p className="text-[13.5px] leading-relaxed text-ink">{entry.body}</p>
+              <p className="text-[13px] leading-relaxed text-ink">{msg.body}</p>
             </div>
           ))}
-          <div ref={threadEndRef} />
         </div>
 
-        <div className="mb-3 flex flex-wrap gap-1.5">
-          {CANNED_RESPONSES.map((canned, i) => (
-            <button
-              key={i}
-              type="button"
-              onClick={() => setReply(canned)}
-              className="rounded-full border border-line px-3 py-1 text-[11.5px] text-ink-soft transition-colors duration-150 ease-out hover:border-line-strong hover:text-ink"
-            >
-              {canned.length > 40 ? `${canned.slice(0, 40)}...` : canned}
-            </button>
+        <Card className="mt-4 flex flex-col gap-3 p-4">
+          <Select
+            placeholder="Insert a canned response..."
+            options={CANNED_RESPONSES.map((c) => ({ label: c.label, value: c.value }))}
+            value={cannedValue}
+            onChange={(e) => applyCanned(e.target.value)}
+          />
+          <Textarea rows={4} placeholder="Type your reply..." value={replyText} onChange={(e) => setReplyText(e.target.value)} />
+          <div className="flex justify-end">
+            <Button size="sm" onClick={sendReply} disabled={!replyText.trim()}>
+              <Send size={14} strokeWidth={1.75} /> Send reply
+            </Button>
+          </div>
+        </Card>
+      </div>
+
+      <div>
+        <p className="mb-3 flex items-center gap-1.5 text-[14px] font-semibold text-ink">
+          <StickyNote size={15} strokeWidth={1.75} /> Internal notes
+        </p>
+        <p className="mb-3 text-[12px] text-ink-soft">Only visible to admin staff - never shown to the requester.</p>
+        <div className="mb-3 flex flex-col gap-2">
+          {notes.map((note) => (
+            <div key={note.id} className="rounded-control border border-warning bg-warning-tint px-3.5 py-3">
+              <div className="mb-1 flex items-center justify-between gap-3">
+                <span className="text-[12px] font-semibold text-ink">{note.author}</span>
+                <span className="text-[11px] text-ink-soft">{formatRelativeTime(note.createdAt)}</span>
+              </div>
+              <p className="text-[12.5px] text-ink">{note.body}</p>
+            </div>
           ))}
         </div>
-
-        <Textarea
-          label="Reply to requester"
-          placeholder="Type your reply..."
-          rows={4}
-          value={reply}
-          onChange={(e) => setReply(e.target.value)}
-        />
-        <div className="mt-3 flex justify-end">
-          <Button onClick={handleSendReply} disabled={!reply.trim() || sending}>
-            <Send size={14} strokeWidth={1.75} /> {sending ? "Sending..." : "Send reply"}
+        <div className="flex gap-2">
+          <Textarea rows={2} placeholder="Add an internal note..." value={noteText} onChange={(e) => setNoteText(e.target.value)} className="flex-1" />
+          <Button size="sm" variant="secondary" onClick={addNote} disabled={!noteText.trim()}>
+            Add note
           </Button>
         </div>
-      </Card>
+      </div>
     </main>
   );
 }

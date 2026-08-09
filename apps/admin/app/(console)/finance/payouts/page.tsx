@@ -1,91 +1,71 @@
-"use client";
+﻿"use client";
 
-import { useMemo, useState } from "react";
-import { toast } from "sonner";
-import { Banknote, CheckCircle2, Clock3, Download } from "lucide-react";
-import { Button, Card, Select, StatusPill, Modal, ShimmerKpiCard, HelpTooltip, RefreshButton } from "@saachi/ui";
+import { useState } from "react";
+import { Banknote, CheckCircle2, XCircle, Download } from "lucide-react";
+import { Button, Card, Select, StatusPill, EmptyState, HelpTooltip } from "@saachi/ui";
 import { formatCurrency, formatDate } from "@saachi/utils";
 
-type PayoutStatus = "pending" | "processing" | "paid" | "failed";
+type PayoutStatus = "pending" | "approved" | "processing" | "paid" | "failed";
 
-type PayoutRow = {
+type PayoutRequest = {
   id: string;
   instructorName: string;
-  method: string;
+  instructorEmail: string;
   amount: number;
   currency: string;
-  status: PayoutStatus;
+  method: string;
   requestedAt: string;
+  status: PayoutStatus;
+  batchId: string;
 };
 
 const STATUS_OPTIONS = [
   { label: "Pending", value: "pending" },
+  { label: "Approved", value: "approved" },
   { label: "Processing", value: "processing" },
   { label: "Paid", value: "paid" },
   { label: "Failed", value: "failed" }
 ];
 
-const STATUS_TONE: Record<PayoutStatus, "warning" | "info" | "success" | "error"> = {
+const STATUS_TONE: Record<PayoutStatus, "success" | "warning" | "error" | "info" | "neutral"> = {
   pending: "warning",
+  approved: "info",
   processing: "info",
   paid: "success",
   failed: "error"
 };
 
-const INITIAL_PAYOUTS: PayoutRow[] = [
-  { id: "PO-2026-0912-1", instructorName: "Zeeshan Tariq", method: "Bank Transfer", amount: 842, currency: "USD", status: "pending", requestedAt: "2026-08-07T10:00:00Z" },
-  { id: "PO-2026-0912-2", instructorName: "Ayesha Malik", method: "JazzCash", amount: 315, currency: "USD", status: "pending", requestedAt: "2026-08-07T10:00:00Z" },
-  { id: "PO-2026-0912-3", instructorName: "Bilal Ahmed", method: "Stripe Connect", amount: 1204, currency: "USD", status: "pending", requestedAt: "2026-08-07T10:00:00Z" },
-  { id: "PO-2026-0905-1", instructorName: "Nida Khan", method: "Bank Transfer", amount: 620, currency: "USD", status: "paid", requestedAt: "2026-07-31T10:00:00Z" },
-  { id: "PO-2026-0905-2", instructorName: "Hassan Raza", method: "Easypaisa", amount: 190, currency: "USD", status: "paid", requestedAt: "2026-07-31T10:00:00Z" }
+const INITIAL_PAYOUTS: PayoutRequest[] = [
+  { id: "po_1", instructorName: "Zeeshan Tariq", instructorEmail: "zeeshan@example.com", amount: 842.5, currency: "USD", method: "Bank Transfer", requestedAt: "2026-08-08T09:00:00Z", status: "pending", batchId: "PAYOUT-2026-0913" },
+  { id: "po_2", instructorName: "Bilal Ahmed", instructorEmail: "bilal@example.com", amount: 1290, currency: "USD", method: "Stripe Connect", requestedAt: "2026-08-08T09:00:00Z", status: "pending", batchId: "PAYOUT-2026-0913" },
+  { id: "po_3", instructorName: "Fatima Noor", instructorEmail: "fatima@example.com", amount: 315.75, currency: "USD", method: "Easypaisa", requestedAt: "2026-08-08T09:00:00Z", status: "pending", batchId: "PAYOUT-2026-0913" },
+  { id: "po_4", instructorName: "Hassan Raza", instructorEmail: "hassan@example.com", amount: 560, currency: "USD", method: "JazzCash", requestedAt: "2026-08-01T09:00:00Z", status: "paid", batchId: "PAYOUT-2026-0906" },
+  { id: "po_5", instructorName: "Ayesha Malik", instructorEmail: "ayesha@example.com", amount: 220, currency: "USD", method: "Bank Transfer", requestedAt: "2026-08-01T09:00:00Z", status: "failed", batchId: "PAYOUT-2026-0906" }
 ];
 
-export default function PayoutsPage() {
+export default function PayoutProcessingQueuePage() {
   const [payouts, setPayouts] = useState(INITIAL_PAYOUTS);
-  const [statusFilter, setStatusFilter] = useState("");
-  const [batchModalOpen, setBatchModalOpen] = useState(false);
+  const [statusFilter, setStatusFilter] = useState("pending");
   const [processing, setProcessing] = useState(false);
 
-  const filtered = useMemo(() => {
-    if (!statusFilter) return payouts;
-    return payouts.filter((p) => p.status === statusFilter);
-  }, [payouts, statusFilter]);
+  const filtered = payouts.filter((p) => !statusFilter || p.status === statusFilter);
+  const pendingBatch = payouts.filter((p) => p.status === "pending");
+  const pendingTotal = pendingBatch.reduce((sum, p) => sum + p.amount, 0);
 
-  const summary = useMemo(() => {
-    const pending = payouts.filter((p) => p.status === "pending");
-    const paid = payouts.filter((p) => p.status === "paid");
-    return {
-      pendingCount: pending.length,
-      pendingTotal: pending.reduce((sum, p) => sum + p.amount, 0),
-      paidThisMonth: paid.reduce((sum, p) => sum + p.amount, 0)
-    };
-  }, [payouts]);
-
-  const handleProcessBatch = () => {
-    setProcessing(true);
-    setTimeout(() => {
-      setPayouts((prev) => prev.map((p) => (p.status === "pending" ? { ...p, status: "paid" as PayoutStatus } : p)));
-      setProcessing(false);
-      setBatchModalOpen(false);
-      toast.success("Payout batch processed", {
-        description: `${summary.pendingCount} payouts totaling ${formatCurrency(summary.pendingTotal, "USD")} have been marked as paid.`
-      });
-    }, 900);
+  const approveOne = (id: string) => {
+    setPayouts((prev) => prev.map((p) => (p.id === id ? { ...p, status: "approved" } : p)));
   };
 
-  const handleExport = () => {
-    const header = ["Payout ID", "Instructor", "Method", "Amount", "Status", "Requested"];
-    const rows = payouts.map((p) => [p.id, p.instructorName, p.method, p.amount.toString(), p.status, formatDate(p.requestedAt)]);
-    const csv = [header, ...rows].map((r) => r.map((v) => `"${String(v).replace(/"/g, '""')}"`).join(",")).join("\n");
-    const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement("a");
-    link.href = url;
-    link.download = `saachi-payouts-${new Date().toISOString().slice(0, 10)}.csv`;
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-    URL.revokeObjectURL(url);
+  const rejectOne = (id: string) => {
+    setPayouts((prev) => prev.map((p) => (p.id === id ? { ...p, status: "failed" } : p)));
+  };
+
+  const approveBatch = () => {
+    setProcessing(true);
+    setTimeout(() => {
+      setPayouts((prev) => prev.map((p) => (p.status === "pending" ? { ...p, status: "approved" } : p)));
+      setProcessing(false);
+    }, 700);
   };
 
   return (
@@ -97,89 +77,68 @@ export default function PayoutsPage() {
           </div>
           <div>
             <div className="flex items-center gap-1.5">
-              <h1 className="text-[22px] font-semibold text-ink">Payouts</h1>
-              <HelpTooltip text="Instructor payout requests awaiting processing. Process the batch to mark all pending payouts as paid via each instructor's configured method." />
+              <h1 className="text-[22px] font-semibold text-ink">Payout Processing Queue</h1>
+              <HelpTooltip text="Instructor payout requests awaiting review. Approve individually or process the entire pending batch at once." />
             </div>
-            <p className="mt-0.5 text-[13px] text-ink-soft">Review and process instructor payout batches.</p>
+            <p className="mt-0.5 text-[13px] text-ink-soft">Pending instructor payout requests, batched weekly.</p>
           </div>
         </div>
-        <div className="flex items-center gap-2">
-          <Button size="sm" variant="secondary" onClick={handleExport}>
-            <Download size={14} strokeWidth={1.75} /> Export CSV
+        <Button size="sm" variant="secondary">
+          <Download size={14} strokeWidth={1.75} /> Export CSV
+        </Button>
+      </div>
+
+      {pendingBatch.length > 0 && (
+        <Card className="mb-6 flex flex-col gap-3 p-5 sm:flex-row sm:items-center sm:justify-between">
+          <div>
+            <p className="text-[13px] text-ink-soft">Current batch - PAYOUT-2026-0913</p>
+            <p className="mt-1 font-mono text-[22px] font-semibold text-ink">{formatCurrency(pendingTotal, "USD")}</p>
+            <p className="mt-0.5 text-[12px] text-ink-soft">{pendingBatch.length} instructors awaiting approval</p>
+          </div>
+          <Button onClick={approveBatch} disabled={processing}>
+            <CheckCircle2 size={14} strokeWidth={1.75} /> {processing ? "Processing..." : "Approve entire batch"}
           </Button>
-          <RefreshButton />
-        </div>
+        </Card>
+      )}
+
+      <div className="mb-5 w-[180px]">
+        <Select placeholder="All statuses" options={STATUS_OPTIONS} value={statusFilter} onChange={(e) => setStatusFilter(e.target.value)} />
       </div>
 
-      <div className="mb-6 grid grid-cols-1 gap-4 sm:grid-cols-3">
-        <Card className="p-5">
-          <p className="flex items-center gap-1.5 text-[12px] text-ink-soft">
-            <Clock3 size={13} strokeWidth={1.75} /> Pending payouts
-          </p>
-          <p className="mt-1.5 font-mono text-[22px] font-semibold text-ink">{summary.pendingCount}</p>
-        </Card>
-        <Card className="p-5">
-          <p className="text-[12px] text-ink-soft">Pending amount</p>
-          <p className="mt-1.5 font-mono text-[22px] font-semibold text-ink">{formatCurrency(summary.pendingTotal, "USD")}</p>
-        </Card>
-        <Card className="p-5">
-          <p className="text-[12px] text-ink-soft">Paid this batch</p>
-          <p className="mt-1.5 font-mono text-[22px] font-semibold text-ink">{formatCurrency(summary.paidThisMonth, "USD")}</p>
-        </Card>
-      </div>
-
-      <div className="mb-5 flex flex-wrap items-center justify-between gap-3">
-        <div className="w-[200px]">
-          <Select placeholder="All statuses" options={STATUS_OPTIONS} value={statusFilter} onChange={(e) => setStatusFilter(e.target.value)} />
-        </div>
-        {summary.pendingCount > 0 && (
-          <Button size="sm" onClick={() => setBatchModalOpen(true)}>
-            <CheckCircle2 size={14} strokeWidth={1.75} /> Process pending batch
-          </Button>
-        )}
-      </div>
-
-      <div className="overflow-hidden rounded-card border border-line bg-card">
-        {filtered.map((p) => (
-          <div key={p.id} className="flex flex-col gap-3 border-b border-line px-5 py-4 last:border-0 sm:flex-row sm:items-center sm:justify-between">
-            <div>
-              <div className="flex items-center gap-2.5">
-                <p className="text-[14px] font-semibold text-ink">{p.instructorName}</p>
-                <StatusPill label={p.status} tone={STATUS_TONE[p.status]} />
+      {filtered.length === 0 ? (
+        <EmptyState icon={<Banknote size={22} strokeWidth={1.75} />} title="No payouts found" description="Try a different status filter." />
+      ) : (
+        <div className="flex flex-col gap-3">
+          {filtered.map((payout) => (
+            <Card key={payout.id} className="flex flex-col gap-4 p-5 sm:flex-row sm:items-center sm:justify-between">
+              <div className="min-w-0">
+                <div className="flex items-center gap-2.5">
+                  <p className="truncate text-[14px] font-semibold text-ink">{payout.instructorName}</p>
+                  <StatusPill label={payout.status} tone={STATUS_TONE[payout.status]} />
+                </div>
+                <p className="mt-1 text-[12.5px] text-ink-soft">
+                  {payout.instructorEmail} - {payout.method} - Requested {formatDate(payout.requestedAt)}
+                </p>
               </div>
-              <p className="mt-1 text-[12.5px] text-ink-soft">
-                {p.id} - {p.method} - requested {formatDate(p.requestedAt)}
-              </p>
-            </div>
-            <span className="shrink-0 font-mono text-[16px] font-semibold text-ink">{formatCurrency(p.amount, p.currency)}</span>
-          </div>
-        ))}
-        {filtered.length === 0 && (
-          <div className="px-5 py-10 text-center text-[13px] text-ink-soft">No payouts match this filter.</div>
-        )}
-      </div>
-
-      <Modal
-        open={batchModalOpen}
-        onClose={() => setBatchModalOpen(false)}
-        title="Process pending payout batch?"
-        footer={
-          <>
-            <Button variant="ghost" onClick={() => setBatchModalOpen(false)} disabled={processing}>
-              Cancel
-            </Button>
-            <Button onClick={handleProcessBatch} disabled={processing}>
-              {processing ? "Processing..." : "Process batch"}
-            </Button>
-          </>
-        }
-      >
-        <p className="text-[14px] text-ink-soft">
-          This will mark <span className="font-semibold text-ink">{summary.pendingCount} pending payouts</span>{" "}
-          totaling <span className="font-semibold text-ink">{formatCurrency(summary.pendingTotal, "USD")}</span> as paid,
-          disbursed via each instructor's configured payout method.
-        </p>
-      </Modal>
+              <div className="flex shrink-0 items-center gap-4">
+                <span className="font-mono text-[16px] font-semibold text-ink">
+                  {formatCurrency(payout.amount, payout.currency)}
+                </span>
+                {payout.status === "pending" && (
+                  <div className="flex gap-2">
+                    <Button size="sm" variant="secondary" onClick={() => rejectOne(payout.id)}>
+                      <XCircle size={14} strokeWidth={1.75} /> Reject
+                    </Button>
+                    <Button size="sm" onClick={() => approveOne(payout.id)}>
+                      <CheckCircle2 size={14} strokeWidth={1.75} /> Approve
+                    </Button>
+                  </div>
+                )}
+              </div>
+            </Card>
+          ))}
+        </div>
+      )}
     </main>
   );
 }
