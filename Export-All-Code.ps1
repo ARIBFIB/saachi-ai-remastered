@@ -117,7 +117,6 @@ foreach ($file in $AllFiles) {
     [void]$StringBuilder.AppendLine("")
 }
 
-
 # File likh dein
 [System.IO.File]::WriteAllText($OutputPath, $StringBuilder.ToString(), [System.Text.Encoding]::UTF8)
 
