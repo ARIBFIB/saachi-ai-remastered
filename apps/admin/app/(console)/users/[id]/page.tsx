@@ -175,7 +175,6 @@ export default function UserDetailPage() {
         <ArrowLeft size={14} strokeWidth={1.75} /> Back to Users
       </button>
 
-      {/* Header card */}
       <Card className="mb-6 flex flex-col gap-5 p-6 sm:flex-row sm:items-start sm:justify-between">
         <div className="flex items-start gap-4">
           <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full border border-line bg-paper-dim text-[18px] font-semibold text-ink-soft">
@@ -221,7 +220,6 @@ export default function UserDetailPage() {
         </div>
       </Card>
 
-      {/* Report-style stat cards */}
       <div className="mb-6 grid grid-cols-3 gap-4">
         <Card className="p-5">
           <p className="text-[12px] text-ink-soft">Courses enrolled</p>
@@ -237,7 +235,6 @@ export default function UserDetailPage() {
         </Card>
       </div>
 
-      {/* Editable profile fields */}
       <Card className="mb-6 p-6">
         <p className="mb-4 text-[14px] font-semibold text-ink">Profile details</p>
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
@@ -285,7 +282,6 @@ export default function UserDetailPage() {
         </div>
       </Card>
 
-      {/* Moderation actions */}
       <Card className="mb-6 p-6">
         <p className="mb-4 text-[14px] font-semibold text-ink">Account actions</p>
         <div className="flex flex-wrap gap-2">
@@ -307,7 +303,6 @@ export default function UserDetailPage() {
         </div>
       </Card>
 
-      {/* Activity log */}
       <Card className="p-6">
         <div className="mb-4 flex items-center gap-2">
           <History size={15} strokeWidth={1.75} className="text-ink" />
