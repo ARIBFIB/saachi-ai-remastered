@@ -37,7 +37,7 @@ import {
 import type { ColumnDef } from "@tanstack/react-table";
 import { Button, Modal, DataTable, ShimmerKpiCard, ShimmerChart, Shimmer, EmptyState } from "@saachi/ui";
 import { formatRelativeTime } from "@saachi/utils";
-import { getCurrentRole, canAccessModule, type StaffRole } from "../../lib/permissions";
+import { getCurrentRole, canAccessModule, type StaffRole } from "../../../lib/permissions";
 import {
   KPI_MODULE_MAP,
   QUICK_ACTION_MODULE_MAP,
@@ -46,7 +46,7 @@ import {
   REVENUE_CHART_MODULE,
   PIE_CHART_MODULE,
   ENROLLMENT_CHART_MODULE
-} from "../../lib/dashboard-config";
+} from "../../../lib/dashboard-config";
 
 const REVENUE_TREND: Record<string, { day: string; revenue: number }[]> = {
   today: [
@@ -802,3 +802,4 @@ export default function AdminDashboardPage() {
     </main>
   );
 }
+
