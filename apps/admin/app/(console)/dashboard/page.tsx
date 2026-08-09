@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
@@ -35,8 +35,18 @@ import {
   Bar
 } from "recharts";
 import type { ColumnDef } from "@tanstack/react-table";
-import { Button, Modal, DataTable, ShimmerKpiCard, ShimmerChart, Shimmer } from "@saachi/ui";
+import { Button, Modal, DataTable, ShimmerKpiCard, ShimmerChart, Shimmer, EmptyState } from "@saachi/ui";
 import { formatRelativeTime } from "@saachi/utils";
+import { getCurrentRole, canAccessModule, type StaffRole } from "../../lib/permissions";
+import {
+  KPI_MODULE_MAP,
+  QUICK_ACTION_MODULE_MAP,
+  NOTIFICATION_MODULE_MAP,
+  ACTIVITY_TYPE_MODULE_MAP,
+  REVENUE_CHART_MODULE,
+  PIE_CHART_MODULE,
+  ENROLLMENT_CHART_MODULE
+} from "../../lib/dashboard-config";
 
 const REVENUE_TREND: Record<string, { day: string; revenue: number }[]> = {
   today: [
@@ -272,6 +282,13 @@ export default function AdminDashboardPage() {
   const [notifTarget, setNotifTarget] = useState<NotificationItem | null>(null);
   const [actionTarget, setActionTarget] = useState<QuickAction | null>(null);
   const [statusTarget, setStatusTarget] = useState<(typeof SYSTEM_STATUS)[number] | null>(null);
+  const [currentRole, setCurrentRoleState] = useState<StaffRole>("super_admin");
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setCurrentRoleState(getCurrentRole());
+    setMounted(true);
+  }, []);
 
   useEffect(() => {
     const t = setTimeout(() => setIsLoading(false), 700);
@@ -300,7 +317,7 @@ export default function AdminDashboardPage() {
     return () => document.removeEventListener("click", handleClickOutside);
   }, [openHelp]);
 
-  const kpis: KpiDef[] = [
+  const allKpis: KpiDef[] = [
     {
       key: "signups",
       label: "New signups today",
@@ -338,6 +355,50 @@ export default function AdminDashboardPage() {
       help: "Support tickets that are still open or in progress and awaiting resolution."
     }
   ];
+
+  // ---- Role-aware filtering (single source of truth: lib/permissions.ts) ----
+  const kpis = useMemo(
+    () => (mounted ? allKpis.filter((k) => canAccessModule(KPI_MODULE_MAP[k.key], currentRole)) : allKpis),
+    [mounted, currentRole]
+  );
+
+  const quickActions = useMemo(
+    () =>
+      mounted
+        ? QUICK_ACTIONS.filter((a) => canAccessModule(QUICK_ACTION_MODULE_MAP[a.id], currentRole))
+        : QUICK_ACTIONS,
+    [mounted, currentRole]
+  );
+
+  const notifications = useMemo(
+    () =>
+      mounted
+        ? NOTIFICATIONS.filter((n) => canAccessModule(NOTIFICATION_MODULE_MAP[n.id], currentRole))
+        : NOTIFICATIONS,
+    [mounted, currentRole]
+  );
+
+  const recentActivity = useMemo(
+    () =>
+      mounted
+        ? RECENT_ACTIVITY.filter((a) => canAccessModule(ACTIVITY_TYPE_MODULE_MAP[a.type], currentRole))
+        : RECENT_ACTIVITY,
+    [mounted, currentRole]
+  );
+
+  const showRevenueChart = !mounted || canAccessModule(REVENUE_CHART_MODULE, currentRole);
+  const showPieChart = !mounted || canAccessModule(PIE_CHART_MODULE, currentRole);
+  const showEnrollmentChart = !mounted || canAccessModule(ENROLLMENT_CHART_MODULE, currentRole);
+  const showSystemStatus = !mounted || canAccessModule("/settings/commission-tiers", currentRole);
+
+  const hasAnyWidgets =
+    kpis.length > 0 ||
+    quickActions.length > 0 ||
+    showRevenueChart ||
+    showPieChart ||
+    showEnrollmentChart ||
+    notifications.length > 0 ||
+    recentActivity.length > 0;
 
   const activityColumns = useMemo<ColumnDef<ActivityRow, any>[]>(
     () => [
@@ -386,292 +447,318 @@ export default function AdminDashboardPage() {
           <p className="mt-1 text-[13px] text-ink-soft">Platform-wide overview and pending operational items.</p>
         </div>
 
-        <div className="flex items-center gap-1.5 rounded-control border border-line bg-card p-1">
-          <Calendar size={14} strokeWidth={1.75} className="ml-1.5 text-ink-soft" />
-          {(Object.keys(RANGE_LABEL) as DateRange[]).map((range) => (
-            <button
-              key={range}
-              type="button"
-              onClick={() => setDateRange(range)}
-              className={`rounded-control px-2.5 py-1.5 text-[12px] font-medium transition-colors duration-150 ease-out ${
-                dateRange === range ? "bg-ink text-paper" : "text-ink-soft hover:bg-paper-dim hover:text-ink"
-              }`}
-            >
-              {RANGE_LABEL[range]}
-            </button>
-          ))}
-        </div>
-      </div>
-
-      {/* System status strip */}
-      <div className="mb-6 flex flex-wrap items-center gap-2 rounded-control border border-line bg-card px-4 py-2.5">
-        <span className="flex items-center gap-1.5 text-[12px] font-semibold text-ink-soft">
-          <Activity size={13} strokeWidth={1.75} /> System status
-        </span>
-        <span className="h-4 w-px bg-line" />
-        {SYSTEM_STATUS.map((s) => (
-          <button
-            key={s.id}
-            type="button"
-            onClick={() => setStatusTarget(s)}
-            className="flex items-center gap-1.5 rounded-full border border-line px-2.5 py-1 text-[11.5px] font-medium text-ink-soft transition-colors duration-150 ease-out hover:border-line-strong hover:text-ink"
-          >
-            <span className={`h-1.5 w-1.5 rounded-full ${s.ok ? "bg-success" : "bg-error"}`} />
-            {s.label}
-          </button>
-        ))}
-      </div>
-
-      {/* KPI cards - click to open the related report, "?" opens an info box */}
-      <div className="mb-8 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        {isLoading
-          ? Array.from({ length: 4 }).map((_, i) => <ShimmerKpiCard key={i} />)
-          : kpis.map((kpi) => (
-              <div
-                key={kpi.key}
-                role="button"
-                tabIndex={0}
-                onClick={() => router.push(kpi.href)}
-                onKeyDown={(e) => {
-                  if (e.key === "Enter") router.push(kpi.href);
-                }}
-                className="group relative cursor-pointer rounded-card border border-line bg-card p-5 transition-colors duration-150 ease-out hover:border-line-strong"
-              >
-                <div className="flex items-start justify-between">
-                  <div className="flex h-9 w-9 items-center justify-center rounded-control border border-line text-ink">
-                    <kpi.icon size={16} strokeWidth={1.75} />
-                  </div>
-                  <div className="flex items-center gap-1">
-                    <button
-                      type="button"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        setOpenHelp((prev) => (prev === kpi.key ? null : kpi.key));
-                      }}
-                      className="flex h-6 w-6 items-center justify-center rounded-full text-ink-soft transition-colors duration-150 ease-out hover:bg-paper-dim hover:text-ink"
-                      aria-label={`What is ${kpi.label}?`}
-                    >
-                      <HelpCircle size={14} strokeWidth={1.75} />
-                    </button>
-                    <ArrowUpRight
-                      size={14}
-                      strokeWidth={1.75}
-                      className="text-ink-soft opacity-0 transition-opacity duration-150 ease-out group-hover:opacity-100"
-                    />
-                  </div>
-                </div>
-
-                <p className="mt-3.5 text-[12px] text-ink-soft">{kpi.label}</p>
-                <div className="mt-1 flex items-end justify-between gap-2">
-                  <span className="font-mono text-[22px] font-semibold text-ink">{kpi.value}</span>
-                  <span
-                    className={`mb-0.5 text-[12px] font-medium ${
-                      kpi.delta.direction === "up" ? "text-success" : "text-error"
-                    }`}
-                  >
-                    {kpi.delta.value}
-                  </span>
-                </div>
-
-                {openHelp === kpi.key && (
-                  <div
-                    onClick={(e) => e.stopPropagation()}
-                    className="absolute left-0 top-[calc(100%+6px)] z-20 w-[240px] rounded-control border border-line bg-card p-3 text-[12px] leading-relaxed text-ink-soft shadow-lg"
-                  >
-                    {kpi.help}
-                  </div>
-                )}
-              </div>
-            ))}
-      </div>
-
-      {/* Quick actions row */}
-      <div className="mb-8 rounded-card border border-line bg-card p-6">
-        <div className="mb-4 text-[14px] font-semibold text-ink">Quick actions</div>
-        <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
-          {QUICK_ACTIONS.map((action) => (
-            <button
-              key={action.id}
-              type="button"
-              onClick={() => setActionTarget(action)}
-              className="flex flex-col items-start gap-2.5 rounded-control border border-line p-4 text-left transition-colors duration-150 ease-out hover:border-line-strong hover:bg-paper-dim"
-            >
-              <div className="flex h-9 w-9 items-center justify-center rounded-control border border-line text-ink">
-                <action.icon size={16} strokeWidth={1.75} />
-              </div>
-              <span className="text-[12.5px] font-medium text-ink">{action.label}</span>
-            </button>
-          ))}
-        </div>
-      </div>
-
-      {/* Line chart + Pie chart with view switcher */}
-      <div className="mb-8 grid grid-cols-1 gap-6 lg:grid-cols-[1.3fr_1fr]">
-        {isLoading ? (
-          <ShimmerChart />
-        ) : (
-          <div className="rounded-card border border-line bg-card p-6">
-            <div className="mb-1 text-[14px] font-semibold text-ink">Revenue - {RANGE_LABEL[dateRange].toLowerCase()}</div>
-            <p className="mb-5 text-[12px] text-ink-soft">Gross transaction volume across all payment gateways.</p>
-            <ResponsiveContainer width="100%" height={220}>
-              <LineChart data={activeRevenue}>
-                <CartesianGrid strokeDasharray="3 3" stroke="var(--color-line)" />
-                <XAxis dataKey="day" stroke="var(--color-ink-soft)" fontSize={12} tickLine={false} axisLine={false} />
-                <YAxis stroke="var(--color-ink-soft)" fontSize={12} tickLine={false} axisLine={false} />
-                <Tooltip
-                  contentStyle={{
-                    background: "var(--color-card)",
-                    border: "1px solid var(--color-line)",
-                    borderRadius: 10,
-                    fontSize: 12,
-                    color: "var(--color-ink)"
-                  }}
-                />
-                <Line type="monotone" dataKey="revenue" stroke="var(--color-ink)" strokeWidth={2} dot={false} />
-              </LineChart>
-            </ResponsiveContainer>
-          </div>
-        )}
-
-        {isLoading ? (
-          <ShimmerChart />
-        ) : (
-          <div className="rounded-card border border-line bg-card p-6">
-            <div className="mb-1 text-[14px] font-semibold text-ink">{activePie.label}</div>
-            <p className="mb-4 text-[12px] text-ink-soft">Tap a view below to switch what the chart shows.</p>
-            <div className="mb-4 flex flex-wrap gap-1.5">
-              {(Object.keys(PIE_DATASETS) as PieView[]).map((key) => (
-                <button
-                  key={key}
-                  type="button"
-                  onClick={() => setPieView(key)}
-                  className={`rounded-full border px-3 py-1 text-[11.5px] font-medium transition-colors duration-150 ease-out ${
-                    pieView === key
-                      ? "border-ink bg-ink text-paper"
-                      : "border-line text-ink-soft hover:border-line-strong hover:text-ink"
-                  }`}
-                >
-                  {PIE_DATASETS[key].label}
-                </button>
-              ))}
-            </div>
-            <ResponsiveContainer width="100%" height={220}>
-              <PieChart>
-                <Pie data={activePie.data} dataKey="value" nameKey="name" innerRadius={48} outerRadius={78} paddingAngle={2}>
-                  {activePie.data.map((_, i) => (
-                    <Cell key={i} fill={PIE_COLORS[i % PIE_COLORS.length]} />
-                  ))}
-                </Pie>
-                <Tooltip
-                  contentStyle={{
-                    background: "var(--color-card)",
-                    border: "1px solid var(--color-line)",
-                    borderRadius: 10,
-                    fontSize: 12,
-                    color: "var(--color-ink)"
-                  }}
-                />
-                <Legend wrapperStyle={{ fontSize: 11 }} />
-              </PieChart>
-            </ResponsiveContainer>
-          </div>
-        )}
-      </div>
-
-      {/* Bar chart - enrollments by category */}
-      {isLoading ? (
-        <div className="mb-8">
-          <ShimmerChart />
-        </div>
-      ) : (
-        <div className="mb-8 rounded-card border border-line bg-card p-6">
-          <div className="mb-1 text-[14px] font-semibold text-ink">Enrollments by category</div>
-          <p className="mb-5 text-[12px] text-ink-soft">New course enrollments this period, grouped by top-level category.</p>
-          <ResponsiveContainer width="100%" height={240}>
-            <BarChart data={ENROLLMENTS_BY_CATEGORY}>
-              <CartesianGrid strokeDasharray="3 3" stroke="var(--color-line)" vertical={false} />
-              <XAxis dataKey="category" stroke="var(--color-ink-soft)" fontSize={11} tickLine={false} axisLine={false} />
-              <YAxis stroke="var(--color-ink-soft)" fontSize={12} tickLine={false} axisLine={false} />
-              <Tooltip
-                cursor={{ fill: "var(--color-paper-dim)" }}
-                contentStyle={{
-                  background: "var(--color-card)",
-                  border: "1px solid var(--color-line)",
-                  borderRadius: 10,
-                  fontSize: 12,
-                  color: "var(--color-ink)"
-                }}
-              />
-              <Bar dataKey="enrollments" fill="var(--color-ink)" radius={[6, 6, 0, 0]} maxBarSize={48} />
-            </BarChart>
-          </ResponsiveContainer>
-        </div>
-      )}
-
-      {/* Notifications card - click a notification to see details */}
-      <div className="mb-8 rounded-card border border-line bg-card p-6">
-        <div className="mb-4 flex items-center justify-between gap-2">
-          <div className="flex items-center gap-2">
-            <Bell size={15} strokeWidth={1.75} className="text-ink" />
-            <div className="text-[14px] font-semibold text-ink">Notifications</div>
-          </div>
-          <span className="text-[11.5px] text-ink-soft">{NOTIFICATIONS.length} active</span>
-        </div>
-        {isLoading ? (
-          <div className="flex flex-col gap-3">
-            {Array.from({ length: 4 }).map((_, i) => (
-              <Shimmer key={i} className="h-11 w-full" />
-            ))}
-          </div>
-        ) : (
-          <div className="flex flex-col gap-2">
-            {NOTIFICATIONS.map((n) => (
+        {showRevenueChart && (
+          <div className="flex items-center gap-1.5 rounded-control border border-line bg-card p-1">
+            <Calendar size={14} strokeWidth={1.75} className="ml-1.5 text-ink-soft" />
+            {(Object.keys(RANGE_LABEL) as DateRange[]).map((range) => (
               <button
-                key={n.id}
+                key={range}
                 type="button"
-                onClick={() => setNotifTarget(n)}
-                className="flex w-full items-center justify-between gap-3 rounded-control border border-line px-3.5 py-3 text-left text-[13px] text-ink transition-colors duration-150 ease-out hover:bg-paper-dim"
+                onClick={() => setDateRange(range)}
+                className={`rounded-control px-2.5 py-1.5 text-[12px] font-medium transition-colors duration-150 ease-out ${
+                  dateRange === range ? "bg-ink text-paper" : "text-ink-soft hover:bg-paper-dim hover:text-ink"
+                }`}
               >
-                <div className="flex items-center gap-2.5">
-                  <span className={`h-1.5 w-1.5 shrink-0 rounded-full ${TONE_DOT[n.tone]}`} />
-                  <span className="text-[12.5px]">{n.label}</span>
-                </div>
-                <ChevronRight size={14} strokeWidth={1.75} className="shrink-0 text-ink-soft" />
+                {RANGE_LABEL[range]}
               </button>
             ))}
           </div>
         )}
       </div>
 
-      {/* Recent activity table - "View more" opens the full paginated report */}
-      <div className="rounded-card border border-line bg-card p-6">
-        <div className="mb-4 flex items-center justify-between gap-2">
-          <div>
-            <div className="text-[14px] font-semibold text-ink">Recent activity</div>
-            <p className="mt-0.5 text-[12px] text-ink-soft">Latest transactions, submissions, and tickets across the platform.</p>
-          </div>
-          <Button size="sm" variant="secondary" onClick={() => router.push("/dashboard/activity")}>
-            View more
-          </Button>
+      {/* System status strip - Super Admin only (ties to platform-wide config access) */}
+      {showSystemStatus && (
+        <div className="mb-6 flex flex-wrap items-center gap-2 rounded-control border border-line bg-card px-4 py-2.5">
+          <span className="flex items-center gap-1.5 text-[12px] font-semibold text-ink-soft">
+            <Activity size={13} strokeWidth={1.75} /> System status
+          </span>
+          <span className="h-4 w-px bg-line" />
+          {SYSTEM_STATUS.map((s) => (
+            <button
+              key={s.id}
+              type="button"
+              onClick={() => setStatusTarget(s)}
+              className="flex items-center gap-1.5 rounded-full border border-line px-2.5 py-1 text-[11.5px] font-medium text-ink-soft transition-colors duration-150 ease-out hover:border-line-strong hover:text-ink"
+            >
+              <span className={`h-1.5 w-1.5 rounded-full ${s.ok ? "bg-success" : "bg-error"}`} />
+              {s.label}
+            </button>
+          ))}
         </div>
+      )}
 
-        {isLoading ? (
-          <div className="flex flex-col gap-2">
-            {Array.from({ length: 5 }).map((_, i) => (
-              <Shimmer key={i} className="h-11 w-full" />
+      {/* KPI cards - filtered by role's accessible modules */}
+      {(isLoading || kpis.length > 0) && (
+        <div className="mb-8 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          {isLoading
+            ? Array.from({ length: 4 }).map((_, i) => <ShimmerKpiCard key={i} />)
+            : kpis.map((kpi) => (
+                <div
+                  key={kpi.key}
+                  role="button"
+                  tabIndex={0}
+                  onClick={() => router.push(kpi.href)}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") router.push(kpi.href);
+                  }}
+                  className="group relative cursor-pointer rounded-card border border-line bg-card p-5 transition-colors duration-150 ease-out hover:border-line-strong"
+                >
+                  <div className="flex items-start justify-between">
+                    <div className="flex h-9 w-9 items-center justify-center rounded-control border border-line text-ink">
+                      <kpi.icon size={16} strokeWidth={1.75} />
+                    </div>
+                    <div className="flex items-center gap-1">
+                      <button
+                        type="button"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setOpenHelp((prev) => (prev === kpi.key ? null : kpi.key));
+                        }}
+                        className="flex h-6 w-6 items-center justify-center rounded-full text-ink-soft transition-colors duration-150 ease-out hover:bg-paper-dim hover:text-ink"
+                        aria-label={`What is ${kpi.label}?`}
+                      >
+                        <HelpCircle size={14} strokeWidth={1.75} />
+                      </button>
+                      <ArrowUpRight
+                        size={14}
+                        strokeWidth={1.75}
+                        className="text-ink-soft opacity-0 transition-opacity duration-150 ease-out group-hover:opacity-100"
+                      />
+                    </div>
+                  </div>
+
+                  <p className="mt-3.5 text-[12px] text-ink-soft">{kpi.label}</p>
+                  <div className="mt-1 flex items-end justify-between gap-2">
+                    <span className="font-mono text-[22px] font-semibold text-ink">{kpi.value}</span>
+                    <span
+                      className={`mb-0.5 text-[12px] font-medium ${
+                        kpi.delta.direction === "up" ? "text-success" : "text-error"
+                      }`}
+                    >
+                      {kpi.delta.value}
+                    </span>
+                  </div>
+
+                  {openHelp === kpi.key && (
+                    <div
+                      onClick={(e) => e.stopPropagation()}
+                      className="absolute left-0 top-[calc(100%+6px)] z-20 w-[240px] rounded-control border border-line bg-card p-3 text-[12px] leading-relaxed text-ink-soft shadow-lg"
+                    >
+                      {kpi.help}
+                    </div>
+                  )}
+                </div>
+              ))}
+        </div>
+      )}
+
+      {/* Quick actions row - filtered by role's accessible modules */}
+      {(isLoading || quickActions.length > 0) && (
+        <div className="mb-8 rounded-card border border-line bg-card p-6">
+          <div className="mb-4 text-[14px] font-semibold text-ink">Quick actions</div>
+          <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+            {(isLoading ? QUICK_ACTIONS : quickActions).map((action) => (
+              <button
+                key={action.id}
+                type="button"
+                onClick={() => setActionTarget(action)}
+                className="flex flex-col items-start gap-2.5 rounded-control border border-line p-4 text-left transition-colors duration-150 ease-out hover:border-line-strong hover:bg-paper-dim"
+              >
+                <div className="flex h-9 w-9 items-center justify-center rounded-control border border-line text-ink">
+                  <action.icon size={16} strokeWidth={1.75} />
+                </div>
+                <span className="text-[12.5px] font-medium text-ink">{action.label}</span>
+              </button>
             ))}
           </div>
+        </div>
+      )}
+
+      {/* Line chart + Pie chart - both gated behind /finance access */}
+      {(showRevenueChart || showPieChart) && (
+        <div className="mb-8 grid grid-cols-1 gap-6 lg:grid-cols-[1.3fr_1fr]">
+          {showRevenueChart &&
+            (isLoading ? (
+              <ShimmerChart />
+            ) : (
+              <div className="rounded-card border border-line bg-card p-6">
+                <div className="mb-1 text-[14px] font-semibold text-ink">Revenue - {RANGE_LABEL[dateRange].toLowerCase()}</div>
+                <p className="mb-5 text-[12px] text-ink-soft">Gross transaction volume across all payment gateways.</p>
+                <ResponsiveContainer width="100%" height={220}>
+                  <LineChart data={activeRevenue}>
+                    <CartesianGrid strokeDasharray="3 3" stroke="var(--color-line)" />
+                    <XAxis dataKey="day" stroke="var(--color-ink-soft)" fontSize={12} tickLine={false} axisLine={false} />
+                    <YAxis stroke="var(--color-ink-soft)" fontSize={12} tickLine={false} axisLine={false} />
+                    <Tooltip
+                      contentStyle={{
+                        background: "var(--color-card)",
+                        border: "1px solid var(--color-line)",
+                        borderRadius: 10,
+                        fontSize: 12,
+                        color: "var(--color-ink)"
+                      }}
+                    />
+                    <Line type="monotone" dataKey="revenue" stroke="var(--color-ink)" strokeWidth={2} dot={false} />
+                  </LineChart>
+                </ResponsiveContainer>
+              </div>
+            ))}
+
+          {showPieChart &&
+            (isLoading ? (
+              <ShimmerChart />
+            ) : (
+              <div className="rounded-card border border-line bg-card p-6">
+                <div className="mb-1 text-[14px] font-semibold text-ink">{activePie.label}</div>
+                <p className="mb-4 text-[12px] text-ink-soft">Tap a view below to switch what the chart shows.</p>
+                <div className="mb-4 flex flex-wrap gap-1.5">
+                  {(Object.keys(PIE_DATASETS) as PieView[]).map((key) => (
+                    <button
+                      key={key}
+                      type="button"
+                      onClick={() => setPieView(key)}
+                      className={`rounded-full border px-3 py-1 text-[11.5px] font-medium transition-colors duration-150 ease-out ${
+                        pieView === key
+                          ? "border-ink bg-ink text-paper"
+                          : "border-line text-ink-soft hover:border-line-strong hover:text-ink"
+                      }`}
+                    >
+                      {PIE_DATASETS[key].label}
+                    </button>
+                  ))}
+                </div>
+                <ResponsiveContainer width="100%" height={220}>
+                  <PieChart>
+                    <Pie data={activePie.data} dataKey="value" nameKey="name" innerRadius={48} outerRadius={78} paddingAngle={2}>
+                      {activePie.data.map((_, i) => (
+                        <Cell key={i} fill={PIE_COLORS[i % PIE_COLORS.length]} />
+                      ))}
+                    </Pie>
+                    <Tooltip
+                      contentStyle={{
+                        background: "var(--color-card)",
+                        border: "1px solid var(--color-line)",
+                        borderRadius: 10,
+                        fontSize: 12,
+                        color: "var(--color-ink)"
+                      }}
+                    />
+                    <Legend wrapperStyle={{ fontSize: 11 }} />
+                  </PieChart>
+                </ResponsiveContainer>
+              </div>
+            ))}
+        </div>
+      )}
+
+      {/* Bar chart - enrollments by category (analytics access) */}
+      {showEnrollmentChart &&
+        (isLoading ? (
+          <div className="mb-8">
+            <ShimmerChart />
+          </div>
         ) : (
-          <DataTable
-            columns={activityColumns}
-            data={RECENT_ACTIVITY}
-            isLoading={false}
-            emptyTitle="No recent activity"
-            emptyDescription=""
-            onRowClick={(row: ActivityRow) => router.push(ACTIVITY_ROUTE[row.type])}
-          />
-        )}
-      </div>
+          <div className="mb-8 rounded-card border border-line bg-card p-6">
+            <div className="mb-1 text-[14px] font-semibold text-ink">Enrollments by category</div>
+            <p className="mb-5 text-[12px] text-ink-soft">New course enrollments this period, grouped by top-level category.</p>
+            <ResponsiveContainer width="100%" height={240}>
+              <BarChart data={ENROLLMENTS_BY_CATEGORY}>
+                <CartesianGrid strokeDasharray="3 3" stroke="var(--color-line)" vertical={false} />
+                <XAxis dataKey="category" stroke="var(--color-ink-soft)" fontSize={11} tickLine={false} axisLine={false} />
+                <YAxis stroke="var(--color-ink-soft)" fontSize={12} tickLine={false} axisLine={false} />
+                <Tooltip
+                  cursor={{ fill: "var(--color-paper-dim)" }}
+                  contentStyle={{
+                    background: "var(--color-card)",
+                    border: "1px solid var(--color-line)",
+                    borderRadius: 10,
+                    fontSize: 12,
+                    color: "var(--color-ink)"
+                  }}
+                />
+                <Bar dataKey="enrollments" fill="var(--color-ink)" radius={[6, 6, 0, 0]} maxBarSize={48} />
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
+        ))}
+
+      {/* Notifications card - filtered by role's accessible modules */}
+      {(isLoading || notifications.length > 0) && (
+        <div className="mb-8 rounded-card border border-line bg-card p-6">
+          <div className="mb-4 flex items-center justify-between gap-2">
+            <div className="flex items-center gap-2">
+              <Bell size={15} strokeWidth={1.75} className="text-ink" />
+              <div className="text-[14px] font-semibold text-ink">Notifications</div>
+            </div>
+            <span className="text-[11.5px] text-ink-soft">{notifications.length} active</span>
+          </div>
+          {isLoading ? (
+            <div className="flex flex-col gap-3">
+              {Array.from({ length: 4 }).map((_, i) => (
+                <Shimmer key={i} className="h-11 w-full" />
+              ))}
+            </div>
+          ) : (
+            <div className="flex flex-col gap-2">
+              {notifications.map((n) => (
+                <button
+                  key={n.id}
+                  type="button"
+                  onClick={() => setNotifTarget(n)}
+                  className="flex w-full items-center justify-between gap-3 rounded-control border border-line px-3.5 py-3 text-left text-[13px] text-ink transition-colors duration-150 ease-out hover:bg-paper-dim"
+                >
+                  <div className="flex items-center gap-2.5">
+                    <span className={`h-1.5 w-1.5 shrink-0 rounded-full ${TONE_DOT[n.tone]}`} />
+                    <span className="text-[12.5px]">{n.label}</span>
+                  </div>
+                  <ChevronRight size={14} strokeWidth={1.75} className="shrink-0 text-ink-soft" />
+                </button>
+              ))}
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* Recent activity table - filtered by role's accessible activity types */}
+      {(isLoading || recentActivity.length > 0) && (
+        <div className="rounded-card border border-line bg-card p-6">
+          <div className="mb-4 flex items-center justify-between gap-2">
+            <div>
+              <div className="text-[14px] font-semibold text-ink">Recent activity</div>
+              <p className="mt-0.5 text-[12px] text-ink-soft">Latest activity across the modules you have access to.</p>
+            </div>
+            <Button size="sm" variant="secondary" onClick={() => router.push("/dashboard/activity")}>
+              View more
+            </Button>
+          </div>
+
+          {isLoading ? (
+            <div className="flex flex-col gap-2">
+              {Array.from({ length: 5 }).map((_, i) => (
+                <Shimmer key={i} className="h-11 w-full" />
+              ))}
+            </div>
+          ) : (
+            <DataTable
+              columns={activityColumns}
+              data={recentActivity}
+              isLoading={false}
+              emptyTitle="No recent activity"
+              emptyDescription=""
+              onRowClick={(row: ActivityRow) => router.push(ACTIVITY_ROUTE[row.type])}
+            />
+          )}
+        </div>
+      )}
+
+      {/* Edge case: role has no accessible dashboard widgets at all */}
+      {!isLoading && !hasAnyWidgets && (
+        <EmptyState
+          icon={<LifeBuoy size={22} strokeWidth={1.75} />}
+          title="No dashboard widgets available"
+          description="Your current role does not have access to any dashboard modules. Use the sidebar to navigate to a page you have permission for."
+        />
+      )}
 
       <Modal open={Boolean(notifTarget)} onClose={() => setNotifTarget(null)} title={notifTarget?.label ?? ""}>
         <p className="mb-5 text-[13.5px] leading-relaxed text-ink-soft">{notifTarget?.detail}</p>

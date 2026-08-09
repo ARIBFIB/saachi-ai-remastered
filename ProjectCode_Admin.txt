@@ -1,7 +1,7 @@
 ﻿================================================================================
 MODULE CODE EXPORT: Admin
-Generated: 2026-08-10 00:55:26
-Total Files: 42
+Generated: 2026-08-10 01:26:36
+Total Files: 45
 ================================================================================
 
 
@@ -2706,6 +2706,157 @@ export default function PromotionSalesPage() {
 
 
 ================================================================================
+FILE: apps\admin\app\(console)\moderation\content\page.tsx
+================================================================================
+"use client";
+
+import { useState } from "react";
+import { ShieldCheck, FileWarning, CheckCircle2, Trash2, ShieldAlert } from "lucide-react";
+import { Button, Card, Select, StatusPill, EmptyState, HelpTooltip } from "@saachi/ui";
+import { formatRelativeTime } from "@saachi/utils";
+
+type ContentType = "course_description" | "instructor_bio" | "banner_copy" | "certificate_note";
+type FlagStatus = "pending" | "removed" | "dismissed" | "warned";
+
+type FlaggedContent = {
+  id: string;
+  type: ContentType;
+  title: string;
+  body: string;
+  author: string;
+  flaggedBy: string;
+  flagReason: string;
+  status: FlagStatus;
+  createdAt: string;
+};
+
+const TYPE_LABEL: Record<ContentType, string> = {
+  course_description: "Course description",
+  instructor_bio: "Instructor bio",
+  banner_copy: "Banner copy",
+  certificate_note: "Certificate note"
+};
+
+const STATUS_OPTIONS = [
+  { label: "Pending", value: "pending" },
+  { label: "Removed", value: "removed" },
+  { label: "Dismissed", value: "dismissed" },
+  { label: "Warned", value: "warned" }
+];
+
+const STATUS_TONE: Record<FlagStatus, "warning" | "error" | "neutral" | "info"> = {
+  pending: "warning",
+  removed: "error",
+  dismissed: "neutral",
+  warned: "info"
+};
+
+const INITIAL_CONTENT: FlaggedContent[] = [
+  {
+    id: "c1",
+    type: "course_description",
+    title: "AI Automation with n8n",
+    body: "This course guarantees you will make $10,000 in your first month using these automation secrets nobody talks about.",
+    author: "Zeeshan Tariq",
+    flaggedBy: "Automated filter",
+    flagReason: "Unverifiable earnings claim",
+    status: "pending",
+    createdAt: "2026-08-08T08:20:00Z"
+  },
+  {
+    id: "c2",
+    type: "instructor_bio",
+    title: "Bilal Ahmed - Instructor Bio",
+    body: "Ex-Google, ex-Meta, ex-OpenAI senior engineer with 15 years building production AI systems at scale.",
+    author: "Bilal Ahmed",
+    flaggedBy: "Fatima Noor",
+    flagReason: "Unverified employment claims",
+    status: "pending",
+    createdAt: "2026-08-07T15:10:00Z"
+  }
+];
+
+export default function ContentModerationPage() {
+  const [content, setContent] = useState(INITIAL_CONTENT);
+  const [statusFilter, setStatusFilter] = useState("pending");
+
+  const filtered = content.filter((c) => !statusFilter || c.status === statusFilter);
+
+  const resolve = (id: string, status: FlagStatus) => {
+    setContent((prev) => prev.map((c) => (c.id === id ? { ...c, status } : c)));
+  };
+
+  return (
+    <main className="mx-auto max-w-[1000px] px-4 py-8 md:px-8 md:py-10">
+      <div className="mb-6 flex items-center justify-between gap-3">
+        <div className="flex items-center gap-3">
+          <div className="flex h-10 w-10 items-center justify-center rounded-control border border-line text-ink">
+            <ShieldCheck size={17} strokeWidth={1.75} />
+          </div>
+          <div>
+            <div className="flex items-center gap-1.5">
+              <h1 className="text-[22px] font-semibold text-ink">Content Moderation</h1>
+              <HelpTooltip text="Flagged platform content outside of reviews and forum posts - course descriptions, instructor bios, banner copy, and certificate notes." />
+            </div>
+            <p className="mt-0.5 text-[13px] text-ink-soft">Miscellaneous platform content flagged for policy review.</p>
+          </div>
+        </div>
+        <div className="w-[180px]">
+          <Select placeholder="All statuses" options={STATUS_OPTIONS} value={statusFilter} onChange={(e) => setStatusFilter(e.target.value)} />
+        </div>
+      </div>
+
+      {filtered.length === 0 ? (
+        <EmptyState icon={<FileWarning size={22} strokeWidth={1.75} />} title="Nothing flagged" description="No content matches this filter." />
+      ) : (
+        <div className="flex flex-col gap-4">
+          {filtered.map((c) => (
+            <Card key={c.id} className="flex flex-col gap-4 p-5">
+              <div>
+                <div className="flex flex-wrap items-center gap-2.5">
+                  <p className="text-[14px] font-semibold text-ink">{c.title}</p>
+                  <span className="rounded-full border border-line-strong px-2 py-0.5 text-[11px] text-ink-soft">
+                    {TYPE_LABEL[c.type]}
+                  </span>
+                  <StatusPill label={c.status} tone={STATUS_TONE[c.status]} />
+                </div>
+                <p className="mt-1 text-[12.5px] text-ink-soft">
+                  by {c.author} - {formatRelativeTime(c.createdAt)}
+                </p>
+              </div>
+
+              <p className="rounded-control border border-line bg-paper-dim p-3.5 text-[13.5px] leading-relaxed text-ink">
+                {c.body}
+              </p>
+
+              <div className="flex items-center gap-2 text-[12.5px] text-ink-soft">
+                <ShieldAlert size={13} strokeWidth={1.75} className="shrink-0 text-error" />
+                Flagged by {c.flaggedBy} - reason: {c.flagReason}
+              </div>
+
+              {c.status === "pending" && (
+                <div className="flex flex-wrap gap-2">
+                  <Button size="sm" variant="secondary" onClick={() => resolve(c.id, "dismissed")}>
+                    <CheckCircle2 size={14} strokeWidth={1.75} /> Dismiss flag
+                  </Button>
+                  <Button size="sm" variant="secondary" onClick={() => resolve(c.id, "warned")}>
+                    Warn author
+                  </Button>
+                  <Button size="sm" variant="danger" onClick={() => resolve(c.id, "removed")}>
+                    <Trash2 size={14} strokeWidth={1.75} /> Remove content
+                  </Button>
+                </div>
+              )}
+            </Card>
+          ))}
+        </div>
+      )}
+    </main>
+  );
+}
+
+
+================================================================================
 FILE: apps\admin\app\(console)\moderation\forum\page.tsx
 ================================================================================
 "use client";
@@ -3887,48 +4038,154 @@ FILE: apps\admin\app\login\page.tsx
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { ShieldCheck } from "lucide-react";
+import { ShieldCheck, AlertCircle } from "lucide-react";
 import { Button, Card, Input, ThemeToggle } from "@saachi/ui";
+import { findStaffUser, setAuthCookies, ROLE_LABEL, type StaffRole } from "../../lib/permissions";
+
+const DEMO_CREDENTIALS: { role: StaffRole; email: string; password: string }[] = [
+  { role: "super_admin", email: "superadmin@saachi.ai", password: "super123" },
+  { role: "admin", email: "admin@saachi.ai", password: "admin123" },
+  { role: "finance_officer", email: "finance@saachi.ai", password: "finance123" },
+  { role: "support_officer", email: "support@saachi.ai", password: "support123" }
+];
 
 export default function AdminLoginPage() {
   const router = useRouter();
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    setError("");
+
+    const user = findStaffUser(email, password);
+    if (!user) {
+      setError("Invalid email or password. Check the demo credentials below.");
+      return;
+    }
+
     setLoading(true);
-    document.cookie = "saachi_admin_session=demo_token; path=/; max-age=" + 60 * 60 * 24 * 7;
+    setAuthCookies(user);
     setTimeout(() => router.push("/dashboard"), 500);
   };
 
+  const fillDemo = (cred: (typeof DEMO_CREDENTIALS)[number]) => {
+    setEmail(cred.email);
+    setPassword(cred.password);
+    setError("");
+  };
+
   return (
-    <main className="flex min-h-screen items-center justify-center bg-paper px-4">
+    <main className="flex min-h-screen items-center justify-center bg-paper px-4 py-10">
       <div className="absolute right-5 top-5">
         <ThemeToggle />
       </div>
 
-      <Card className="w-full max-w-[400px] p-8">
-        <div className="mb-6 flex flex-col items-center text-center">
-          <span className="mb-4 flex h-11 w-11 items-center justify-center rounded-full border border-ink text-[15px] font-bold text-ink">
-            S
-          </span>
-          <h1 className="text-[20px] font-semibold text-ink">Saachi AI - Admin</h1>
-          <p className="mt-1.5 text-[13px] text-ink-soft">Internal staff access only. 2FA required.</p>
-        </div>
+      <div className="flex w-full max-w-[860px] flex-col gap-6 lg:flex-row lg:items-start">
+        <Card className="w-full max-w-[400px] p-8 lg:mx-auto">
+          <div className="mb-6 flex flex-col items-center text-center">
+            <span className="mb-4 flex h-11 w-11 items-center justify-center rounded-full border border-ink text-[15px] font-bold text-ink">
+              S
+            </span>
+            <h1 className="text-[20px] font-semibold text-ink">Saachi AI - Admin</h1>
+            <p className="mt-1.5 text-[13px] text-ink-soft">Internal staff access only.</p>
+          </div>
 
-        <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-          <Input label="Email" type="email" placeholder="you@saachi.ai" required />
-          <Input label="Password" type="password" placeholder="********" required />
-          <Button type="submit" size="lg" disabled={loading}>
-            {loading ? "Verifying..." : "Continue"}
-          </Button>
-        </form>
+          <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+            <Input
+              label="Email"
+              type="email"
+              placeholder="you@saachi.ai"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+            />
+            <Input
+              label="Password"
+              type="password"
+              placeholder="********"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+            />
 
-        <div className="mt-5 flex items-center justify-center gap-1.5 text-[12px] text-ink-soft">
-          <ShieldCheck size={13} strokeWidth={1.75} />
-          Protected by mandatory two-factor authentication
-        </div>
-      </Card>
+            {error && (
+              <div className="flex items-start gap-2 rounded-control border border-error bg-error-tint px-3 py-2.5 text-[12.5px] text-error">
+                <AlertCircle size={14} strokeWidth={1.75} className="mt-0.5 shrink-0" />
+                <span>{error}</span>
+              </div>
+            )}
+
+            <Button type="submit" size="lg" disabled={loading}>
+              {loading ? "Verifying..." : "Continue"}
+            </Button>
+          </form>
+
+          <div className="mt-5 flex items-center justify-center gap-1.5 text-[12px] text-ink-soft">
+            <ShieldCheck size={13} strokeWidth={1.75} />
+            Role-based access control demo
+          </div>
+        </Card>
+
+        <Card className="w-full max-w-[400px] p-6 lg:mx-auto">
+          <p className="mb-1 text-[13px] font-semibold text-ink">Demo credentials</p>
+          <p className="mb-4 text-[12px] text-ink-soft">
+            No backend yet - click a role below to auto-fill and try each access level.
+          </p>
+          <div className="flex flex-col gap-2">
+            {DEMO_CREDENTIALS.map((cred) => (
+              <button
+                key={cred.role}
+                type="button"
+                onClick={() => fillDemo(cred)}
+                className="flex flex-col items-start rounded-control border border-line px-3.5 py-2.5 text-left transition-colors duration-150 ease-out hover:border-line-strong hover:bg-paper-dim"
+              >
+                <span className="text-[13px] font-semibold text-ink">{ROLE_LABEL[cred.role]}</span>
+                <span className="mt-0.5 font-mono text-[11.5px] text-ink-soft">{cred.email}</span>
+                <span className="font-mono text-[11.5px] text-ink-soft">{cred.password}</span>
+              </button>
+            ))}
+          </div>
+        </Card>
+      </div>
+    </main>
+  );
+}
+
+
+================================================================================
+FILE: apps\admin\app\_components\AccessDenied.tsx
+================================================================================
+"use client";
+
+import { useRouter } from "next/navigation";
+import { ShieldAlert } from "lucide-react";
+import { Button } from "@saachi/ui";
+import { ROLE_LABEL, type StaffRole } from "../../lib/permissions";
+
+type AccessDeniedProps = {
+  role: StaffRole;
+};
+
+export function AccessDenied({ role }: AccessDeniedProps) {
+  const router = useRouter();
+
+  return (
+    <main className="mx-auto flex max-w-[600px] flex-col items-center px-4 py-24 text-center">
+      <div className="mb-5 flex h-14 w-14 items-center justify-center rounded-full border border-error text-error">
+        <ShieldAlert size={24} strokeWidth={1.75} />
+      </div>
+      <h1 className="text-[20px] font-semibold text-ink">Access denied</h1>
+      <p className="mt-2 text-[13.5px] leading-relaxed text-ink-soft">
+        Your current role - <span className="font-semibold text-ink">{ROLE_LABEL[role]}</span> - does not have
+        permission to view this page. Switch to a role with access, or contact a Super Admin if you believe this is
+        a mistake.
+      </p>
+      <Button className="mt-6" onClick={() => router.push("/dashboard")}>
+        Back to Dashboard
+      </Button>
     </main>
   );
 }
@@ -3959,7 +4216,19 @@ import {
 } from "lucide-react";
 import { ThemeToggle } from "@saachi/ui";
 import { ADMIN_NAV } from "../../lib/nav-config";
+import {
+  ROLE_LABEL,
+  getAllowedRolesForRoute,
+  isRouteAllowed,
+  getCurrentRole,
+  getCurrentName,
+  getCurrentEmail,
+  setCurrentRole,
+  clearAuthCookies,
+  type StaffRole
+} from "../../lib/permissions";
 import { CommandPalette } from "./CommandPalette";
+import { AccessDenied } from "./AccessDenied";
 
 function cx(...parts: Array<string | false | undefined>) {
   return parts.filter(Boolean).join(" ");
@@ -3985,23 +4254,7 @@ const TONE_DOT: Record<NotificationItem["tone"], string> = {
   info: "bg-info"
 };
 
-type StaffRole = "super_admin" | "admin" | "finance_officer" | "support_officer";
-
-const ROLE_LABEL: Record<StaffRole, string> = {
-  super_admin: "Super Admin",
-  admin: "Admin",
-  finance_officer: "Finance Officer",
-  support_officer: "Support Officer"
-};
-
 const ROLE_LIST: StaffRole[] = ["super_admin", "admin", "finance_officer", "support_officer"];
-
-const CURRENT_USER = {
-  name: "Abdul Rehman Irfan",
-  email: "abdulrehman@saachi.ai"
-};
-
-const ROLE_STORAGE_KEY = "saachi_admin_role";
 
 export function AdminShell({ children }: { children: ReactNode }) {
   const pathname = usePathname();
@@ -4010,16 +4263,19 @@ export function AdminShell({ children }: { children: ReactNode }) {
   const [collapsed, setCollapsed] = useState(false);
   const [notifOpen, setNotifOpen] = useState(false);
   const [userMenuOpen, setUserMenuOpen] = useState(false);
-  const [currentRole, setCurrentRole] = useState<StaffRole>("super_admin");
+  const [currentRole, setCurrentRoleState] = useState<StaffRole>("super_admin");
+  const [currentName, setCurrentName] = useState("Abdul Rehman Irfan");
+  const [currentEmail, setCurrentEmail] = useState("abdulrehman@saachi.ai");
+  const [mounted, setMounted] = useState(false);
 
   const notifRef = useRef<HTMLDivElement>(null);
   const userMenuRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    const stored = window.localStorage.getItem(ROLE_STORAGE_KEY) as StaffRole | null;
-    if (stored && ROLE_LIST.includes(stored)) {
-      setCurrentRole(stored);
-    }
+    setCurrentRoleState(getCurrentRole());
+    setCurrentName(getCurrentName());
+    setCurrentEmail(getCurrentEmail());
+    setMounted(true);
   }, []);
 
   useEffect(() => {
@@ -4032,23 +4288,31 @@ export function AdminShell({ children }: { children: ReactNode }) {
   }, []);
 
   const handleLogout = () => {
-    document.cookie = "saachi_admin_session=; path=/; max-age=0";
+    clearAuthCookies();
     router.push("/login");
   };
 
   const handleSwitchRole = (role: StaffRole) => {
+    setCurrentRoleState(role);
     setCurrentRole(role);
-    window.localStorage.setItem(ROLE_STORAGE_KEY, role);
     setUserMenuOpen(false);
     toast.success(`Switched to ${ROLE_LABEL[role]}`, {
       description: "Your view now reflects this role's permissions."
     });
+    if (!isRouteAllowed(pathname ?? "/dashboard", role)) {
+      router.push("/dashboard");
+    }
   };
+
+  const filteredNav = ADMIN_NAV.map((section) => ({
+    ...section,
+    items: section.items.filter((item) => getAllowedRolesForRoute(item.href).includes(currentRole))
+  })).filter((section) => section.items.length > 0);
 
   const sidebarContent = (
     <div className="flex h-full flex-col pt-[65px]">
       <nav className="flex flex-1 flex-col gap-5 overflow-y-auto px-3 pb-4 pt-4">
-        {ADMIN_NAV.map((navSection) => (
+        {filteredNav.map((navSection) => (
           <div key={navSection.title}>
             {!collapsed && (
               <div className="mb-1.5 px-2.5 text-[10px] font-semibold uppercase tracking-[0.08em] text-ink-soft/60">
@@ -4107,6 +4371,8 @@ export function AdminShell({ children }: { children: ReactNode }) {
     </div>
   );
 
+  const allowed = mounted ? isRouteAllowed(pathname ?? "/dashboard", currentRole) : true;
+
   return (
     <div className="min-h-screen bg-paper">
       <CommandPalette />
@@ -4147,10 +4413,10 @@ export function AdminShell({ children }: { children: ReactNode }) {
               className="flex min-w-0 items-center gap-2 rounded-control px-1.5 py-1 transition-colors duration-150 ease-out hover:bg-paper-dim"
             >
               <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-line text-[12px] font-semibold text-ink">
-                {CURRENT_USER.name.charAt(0)}
+                {currentName.charAt(0)}
               </div>
               <div className="hidden min-w-0 text-left sm:block">
-                <div className="truncate text-[12.5px] font-semibold leading-tight text-ink">{CURRENT_USER.name}</div>
+                <div className="truncate text-[12.5px] font-semibold leading-tight text-ink">{currentName}</div>
                 <div className="truncate text-[11px] leading-tight text-ink-soft">{ROLE_LABEL[currentRole]}</div>
               </div>
               <ChevronDown size={13} strokeWidth={1.75} className="hidden shrink-0 text-ink-soft sm:block" />
@@ -4159,13 +4425,13 @@ export function AdminShell({ children }: { children: ReactNode }) {
             {userMenuOpen && (
               <div className="absolute left-0 top-[calc(100%+8px)] w-[260px] overflow-hidden rounded-card border border-line bg-card shadow-lg">
                 <div className="border-b border-line px-4 py-3">
-                  <p className="truncate text-[13px] font-semibold text-ink">{CURRENT_USER.name}</p>
-                  <p className="truncate text-[12px] text-ink-soft">{CURRENT_USER.email}</p>
+                  <p className="truncate text-[13px] font-semibold text-ink">{currentName}</p>
+                  <p className="truncate text-[12px] text-ink-soft">{currentEmail}</p>
                 </div>
 
                 <div className="border-b border-line px-4 py-3">
                   <p className="mb-2 text-[10.5px] font-semibold uppercase tracking-[0.06em] text-ink-soft/70">
-                    Switch role
+                    Switch role (testing)
                   </p>
                   <div className="flex flex-col gap-0.5">
                     {ROLE_LIST.map((role) => (
@@ -4186,20 +4452,24 @@ export function AdminShell({ children }: { children: ReactNode }) {
                 </div>
 
                 <div className="flex flex-col p-1.5">
-                  <Link
-                    href="/settings/roles"
-                    onClick={() => setUserMenuOpen(false)}
-                    className="flex items-center gap-2.5 rounded-control px-3 py-2 text-[13px] text-ink transition-colors duration-100 ease-out hover:bg-paper-dim"
-                  >
-                    <User size={14} strokeWidth={1.75} /> Profile
-                  </Link>
-                  <Link
-                    href="/settings/platform"
-                    onClick={() => setUserMenuOpen(false)}
-                    className="flex items-center gap-2.5 rounded-control px-3 py-2 text-[13px] text-ink transition-colors duration-100 ease-out hover:bg-paper-dim"
-                  >
-                    <Settings size={14} strokeWidth={1.75} /> Settings
-                  </Link>
+                  {getAllowedRolesForRoute("/settings/roles").includes(currentRole) && (
+                    <Link
+                      href="/settings/roles"
+                      onClick={() => setUserMenuOpen(false)}
+                      className="flex items-center gap-2.5 rounded-control px-3 py-2 text-[13px] text-ink transition-colors duration-100 ease-out hover:bg-paper-dim"
+                    >
+                      <User size={14} strokeWidth={1.75} /> Profile
+                    </Link>
+                  )}
+                  {getAllowedRolesForRoute("/settings/platform").includes(currentRole) && (
+                    <Link
+                      href="/settings/platform"
+                      onClick={() => setUserMenuOpen(false)}
+                      className="flex items-center gap-2.5 rounded-control px-3 py-2 text-[13px] text-ink transition-colors duration-100 ease-out hover:bg-paper-dim"
+                    >
+                      <Settings size={14} strokeWidth={1.75} /> Settings
+                    </Link>
+                  )}
                   <button
                     type="button"
                     onClick={handleLogout}
@@ -4285,7 +4555,7 @@ export function AdminShell({ children }: { children: ReactNode }) {
       )}
 
       <div className={cx("transition-[padding] duration-200 ease-out", collapsed ? "md:pl-[76px]" : "md:pl-[248px]")}>
-        {children}
+        {allowed ? children : <AccessDenied role={currentRole} />}
       </div>
     </div>
   );
@@ -4758,6 +5028,137 @@ export const ADMIN_NAV: AdminNavSection[] = [
     items: [{ label: "Audit Log", href: "/logs/audit", icon: History }]
   }
 ];
+
+
+================================================================================
+FILE: apps\admin\lib\permissions.ts
+================================================================================
+export type StaffRole = "super_admin" | "admin" | "finance_officer" | "support_officer";
+
+export type StaffUser = {
+  email: string;
+  password: string;
+  role: StaffRole;
+  name: string;
+};
+
+export const ROLE_LABEL: Record<StaffRole, string> = {
+  super_admin: "Super Admin",
+  admin: "Admin",
+  finance_officer: "Finance Officer",
+  support_officer: "Support Officer"
+};
+
+// Dummy staff directory - no backend yet, credentials are hardcoded for demo/testing.
+export const STAFF_USERS: StaffUser[] = [
+  { email: "superadmin@saachi.ai", password: "super123", role: "super_admin", name: "Abdul Rehman Irfan" },
+  { email: "admin@saachi.ai", password: "admin123", role: "admin", name: "Admin User" },
+  { email: "finance@saachi.ai", password: "finance123", role: "finance_officer", name: "Finance Desk" },
+  { email: "support@saachi.ai", password: "support123", role: "support_officer", name: "Support Desk" }
+];
+
+export function findStaffUser(email: string, password: string): StaffUser | null {
+  const match = STAFF_USERS.find(
+    (u) => u.email.toLowerCase() === email.trim().toLowerCase() && u.password === password
+  );
+  return match ?? null;
+}
+
+// Route prefix -> roles allowed to access it. Checked in order, first match wins.
+// Any route not listed here is allowed for all roles (e.g. /dashboard).
+const ROUTE_PERMISSIONS: { prefix: string; roles: StaffRole[] }[] = [
+  // Settings - Super Admin only
+  { prefix: "/settings/roles", roles: ["super_admin"] },
+  { prefix: "/settings/commission-tiers", roles: ["super_admin"] },
+  { prefix: "/settings/payment-gateways", roles: ["super_admin"] },
+  { prefix: "/settings/platform", roles: ["super_admin"] },
+  { prefix: "/settings/legal-documents", roles: ["super_admin"] },
+
+  // Finance - Super Admin, Admin, Finance Officer
+  { prefix: "/finance", roles: ["super_admin", "admin", "finance_officer"] },
+
+  // Analytics - Super Admin, Admin, Finance Officer
+  { prefix: "/analytics", roles: ["super_admin", "admin", "finance_officer"] },
+
+  // Courses - Super Admin, Admin only
+  { prefix: "/courses", roles: ["super_admin", "admin"] },
+
+  // Marketing - Super Admin, Admin only
+  { prefix: "/marketing", roles: ["super_admin", "admin"] },
+
+  // Audit log - Super Admin, Admin only
+  { prefix: "/logs/audit", roles: ["super_admin", "admin"] },
+
+  // Users - Super Admin, Admin, Support Officer
+  { prefix: "/users", roles: ["super_admin", "admin", "support_officer"] },
+
+  // Moderation (reviews, forum, content) - Super Admin, Admin, Support Officer
+  { prefix: "/moderation", roles: ["super_admin", "admin", "support_officer"] },
+
+  // Support tickets - Super Admin, Admin, Support Officer
+  { prefix: "/support", roles: ["super_admin", "admin", "support_officer"] }
+
+  // /dashboard and anything else not listed above -> allowed for all roles
+];
+
+export function isRouteAllowed(pathname: string, role: StaffRole): boolean {
+  const rule = ROUTE_PERMISSIONS.find((r) => pathname === r.prefix || pathname.startsWith(`${r.prefix}/`));
+  if (!rule) return true; // not restricted -> everyone can access
+  return rule.roles.includes(role);
+}
+
+export function getAllowedRolesForRoute(prefix: string): StaffRole[] {
+  const rule = ROUTE_PERMISSIONS.find((r) => prefix === r.prefix || prefix.startsWith(`${r.prefix}/`) || r.prefix.startsWith(prefix));
+  if (!rule) return ["super_admin", "admin", "finance_officer", "support_officer"];
+  return rule.roles;
+}
+
+// ---- Cookie helpers (client-side, no backend) ----
+
+const SESSION_COOKIE = "saachi_admin_session";
+const ROLE_COOKIE = "saachi_admin_role";
+const NAME_COOKIE = "saachi_admin_name";
+const EMAIL_COOKIE = "saachi_admin_email";
+
+export function setAuthCookies(user: StaffUser) {
+  const maxAge = 60 * 60 * 24 * 7; // 7 days
+  document.cookie = `${SESSION_COOKIE}=demo_token; path=/; max-age=${maxAge}`;
+  document.cookie = `${ROLE_COOKIE}=${user.role}; path=/; max-age=${maxAge}`;
+  document.cookie = `${NAME_COOKIE}=${encodeURIComponent(user.name)}; path=/; max-age=${maxAge}`;
+  document.cookie = `${EMAIL_COOKIE}=${encodeURIComponent(user.email)}; path=/; max-age=${maxAge}`;
+}
+
+export function clearAuthCookies() {
+  document.cookie = `${SESSION_COOKIE}=; path=/; max-age=0`;
+  document.cookie = `${ROLE_COOKIE}=; path=/; max-age=0`;
+  document.cookie = `${NAME_COOKIE}=; path=/; max-age=0`;
+  document.cookie = `${EMAIL_COOKIE}=; path=/; max-age=0`;
+}
+
+function readCookie(name: string): string | null {
+  if (typeof document === "undefined") return null;
+  const match = document.cookie.match(new RegExp(`(?:^|; )${name}=([^;]*)`));
+  return match ? decodeURIComponent(match[1]) : null;
+}
+
+export function getCurrentRole(): StaffRole {
+  const stored = readCookie(ROLE_COOKIE) as StaffRole | null;
+  const valid: StaffRole[] = ["super_admin", "admin", "finance_officer", "support_officer"];
+  return stored && valid.includes(stored) ? stored : "super_admin";
+}
+
+export function getCurrentName(): string {
+  return readCookie(NAME_COOKIE) ?? "Abdul Rehman Irfan";
+}
+
+export function getCurrentEmail(): string {
+  return readCookie(EMAIL_COOKIE) ?? "abdulrehman@saachi.ai";
+}
+
+export function setCurrentRole(role: StaffRole) {
+  const maxAge = 60 * 60 * 24 * 7;
+  document.cookie = `${ROLE_COOKIE}=${role}; path=/; max-age=${maxAge}`;
+}
 
 
 ================================================================================

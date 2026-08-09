@@ -124,3 +124,10 @@ export function setCurrentRole(role: StaffRole) {
   const maxAge = 60 * 60 * 24 * 7;
   document.cookie = `${ROLE_COOKIE}=${role}; path=/; max-age=${maxAge}`;
 }
+
+// ---- Module-level access check (used by dashboard widgets, quick actions, charts) ----
+// Reuses the same ROUTE_PERMISSIONS matrix as the sidebar/route guard, so there is a
+// single source of truth for "who can see what."
+export function canAccessModule(modulePrefix: string, role: StaffRole): boolean {
+  return getAllowedRolesForRoute(modulePrefix).includes(role);
+}
