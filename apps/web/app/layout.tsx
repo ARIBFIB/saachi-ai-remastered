@@ -1,17 +1,19 @@
 ﻿import type { Metadata } from "next";
-import { Providers } from "./providers";
+import type { ReactNode } from "react";
+import { AntdProvider } from "@/lib/design-system";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Saachi AI - Learn Practical AI Skills",
-  description: "A skills-first marketplace to learn and monetize practical AI application skills."
+  title: "Saachi AI â€” Master AI, Master the Future",
+  description:
+    "The world's leading AI-skills marketplace. Practical, expert-led artificial intelligence courses.",
 };
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="en">
       <body>
-        <Providers>{children}</Providers>
+        <AntdProvider>{children}</AntdProvider>
       </body>
     </html>
   );

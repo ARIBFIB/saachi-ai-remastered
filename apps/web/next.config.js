@@ -1,4 +1,4 @@
-/** @type {import("next").NextConfig} */
+﻿/** @type {import("next").NextConfig} */
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "https://api.saachi.ai";
 
 const nextConfig = {
@@ -14,7 +14,8 @@ const nextConfig = {
     remotePatterns: [
       { protocol: "https", hostname: "**.cloudfront.net" },
       { protocol: "https", hostname: "res.cloudinary.com" },
-      { protocol: "https", hostname: "picsum.photos" }
+      { protocol: "https", hostname: "picsum.photos" },
+      { protocol: "https", hostname: "placehold.co" }
     ]
   },
   async rewrites() {
