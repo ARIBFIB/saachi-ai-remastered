@@ -1,8 +1,112 @@
 ﻿================================================================================
 MODULE CODE EXPORT: Web
-Generated: 2026-08-12 03:15:47
-Total Files: 37
+Generated: 2026-08-12 04:03:08
+Total Files: 68
 ================================================================================
+
+
+================================================================================
+FILE: apps\web\app\(auth)\forgot-password\page.tsx
+================================================================================
+"use client";
+
+import { useState } from "react";
+import Link from "next/link";
+import { Mail, ArrowRight, ArrowLeft, CheckCircle2 } from "lucide-react";
+
+export default function ForgotPasswordPage() {
+  const [email, setEmail] = useState("");
+  const [submitted, setSubmitted] = useState(false);
+
+  function handleSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    // TODO: wire to useAuth().requestPasswordReset() from @saachi/api-client
+    console.log("request password reset", { email });
+    setSubmitted(true);
+  }
+
+  return (
+    <div className="flex min-h-screen items-center justify-center bg-[var(--token-color-bg)] px-12 py-32">
+      <div className="flex w-96 max-w-96 flex-col gap-6">
+        <Link href="/" className="text-center text-3xl font-bold text-[var(--token-color-primary)]">
+          Saachi AI
+        </Link>
+
+        <div className="overflow-hidden rounded-xl bg-[var(--token-color-surface)] px-10 py-10 shadow-[0px_4px_20px_0px_rgba(15,23,42,0.05)]">
+          {submitted ? (
+            <div className="flex flex-col items-center gap-2 text-center">
+              <CheckCircle2 className="h-10 w-10 text-[var(--token-color-success)]" />
+              <h2 className="text-2xl font-semibold text-[var(--token-color-ink)]">Check your email</h2>
+              <p className="text-base text-[var(--token-color-inkSoft)]">
+                We&apos;ve sent a password reset link to <span className="font-semibold">{email}</span>.
+              </p>
+
+              <Link
+                href="/login"
+                className="mt-5 flex items-center gap-1 text-base text-[var(--token-color-inkSoft)] hover:text-[var(--token-color-primary)]"
+              >
+                <ArrowLeft className="h-3 w-3" />
+                Back to Login
+              </Link>
+            </div>
+          ) : (
+            <div className="flex flex-col gap-1">
+              <h2 className="text-2xl font-semibold text-[var(--token-color-ink)]">Reset your password</h2>
+              <p className="text-base text-[var(--token-color-inkSoft)]">
+                Enter your email address and we&apos;ll send you a link to securely reset your password.
+              </p>
+
+              <form onSubmit={handleSubmit} className="flex flex-col gap-6 pt-9">
+                <div className="flex flex-col gap-2">
+                  <label htmlFor="email" className="text-sm font-semibold tracking-wide text-[var(--token-color-ink)]">
+                    Email address
+                  </label>
+                  <div className="relative">
+                    <Mail className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[var(--token-color-textMuted)]" />
+                    <input
+                      id="email"
+                      type="email"
+                      required
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      placeholder="name@company.com"
+                      className="w-full rounded-lg border border-[var(--token-color-border)] bg-[var(--token-color-surface)] py-3.5 pl-10 pr-4 text-base text-[var(--token-color-ink)] placeholder:text-gray-500 focus:border-[var(--token-color-primary)] focus:outline-none"
+                    />
+                  </div>
+                </div>
+
+                <button
+                  type="submit"
+                  className="flex items-center justify-center gap-2 rounded-lg bg-[var(--token-color-primary)] px-4 py-3 text-sm font-semibold tracking-wide text-white hover:bg-[var(--token-color-primaryHover)]"
+                >
+                  Send Reset Link
+                  <ArrowRight className="h-3 w-3" />
+                </button>
+              </form>
+
+              <div className="flex flex-col items-center pb-1 pt-5">
+                <Link
+                  href="/login"
+                  className="flex items-center gap-1 text-base text-[var(--token-color-inkSoft)] hover:text-[var(--token-color-primary)]"
+                >
+                  <ArrowLeft className="h-3 w-3" />
+                  Back to Login
+                </Link>
+              </div>
+            </div>
+          )}
+        </div>
+
+        <p className="text-center text-xs font-medium text-[var(--token-color-inkSoft)]">
+          Need help?{" "}
+          <Link href="/contact" className="text-[var(--token-color-primary)]">
+            Contact Support
+          </Link>
+        </p>
+      </div>
+    </div>
+  );
+}
 
 
 ================================================================================
@@ -219,6 +323,97 @@ function RoleCard({
 
 
 ================================================================================
+FILE: apps\web\app\(auth)\verify-email\page.tsx
+================================================================================
+import Link from "next/link";
+import { Check, ArrowRight } from "lucide-react";
+
+export default function EmailVerifiedPage() {
+  return (
+    <div className="relative flex min-h-screen items-center justify-center overflow-hidden bg-[var(--token-color-surface)] p-12">
+      <div
+        className="pointer-events-none absolute -left-32 -top-60 h-[640px] w-[640px] rounded-full opacity-20 blur-[50px]"
+        style={{ backgroundColor: "var(--token-color-primaryTint)" }}
+      />
+      <div
+        className="pointer-events-none absolute -right-32 bottom-0 h-[768px] w-[768px] rounded-full opacity-10 blur-3xl"
+        style={{ backgroundColor: "var(--token-color-successTint)" }}
+      />
+
+      <div className="relative flex w-96 max-w-96 flex-col items-center gap-6 rounded-2xl border border-[var(--token-color-border)] bg-[var(--token-color-surface)] p-10 shadow-[0px_4px_20px_0px_rgba(15,23,42,0.05)]">
+        <span className="relative flex h-20 w-20 items-center justify-center rounded-full bg-[var(--token-color-success)]/10">
+          <Check className="h-9 w-9 text-[var(--token-color-success)]" strokeWidth={3} />
+          <span className="absolute inset-0 rounded-full border-4 border-[var(--token-color-success)] opacity-20" />
+        </span>
+
+        <div className="flex flex-col items-center gap-2 text-center">
+          <h1 className="text-3xl font-bold text-[var(--token-color-ink)]">Email Verified</h1>
+          <p className="max-w-72 text-base leading-6 text-gray-700">
+            Your email address has been successfully confirmed. You now have full access to Saachi AI.
+          </p>
+        </div>
+
+        <Link
+          href="/dashboard"
+          className="flex w-full items-center justify-center gap-2 rounded-lg bg-[var(--token-color-primary)] px-6 py-4 text-sm font-semibold tracking-wide text-white shadow-[0px_1px_2px_0px_rgba(0,0,0,0.05)] hover:bg-[var(--token-color-primaryHover)]"
+        >
+          Continue to Dashboard
+          <ArrowRight className="h-3 w-3" />
+        </Link>
+      </div>
+    </div>
+  );
+}
+
+
+================================================================================
+FILE: apps\web\app\(marketing)\categories\[slug]\page.tsx
+================================================================================
+!! ERROR reading file: A parameter cannot be found that matches parameter name 'Raw'.
+
+
+================================================================================
+FILE: apps\web\app\(marketing)\contact\page.tsx
+================================================================================
+import { SupportHeader } from "@/components/support/SupportHeader";
+import { SupportFooter } from "@/components/support/SupportFooter";
+import { ContactForm } from "@/components/support/ContactForm";
+import { DirectContactCard } from "@/components/support/DirectContactCard";
+import { OfficeMapCard } from "@/components/support/OfficeMapCard";
+
+export default function ContactPage() {
+  return (
+    <div className="flex min-h-screen flex-col bg-[var(--token-color-bg)]">
+      <SupportHeader />
+
+      <main className="mx-auto flex w-full max-w-[1280px] flex-1 flex-col gap-10 px-6 py-10">
+        <div className="flex max-w-[768px] flex-col gap-1.5">
+          <h1 className="text-5xl font-bold leading-[52.8px] text-[var(--token-color-ink)]">Get in Touch</h1>
+          <p className="text-lg leading-7 text-[var(--token-color-inkSoft)]">
+            Our team is here to support your learning journey. Reach out with questions, technical issues, or
+            feedback.
+          </p>
+        </div>
+
+        <div className="grid grid-cols-1 items-start gap-6 lg:grid-cols-3">
+          <div className="lg:col-span-2">
+            <ContactForm />
+          </div>
+
+          <div className="flex flex-col gap-6">
+            <DirectContactCard />
+            <OfficeMapCard />
+          </div>
+        </div>
+      </main>
+
+      <SupportFooter />
+    </div>
+  );
+}
+
+
+================================================================================
 FILE: apps\web\app\(marketing)\courses\[slug]\page.tsx
 ================================================================================
 !! ERROR reading file: A parameter cannot be found that matches parameter name 'Raw'.
@@ -319,6 +514,287 @@ export default function CourseMarketplacePage() {
 
 
 ================================================================================
+FILE: apps\web\app\(marketing)\instructors\[slug]\page.tsx
+================================================================================
+!! ERROR reading file: A parameter cannot be found that matches parameter name 'Raw'.
+
+
+================================================================================
+FILE: apps\web\app\(marketing)\legal\terms\page.tsx
+================================================================================
+import { Header } from "@/components/marketing/Header";
+import { CompactFooter } from "@/components/marketing/CompactFooter";
+import { LegalSidebar } from "@/components/legal/LegalSidebar";
+import { LegalSection } from "@/components/legal/LegalSection";
+
+export default function TermsOfServicePage() {
+  return (
+    <div className="flex min-h-screen flex-col bg-[var(--token-color-surface)]">
+      <Header />
+
+      <main className="mx-auto flex w-full max-w-[1280px] items-start gap-10 px-6 py-10">
+        <LegalSidebar />
+
+        <article className="flex flex-1 flex-col gap-10 rounded-xl border border-[var(--token-color-border)]/30 bg-[var(--token-color-surface)] p-10 shadow-[0px_4px_20px_0px_rgba(15,23,42,0.05)]">
+          <header className="flex flex-col gap-1 border-b border-[var(--token-color-border)]/30 pb-6">
+            <h1 className="text-3xl font-bold text-[var(--token-color-ink)]">Terms of Service</h1>
+            <p className="text-base text-[var(--token-color-inkSoft)]">Last Updated: October 24, 2023</p>
+          </header>
+
+          <div className="flex flex-col gap-10">
+            <LegalSection
+              heading="1. Acceptance of Terms"
+              paragraphs={[
+                "By accessing or using the Saachi AI platform, you agree to be bound by these Terms of Service. If you disagree with any part of the terms, you may not access the service. These terms apply to all visitors, users, instructors, and others who access or use the Service.",
+                "We reserve the right to update or change our Terms at any time, and you should check this page periodically. Your continued use of the Service after we post any modifications will constitute your acknowledgment of the modifications and your consent to abide and be bound by the modified Terms.",
+              ]}
+            />
+
+            <LegalSection
+              heading="2. User Accounts"
+              paragraphs={[
+                "When you create an account with us, you must provide information that is accurate, complete, and current at all times. Failure to do so constitutes a breach of the Terms, which may result in immediate termination of your account on our Service.",
+              ]}
+              listItems={[
+                "You are responsible for safeguarding the password that you use to access the Service.",
+                "You agree not to disclose your password to any third party.",
+                "You must notify us immediately upon becoming aware of any breach of security or unauthorized use of your account.",
+              ]}
+            />
+
+            <LegalSection
+              heading="3. Intellectual Property"
+              paragraphs={[
+                "The Service and its original content (excluding Content provided by users or instructors), features, and functionality are and will remain the exclusive property of Saachi AI and its licensors. The Service is protected by copyright, trademark, and other laws of both the United States and foreign countries.",
+              ]}
+              callout={{
+                title: "Instructor Content Note",
+                body: "Instructors retain ownership of the course materials they create and upload to the platform, granting Saachi AI a license to distribute and display said materials as outlined in the Instructor Handbook.",
+              }}
+            />
+
+            <LegalSection
+              heading="4. Acceptable Use Policy"
+              paragraphs={["You agree not to use the Service to:"]}
+              listItems={[
+                "Upload, post, or transmit any content that is unlawful, harmful, threatening, abusive, harassing, defamatory, vulgar, obscene, or invasive of another's privacy.",
+                "Impersonate any person or entity, or falsely state or otherwise misrepresent your affiliation with a person or entity.",
+                "Interfere with or disrupt the Service or servers or networks connected to the Service.",
+                "Attempt to gain unauthorized access to any portion of the Service or any other accounts, computer systems, or networks.",
+              ]}
+            />
+
+            <LegalSection
+              heading="5. Limitation of Liability"
+              eyebrow="PLEASE READ THIS SECTION CAREFULLY AS IT LIMITS OUR LIABILITY TO YOU."
+              paragraphs={[
+                "In no event shall Saachi AI, nor its directors, employees, partners, agents, suppliers, or affiliates, be liable for any indirect, incidental, special, consequential or punitive damages, including without limitation, loss of profits, data, use, goodwill, or other intangible losses, resulting from (i) your access to or use of or inability to access or use the Service; (ii) any conduct or content of any third party on the Service; (iii) any content obtained from the Service; and (iv) unauthorized access, use or alteration of your transmissions or content, whether based on warranty, contract, tort (including negligence) or any other legal theory, whether or not we have been informed of the possibility of such damage.",
+              ]}
+            />
+          </div>
+
+          <footer className="flex flex-col items-center gap-4 border-t border-[var(--token-color-border)]/30 pt-6">
+            <p className="text-center text-base text-[var(--token-color-inkSoft)]">
+              Questions about the Terms of Service? Please contact our legal team.
+            </p>
+            <a
+              href="/contact"
+              className="rounded-lg border border-[var(--token-color-border)] bg-[var(--token-color-bg)] px-4 py-2 text-sm font-semibold tracking-wide text-[var(--token-color-inkSoft)] hover:bg-[var(--token-color-surfaceAlt)]"
+            >
+              Contact Legal Support
+            </a>
+          </footer>
+        </article>
+      </main>
+
+      <CompactFooter />
+    </div>
+  );
+}
+
+
+================================================================================
+FILE: apps\web\app\(marketing)\pricing\page.tsx
+================================================================================
+import { Header } from "@/components/marketing/Header";
+import { DetailFooter } from "@/components/course-detail/DetailFooter";
+import { BillingToggle } from "@/components/pricing/BillingToggle";
+import { PricingCard, type PricingCardProps } from "@/components/pricing/PricingCard";
+import { FeatureComparisonTable } from "@/components/pricing/FeatureComparisonTable";
+import { FaqAccordion } from "@/components/pricing/FaqAccordion";
+
+const tiers: PricingCardProps[] = [
+  {
+    tier: "Free",
+    description: "For curious learners starting their journey.",
+    price: "$0",
+    priceSuffix: "/month",
+    features: ["Access to free courses", "Community forums", "Basic progress tracking"],
+    ctaLabel: "Get Started",
+  },
+  {
+    tier: "Pro",
+    description: "For dedicated professionals accelerating their skills.",
+    price: "$29",
+    priceSuffix: "/month",
+    features: [
+      "Everything in Free",
+      "Unlimited premium courses",
+      "1-on-1 AI Mentorship",
+      "Certificate of completion",
+    ],
+    ctaLabel: "Select Pro",
+    highlighted: true,
+    badge: "Most Popular",
+  },
+  {
+    tier: "Enterprise",
+    description: "Custom solutions for teams and organizations.",
+    price: "Custom",
+    features: [
+      "Dedicated success manager",
+      "Custom learning paths",
+      "Advanced analytics dashboard",
+      "SSO & API access",
+    ],
+    ctaLabel: "Contact Sales",
+  },
+];
+
+export default function PricingPage() {
+  return (
+    <div className="flex min-h-screen flex-col bg-[var(--token-color-bg)]">
+      <Header />
+
+      <main className="mx-auto flex w-full max-w-[1280px] flex-col items-center gap-10 px-6 pb-20 pt-24">
+        <section className="flex w-full flex-col items-center gap-1.5">
+          <h1 className="text-center text-5xl font-bold leading-[52.8px] text-[var(--token-color-ink)]">
+            Simple, transparent pricing
+          </h1>
+          <p className="max-w-[672px] text-center text-lg leading-7 text-[var(--token-color-inkSoft)]">
+            Choose the plan that best fits your learning or teaching goals. No hidden fees, ever.
+          </p>
+          <BillingToggle />
+        </section>
+
+        <section className="flex flex-wrap items-start justify-center gap-6 pt-6">
+          {tiers.map((tier) => (
+            <PricingCard key={tier.tier} {...tier} />
+          ))}
+        </section>
+
+        <FeatureComparisonTable />
+
+        <FaqAccordion />
+      </main>
+
+      <DetailFooter />
+    </div>
+  );
+}
+
+
+================================================================================
+FILE: apps\web\app\(marketing)\search\page.tsx
+================================================================================
+import { Header } from "@/components/marketing/Header";
+import { CompactFooter } from "@/components/marketing/CompactFooter";
+import { ResultFilterTabs, type FilterTab } from "@/components/search/ResultFilterTabs";
+import { FeaturedResultCard } from "@/components/search/FeaturedResultCard";
+import { InstructorResultCard } from "@/components/search/InstructorResultCard";
+import { StandardResultCard } from "@/components/search/StandardResultCard";
+import { ResultsPagination } from "@/components/search/ResultsPagination";
+
+const filterTabs: FilterTab[] = [
+  { label: "All Results", count: 0 },
+  { label: "Courses", count: 120 },
+  { label: "Instructors", count: 22 },
+];
+
+const standardResults = [
+  {
+    title: "Practical ML for Product Managers",
+    description: "Bridge the gap between business requirements and AI capabilities.",
+    meta: "8 Weeks Ã¢â‚¬Â¢ Intermediate",
+    price: "Ã‚Â£299",
+    image:
+      "https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=600&q=80",
+  },
+  {
+    title: "Computer Vision Fundamentals",
+    description: "Implement image recognition systems from scratch using PyTorch.",
+    meta: "12 Weeks Ã¢â‚¬Â¢ Advanced",
+    price: "Ã‚Â£450",
+    image:
+      "https://images.unsplash.com/photo-1485827404703-89b55fcc595e?auto=format&fit=crop&w=600&q=80",
+  },
+  {
+    title: "MLOps: Deploying Models",
+    description: "Learn to scale and monitor machine learning pipelines in production.",
+    meta: "6 Weeks Ã¢â‚¬Â¢ Intermediate",
+    price: "Ã‚Â£199",
+    // no image -- design shows a placeholder icon tile for this card
+  },
+];
+
+interface SearchPageProps {
+  searchParams: { q?: string };
+}
+
+export default function SearchResultsPage({ searchParams }: SearchPageProps) {
+  const query = searchParams.q ?? "Machine Learning";
+
+  return (
+    <div className="flex min-h-screen flex-col bg-[var(--token-color-bg)]">
+      <Header />
+
+      <main className="mx-auto flex w-full max-w-[1280px] flex-1 flex-col gap-8 px-12 py-10">
+        <div className="flex flex-col gap-2">
+          <h1 className="text-5xl font-bold leading-[52.8px] text-[var(--token-color-ink)]">
+            Results for &quot;{query}&quot;
+          </h1>
+          <p className="text-base text-[var(--token-color-inkSoft)]">Found 142 results across all categories</p>
+          <ResultFilterTabs tabs={filterTabs} />
+        </div>
+
+        <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
+          <FeaturedResultCard
+            badge="Bestseller"
+            pathLabel="Data Science Path"
+            title="Advanced Machine Learning Specialization"
+            description="Master deep learning, neural networks, and scalable AI infrastructure with industry-leading mentors."
+            instructorName="Dr. Elena Rostova"
+            instructorAvatar="https://images.unsplash.com/photo-1580489944761-15a19d654956?auto=format&fit=crop&w=100&q=80"
+            rating={4.9}
+            reviews="2.1k"
+            image="https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?auto=format&fit=crop&w=800&q=80"
+          />
+
+          <InstructorResultCard
+            name="Marcus Chen"
+            title="Principal AI Engineer @ TechFlow"
+            avatar="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&w=200&q=80"
+            tags={["Python", "TensorFlow"]}
+            bio="Helping professionals transition into scalable AI engineering roles."
+          />
+        </div>
+
+        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          {standardResults.map((result) => (
+            <StandardResultCard key={result.title} {...result} />
+          ))}
+        </div>
+
+        <ResultsPagination totalPages={12} />
+      </main>
+
+      <CompactFooter />
+    </div>
+  );
+}
+
+
+================================================================================
 FILE: apps\web\app\(marketing)\page.tsx
 ================================================================================
 import { Header } from "@/components/marketing/Header";
@@ -369,6 +845,89 @@ body {
 
 * {
   box-sizing: border-box;
+}
+
+
+================================================================================
+FILE: apps\web\app\not-found.tsx
+================================================================================
+"use client";
+
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { Home, ArrowLeft, SearchX } from "lucide-react";
+
+export default function NotFound() {
+  const router = useRouter();
+
+  return (
+    <div className="relative flex min-h-screen items-center justify-center overflow-hidden bg-[var(--token-color-bg)] p-12">
+      <div
+        className="pointer-events-none absolute -top-28 right-0 h-[600px] w-[600px] rounded-full opacity-5 blur-[32px]"
+        style={{ backgroundColor: "var(--token-color-primary)" }}
+      />
+      <div
+        className="pointer-events-none absolute -left-32 bottom-0 h-[500px] w-[500px] rounded-full opacity-5 blur-[32px]"
+        style={{ backgroundColor: "var(--token-color-inkSoft)" }}
+      />
+
+      <div className="relative flex w-full max-w-[800px] items-center justify-center gap-10">
+        <div className="flex flex-1 flex-col gap-6">
+          <span className="w-fit rounded-sm bg-[var(--token-color-errorTint)] px-2 pb-1 pt-[3px] text-xs font-medium uppercase tracking-wide text-[var(--token-color-error)]">
+            Error 404
+          </span>
+
+          <h1 className="pt-2 text-5xl font-bold leading-[52.8px] text-[var(--token-color-ink)]">
+            Looks like you&apos;re lost in the <span className="text-[var(--token-color-primary)]">void</span>.
+          </h1>
+
+          <p className="max-w-96 text-lg leading-7 text-gray-700">
+            We couldn&apos;t find the page you were looking for. It might have been moved, deleted, or perhaps it
+            never existed in our training data.
+          </p>
+
+          <div className="flex items-center gap-4 pt-4">
+            <Link
+              href="/"
+              className="flex items-center gap-2 rounded-lg bg-[var(--token-color-primary)] px-6 py-3 text-sm font-semibold tracking-wide text-white shadow-[0px_4px_14px_0px_rgba(53,37,205,0.25)] hover:bg-[var(--token-color-primaryHover)]"
+            >
+              <Home className="h-[18px] w-4" />
+              Back to Home
+            </Link>
+
+            <button
+              type="button"
+              onClick={() => router.back()}
+              className="flex items-center gap-2 rounded-lg border border-[var(--token-color-border)] bg-[var(--token-color-surface)] px-6 py-2.5 text-sm font-semibold tracking-wide text-[var(--token-color-ink)] shadow-[0px_1px_2px_0px_rgba(0,0,0,0.05)] hover:bg-[var(--token-color-surfaceAlt)]"
+            >
+              <ArrowLeft className="h-4 w-4" />
+              Go Back
+            </button>
+          </div>
+        </div>
+
+        <div className="flex flex-1 justify-center">
+          <div className="relative max-w-96 flex-1 overflow-hidden rounded-[32px] border border-white/20 bg-[var(--token-color-surface)]/70 shadow-[0px_10px_40px_0px_rgba(15,23,42,0.08)] backdrop-blur-[5px]">
+            <img
+              src="https://placehold.co/378x378/F8FAFC/CBD5E1?text=404"
+              alt="Lost robot illustration"
+              className="h-full w-full object-cover"
+            />
+
+            <div className="absolute -left-4 top-[289px] flex items-center gap-2 rounded-lg border border-[var(--token-color-border)] bg-[var(--token-color-surface)] p-2 shadow-lg">
+              <span className="flex h-8 w-8 items-center justify-center rounded-full bg-[var(--token-color-error)]/10">
+                <SearchX className="h-3.5 w-3.5 text-[var(--token-color-error)]" />
+              </span>
+              <div>
+                <p className="text-xs font-medium text-[var(--token-color-ink)]">Target Not Found</p>
+                <p className="text-[10px] text-[var(--token-color-inkSoft)]">Rerouting...</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
 }
 
 
@@ -721,6 +1280,322 @@ export function WhatYoullLearn() {
   );
 }
 
+
+
+================================================================================
+FILE: apps\web\components\instructor\InstructorCourseCard.tsx
+================================================================================
+import Image from "next/image";
+import { Star } from "lucide-react";
+
+export interface InstructorCourseCardProps {
+  title: string;
+  description: string;
+  category: string;
+  price: string;
+  rating: number;
+  reviews: string;
+  duration: string;
+  image: string;
+  badge?: { label: string; variant: "light" | "dark" };
+}
+
+export function InstructorCourseCard({
+  title,
+  description,
+  category,
+  price,
+  rating,
+  reviews,
+  duration,
+  image,
+  badge,
+}: InstructorCourseCardProps) {
+  return (
+    <article className="flex w-96 flex-col overflow-hidden rounded-xl border border-[var(--token-color-border)]/30 bg-[var(--token-color-surface)] shadow-[0px_4px_20px_0px_rgba(15,23,42,0.05)]">
+      <div className="relative h-48 w-full bg-[var(--token-color-surfaceAlt)]">
+        <Image src={image} alt={title} fill sizes="384px" className="object-cover" />
+        {badge && (
+          <span
+            className={`absolute right-4 top-4 rounded-sm px-2 pb-1 pt-[3px] text-xs font-bold ${
+              badge.variant === "dark"
+                ? "bg-[var(--token-color-success)] text-white"
+                : "bg-[var(--token-color-surface)]/90 text-[var(--token-color-ink)] backdrop-blur-[2px]"
+            }`}
+          >
+            {badge.label}
+          </span>
+        )}
+      </div>
+
+      <div className="flex flex-col gap-4 p-6">
+        <div className="flex items-center justify-between">
+          <span className="text-xs font-medium uppercase tracking-wide text-[var(--token-color-primary)]">
+            {category}
+          </span>
+          <span className="text-sm font-bold tracking-wide text-[var(--token-color-ink)]">{price}</span>
+        </div>
+
+        <div className="flex flex-col gap-2">
+          <h3 className="line-clamp-2 text-lg font-semibold leading-7 text-[var(--token-color-ink)]">
+            {title}
+          </h3>
+          <p className="line-clamp-2 text-base text-[var(--token-color-inkSoft)]">{description}</p>
+        </div>
+
+        <div className="flex items-center gap-2">
+          <Star className="h-3.5 w-3.5 text-[var(--token-color-warning)]" fill="currentColor" strokeWidth={0} />
+          <span className="text-sm font-semibold tracking-wide text-[var(--token-color-ink)]">
+            {rating} <span className="text-[var(--token-color-inkSoft)]">({reviews})</span>
+          </span>
+          <span className="text-[var(--token-color-inkSoft)]">&bull;</span>
+          <span className="text-xs font-medium text-[var(--token-color-inkSoft)]">{duration} Total</span>
+        </div>
+
+        <button
+          type="button"
+          className="w-full rounded-lg border border-[var(--token-color-border)] bg-[var(--token-color-surfaceAlt)] py-2 text-sm font-semibold tracking-wide text-[var(--token-color-inkSoft)] hover:bg-[var(--token-color-border)]/20"
+        >
+          View Course
+        </button>
+      </div>
+    </article>
+  );
+}
+
+
+================================================================================
+FILE: apps\web\components\instructor\InstructorProfileCard.tsx
+================================================================================
+import Image from "next/image";
+import { Mail } from "lucide-react";
+
+interface InstructorProfileCardProps {
+  name: string;
+  title: string;
+  bio: string;
+  avatar: string;
+  tags: string[];
+}
+
+export function InstructorProfileCard({
+  name,
+  title,
+  bio,
+  avatar,
+  tags,
+}: InstructorProfileCardProps) {
+  return (
+    <div className="flex flex-1 items-start gap-6 rounded-xl border border-[var(--token-color-border)]/30 bg-[var(--token-color-surface)] p-6 shadow-[0px_4px_20px_0px_rgba(15,23,42,0.05)]">
+      <span className="relative block h-32 w-32 shrink-0 overflow-hidden rounded-full ring-4 ring-[var(--token-color-surfaceAlt)]">
+        <Image src={avatar} alt={name} fill sizes="128px" className="object-cover" />
+      </span>
+
+      <div className="flex flex-1 flex-col gap-4">
+        <div className="flex items-start justify-between gap-4">
+          <div>
+            <h1 className="text-3xl font-bold leading-10 text-[var(--token-color-ink)]">{name}</h1>
+            <p className="text-lg leading-7 text-[var(--token-color-inkSoft)]">{title}</p>
+          </div>
+
+          <button
+            type="button"
+            className="flex shrink-0 items-center gap-2 rounded-lg bg-[var(--token-color-primary)] px-4 py-2 text-sm font-semibold tracking-wide text-white hover:bg-[var(--token-color-primaryHover)]"
+          >
+            <Mail className="h-3.5 w-3.5" />
+            Message Instructor
+          </button>
+        </div>
+
+        <div className="flex flex-wrap gap-2">
+          {tags.map((tag) => (
+            <span
+              key={tag}
+              className="rounded-sm bg-[var(--token-color-primaryTint)] px-3 pb-1 pt-[3px] text-xs font-medium text-[var(--token-color-primary)]"
+            >
+              {tag}
+            </span>
+          ))}
+        </div>
+
+        <p className="max-w-2xl text-base text-[var(--token-color-inkSoft)]">{bio}</p>
+      </div>
+    </div>
+  );
+}
+
+
+================================================================================
+FILE: apps\web\components\instructor\InstructorStatsGrid.tsx
+================================================================================
+import { GraduationCap, Users, Star } from "lucide-react";
+
+interface InstructorStatsGridProps {
+  coursesCount: number;
+  studentsCount: string;
+  rating: number;
+  reviewsCount: string;
+}
+
+export function InstructorStatsGrid({
+  coursesCount,
+  studentsCount,
+  rating,
+  reviewsCount,
+}: InstructorStatsGridProps) {
+  return (
+    <div className="flex w-64 shrink-0 flex-col gap-4">
+      <div className="flex gap-4">
+        <StatCard
+          icon={<GraduationCap className="h-[30px] w-[30px] text-[var(--token-color-primary)]" />}
+          value={coursesCount}
+          label="Courses"
+        />
+        <StatCard
+          icon={<Users className="h-[26px] w-[30px] text-[var(--token-color-primary)]" />}
+          value={studentsCount}
+          label="Students"
+        />
+      </div>
+
+      <div className="flex flex-col items-center gap-2 rounded-xl border border-[var(--token-color-border)]/30 bg-[var(--token-color-surface)] px-4 py-8 shadow-[0px_4px_20px_0px_rgba(15,23,42,0.05)]">
+        <div className="flex items-center gap-2">
+          <Star className="h-[19px] w-5 text-[var(--token-color-warning)]" fill="currentColor" strokeWidth={0} />
+          <span className="text-2xl font-semibold leading-8 text-[var(--token-color-ink)]">{rating}</span>
+        </div>
+        <span className="text-center text-xs font-medium uppercase tracking-wide text-[var(--token-color-inkSoft)]">
+          Instructor Rating ({reviewsCount} reviews)
+        </span>
+      </div>
+    </div>
+  );
+}
+
+function StatCard({
+  icon,
+  value,
+  label,
+}: {
+  icon: React.ReactNode;
+  value: string | number;
+  label: string;
+}) {
+  return (
+    <div className="flex flex-1 flex-col items-center justify-center gap-2 rounded-xl border border-[var(--token-color-border)]/30 bg-[var(--token-color-surface)] py-8 shadow-[0px_4px_20px_0px_rgba(15,23,42,0.05)]">
+      {icon}
+      <span className="text-2xl font-semibold leading-8 text-[var(--token-color-ink)]">{value}</span>
+      <span className="text-xs font-medium uppercase tracking-wide text-[var(--token-color-inkSoft)]">{label}</span>
+    </div>
+  );
+}
+
+
+================================================================================
+FILE: apps\web\components\legal\LegalSection.tsx
+================================================================================
+import { Info } from "lucide-react";
+
+interface LegalSectionProps {
+  heading: string;
+  paragraphs?: string[];
+  eyebrow?: string;
+  listItems?: string[];
+  callout?: { title: string; body: string };
+}
+
+export function LegalSection({ heading, paragraphs, eyebrow, listItems, callout }: LegalSectionProps) {
+  return (
+    <section className="flex flex-col gap-3.5">
+      <h2 className="text-2xl font-semibold text-[var(--token-color-ink)]">{heading}</h2>
+
+      {eyebrow && (
+        <p className="text-xs font-semibold uppercase tracking-tight text-[var(--token-color-inkSoft)]">
+          {eyebrow}
+        </p>
+      )}
+
+      {paragraphs?.map((p) => (
+        <p key={p.slice(0, 40)} className="text-lg leading-7 text-gray-700">
+          {p}
+        </p>
+      ))}
+
+      {listItems && (
+        <ul className="flex list-disc flex-col gap-2 pl-6 text-base leading-6 text-gray-700">
+          {listItems.map((item) => (
+            <li key={item.slice(0, 40)}>{item}</li>
+          ))}
+        </ul>
+      )}
+
+      {callout && (
+        <div className="flex flex-col gap-1 rounded-lg border border-[var(--token-color-border)]/20 bg-[var(--token-color-surfaceAlt)] px-4 py-4">
+          <h4 className="flex items-center gap-1.5 text-sm font-semibold tracking-wide text-[var(--token-color-ink)]">
+            <Info className="h-3 w-3 text-[var(--token-color-primary)]" />
+            {callout.title}
+          </h4>
+          <p className="text-base text-[var(--token-color-inkSoft)]">{callout.body}</p>
+        </div>
+      )}
+    </section>
+  );
+}
+
+
+================================================================================
+FILE: apps\web\components\legal\LegalSidebar.tsx
+================================================================================
+"use client";
+
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { ScrollText, Shield, RefreshCcw, Cookie } from "lucide-react";
+import type { LucideIcon } from "lucide-react";
+
+interface LegalNavItem {
+  label: string;
+  href: string;
+  icon: LucideIcon;
+}
+
+const navItems: LegalNavItem[] = [
+  { label: "Terms of Service", href: "/legal/terms", icon: ScrollText },
+  { label: "Privacy Policy", href: "/legal/privacy", icon: Shield },
+  { label: "Refund Policy", href: "/legal/refund", icon: RefreshCcw },
+  { label: "Cookie Policy", href: "/legal/cookies", icon: Cookie },
+];
+
+export function LegalSidebar() {
+  const pathname = usePathname();
+
+  return (
+    <aside className="w-72 shrink-0 self-start rounded-xl border border-[var(--token-color-border)]/30 bg-[var(--token-color-surface)] px-4 pb-4 pt-3.5 shadow-[0px_4px_20px_0px_rgba(15,23,42,0.05)]">
+      <h3 className="px-2 pb-4 text-xs font-medium uppercase tracking-wide text-[var(--token-color-inkSoft)]">
+        Legal Policies
+      </h3>
+
+      <nav className="flex flex-col gap-2">
+        {navItems.map(({ label, href, icon: Icon }) => {
+          const isActive = pathname === href;
+          return (
+            <Link
+              key={href}
+              href={href}
+              className={`flex h-12 items-center gap-3 rounded-lg border-l-4 pl-4 pr-2 text-sm font-semibold tracking-wide transition ${
+                isActive
+                  ? "border-[var(--token-color-primary)] bg-[var(--token-color-primaryTint)] text-[var(--token-color-primary)]"
+                  : "border-transparent text-[var(--token-color-inkSoft)] hover:bg-[var(--token-color-surfaceAlt)]"
+              }`}
+            >
+              <Icon className="h-4 w-4 shrink-0" />
+              {label}
+            </Link>
+          );
+        })}
+      </nav>
+    </aside>
+  );
+}
 
 
 ================================================================================
@@ -1320,6 +2195,149 @@ export function WhySaachi() {
 
 
 ================================================================================
+FILE: apps\web\components\marketplace\CategoryBanner.tsx
+================================================================================
+interface CategoryBannerProps {
+  title: string;
+  description: string;
+  image?: string;
+}
+
+export function CategoryBanner({ title, description, image }: CategoryBannerProps) {
+  return (
+    <div className="relative self-stretch overflow-hidden rounded-xl bg-[var(--token-color-surfaceAlt)]">
+      <img
+        src={image ?? "https://placehold.co/1184x320"}
+        alt=""
+        className="absolute left-0 top-0 h-80 w-full object-cover opacity-20"
+      />
+
+      <div className="relative flex min-h-80 flex-col justify-end gap-4 px-10 pb-10 pt-32">
+        <h1 className="max-w-[1104px] text-5xl font-bold leading-[52.8px] text-[var(--token-color-ink)]">
+          {title}
+        </h1>
+        <p className="max-w-[672px] text-lg leading-7 text-[var(--token-color-inkSoft)]">
+          {description}
+        </p>
+      </div>
+    </div>
+  );
+}
+
+
+================================================================================
+FILE: apps\web\components\marketplace\CategoryChips.tsx
+================================================================================
+"use client";
+
+import { useState } from "react";
+
+interface CategoryChipsProps {
+  chips: string[];
+  defaultActive?: string;
+  onChange?: (chip: string) => void;
+}
+
+export function CategoryChips({ chips, defaultActive, onChange }: CategoryChipsProps) {
+  const [active, setActive] = useState(defaultActive ?? chips[0]);
+
+  function handleSelect(chip: string) {
+    setActive(chip);
+    onChange?.(chip);
+  }
+
+  return (
+    <div className="flex flex-wrap items-start gap-2 self-stretch pt-4">
+      {chips.map((chip) => {
+        const isActive = chip === active;
+        return (
+          <button
+            key={chip}
+            type="button"
+            onClick={() => handleSelect(chip)}
+            className={`rounded-full border px-4 py-2 text-sm font-semibold tracking-wide transition ${
+              isActive
+                ? "border-[var(--token-color-primary)]/20 bg-[var(--token-color-primary)]/10 text-[var(--token-color-primary)]"
+                : "border-[var(--token-color-border)] bg-[var(--token-color-surfaceAlt)] text-[var(--token-color-inkSoft)]"
+            }`}
+          >
+            {chip}
+          </button>
+        );
+      })}
+    </div>
+  );
+}
+
+
+================================================================================
+FILE: apps\web\components\marketplace\CategoryCourseCard.tsx
+================================================================================
+import Image from "next/image";
+import { Star } from "lucide-react";
+
+export interface CategoryCourseCardProps {
+  title: string;
+  description: string;
+  levelTag: string;
+  rating: number;
+  reviews: string;
+  price: string;
+  image: string;
+}
+
+export function CategoryCourseCard({
+  title,
+  description,
+  levelTag,
+  rating,
+  reviews,
+  price,
+  image,
+}: CategoryCourseCardProps) {
+  return (
+    <article className="flex flex-1 flex-col overflow-hidden rounded-xl border border-[var(--token-color-border)]/30 bg-[var(--token-color-surface)] shadow-[0px_4px_20px_0px_rgba(15,23,42,0.05)]">
+      <div className="relative h-40 w-full shrink-0 overflow-hidden bg-[var(--token-color-surfaceAlt)]">
+        <Image
+          src={image}
+          alt={title}
+          fill
+          sizes="(max-width: 768px) 100vw, 320px"
+          className="object-cover"
+        />
+        <span className="absolute right-2 top-2 bg-[var(--token-color-bg)]/90 px-2 pb-1 pt-[3px] text-xs font-medium text-[var(--token-color-ink)] backdrop-blur-[2px]">
+          {levelTag}
+        </span>
+      </div>
+
+      <div className="flex flex-1 flex-col justify-between p-6">
+        <div className="flex flex-col gap-1 pb-4">
+          <h3 className="line-clamp-2 text-2xl font-semibold leading-8 text-[var(--token-color-ink)]">
+            {title}
+          </h3>
+          <p className="line-clamp-3 text-base text-[var(--token-color-inkSoft)]">
+            {description}
+          </p>
+        </div>
+
+        <div className="flex items-center justify-between border-t border-[var(--token-color-border)]/50 pt-4">
+          <div className="flex items-center gap-1">
+            <Star className="h-3.5 w-3.5 text-[var(--token-color-textMuted)]" fill="currentColor" strokeWidth={0} />
+            <span className="text-xs font-medium text-[var(--token-color-inkSoft)]">
+              {rating} ({reviews})
+            </span>
+          </div>
+          <span className="text-sm font-bold tracking-wide text-[var(--token-color-primary)]">
+            {price}
+          </span>
+        </div>
+      </div>
+    </article>
+  );
+}
+
+
+================================================================================
 FILE: apps\web\components\marketplace\FilterSidebar.tsx
 ================================================================================
 "use client";
@@ -1640,6 +2658,836 @@ export function SortDropdown() {
   );
 }
 
+
+
+================================================================================
+FILE: apps\web\components\pricing\BillingToggle.tsx
+================================================================================
+"use client";
+
+import { useState } from "react";
+
+export type BillingCycle = "monthly" | "annually";
+
+interface BillingToggleProps {
+  onChange?: (cycle: BillingCycle) => void;
+}
+
+export function BillingToggle({ onChange }: BillingToggleProps) {
+  const [cycle, setCycle] = useState<BillingCycle>("monthly");
+
+  function toggle() {
+    const next = cycle === "monthly" ? "annually" : "monthly";
+    setCycle(next);
+    onChange?.(next);
+  }
+
+  const isAnnual = cycle === "annually";
+
+  return (
+    <div className="flex items-center justify-center gap-4 pt-4">
+      <span className="text-sm font-semibold tracking-wide text-[var(--token-color-ink)]">Monthly</span>
+
+      <button
+        type="button"
+        role="switch"
+        aria-checked={isAnnual}
+        onClick={toggle}
+        className={`relative h-6 w-11 shrink-0 rounded-full transition ${
+          isAnnual ? "bg-[var(--token-color-primary)]" : "bg-[var(--token-color-border)]"
+        }`}
+      >
+        <span
+          className={`absolute top-0.5 h-5 w-5 rounded-full bg-[var(--token-color-surface)] shadow transition-transform ${
+            isAnnual ? "translate-x-[22px]" : "translate-x-0.5"
+          }`}
+        />
+      </button>
+
+      <span className="flex items-end gap-1 pb-px">
+        <span className="text-sm font-semibold tracking-wide text-[var(--token-color-ink)]">Annually</span>
+        <span className="text-xs font-bold tracking-wide text-[var(--token-color-primary)]">(Save 20%)</span>
+      </span>
+    </div>
+  );
+}
+
+
+================================================================================
+FILE: apps\web\components\pricing\FaqAccordion.tsx
+================================================================================
+"use client";
+
+import { useState } from "react";
+import { ChevronDown } from "lucide-react";
+
+interface FaqItem {
+  question: string;
+  answer: string;
+}
+
+const faqs: FaqItem[] = [
+  {
+    question: "Can I cancel my subscription at any time?",
+    answer: "Yes, you can cancel your subscription at any time from your account settings. You'll retain access until the end of your current billing period.",
+  },
+  {
+    question: "Do you offer refunds?",
+    answer: "We offer a 30-day money-back guarantee on all paid plans. Contact support if you're not satisfied.",
+  },
+  {
+    question: "Can I switch plans later?",
+    answer: "Absolutely. You can upgrade or downgrade your plan at any time, and we'll prorate the difference.",
+  },
+];
+
+export function FaqAccordion() {
+  const [openIndex, setOpenIndex] = useState<number | null>(null);
+
+  return (
+    <section className="mx-auto flex w-full max-w-[768px] flex-col gap-6">
+      <h2 className="text-center text-3xl font-bold leading-10 text-[var(--token-color-ink)]">
+        Frequently Asked Questions
+      </h2>
+
+      <div className="flex flex-col gap-4">
+        {faqs.map((faq, index) => {
+          const isOpen = openIndex === index;
+          return (
+            <div
+              key={faq.question}
+              className="overflow-hidden rounded-lg border border-[var(--token-color-border)] bg-[var(--token-color-surface)]"
+            >
+              <button
+                type="button"
+                onClick={() => setOpenIndex(isOpen ? null : index)}
+                className="flex w-full items-center justify-between px-6 py-4 text-left"
+              >
+                <span className="text-sm font-semibold tracking-wide text-[var(--token-color-ink)]">
+                  {faq.question}
+                </span>
+                <ChevronDown
+                  className={`h-3 w-3 shrink-0 text-[var(--token-color-inkSoft)] transition-transform ${
+                    isOpen ? "rotate-180" : ""
+                  }`}
+                />
+              </button>
+
+              {isOpen && (
+                <div className="border-t border-[var(--token-color-border)]/50 px-6 py-4 text-sm text-[var(--token-color-inkSoft)]">
+                  {faq.answer}
+                </div>
+              )}
+            </div>
+          );
+        })}
+      </div>
+    </section>
+  );
+}
+
+
+================================================================================
+FILE: apps\web\components\pricing\FeatureComparisonTable.tsx
+================================================================================
+import { X } from "lucide-react";
+
+interface ComparisonRow {
+  feature: string;
+  free: string | null;
+  pro: string;
+  enterprise: string;
+}
+
+const rows: ComparisonRow[] = [
+  { feature: "Course Access", free: "Free only", pro: "Unlimited Premium", enterprise: "Unlimited Premium" },
+  { feature: "AI Mentorship", free: null, pro: "1-on-1 Sessions", enterprise: "Priority Scheduling" },
+  { feature: "Analytics", free: "Basic", pro: "Detailed", enterprise: "Custom Organization" },
+  { feature: "Support", free: "Community", pro: "Priority Email", enterprise: "24/7 Dedicated" },
+];
+
+export function FeatureComparisonTable() {
+  return (
+    <section className="w-full overflow-hidden rounded-xl border border-[var(--token-color-border)] bg-[var(--token-color-surface)] p-6 shadow-[0px_1px_2px_0px_rgba(0,0,0,0.05)]">
+      <h2 className="pb-6 text-center text-3xl font-bold leading-10 text-[var(--token-color-ink)]">
+        Compare Features
+      </h2>
+
+      <div className="min-w-[800px] overflow-x-auto">
+        <div className="grid grid-cols-[1.5fr_1fr_1fr_1fr] border-b border-[var(--token-color-border)]">
+          <div className="p-4 text-sm font-medium tracking-wide text-[var(--token-color-inkSoft)]">Feature</div>
+          <div className="p-4 text-center text-sm font-semibold tracking-wide text-[var(--token-color-ink)]">Free</div>
+          <div className="p-4 text-center text-sm font-bold tracking-wide text-[var(--token-color-primary)]">Pro</div>
+          <div className="p-4 text-center text-sm font-semibold tracking-wide text-[var(--token-color-ink)]">Enterprise</div>
+        </div>
+
+        {rows.map((row, i) => (
+          <div
+            key={row.feature}
+            className={`grid grid-cols-[1.5fr_1fr_1fr_1fr] ${
+              i < rows.length - 1 ? "border-b border-[var(--token-color-border)]/40" : ""
+            }`}
+          >
+            <div className="p-4 text-base text-[var(--token-color-inkSoft)]">{row.feature}</div>
+            <div className="flex items-center justify-center p-4 text-center text-base text-[var(--token-color-inkSoft)]">
+              {row.free ?? <X className="h-3 w-3 text-[var(--token-color-textMuted)]" />}
+            </div>
+            <div className="p-4 text-center text-base font-medium text-[var(--token-color-primary)]">{row.pro}</div>
+            <div className="p-4 text-center text-base text-[var(--token-color-inkSoft)]">{row.enterprise}</div>
+          </div>
+        ))}
+      </div>
+    </section>
+  );
+}
+
+
+================================================================================
+FILE: apps\web\components\pricing\PricingCard.tsx
+================================================================================
+import { CheckCircle2 } from "lucide-react";
+
+export interface PricingCardProps {
+  tier: string;
+  description: string;
+  price: string;
+  priceSuffix?: string;
+  features: string[];
+  ctaLabel: string;
+  highlighted?: boolean;
+  badge?: string;
+}
+
+export function PricingCard({
+  tier,
+  description,
+  price,
+  priceSuffix,
+  features,
+  ctaLabel,
+  highlighted = false,
+  badge,
+}: PricingCardProps) {
+  return (
+    <div
+      className={`relative flex w-96 flex-col justify-between rounded-xl border bg-[var(--token-color-surface)]/90 p-6 backdrop-blur-[6px] ${
+        highlighted
+          ? "border-[var(--token-color-primary)]/30 shadow-[0px_0px_40px_0px_rgba(79,70,229,0.15)]"
+          : "border-[var(--token-color-border)]/60"
+      }`}
+    >
+      {badge && (
+        <span className="absolute -top-3 left-1/2 -translate-x-1/2 rounded-full bg-[var(--token-color-primary)] px-3 py-1 text-xs font-bold uppercase tracking-wide text-white">
+          {badge}
+        </span>
+      )}
+
+      <div className="flex flex-col gap-1 pb-6">
+        <h3
+          className={`text-2xl font-semibold leading-8 ${
+            highlighted ? "text-[var(--token-color-primary)]" : "text-[var(--token-color-ink)]"
+          }`}
+        >
+          {tier}
+        </h3>
+        <p className="text-base text-[var(--token-color-inkSoft)]">{description}</p>
+
+        <div className="flex items-baseline gap-1 pt-5">
+          <span className="text-5xl font-bold leading-[52.8px] text-[var(--token-color-ink)]">{price}</span>
+          {priceSuffix && <span className="text-base text-[var(--token-color-inkSoft)]">{priceSuffix}</span>}
+        </div>
+
+        <ul className="flex flex-col gap-4 pt-5">
+          {features.map((feature) => (
+            <li key={feature} className="flex items-center gap-2">
+              <CheckCircle2 className="h-3 w-3 shrink-0 text-[var(--token-color-primary)]" />
+              <span className="text-base text-[var(--token-color-inkSoft)]">{feature}</span>
+            </li>
+          ))}
+        </ul>
+      </div>
+
+      <button
+        type="button"
+        className={`w-full rounded-lg py-3 text-sm font-semibold tracking-wide transition ${
+          highlighted
+            ? "bg-[var(--token-color-primary)] text-white shadow-md hover:bg-[var(--token-color-primaryHover)]"
+            : "border border-[var(--token-color-textMuted)] text-[var(--token-color-ink)] hover:bg-[var(--token-color-surfaceAlt)]"
+        }`}
+      >
+        {ctaLabel}
+      </button>
+    </div>
+  );
+}
+
+
+================================================================================
+FILE: apps\web\components\search\FeaturedResultCard.tsx
+================================================================================
+import Image from "next/image";
+import { GraduationCap, Star } from "lucide-react";
+
+export interface FeaturedResultCardProps {
+  badge?: string;
+  pathLabel: string;
+  title: string;
+  description: string;
+  instructorName: string;
+  instructorAvatar: string;
+  rating: number;
+  reviews: string;
+  image: string;
+}
+
+export function FeaturedResultCard({
+  badge,
+  pathLabel,
+  title,
+  description,
+  instructorName,
+  instructorAvatar,
+  rating,
+  reviews,
+  image,
+}: FeaturedResultCardProps) {
+  return (
+    <article className="flex h-96 overflow-hidden rounded-xl border border-[var(--token-color-border)] bg-[var(--token-color-surface)] shadow-[0px_4px_20px_0px_rgba(15,23,42,0.05)]">
+      <div className="relative w-80 shrink-0">
+        <Image src={image} alt={title} fill sizes="320px" className="object-cover" />
+        {badge && (
+          <span className="absolute left-4 top-4 bg-[var(--token-color-primary)] px-2 pb-1 pt-[3px] text-xs font-medium text-white">
+            {badge}
+          </span>
+        )}
+      </div>
+
+      <div className="flex flex-1 flex-col justify-between p-6">
+        <div className="flex flex-col gap-2 pb-4">
+          <div className="flex items-center gap-1">
+            <GraduationCap className="h-3 w-3.5 text-[var(--token-color-inkSoft)]" />
+            <span className="text-xs font-medium text-[var(--token-color-inkSoft)]">{pathLabel}</span>
+          </div>
+          <h2 className="text-2xl font-semibold leading-8 text-[var(--token-color-ink)]">{title}</h2>
+          <p className="text-base leading-6 text-[var(--token-color-inkSoft)]">{description}</p>
+        </div>
+
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <span className="relative block h-8 w-8 overflow-hidden rounded-full">
+              <Image src={instructorAvatar} alt={instructorName} fill sizes="32px" className="object-cover" />
+            </span>
+            <span className="text-xs font-medium text-[var(--token-color-inkSoft)]">{instructorName}</span>
+          </div>
+
+          <div className="flex items-center gap-1">
+            <Star className="h-3.5 w-3.5 text-[var(--token-color-primary)]" fill="currentColor" strokeWidth={0} />
+            <span className="text-xs font-bold text-[var(--token-color-primary)]">
+              {rating} ({reviews})
+            </span>
+          </div>
+        </div>
+      </div>
+    </article>
+  );
+}
+
+
+================================================================================
+FILE: apps\web\components\search\InstructorResultCard.tsx
+================================================================================
+import Image from "next/image";
+
+export interface InstructorResultCardProps {
+  name: string;
+  title: string;
+  avatar: string;
+  tags: string[];
+  bio: string;
+  profileUrl?: string;
+}
+
+export function InstructorResultCard({
+  name,
+  title,
+  avatar,
+  tags,
+  bio,
+  profileUrl = "#",
+}: InstructorResultCardProps) {
+  return (
+    <div className="flex flex-col items-center justify-between rounded-xl border border-[var(--token-color-border)] bg-[var(--token-color-surface)] p-6 shadow-[0px_4px_20px_0px_rgba(15,23,42,0.05)]">
+      <span className="relative mb-4 block h-24 w-24 overflow-hidden rounded-full border-4 border-[var(--token-color-surfaceAlt)]">
+        <Image src={avatar} alt={name} fill sizes="96px" className="object-cover" />
+      </span>
+
+      <h3 className="text-2xl font-semibold text-[var(--token-color-ink)]">{name}</h3>
+      <p className="pb-4 text-center text-xs font-medium text-[var(--token-color-primary)]">{title}</p>
+
+      <div className="flex flex-wrap justify-center gap-2 pb-4">
+        {tags.map((tag) => (
+          <span key={tag} className="bg-[var(--token-color-surfaceAlt)] px-2 pb-1 pt-[3px] text-xs font-medium text-[var(--token-color-inkSoft)]">
+            {tag}
+          </span>
+        ))}
+      </div>
+
+      <p className="pb-4 text-center text-sm leading-5 text-[var(--token-color-inkSoft)]">{bio}</p>
+
+      <a
+        href={profileUrl}
+        className="w-full border border-[var(--token-color-primary)] py-2 text-center text-sm font-semibold tracking-wide text-[var(--token-color-primary)] hover:bg-[var(--token-color-primaryTint)]"
+      >
+        View Profile
+      </a>
+    </div>
+  );
+}
+
+
+================================================================================
+FILE: apps\web\components\search\ResultFilterTabs.tsx
+================================================================================
+"use client";
+
+import { useState } from "react";
+
+export interface FilterTab {
+  label: string;
+  count: number;
+}
+
+interface ResultFilterTabsProps {
+  tabs: FilterTab[];
+}
+
+export function ResultFilterTabs({ tabs }: ResultFilterTabsProps) {
+  const [active, setActive] = useState(tabs[0]?.label);
+
+  return (
+    <div className="flex flex-wrap items-center gap-2 pt-4">
+      {tabs.map((tab) => {
+        const isActive = tab.label === active;
+        return (
+          <button
+            key={tab.label}
+            type="button"
+            onClick={() => setActive(tab.label)}
+            className={`rounded-full px-4 pb-2 pt-1.5 text-xs font-medium transition ${
+              isActive
+                ? "bg-[var(--token-color-primaryTint)] text-[var(--token-color-primary)] outline outline-1 outline-offset-[-1px] outline-[var(--token-color-primary)]"
+                : "bg-zinc-200 text-[var(--token-color-inkSoft)] outline outline-1 outline-offset-[-1px] outline-[var(--token-color-border)]"
+            }`}
+          >
+            {tab.label}
+            {tab.count > 0 && ` (${tab.count})`}
+          </button>
+        );
+      })}
+    </div>
+  );
+}
+
+
+================================================================================
+FILE: apps\web\components\search\ResultsPagination.tsx
+================================================================================
+"use client";
+
+import { useState } from "react";
+import { ChevronLeft, ChevronRight } from "lucide-react";
+
+interface ResultsPaginationProps {
+  totalPages?: number;
+}
+
+export function ResultsPagination({ totalPages = 12 }: ResultsPaginationProps) {
+  const [page, setPage] = useState(1);
+  const pages = [1, 2, 3];
+
+  return (
+    <div className="flex items-center justify-center gap-2 pt-4">
+      <button
+        type="button"
+        aria-label="Previous page"
+        onClick={() => setPage((p) => Math.max(1, p - 1))}
+        className="flex h-10 w-8 items-center justify-center border border-[var(--token-color-border)] text-[var(--token-color-inkSoft)] hover:bg-[var(--token-color-surfaceAlt)]"
+      >
+        <ChevronLeft className="h-3 w-3" />
+      </button>
+
+      {pages.map((p) => (
+        <button
+          key={p}
+          type="button"
+          onClick={() => setPage(p)}
+          className={`flex h-10 w-10 items-center justify-center text-sm font-semibold tracking-wide ${
+            page === p
+              ? "bg-[var(--token-color-primary)] text-white"
+              : "border border-[var(--token-color-border)] text-[var(--token-color-inkSoft)] hover:bg-[var(--token-color-surfaceAlt)]"
+          }`}
+        >
+          {p}
+        </button>
+      ))}
+
+      <span className="px-1 text-base text-[var(--token-color-inkSoft)]">...</span>
+
+      <button
+        type="button"
+        onClick={() => setPage(totalPages)}
+        className={`flex h-10 w-10 items-center justify-center text-sm font-semibold tracking-wide ${
+          page === totalPages
+            ? "bg-[var(--token-color-primary)] text-white"
+            : "border border-[var(--token-color-border)] text-[var(--token-color-inkSoft)] hover:bg-[var(--token-color-surfaceAlt)]"
+        }`}
+      >
+        {totalPages}
+      </button>
+
+      <button
+        type="button"
+        aria-label="Next page"
+        onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+        className="flex h-10 w-8 items-center justify-center border border-[var(--token-color-border)] text-[var(--token-color-inkSoft)] hover:bg-[var(--token-color-surfaceAlt)]"
+      >
+        <ChevronRight className="h-3 w-3" />
+      </button>
+    </div>
+  );
+}
+
+
+================================================================================
+FILE: apps\web\components\search\StandardResultCard.tsx
+================================================================================
+import Image from "next/image";
+import { ImageOff } from "lucide-react";
+
+export interface StandardResultCardProps {
+  title: string;
+  description: string;
+  meta: string;
+  price: string;
+  image?: string;
+}
+
+export function StandardResultCard({ title, description, meta, price, image }: StandardResultCardProps) {
+  return (
+    <article className="overflow-hidden rounded-xl border border-[var(--token-color-border)] bg-[var(--token-color-surface)] shadow-[0px_4px_20px_0px_rgba(15,23,42,0.05)]">
+      <div className="relative h-40 w-full bg-zinc-200">
+        {image ? (
+          <Image src={image} alt={title} fill sizes="400px" className="object-cover" />
+        ) : (
+          <div className="flex h-full w-full items-center justify-center">
+            <ImageOff className="h-10 w-10 text-[var(--token-color-inkSoft)]/30" />
+          </div>
+        )}
+      </div>
+
+      <div className="flex flex-col gap-2 p-4">
+        <h3 className="line-clamp-1 text-lg font-bold leading-7 text-[var(--token-color-ink)]">{title}</h3>
+        <p className="line-clamp-2 text-xs font-medium text-[var(--token-color-inkSoft)]">{description}</p>
+
+        <div className="flex items-center justify-between border-t border-[var(--token-color-border)] pt-3">
+          <span className="text-xs font-medium text-[var(--token-color-inkSoft)]">{meta}</span>
+          <span className="text-xs font-bold text-[var(--token-color-primary)]">{price}</span>
+        </div>
+      </div>
+    </article>
+  );
+}
+
+
+================================================================================
+FILE: apps\web\components\support\ContactForm.tsx
+================================================================================
+"use client";
+
+import { useState } from "react";
+import { Mail, Send } from "lucide-react";
+
+const subjects = ["Technical Support", "Billing Question", "Instructor Application", "Partnership", "Other"];
+
+export function ContactForm() {
+  const [subject, setSubject] = useState(subjects[0]);
+
+  function handleSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    // TODO: wire to support ticket API (packages/api-client)
+    console.log("submit inquiry", { subject });
+  }
+
+  return (
+    <div className="flex flex-1 flex-col rounded-xl border border-[var(--token-color-border)]/30 bg-[var(--token-color-surface)] p-10 shadow-[0px_4px_20px_0px_rgba(15,23,42,0.05)]">
+      <div className="flex flex-col gap-1 pb-6">
+        <h2 className="flex items-center gap-2 text-2xl font-semibold text-[var(--token-color-ink)]">
+          <Mail className="h-5 w-4 text-[var(--token-color-primary)]" />
+          Send us a Message
+        </h2>
+        <p className="text-base text-[var(--token-color-inkSoft)]">
+          We aim to respond to all inquiries within 24 hours.
+        </p>
+      </div>
+
+      <form onSubmit={handleSubmit} className="flex flex-col gap-3.5">
+        <div className="grid grid-cols-1 gap-3.5 sm:grid-cols-2">
+          <div className="flex flex-col gap-1">
+            <label htmlFor="name" className="text-sm font-semibold tracking-wide text-[var(--token-color-ink)]">
+              Full Name
+            </label>
+            <input
+              id="name"
+              type="text"
+              required
+              placeholder="Jane Doe"
+              className="border border-[var(--token-color-border)] bg-[var(--token-color-surface)] px-4 py-2.5 text-base text-[var(--token-color-ink)] placeholder:text-[var(--token-color-inkSoft)]/50 focus:outline-none"
+            />
+          </div>
+
+          <div className="flex flex-col gap-1">
+            <label htmlFor="email" className="text-sm font-semibold tracking-wide text-[var(--token-color-ink)]">
+              Email Address
+            </label>
+            <input
+              id="email"
+              type="email"
+              required
+              placeholder="jane@example.com"
+              className="border border-[var(--token-color-border)] bg-[var(--token-color-surface)] px-4 py-2.5 text-base text-[var(--token-color-ink)] placeholder:text-[var(--token-color-inkSoft)]/50 focus:outline-none"
+            />
+          </div>
+        </div>
+
+        <div className="flex flex-col gap-1">
+          <label htmlFor="subject" className="text-sm font-semibold tracking-wide text-[var(--token-color-ink)]">
+            Subject
+          </label>
+          <select
+            id="subject"
+            value={subject}
+            onChange={(e) => setSubject(e.target.value)}
+            className="border border-[var(--token-color-border)] bg-[var(--token-color-surface)] px-4 py-2 text-base text-[var(--token-color-ink)] focus:outline-none"
+          >
+            {subjects.map((s) => (
+              <option key={s} value={s}>
+                {s}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        <div className="flex flex-col gap-1 pb-2.5">
+          <label htmlFor="message" className="text-sm font-semibold tracking-wide text-[var(--token-color-ink)]">
+            Message
+          </label>
+          <textarea
+            id="message"
+            required
+            rows={6}
+            placeholder="How can we help you today?"
+            className="resize-none border border-[var(--token-color-border)] bg-[var(--token-color-surface)] px-4 py-2 text-base text-[var(--token-color-ink)] placeholder:text-[var(--token-color-inkSoft)]/50 focus:outline-none"
+          />
+        </div>
+
+        <div className="flex justify-end pt-2">
+          <button
+            type="submit"
+            className="flex w-48 items-center justify-center gap-2 rounded-lg bg-[var(--token-color-primary)] py-3 text-sm font-semibold tracking-wide text-white hover:bg-[var(--token-color-primaryHover)]"
+          >
+            Submit Inquiry
+            <Send className="h-3.5 w-4" />
+          </button>
+        </div>
+      </form>
+    </div>
+  );
+}
+
+
+================================================================================
+FILE: apps\web\components\support\DirectContactCard.tsx
+================================================================================
+import { Headset, Phone, Building2 } from "lucide-react";
+
+export function DirectContactCard() {
+  return (
+    <div className="flex flex-col gap-4 rounded-xl border border-[var(--token-color-border)]/30 bg-[var(--token-color-surface)] p-6 shadow-[0px_4px_20px_0px_rgba(15,23,42,0.05)]">
+      <h3 className="text-2xl font-semibold text-[var(--token-color-ink)]">Direct Contact</h3>
+
+      <div className="flex flex-col gap-6">
+        <ContactItem icon={<Headset className="h-5 w-4 text-[var(--token-color-primary)]" />} label="Support Email">
+          <a href="mailto:support@saachi.ai" className="text-base text-[var(--token-color-inkSoft)] hover:text-[var(--token-color-primary)]">
+            support@saachi.ai
+          </a>
+        </ContactItem>
+
+        <ContactItem icon={<Phone className="h-5 w-[18px] text-[var(--token-color-primary)]" />} label="Phone Support">
+          <p className="text-base text-[var(--token-color-inkSoft)]">+1 (800) 555-0199</p>
+          <p className="text-xs font-medium text-gray-500">Mon-Fri, 9am - 6pm EST</p>
+        </ContactItem>
+
+        <ContactItem icon={<Building2 className="h-5 w-5 text-[var(--token-color-primary)]" />} label="Headquarters">
+          <p className="text-base leading-6 text-[var(--token-color-inkSoft)]">
+            100 Innovation Way
+            <br />
+            Suite 400
+            <br />
+            San Francisco, CA 94105
+          </p>
+        </ContactItem>
+      </div>
+    </div>
+  );
+}
+
+function ContactItem({
+  icon,
+  label,
+  children,
+}: {
+  icon: React.ReactNode;
+  label: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <div className="flex items-start gap-4">
+      <span className="flex h-10 w-9 shrink-0 items-center justify-center rounded bg-[var(--token-color-primaryTint)]">
+        {icon}
+      </span>
+      <div>
+        <p className="text-sm font-semibold tracking-wide text-[var(--token-color-ink)]">{label}</p>
+        {children}
+      </div>
+    </div>
+  );
+}
+
+
+================================================================================
+FILE: apps\web\components\support\OfficeMapCard.tsx
+================================================================================
+import { Map } from "lucide-react";
+
+interface OfficeMapCardProps {
+  image?: string;
+  mapUrl?: string;
+}
+
+export function OfficeMapCard({ image, mapUrl = "#" }: OfficeMapCardProps) {
+  return (
+    <a
+      href={mapUrl}
+      className="relative block h-48 overflow-hidden rounded-xl border border-[var(--token-color-border)]/30 bg-[var(--token-color-surface)] shadow-[0px_4px_20px_0px_rgba(15,23,42,0.05)]"
+    >
+      <img
+        src={image ?? "https://placehold.co/393x190"}
+        alt="Office location map"
+        className="h-full w-full object-cover"
+      />
+      <div className="absolute inset-0 flex items-end justify-start bg-gradient-to-r from-white/80 to-transparent p-4">
+        <span className="flex items-center gap-1 bg-[var(--token-color-surface)]/90 px-2 pb-1 pt-[3px] text-sm font-semibold text-[var(--token-color-ink)]">
+          <Map className="h-3 w-3" />
+          View on Map
+        </span>
+      </div>
+    </a>
+  );
+}
+
+
+================================================================================
+FILE: apps\web\components\support\SupportFooter.tsx
+================================================================================
+import Link from "next/link";
+
+const links = [
+  { label: "About Us", href: "/about" },
+  { label: "Careers", href: "/careers" },
+  { label: "Privacy Policy", href: "/legal/privacy" },
+  { label: "Terms of Service", href: "/legal/terms" },
+  { label: "Instructor Handbook", href: "/instructor/handbook" },
+];
+
+export function SupportFooter() {
+  return (
+    <footer className="w-full border-t border-[var(--token-color-border)]/20 bg-zinc-900 px-6 py-10">
+      <div className="mx-auto flex max-w-[1280px] flex-col justify-between gap-6 sm:flex-row sm:items-start">
+        <div className="flex flex-col gap-1">
+          <span className="text-base font-bold text-[var(--token-color-primary)]">Saachi AI</span>
+          <p className="text-xs font-medium text-zinc-200">
+            Ã‚Â© {new Date().getFullYear()} Saachi AI Marketplace. Empowering the future of skills.
+          </p>
+        </div>
+
+        <nav className="flex flex-wrap gap-6">
+          {links.map((link) => (
+            <Link key={link.label} href={link.href} className="text-base text-zinc-200 hover:text-white">
+              {link.label}
+            </Link>
+          ))}
+        </nav>
+      </div>
+    </footer>
+  );
+}
+
+
+================================================================================
+FILE: apps\web\components\support\SupportHeader.tsx
+================================================================================
+import Link from "next/link";
+import { Search, ShoppingCart, Bell } from "lucide-react";
+
+export function SupportHeader() {
+  return (
+    <header className="sticky top-0 z-50 w-full bg-zinc-900 shadow-[0px_1px_2px_0px_rgba(0,0,0,0.05)]">
+      <div className="mx-auto flex h-16 max-w-[1280px] items-center justify-between px-6">
+        <div className="flex flex-1 items-center gap-6">
+          <Link href="/" className="text-2xl font-black text-violet-300">
+            Saachi AI
+          </Link>
+
+          <div className="relative w-full max-w-96">
+            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[var(--token-color-textMuted)]" />
+            <input
+              type="text"
+              placeholder="Search courses, skills, instructors..."
+              className="w-full rounded-none border border-[var(--token-color-border)] bg-[var(--token-color-surface)] py-2.5 pl-10 pr-2 text-base text-[var(--token-color-ink)] placeholder:text-gray-500 focus:outline-none"
+            />
+          </div>
+        </div>
+
+        <nav className="flex items-center gap-6">
+          <Link href="/courses" className="text-sm font-semibold tracking-wide text-slate-300 hover:text-white">
+            Marketplace
+          </Link>
+          <Link href="/categories" className="text-sm font-semibold tracking-wide text-slate-300 hover:text-white">
+            Categories
+          </Link>
+        </nav>
+
+        <div className="flex items-center gap-4 pl-6">
+          <button aria-label="Cart" className="rounded-full p-2 text-[#BEC6E0] hover:bg-white/10">
+            <ShoppingCart className="h-5 w-5" />
+          </button>
+          <button aria-label="Notifications" className="rounded-full p-2 text-[#BEC6E0] hover:bg-white/10">
+            <Bell className="h-5 w-5" />
+          </button>
+          <Link
+            href="/login"
+            className="rounded-lg bg-[var(--token-color-primary)] px-4 py-2 text-sm font-semibold tracking-wide text-white hover:bg-[var(--token-color-primaryHover)]"
+          >
+            Sign In
+          </Link>
+          <Link href="/settings/profile">
+            <span className="block h-8 w-8 overflow-hidden rounded-full border border-[var(--token-color-border)] bg-zinc-200" />
+          </Link>
+        </div>
+      </div>
+    </header>
+  );
+}
 
 
 ================================================================================
