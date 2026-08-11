@@ -10,7 +10,7 @@ const courses: CourseCardProps[] = [
     reviews: "2.4k",
     tag: "Foundational",
     tagVariant: "default",
-    image: "https://placehold.co/288x160",
+    image: "https://images.unsplash.com/photo-1677442136019-21780ecad995?auto=format&fit=crop&w=600&q=80",
   },
   {
     title: "Mastering Prompt Engineering",
@@ -19,7 +19,7 @@ const courses: CourseCardProps[] = [
     reviews: "8.1k",
     tag: "Bestseller",
     tagVariant: "highlight",
-    image: "https://placehold.co/288x160",
+    image: "https://images.unsplash.com/photo-1531482615713-2afd69097998?auto=format&fit=crop&w=600&q=80",
   },
   {
     title: "Generative AI & Digital Art",
@@ -28,7 +28,7 @@ const courses: CourseCardProps[] = [
     reviews: "1.2k",
     tag: "Creative",
     tagVariant: "default",
-    image: "https://placehold.co/288x160",
+    image: "https://images.unsplash.com/photo-1550439062-609e1531270e?auto=format&fit=crop&w=600&q=80",
   },
   {
     title: "LLM Ops & Deploymentâ€¦",
@@ -37,26 +37,26 @@ const courses: CourseCardProps[] = [
     reviews: "940",
     tag: "Advanced",
     tagVariant: "neutral",
-    image: "https://placehold.co/288x160",
+    image: "https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?auto=format&fit=crop&w=600&q=80",
   },
 ];
 
 export function TrendingCourses() {
   return (
-    <section className="w-full bg-[var(--token-color-bg)] py-12">
+    <section className="w-full bg-[#F8FAFC] py-12">
       <div className="mx-auto flex max-w-[1280px] flex-col gap-10 px-6">
         <div className="flex items-end justify-between">
           <div className="flex flex-col gap-1">
-            <h2 className="text-2xl font-semibold text-[var(--token-color-ink)]">
+            <h2 className="text-2xl font-semibold text-[#18181B]">
               Trending Courses
             </h2>
-            <p className="text-base text-[var(--token-color-inkSoft)]">
+            <p className="text-base text-[#3F3F46]">
               Highly rated programs to start your journey.
             </p>
           </div>
           <Link
             href="/courses"
-            className="flex items-center gap-1 text-sm font-semibold tracking-wide text-[var(--token-color-primary)]"
+            className="flex items-center gap-1 text-sm font-semibold tracking-wide text-[#3525CD]"
           >
             View all
             <ArrowRight className="h-3 w-3" />

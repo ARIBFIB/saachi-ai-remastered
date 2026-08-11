@@ -23,9 +23,9 @@ const reasons = [
 
 export function WhySaachi() {
   return (
-    <section className="w-full bg-[var(--token-color-bg)] pb-20 pt-12">
+    <section className="w-full bg-[#F8FAFC] pb-20 pt-12">
       <div className="mx-auto flex max-w-[1280px] flex-col gap-10 px-6">
-        <h2 className="text-center text-2xl font-semibold text-[var(--token-color-ink)]">
+        <h2 className="text-center text-2xl font-semibold text-[#18181B]">
           Why Learn with Saachi?
         </h2>
 
@@ -36,12 +36,12 @@ export function WhySaachi() {
               className="flex flex-1 flex-col items-center gap-4 p-6 text-center"
             >
               <span className="flex h-12 w-12 items-center justify-center rounded-sm bg-gray-200">
-                <Icon className="h-6 w-6 text-[var(--token-color-primary)]" />
+                <Icon className="h-6 w-6 text-[#3525CD]" />
               </span>
-              <h3 className="text-lg font-semibold text-[var(--token-color-ink)]">
+              <h3 className="text-lg font-semibold text-[#18181B]">
                 {title}
               </h3>
-              <p className="max-w-[280px] text-base text-[var(--token-color-inkSoft)]">
+              <p className="max-w-[280px] text-base text-[#3F3F46]">
                 {description}
               </p>
             </div>

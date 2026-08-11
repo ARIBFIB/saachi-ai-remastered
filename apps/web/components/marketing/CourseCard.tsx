@@ -12,8 +12,8 @@ export interface CourseCardProps {
 }
 
 const tagStyles: Record<NonNullable<CourseCardProps["tagVariant"]>, string> = {
-  default: "bg-[var(--token-color-primaryTint)] text-gray-500",
-  highlight: "bg-[var(--token-color-primary)]/10 text-[var(--token-color-primary)]",
+  default: "bg-[#E0E7FF] text-gray-500",
+  highlight: "bg-[#3525CD]/10 text-[#3525CD]",
   neutral: "bg-zinc-200 text-zinc-900",
 };
 
@@ -27,9 +27,15 @@ export function CourseCard({
   image,
 }: CourseCardProps) {
   return (
-    <article className="flex flex-1 flex-col overflow-hidden rounded-xl bg-[var(--token-color-surface)] shadow-[var(--token-shadow-md)]">
+    <article className="flex flex-1 flex-col overflow-hidden rounded-xl bg-[#FFFFFF] shadow-[0px_4px_20px_0px_rgba(15,23,42,0.05)]">
       <div className="relative h-40 w-full overflow-hidden bg-gray-100">
-        <Image src={image} alt={title} fill className="object-cover" />
+        <Image
+          src={image}
+          alt={title}
+          fill
+          sizes="(max-width: 768px) 100vw, 288px"
+          className="object-cover"
+        />
       </div>
 
       <div className="flex flex-col gap-4 p-6">
@@ -39,16 +45,16 @@ export function CourseCard({
           {tag}
         </span>
 
-        <h3 className="text-2xl font-semibold leading-8 text-[var(--token-color-ink)]">
+        <h3 className="text-2xl font-semibold leading-8 text-[#18181B]">
           {title}
         </h3>
 
         <div className="flex flex-col gap-1">
-          <p className="text-sm text-[var(--token-color-inkSoft)]">{instructor}</p>
+          <p className="text-sm text-[#3F3F46]">{instructor}</p>
           <div className="flex items-center gap-2">
             <div className="flex items-center gap-1">
-              <Star className="h-3.5 w-3.5 text-[var(--token-color-success)]" fill="currentColor" strokeWidth={0} />
-              <span className="text-sm font-semibold tracking-wide text-[var(--token-color-success)]">
+              <Star className="h-3.5 w-3.5 text-[#005338]" fill="currentColor" strokeWidth={0} />
+              <span className="text-sm font-semibold tracking-wide text-[#005338]">
                 {rating}
               </span>
             </div>

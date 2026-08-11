@@ -1,8 +1,1645 @@
 ﻿================================================================================
 MODULE CODE EXPORT: Web
-Generated: 2026-08-12 01:33:29
-Total Files: 13
+Generated: 2026-08-12 03:15:47
+Total Files: 37
 ================================================================================
+
+
+================================================================================
+FILE: apps\web\app\(auth)\login\page.tsx
+================================================================================
+"use client";
+
+import { useState } from "react";
+import Link from "next/link";
+import { GraduationCap, UserSquare2, Check } from "lucide-react";
+
+type Mode = "signin" | "register";
+type Role = "learner" | "instructor";
+
+export default function LoginPage() {
+  const [mode, setMode] = useState<Mode>("signin");
+  const [role, setRole] = useState<Role>("learner");
+
+  function handleSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    // TODO: wire to useAuth() from @saachi/api-client
+    console.log("submit", { mode, role });
+  }
+
+  return (
+    <div className="flex min-h-screen items-center justify-center bg-slate-50 p-6">
+      <div className="flex w-full max-w-[1200px] overflow-hidden rounded-xl bg-slate-50 shadow-[0px_4px_20px_0px_rgba(15,23,42,0.05)]">
+        {/* Left: Core auth */}
+        <div className="flex-1 bg-white p-10">
+          <div className="mb-8 flex flex-col gap-2">
+            <Link href="/" className="text-3xl font-bold leading-10 text-[#3525CD]">
+              Saachi AI
+            </Link>
+            <p className="text-base text-slate-600">
+              {mode === "signin"
+                ? "Sign in to continue your learning journey."
+                : "Create an account to start learning or teaching."}
+            </p>
+          </div>
+
+          {/* Toggle */}
+          <div className="mb-6 flex rounded-lg bg-gray-100 p-1">
+            <button
+              type="button"
+              onClick={() => setMode("signin")}
+              className={`flex-1 rounded-sm py-2 text-sm font-semibold tracking-wide transition ${
+                mode === "signin"
+                  ? "bg-[#3525CD] text-white shadow-[0px_1px_2px_0px_rgba(0,0,0,0.05)]"
+                  : "text-slate-600"
+              }`}
+            >
+              Sign In
+            </button>
+            <button
+              type="button"
+              onClick={() => setMode("register")}
+              className={`flex-1 rounded-sm py-2 text-sm font-semibold tracking-wide transition ${
+                mode === "register"
+                  ? "bg-[#3525CD] text-white shadow-[0px_1px_2px_0px_rgba(0,0,0,0.05)]"
+                  : "text-slate-600"
+              }`}
+            >
+              Create Account
+            </button>
+          </div>
+
+          {/* Form */}
+          <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+            <div className="flex flex-col gap-1">
+              <label htmlFor="email" className="text-sm font-semibold tracking-wide text-gray-700">
+                Email Address
+              </label>
+              <input
+                id="email"
+                type="email"
+                required
+                placeholder="name@company.com"
+                className="rounded-lg border border-slate-300 bg-slate-50 px-4 py-2.5 text-base text-zinc-900 placeholder:text-gray-500 focus:border-[#3525CD] focus:outline-none"
+              />
+            </div>
+
+            <div className="flex flex-col gap-1">
+              <div className="flex items-center justify-between">
+                <label htmlFor="password" className="text-sm font-semibold tracking-wide text-gray-700">
+                  Password
+                </label>
+                {mode === "signin" && (
+                  <Link href="/forgot-password" className="text-xs font-medium text-[#3525CD]">
+                    Forgot?
+                  </Link>
+                )}
+              </div>
+              <input
+                id="password"
+                type="password"
+                required
+                placeholder="Ã¢â‚¬Â¢Ã¢â‚¬Â¢Ã¢â‚¬Â¢Ã¢â‚¬Â¢Ã¢â‚¬Â¢Ã¢â‚¬Â¢Ã¢â‚¬Â¢Ã¢â‚¬Â¢"
+                className="rounded-lg border border-slate-300 bg-slate-50 px-4 py-2.5 text-base text-zinc-900 placeholder:text-gray-500 focus:border-[#3525CD] focus:outline-none"
+              />
+            </div>
+
+            <button
+              type="submit"
+              className="rounded-lg bg-[#3525CD] py-4 text-sm font-semibold tracking-wide text-white shadow-[0px_1px_2px_0px_rgba(0,0,0,0.05)] hover:bg-[#2A1DA3]"
+            >
+              {mode === "signin" ? "Sign In" : "Create Account"}
+            </button>
+          </form>
+
+          <div className="relative my-6 flex items-center justify-center">
+            <span className="absolute inset-x-0 top-1/2 h-px -translate-y-1/2 border-t border-slate-300" />
+            <span className="relative bg-white px-2 text-xs font-medium text-slate-600">
+              Or continue with
+            </span>
+          </div>
+
+          <div className="flex gap-4">
+            <button
+              type="button"
+              className="flex-1 rounded-lg border border-slate-300 py-2 text-sm font-semibold text-zinc-900 hover:bg-gray-50"
+            >
+              Google
+            </button>
+            <button
+              type="button"
+              className="flex-1 rounded-lg border border-slate-300 py-2 text-sm font-semibold text-zinc-900 hover:bg-gray-50"
+            >
+              LinkedIn
+            </button>
+          </div>
+        </div>
+
+        {/* Right: role selection (register only visual context, always shown per design) */}
+        <div className="relative hidden flex-1 flex-col justify-center overflow-hidden bg-gray-100 px-10 py-28 md:flex">
+          <div className="pointer-events-none absolute left-0 top-0 h-full w-full bg-[radial-gradient(circle_at_100%_0%,rgba(53,37,205,0.2),transparent_50%)]" />
+
+          <div className="relative flex flex-col gap-4">
+            <h2 className="text-2xl font-semibold text-zinc-900">Join the ecosystem</h2>
+            <p className="text-base text-slate-600">
+              Select your path to get started with specialized tools and
+              tailored experiences.
+            </p>
+
+            <div className="flex flex-col gap-4 pt-6">
+              <RoleCard
+                icon={<GraduationCap className="h-6 w-6 text-[#3525CD]" />}
+                title="I am a Learner"
+                description="Access courses, track progress, and build your skill portfolio."
+                selected={role === "learner"}
+                onSelect={() => setRole("learner")}
+              />
+              <RoleCard
+                icon={<UserSquare2 className="h-6 w-6 text-[#565E74]" />}
+                title="I am an Instructor"
+                description="Create courses, manage analytics, and grow your audience."
+                selected={role === "instructor"}
+                onSelect={() => setRole("instructor")}
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function RoleCard({
+  icon,
+  title,
+  description,
+  selected,
+  onSelect,
+}: {
+  icon: React.ReactNode;
+  title: string;
+  description: string;
+  selected: boolean;
+  onSelect: () => void;
+}) {
+  return (
+    <button
+      type="button"
+      onClick={onSelect}
+      className={`flex items-start gap-4 rounded-xl border-2 bg-white p-4 text-left transition ${
+        selected ? "border-[#3525CD]" : "border-transparent"
+      }`}
+    >
+      <span
+        className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-lg ${
+          selected ? "bg-[#3525CD]/10" : "bg-gray-200"
+        }`}
+      >
+        {icon}
+      </span>
+
+      <span className="flex-1">
+        <span className="block text-sm font-semibold tracking-wide text-zinc-900">
+          {title}
+        </span>
+        <span className="block text-sm text-slate-600">{description}</span>
+      </span>
+
+      <span
+        className={`mt-1 flex h-5 w-5 shrink-0 items-center justify-center rounded-full border-2 ${
+          selected ? "border-[#3525CD]" : "border-[#C7C4D8]"
+        }`}
+      >
+        {selected && <span className="h-2.5 w-2.5 rounded-full bg-[#3525CD]" />}
+      </span>
+    </button>
+  );
+}
+
+
+
+================================================================================
+FILE: apps\web\app\(marketing)\courses\[slug]\page.tsx
+================================================================================
+!! ERROR reading file: A parameter cannot be found that matches parameter name 'Raw'.
+
+
+================================================================================
+FILE: apps\web\app\(marketing)\courses\page.tsx
+================================================================================
+import { Header } from "@/components/marketing/Header";
+import { CompactFooter } from "@/components/marketing/CompactFooter";
+import { FilterSidebar } from "@/components/marketplace/FilterSidebar";
+import { SortDropdown } from "@/components/marketplace/SortDropdown";
+import { Pagination } from "@/components/marketplace/Pagination";
+import {
+  MarketplaceCourseCard,
+  type MarketplaceCourseCardProps,
+} from "@/components/marketplace/MarketplaceCourseCard";
+
+const courses: MarketplaceCourseCardProps[] = [
+  {
+    title: "Complete A.I. & Machine Learning Bootcamp",
+    provider: "Dr. Angela Yu",
+    rating: 4.8,
+    reviews: "12.4k",
+    price: "$89.99",
+    categoryTag: "Machine Learning",
+    levelTag: "Beginner",
+    badge: { label: "Bestseller", variant: "light" },
+    image:
+      "https://images.unsplash.com/photo-1550439062-609e1531270e?auto=format&fit=crop&w=600&q=80",
+  },
+  {
+    title: "Deep Learning Specialization (Andrewâ€¦",
+    provider: "DeepLearning.AI",
+    rating: 4.9,
+    reviews: "89.1k",
+    price: "$49.00",
+    priceSuffix: "/mo",
+    categoryTag: "Deep Learning",
+    levelTag: "Advanced",
+    image:
+      "https://images.unsplash.com/photo-1677442136019-21780ecad995?auto=format&fit=crop&w=600&q=80",
+  },
+  {
+    title: "Natural Language Processing withâ€¦",
+    provider: "Hugging Face",
+    rating: 4.7,
+    reviews: "2.3k",
+    price: "$129.99",
+    categoryTag: "NLP",
+    levelTag: "Intermediate",
+    badge: { label: "New", variant: "dark" },
+    image:
+      "https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?auto=format&fit=crop&w=600&q=80",
+  },
+];
+
+export default function CourseMarketplacePage() {
+  return (
+    <div className="flex min-h-screen flex-col bg-slate-50">
+      <Header />
+
+      <main className="mx-auto flex w-full max-w-[1280px] flex-1 flex-col gap-6 px-12 pb-40 pt-20 md:flex-row md:gap-8">
+        <div className="w-full shrink-0 md:w-56">
+          <FilterSidebar />
+        </div>
+
+        <div className="flex flex-1 flex-col gap-6">
+          <div className="flex items-center justify-between pb-4">
+            <div className="flex items-baseline gap-3">
+              <h1 className="text-2xl font-semibold text-zinc-900">
+                Explore Courses
+              </h1>
+              <span className="text-base text-slate-600">
+                (1,204 results)
+              </span>
+            </div>
+            <SortDropdown />
+          </div>
+
+          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            {courses.map((course) => (
+              <MarketplaceCourseCard key={course.title} {...course} />
+            ))}
+          </div>
+
+          <div className="pt-10">
+            <Pagination totalPages={12} />
+          </div>
+        </div>
+      </main>
+
+      <CompactFooter />
+    </div>
+  );
+}
+
+
+
+================================================================================
+FILE: apps\web\app\(marketing)\page.tsx
+================================================================================
+import { Header } from "@/components/marketing/Header";
+import { HeroSection } from "@/components/marketing/HeroSection";
+import { TrendingCourses } from "@/components/marketing/TrendingCourses";
+import { CategoryGrid } from "@/components/marketing/CategoryGrid";
+import { WhySaachi } from "@/components/marketing/WhySaachi";
+import { Newsletter } from "@/components/marketing/Newsletter";
+import { Footer } from "@/components/marketing/Footer";
+
+export default function HomePage() {
+  return (
+    <div className="flex min-h-screen flex-col bg-[var(--token-color-bg)]">
+      <Header />
+
+      <main className="flex flex-1 flex-col items-center pb-10">
+        <HeroSection />
+        <TrendingCourses />
+        <CategoryGrid />
+        <WhySaachi />
+        <Newsletter />
+      </main>
+
+      <Footer />
+    </div>
+  );
+}
+
+
+
+================================================================================
+FILE: apps\web\app\globals.css
+================================================================================
+@import "tailwindcss";
+
+/* === AUTO-GENERATED TOKENS START (do not edit) === */
+@theme {
+}
+/* === AUTO-GENERATED TOKENS END === */
+
+html,
+body {
+  padding: 0;
+  margin: 0;
+  background: var(--token-color-bg);
+  font-family: var(--token-font-family);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+
+================================================================================
+FILE: apps\web\components\course-detail\CourseCurriculum.tsx
+================================================================================
+"use client";
+
+import { useState } from "react";
+import { ChevronDown } from "lucide-react";
+
+interface Module {
+  title: string;
+  meta: string;
+}
+
+const modules: Module[] = [
+  { title: "Module 1: Introduction to Large Language Models", meta: "3 lessons Ã¢â‚¬Â¢ 45 mins" },
+  { title: "Module 2: Anatomy of a Perfect Prompt", meta: "5 lessons Ã¢â‚¬Â¢ 1hr 20 mins" },
+];
+
+function ModuleRow({ module }: { module: Module }) {
+  const [open, setOpen] = useState(false);
+
+  return (
+    <div className="overflow-hidden rounded-xl border border-slate-300/30 bg-slate-50 shadow-[0px_1px_2px_0px_rgba(0,0,0,0.05)]">
+      <button
+        type="button"
+        onClick={() => setOpen((o) => !o)}
+        className="flex w-full items-center gap-4 bg-white p-4 text-left"
+      >
+        <ChevronDown
+          className={`h-3 w-3 shrink-0 text-[#464555] transition-transform ${
+            open ? "rotate-180" : ""
+          }`}
+        />
+        <div>
+          <h3 className="text-sm font-semibold tracking-wide text-zinc-900">
+            {module.title}
+          </h3>
+          <p className="text-xs font-medium text-gray-700">{module.meta}</p>
+        </div>
+      </button>
+
+      {open && (
+        <div className="border-t border-slate-300/30 p-4 text-sm text-gray-700">
+          Lesson content coming soon.
+        </div>
+      )}
+    </div>
+  );
+}
+
+export function CourseCurriculum() {
+  return (
+    <section className="flex w-full flex-col gap-6">
+      <h2 className="text-2xl font-semibold text-zinc-900">Course Curriculum</h2>
+      <div className="flex flex-col gap-4">
+        {modules.map((m) => (
+          <ModuleRow key={m.title} module={m} />
+        ))}
+      </div>
+    </section>
+  );
+}
+
+
+
+================================================================================
+FILE: apps\web\components\course-detail\CourseHero.tsx
+================================================================================
+import Image from "next/image";
+import { Star, Play } from "lucide-react";
+
+interface CourseHeroProps {
+  category: string;
+  levelBadge: string;
+  title: string;
+  description: string;
+  rating: number;
+  ratingsCount: string;
+  studentsCount: string;
+  instructorName: string;
+  instructorAvatar: string;
+  previewImage: string;
+}
+
+export function CourseHero({
+  category,
+  levelBadge,
+  title,
+  description,
+  rating,
+  ratingsCount,
+  studentsCount,
+  instructorName,
+  instructorAvatar,
+  previewImage,
+}: CourseHeroProps) {
+  return (
+    <section className="w-full bg-gray-100 px-6 py-12">
+      <div className="mx-auto flex max-w-[1280px] flex-col gap-6 lg:flex-row lg:items-start">
+        <div className="flex flex-1 flex-col gap-6">
+          <div className="flex items-start gap-2">
+            <span className="rounded-sm bg-[#E0E7FF] px-2 pb-1 pt-[3px] text-xs font-medium text-gray-500">
+              {category}
+            </span>
+            <span className="rounded-sm bg-zinc-200 px-2 pb-1 pt-[3px] text-xs font-medium text-zinc-900">
+              {levelBadge}
+            </span>
+          </div>
+
+          <h1 className="text-5xl font-bold leading-[52.8px] text-zinc-900">
+            {title}
+          </h1>
+
+          <p className="max-w-[700px] text-lg leading-7 text-gray-700">
+            {description}
+          </p>
+
+          <div className="flex items-center gap-4">
+            <div className="flex items-center gap-1">
+              <Star className="h-5 w-5 text-[#005338]" fill="currentColor" strokeWidth={0} />
+              <span className="text-base font-bold text-emerald-900">{rating}</span>
+              <span className="pl-1 text-base text-gray-700">({ratingsCount} ratings)</span>
+            </div>
+            <span className="text-gray-700">Ã¢â‚¬Â¢</span>
+            <span className="text-base text-gray-700">{studentsCount} Students Enrolled</span>
+          </div>
+
+          <div className="flex items-center gap-3">
+            <span className="relative block h-10 w-10 overflow-hidden rounded-full">
+              <Image src={instructorAvatar} alt={instructorName} fill sizes="40px" className="object-cover" />
+            </span>
+            <span className="text-sm font-semibold tracking-wide text-zinc-900">
+              Created by {instructorName}
+            </span>
+          </div>
+        </div>
+
+        <div className="w-full lg:w-96">
+          <button
+            type="button"
+            className="group relative block aspect-video w-full overflow-hidden rounded-xl shadow-lg"
+          >
+            <Image
+              src={previewImage}
+              alt={`${title} preview`}
+              fill
+              sizes="(max-width: 1024px) 100vw, 384px"
+              className="object-cover"
+            />
+            <span className="absolute inset-0 bg-zinc-900/20 transition group-hover:bg-zinc-900/30" />
+            <span className="absolute inset-0 flex items-center justify-center">
+              <span className="flex h-[46px] w-[46px] items-center justify-center rounded-full bg-white shadow-lg">
+                <Play className="ml-0.5 h-5 w-5 text-zinc-900" fill="currentColor" />
+              </span>
+            </span>
+          </button>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+
+
+================================================================================
+FILE: apps\web\components\course-detail\DetailFooter.tsx
+================================================================================
+const columns = [
+  { links: [{ label: "About Us", href: "/about" }, { label: "Careers", href: "/careers" }] },
+  { links: [{ label: "Privacy Policy", href: "/legal/privacy" }, { label: "Terms of Service", href: "/legal/terms" }] },
+  { links: [{ label: "Instructor Handbook", href: "/instructor/handbook" }] },
+];
+
+export function DetailFooter() {
+  return (
+    <footer className="w-full bg-zinc-200 px-6 py-10">
+      <div className="mx-auto flex max-w-[1280px] flex-col gap-8 sm:flex-row sm:items-end sm:gap-6">
+        <div className="flex flex-1 flex-col gap-4">
+          <span className="text-base font-bold text-[#3525CD]">Saachi AI</span>
+          <p className="text-base text-gray-700">
+            Ã‚Â© {new Date().getFullYear()} Saachi AI Marketplace.
+            <br />
+            Empowering the future of skills.
+          </p>
+        </div>
+
+        {columns.map((col, i) => (
+          <div key={i} className="flex flex-1 flex-col gap-1.5">
+            {col.links.map((link) => (
+              <a
+                key={link.label}
+                href={link.href}
+                className="text-xs font-medium text-gray-700 hover:text-[#3525CD]"
+              >
+                {link.label}
+              </a>
+            ))}
+          </div>
+        ))}
+      </div>
+    </footer>
+  );
+}
+
+
+
+================================================================================
+FILE: apps\web\components\course-detail\InstructorBio.tsx
+================================================================================
+import Image from "next/image";
+import { Star, Users } from "lucide-react";
+
+interface InstructorBioProps {
+  name: string;
+  title: string;
+  rating: number;
+  studentsCount: string;
+  bio: string;
+  avatar: string;
+}
+
+export function InstructorBio({
+  name,
+  title,
+  rating,
+  studentsCount,
+  bio,
+  avatar,
+}: InstructorBioProps) {
+  return (
+    <section className="flex w-full gap-6 rounded-xl border border-slate-300/30 bg-slate-50 p-6 shadow-[0px_1px_2px_0px_rgba(0,0,0,0.05)]">
+      <span className="relative block h-32 w-32 shrink-0 overflow-hidden rounded-full">
+        <Image src={avatar} alt={name} fill sizes="128px" className="object-cover" />
+      </span>
+
+      <div className="flex flex-col">
+        <h2 className="text-2xl font-semibold text-zinc-900">{name}</h2>
+        <p className="text-sm font-semibold tracking-wide text-[#3525CD]">{title}</p>
+
+        <div className="mt-4 flex items-center gap-4">
+          <div className="flex items-center gap-1.5">
+            <Star className="h-[18px] w-[18px] text-[#464555]" fill="currentColor" strokeWidth={0} />
+            <span className="text-xs font-medium text-gray-700">
+              {rating} Instructor Rating
+            </span>
+          </div>
+          <div className="flex items-center gap-1.5">
+            <Users className="h-[18px] w-[18px] text-[#464555]" />
+            <span className="text-xs font-medium text-gray-700">
+              {studentsCount} Students
+            </span>
+          </div>
+        </div>
+
+        <p className="mt-4 max-w-2xl text-base text-zinc-900">{bio}</p>
+      </div>
+    </section>
+  );
+}
+
+
+
+================================================================================
+FILE: apps\web\components\course-detail\PurchaseCard.tsx
+================================================================================
+import { PlayCircle, FileText, Award } from "lucide-react";
+
+interface PurchaseCardProps {
+  price: string;
+  includes: string[];
+}
+
+const icons = [PlayCircle, FileText, Award];
+
+export function PurchaseCard({ price, includes }: PurchaseCardProps) {
+  return (
+    <div className="sticky top-24 flex w-full flex-col gap-6 rounded-xl border border-slate-300/20 bg-slate-50 px-6 py-6 shadow-[0px_10px_32px_0px_rgba(15,23,42,0.12)]">
+      <div className="flex flex-col items-center gap-1">
+        <span className="text-5xl font-bold leading-[52.8px] text-zinc-900">{price}</span>
+        <span className="text-xs font-medium text-gray-700">
+          30-Day Money-Back Guarantee
+        </span>
+      </div>
+
+      <div className="flex flex-col gap-3">
+        <button
+          type="button"
+          className="w-full rounded-lg bg-[#3525CD] py-3 text-sm font-bold tracking-wide text-white hover:bg-[#2A1DA3]"
+        >
+          Buy Now
+        </button>
+        <button
+          type="button"
+          className="w-full rounded-lg border border-gray-500 bg-white py-3 text-sm font-bold tracking-wide text-zinc-900 hover:bg-gray-50"
+        >
+          Add to Cart
+        </button>
+      </div>
+
+      <div className="flex flex-col gap-3 border-t border-slate-300/30 pt-3.5">
+        <h4 className="text-sm font-semibold tracking-wide text-zinc-900">
+          This course includes:
+        </h4>
+        {includes.map((item, i) => {
+          const Icon = icons[i % icons.length];
+          return (
+            <div key={item} className="flex items-center gap-3">
+              <Icon className="h-5 w-5 shrink-0 text-[#3525CD]" />
+              <span className="text-base text-gray-700">{item}</span>
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
+
+
+================================================================================
+FILE: apps\web\components\course-detail\WhatYoullLearn.tsx
+================================================================================
+import { Check } from "lucide-react";
+
+const learningPoints = [
+  "Core principles of LLM architecture",
+  "Zero-shot and few-shot prompting techniques",
+  "Chain-of-thought reasoning setups",
+  "Preventing hallucinations and bias",
+];
+
+export function WhatYoullLearn() {
+  return (
+    <section className="w-full rounded-xl border border-slate-300/30 bg-slate-50 p-6 shadow-[0px_1px_2px_0px_rgba(0,0,0,0.05)]">
+      <h2 className="mb-6 text-2xl font-semibold text-zinc-900">
+        What you&apos;ll learn
+      </h2>
+      <div className="grid grid-cols-1 gap-x-8 gap-y-3 sm:grid-cols-2">
+        {learningPoints.map((point) => (
+          <div key={point} className="flex items-start gap-2">
+            <Check className="mt-0.5 h-4 w-4 shrink-0 text-[#3525CD]" strokeWidth={3} />
+            <span className="text-base text-zinc-900">{point}</span>
+          </div>
+        ))}
+      </div>
+    </section>
+  );
+}
+
+
+
+================================================================================
+FILE: apps\web\components\marketing\CategoryGrid.tsx
+================================================================================
+import Link from "next/link";
+import { MessageSquare, Eye, Bot, LineChart } from "lucide-react";
+
+const categories = [
+  { label: "NLP & Language", icon: MessageSquare, href: "/categories/nlp" },
+  { label: "Computer Vision", icon: Eye, href: "/categories/computer-vision" },
+  { label: "Robotics", icon: Bot, href: "/categories/robotics" },
+  { label: "AI Strategy", icon: LineChart, href: "/categories/ai-strategy" },
+];
+
+export function CategoryGrid() {
+  return (
+    <section className="w-full border-b border-t border-[#CBD5E1] bg-[#FFFFFF] py-12">
+      <div className="mx-auto flex max-w-[1280px] flex-col gap-10 px-6">
+        <div className="mx-auto flex max-w-[672px] flex-col items-center gap-2 text-center">
+          <h2 className="text-2xl font-semibold text-[#18181B]">
+            Explore by Category
+          </h2>
+          <p className="text-base text-[#3F3F46]">
+            Find specialized tracks tailored to your career goals.
+          </p>
+        </div>
+
+        <div className="flex justify-center gap-4">
+          {categories.map(({ label, icon: Icon, href }) => (
+            <Link
+              key={label}
+              href={href}
+              className="flex flex-1 flex-col items-center gap-3.5 rounded-xl border border-[#CBD5E1] bg-[#F8FAFC] p-10 transition hover:border-[#3525CD]"
+            >
+              <span className="flex h-16 w-16 items-center justify-center rounded-full bg-[#3525CD]/10">
+                <Icon className="h-7 w-7 text-[#3525CD]" />
+              </span>
+              <span className="text-sm font-semibold tracking-wide text-[#18181B]">
+                {label}
+              </span>
+            </Link>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+
+
+================================================================================
+FILE: apps\web\components\marketing\CompactFooter.tsx
+================================================================================
+import Link from "next/link";
+
+const links = [
+  { label: "About Us", href: "/about" },
+  { label: "Careers", href: "/careers" },
+  { label: "Privacy Policy", href: "/legal/privacy" },
+  { label: "Terms of Service", href: "/legal/terms" },
+  { label: "Instructor Handbook", href: "/instructor/handbook" },
+];
+
+export function CompactFooter() {
+  return (
+    <footer className="w-full bg-zinc-200">
+      <div className="mx-auto flex max-w-[1280px] flex-col gap-6 px-6 py-10">
+        <div className="flex items-center justify-between border-b border-slate-300 pb-6">
+          <span className="text-base font-bold text-[#3525CD]">Saachi AI</span>
+          <nav className="flex gap-4">
+            {links.map((link) => (
+              <Link
+                key={link.label}
+                href={link.href}
+                className="text-xs font-medium text-gray-700 hover:text-[#3525CD]"
+              >
+                {link.label}
+              </Link>
+            ))}
+          </nav>
+        </div>
+
+        <p className="text-center text-base text-gray-700">
+          Â© {new Date().getFullYear()} Saachi AI Marketplace. Empowering the
+          future of skills.
+        </p>
+      </div>
+    </footer>
+  );
+}
+
+
+
+================================================================================
+FILE: apps\web\components\marketing\CourseCard.tsx
+================================================================================
+import Image from "next/image";
+import { Star } from "lucide-react";
+
+export interface CourseCardProps {
+  title: string;
+  instructor: string;
+  rating: number;
+  reviews: string;
+  tag: string;
+  tagVariant?: "default" | "highlight" | "neutral";
+  image: string;
+}
+
+const tagStyles: Record<NonNullable<CourseCardProps["tagVariant"]>, string> = {
+  default: "bg-[#E0E7FF] text-gray-500",
+  highlight: "bg-[#3525CD]/10 text-[#3525CD]",
+  neutral: "bg-zinc-200 text-zinc-900",
+};
+
+export function CourseCard({
+  title,
+  instructor,
+  rating,
+  reviews,
+  tag,
+  tagVariant = "default",
+  image,
+}: CourseCardProps) {
+  return (
+    <article className="flex flex-1 flex-col overflow-hidden rounded-xl bg-[#FFFFFF] shadow-[0px_4px_20px_0px_rgba(15,23,42,0.05)]">
+      <div className="relative h-40 w-full overflow-hidden bg-gray-100">
+        <Image
+          src={image}
+          alt={title}
+          fill
+          sizes="(max-width: 768px) 100vw, 288px"
+          className="object-cover"
+        />
+      </div>
+
+      <div className="flex flex-col gap-4 p-6">
+        <span
+          className={`inline-block w-fit rounded-sm px-2 pb-1 pt-[3px] text-xs font-medium ${tagStyles[tagVariant]}`}
+        >
+          {tag}
+        </span>
+
+        <h3 className="text-2xl font-semibold leading-8 text-[#18181B]">
+          {title}
+        </h3>
+
+        <div className="flex flex-col gap-1">
+          <p className="text-sm text-[#3F3F46]">{instructor}</p>
+          <div className="flex items-center gap-2">
+            <div className="flex items-center gap-1">
+              <Star className="h-3.5 w-3.5 text-[#005338]" fill="currentColor" strokeWidth={0} />
+              <span className="text-sm font-semibold tracking-wide text-[#005338]">
+                {rating}
+              </span>
+            </div>
+            <span className="text-sm text-gray-500">({reviews} reviews)</span>
+          </div>
+        </div>
+      </div>
+    </article>
+  );
+}
+
+
+
+================================================================================
+FILE: apps\web\components\marketing\Footer.tsx
+================================================================================
+import Link from "next/link";
+import { Zap, Globe, Share2 } from "lucide-react";
+
+const columns = [
+  {
+    title: "Platform",
+    links: [
+      { label: "Marketplace", href: "/courses" },
+      { label: "Enterprise", href: "/pricing" },
+      { label: "Instructor Handbook", href: "/instructor/handbook" },
+    ],
+  },
+  {
+    title: "Company",
+    links: [
+      { label: "About Us", href: "/about" },
+      { label: "Careers", href: "/careers" },
+      { label: "Contact", href: "/contact" },
+    ],
+  },
+  {
+    title: "Legal",
+    links: [
+      { label: "Privacy Policy", href: "/legal/privacy" },
+      { label: "Terms of Service", href: "/legal/terms" },
+    ],
+  },
+];
+
+export function Footer() {
+  return (
+    <footer className="w-full bg-zinc-200">
+      <div className="mx-auto grid max-w-[1280px] grid-cols-1 gap-8 px-6 py-10 md:grid-cols-4">
+        <div className="flex flex-col gap-4">
+          <Link href="/" className="flex items-center gap-1">
+            <Zap
+              className="h-[18px] w-[18px] text-[#3525CD]"
+              fill="currentColor"
+              strokeWidth={0}
+            />
+            <span className="text-base font-bold text-[#3525CD]">
+              Saachi AI
+            </span>
+          </Link>
+          <p className="text-sm text-[#3F3F46]">
+            Empowering the next generation of builders with cutting-edge
+            artificial intelligence skills.
+          </p>
+        </div>
+
+        {columns.map((col) => (
+          <div key={col.title} className="flex flex-col gap-4">
+            <h4 className="text-sm font-bold tracking-wide text-[#18181B]">
+              {col.title}
+            </h4>
+            <nav className="flex flex-col gap-2">
+              {col.links.map((link) => (
+                <Link
+                  key={link.label}
+                  href={link.href}
+                  className="text-sm text-[#3F3F46] hover:text-[#3525CD]"
+                >
+                  {link.label}
+                </Link>
+              ))}
+            </nav>
+          </div>
+        ))}
+      </div>
+
+      <div className="mx-auto flex max-w-[1280px] items-center justify-between border-t border-[#CBD5E1] px-6 py-6">
+        <p className="text-xs font-medium text-[#3F3F46]">
+          Â© {new Date().getFullYear()} Saachi AI Marketplace. Empowering the
+          future of skills.
+        </p>
+        <div className="flex items-center gap-4 text-slate-600">
+          <Globe className="h-[18px] w-[18px]" />
+          <Share2 className="h-[18px] w-[18px]" />
+        </div>
+      </div>
+    </footer>
+  );
+}
+
+
+
+================================================================================
+FILE: apps\web\components\marketing\Header.tsx
+================================================================================
+import Link from "next/link";
+import { Search, ShoppingCart, Bell, Zap } from "lucide-react";
+
+export function Header() {
+  return (
+    <header className="sticky top-0 z-50 w-full bg-[#F8FAFC] shadow-[0px_1px_2px_0px_rgba(0,0,0,0.05)]">
+      <div className="mx-auto flex h-16 max-w-[1280px] items-center justify-between px-6">
+        {/* Left: Logo + Search */}
+        <div className="flex items-center gap-10">
+          <Link href="/" className="flex items-center gap-2">
+            <Zap
+              className="h-[18px] w-[18px] text-[#3525CD]"
+              fill="currentColor"
+              strokeWidth={0}
+            />
+            <span className="text-2xl font-black text-[#3525CD]">
+              Saachi AI
+            </span>
+          </Link>
+
+          <div className="flex items-center gap-1 rounded-sm border border-[#CBD5E1] bg-gray-100 px-2 py-1">
+            <Search className="h-[15px] w-[15px] text-slate-500" />
+            <input
+              type="text"
+              placeholder="Search courses, skills..."
+              className="w-64 bg-transparent px-3 py-2 text-sm font-semibold tracking-wide text-slate-600 placeholder:text-slate-600 focus:outline-none"
+            />
+          </div>
+        </div>
+
+        {/* Right: Nav links + actions */}
+        <div className="flex items-center gap-6">
+          <nav className="flex items-center gap-5">
+            <Link
+              href="/courses"
+              className="border-b-2 border-[#3525CD] pb-[3px] text-sm font-bold tracking-wide text-[#3525CD]"
+            >
+              Marketplace
+            </Link>
+            <Link
+              href="/categories"
+              className="text-sm font-semibold tracking-wide text-slate-600 hover:text-[#3525CD]"
+            >
+              Categories
+            </Link>
+          </nav>
+
+          <div className="flex items-center gap-2">
+            <button
+              aria-label="Cart"
+              className="rounded-full p-2 text-slate-600 hover:bg-gray-100"
+            >
+              <ShoppingCart className="h-5 w-5" />
+            </button>
+            <button
+              aria-label="Notifications"
+              className="rounded-full p-2 text-slate-600 hover:bg-gray-100"
+            >
+              <Bell className="h-5 w-5" />
+            </button>
+
+            <Link
+              href="/login"
+              className="ml-2 rounded-sm bg-[#3525CD] px-6 py-2 text-sm font-semibold tracking-wide text-white shadow-[0px_1px_2px_0px_rgba(0,0,0,0.05)] hover:bg-[#2A1DA3]"
+            >
+              Sign In
+            </Link>
+
+            <Link href="/settings/profile" className="ml-2">
+              <span className="block h-8 w-8 overflow-hidden rounded-full border border-[#CBD5E1] bg-gray-200" />
+            </Link>
+          </div>
+        </div>
+      </div>
+    </header>
+  );
+}
+
+
+
+================================================================================
+FILE: apps\web\components\marketing\HeroSection.tsx
+================================================================================
+import Link from "next/link";
+import { Sparkles } from "lucide-react";
+import Image from "next/image";
+
+export function HeroSection() {
+  return (
+    <section className="w-full border-b border-[#CBD5E1] bg-[#FFFFFF]">
+      <div className="mx-auto flex min-h-[640px] max-w-[1280px] items-center justify-center gap-10 px-6 py-12">
+        {/* Left: copy */}
+        <div className="relative h-96 flex-1">
+          <div className="inline-flex items-center gap-1 rounded-sm bg-[#E0E7FF] px-2 py-1">
+            <Sparkles className="h-3.5 w-3.5 text-gray-500" />
+            <span className="text-xs font-medium text-gray-500">
+              New: Advanced Generative Models Path
+            </span>
+          </div>
+
+          <h1 className="mt-6 w-[596px] max-w-full text-5xl font-bold leading-[52.8px] text-[#18181B]">
+            Master AI,
+            <br />
+            Master the Future
+          </h1>
+
+          <p className="mt-6 max-w-96 text-lg leading-7 text-[#3F3F46]">
+            The world&apos;s leading AI-skills marketplace. Join thousands of
+            professionals accelerating their careers with cutting-edge,
+            expert-led artificial intelligence courses.
+          </p>
+
+          <div className="mt-8 flex items-center gap-4">
+            <Link
+              href="/courses"
+              className="rounded-lg bg-[#3525CD] px-10 py-4 text-sm font-semibold tracking-wide text-white shadow-[0px_1px_2px_0px_rgba(0,0,0,0.05)] hover:bg-[#2A1DA3]"
+            >
+              Explore Courses
+            </Link>
+            <Link
+              href="/pricing"
+              className="rounded-lg border border-[#CBD5E1] bg-[#F8FAFC] px-10 py-4 text-sm font-semibold tracking-wide text-slate-600 hover:bg-gray-100"
+            >
+              For Enterprise
+            </Link>
+          </div>
+        </div>
+
+        {/* Right: image */}
+        <div className="relative min-h-96 flex-1 self-stretch overflow-hidden rounded-xl shadow-[0px_10px_32px_0px_rgba(15,23,42,0.12)]">
+          <Image
+            src="https://images.unsplash.com/photo-1677442136019-21780ecad995?auto=format&fit=crop&w=1200&q=80"
+            alt="AI Learning Concept"
+            fill
+            sizes="(max-width: 768px) 100vw, 596px"
+            className="object-cover"
+            priority
+          />
+          <div className="absolute inset-0 mix-blend-overlay bg-gradient-to-br from-[#3525CD]/10 to-transparent" />
+        </div>
+      </div>
+    </section>
+  );
+}
+
+
+
+================================================================================
+FILE: apps\web\components\marketing\Newsletter.tsx
+================================================================================
+"use client";
+
+import { useState } from "react";
+
+export function Newsletter() {
+  const [email, setEmail] = useState("");
+
+  function handleSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    // TODO: wire to Newsletter API (packages/api-client)
+    console.log("subscribe:", email);
+  }
+
+  return (
+    <div className="mx-auto flex w-full max-w-[896px] flex-col items-center justify-between gap-6 rounded-xl bg-[#3525CD] p-10 shadow-[0px_10px_32px_0px_rgba(15,23,42,0.12)] md:flex-row">
+      <div className="flex max-w-96 flex-col gap-2">
+        <h2 className="text-2xl font-semibold text-white">
+          Stay ahead of the curve.
+        </h2>
+        <p className="text-base text-violet-300">
+          Join our newsletter for weekly AI insights, course updates, and
+          exclusive discounts.
+        </p>
+      </div>
+
+      <form
+        onSubmit={handleSubmit}
+        className="flex h-12 w-full max-w-96 items-center overflow-hidden rounded-sm bg-white shadow-[0px_1px_2px_0px_rgba(0,0,0,0.05)]"
+      >
+        <input
+          type="email"
+          required
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          placeholder="Enter your email"
+          className="h-full flex-1 px-4 py-2.5 text-base text-[#18181B] placeholder:text-gray-500 focus:outline-none"
+        />
+        <button
+          type="submit"
+          className="m-1 rounded-sm bg-slate-600 px-6 py-2 text-sm font-semibold tracking-wide text-white hover:bg-slate-700"
+        >
+          Subscribe
+        </button>
+      </form>
+    </div>
+  );
+}
+
+
+
+================================================================================
+FILE: apps\web\components\marketing\TrendingCourses.tsx
+================================================================================
+import Link from "next/link";
+import { ArrowRight } from "lucide-react";
+import { CourseCard, type CourseCardProps } from "./CourseCard";
+
+const courses: CourseCardProps[] = [
+  {
+    title: "AI Ethics & Responsibleâ€¦",
+    instructor: "Dr. Sarah Jenkins",
+    rating: 4.9,
+    reviews: "2.4k",
+    tag: "Foundational",
+    tagVariant: "default",
+    image: "https://images.unsplash.com/photo-1677442136019-21780ecad995?auto=format&fit=crop&w=600&q=80",
+  },
+  {
+    title: "Mastering Prompt Engineering",
+    instructor: "Alex Chen",
+    rating: 4.8,
+    reviews: "8.1k",
+    tag: "Bestseller",
+    tagVariant: "highlight",
+    image: "https://images.unsplash.com/photo-1531482615713-2afd69097998?auto=format&fit=crop&w=600&q=80",
+  },
+  {
+    title: "Generative AI & Digital Art",
+    instructor: "Elena Rodriguez",
+    rating: 4.7,
+    reviews: "1.2k",
+    tag: "Creative",
+    tagVariant: "default",
+    image: "https://images.unsplash.com/photo-1550439062-609e1531270e?auto=format&fit=crop&w=600&q=80",
+  },
+  {
+    title: "LLM Ops & Deploymentâ€¦",
+    instructor: "David Kim, PhD",
+    rating: 4.9,
+    reviews: "940",
+    tag: "Advanced",
+    tagVariant: "neutral",
+    image: "https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?auto=format&fit=crop&w=600&q=80",
+  },
+];
+
+export function TrendingCourses() {
+  return (
+    <section className="w-full bg-[#F8FAFC] py-12">
+      <div className="mx-auto flex max-w-[1280px] flex-col gap-10 px-6">
+        <div className="flex items-end justify-between">
+          <div className="flex flex-col gap-1">
+            <h2 className="text-2xl font-semibold text-[#18181B]">
+              Trending Courses
+            </h2>
+            <p className="text-base text-[#3F3F46]">
+              Highly rated programs to start your journey.
+            </p>
+          </div>
+          <Link
+            href="/courses"
+            className="flex items-center gap-1 text-sm font-semibold tracking-wide text-[#3525CD]"
+          >
+            View all
+            <ArrowRight className="h-3 w-3" />
+          </Link>
+        </div>
+
+        <div className="flex justify-center gap-6">
+          {courses.map((course) => (
+            <CourseCard key={course.title} {...course} />
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+
+
+================================================================================
+FILE: apps\web\components\marketing\WhySaachi.tsx
+================================================================================
+import { GraduationCap, Wrench, BadgeCheck } from "lucide-react";
+
+const reasons = [
+  {
+    icon: GraduationCap,
+    title: "Industry Experts",
+    description:
+      "Learn directly from senior engineers and researchers from top tech companies.",
+  },
+  {
+    icon: Wrench,
+    title: "Hands-on Projects",
+    description:
+      "Build real-world AI applications in cloud environments straight from your browser.",
+  },
+  {
+    icon: BadgeCheck,
+    title: "AI-Verified Certificates",
+    description:
+      "Earn credentials verified on the blockchain, trusted by top employers globally.",
+  },
+];
+
+export function WhySaachi() {
+  return (
+    <section className="w-full bg-[#F8FAFC] pb-20 pt-12">
+      <div className="mx-auto flex max-w-[1280px] flex-col gap-10 px-6">
+        <h2 className="text-center text-2xl font-semibold text-[#18181B]">
+          Why Learn with Saachi?
+        </h2>
+
+        <div className="flex justify-center gap-10 pt-6">
+          {reasons.map(({ icon: Icon, title, description }) => (
+            <div
+              key={title}
+              className="flex flex-1 flex-col items-center gap-4 p-6 text-center"
+            >
+              <span className="flex h-12 w-12 items-center justify-center rounded-sm bg-gray-200">
+                <Icon className="h-6 w-6 text-[#3525CD]" />
+              </span>
+              <h3 className="text-lg font-semibold text-[#18181B]">
+                {title}
+              </h3>
+              <p className="max-w-[280px] text-base text-[#3F3F46]">
+                {description}
+              </p>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+
+
+================================================================================
+FILE: apps\web\components\marketplace\FilterSidebar.tsx
+================================================================================
+"use client";
+
+import { useState } from "react";
+import { Check } from "lucide-react";
+
+const categories = ["Machine Learning", "Deep Learning", "NLP", "Generative AI"];
+const levels = ["Beginner", "Intermediate", "Advanced"];
+
+function Checkbox({
+  label,
+  checked,
+  onChange,
+}: {
+  label: string;
+  checked: boolean;
+  onChange: () => void;
+}) {
+  return (
+    <label className="flex cursor-pointer items-center gap-2">
+      <button
+        type="button"
+        onClick={onChange}
+        className={`flex h-4 w-4 items-center justify-center rounded-sm border transition ${
+          checked
+            ? "border-[#3525CD] bg-[#3525CD]"
+            : "border-[#C7C4D8] bg-white"
+        }`}
+      >
+        {checked && <Check className="h-3 w-3 text-white" strokeWidth={3} />}
+      </button>
+      <span className="text-base text-slate-600">{label}</span>
+    </label>
+  );
+}
+
+export function FilterSidebar() {
+  const [selectedCategories, setSelectedCategories] = useState<string[]>([
+    "Machine Learning",
+  ]);
+  const [selectedLevels, setSelectedLevels] = useState<string[]>([
+    "Intermediate",
+  ]);
+
+  function toggle(
+    list: string[],
+    setList: (v: string[]) => void,
+    value: string
+  ) {
+    setList(
+      list.includes(value) ? list.filter((v) => v !== value) : [...list, value]
+    );
+  }
+
+  return (
+    <aside className="w-56 rounded-xl border border-slate-300/30 bg-white p-6 shadow-[0px_4px_20px_0px_rgba(15,23,42,0.05)]">
+      <div className="flex flex-col gap-4">
+        <h3 className="text-sm font-semibold tracking-wide text-zinc-900">
+          Category
+        </h3>
+        <div className="flex flex-col gap-2">
+          {categories.map((c) => (
+            <Checkbox
+              key={c}
+              label={c}
+              checked={selectedCategories.includes(c)}
+              onChange={() => toggle(selectedCategories, setSelectedCategories, c)}
+            />
+          ))}
+        </div>
+      </div>
+
+      <hr className="my-6 border-slate-300/50" />
+
+      <div className="flex flex-col gap-4">
+        <h3 className="text-sm font-semibold tracking-wide text-zinc-900">
+          Level
+        </h3>
+        <div className="flex flex-col gap-2">
+          {levels.map((l) => (
+            <Checkbox
+              key={l}
+              label={l}
+              checked={selectedLevels.includes(l)}
+              onChange={() => toggle(selectedLevels, setSelectedLevels, l)}
+            />
+          ))}
+        </div>
+      </div>
+
+      <hr className="my-6 border-slate-300/50" />
+
+      <div className="flex flex-col gap-4">
+        <h3 className="text-sm font-semibold tracking-wide text-zinc-900">
+          Price
+        </h3>
+        <div className="flex flex-col gap-2">
+          <input
+            type="range"
+            min={0}
+            max={200}
+            defaultValue={200}
+            className="h-1 w-full accent-[#3525CD]"
+          />
+          <div className="flex justify-between text-xs font-medium text-gray-500">
+            <span>$0</span>
+            <span>$200+</span>
+          </div>
+        </div>
+      </div>
+    </aside>
+  );
+}
+
+
+
+================================================================================
+FILE: apps\web\components\marketplace\MarketplaceCourseCard.tsx
+================================================================================
+import Image from "next/image";
+import { Star } from "lucide-react";
+
+export interface MarketplaceCourseCardProps {
+  title: string;
+  provider: string;
+  rating: number;
+  reviews: string;
+  price: string;
+  priceSuffix?: string;
+  categoryTag: string;
+  levelTag: string;
+  badge?: { label: string; variant: "dark" | "light" };
+  image: string;
+}
+
+export function MarketplaceCourseCard({
+  title,
+  provider,
+  rating,
+  reviews,
+  price,
+  priceSuffix,
+  categoryTag,
+  levelTag,
+  badge,
+  image,
+}: MarketplaceCourseCardProps) {
+  return (
+    <article className="flex flex-1 flex-col overflow-hidden rounded-xl border border-slate-300/30 bg-white shadow-[0px_4px_20px_0px_rgba(15,23,42,0.05)]">
+      <div className="relative h-40 w-full overflow-hidden bg-zinc-200">
+        <Image
+          src={image}
+          alt={title}
+          fill
+          sizes="(max-width: 768px) 100vw, 400px"
+          className="object-cover"
+        />
+        {badge && (
+          <span
+            className={`absolute left-2 top-2 rounded-sm px-2 pb-1 pt-[3px] text-xs font-medium shadow-[0px_1px_2px_0px_rgba(0,0,0,0.05)] ${
+              badge.variant === "dark"
+                ? "bg-emerald-700 text-emerald-300"
+                : "bg-white/90 text-zinc-900 backdrop-blur-[2px]"
+            }`}
+          >
+            {badge.label}
+          </span>
+        )}
+      </div>
+
+      <div className="flex flex-1 flex-col justify-between p-6">
+        <div className="flex flex-col gap-2">
+          <div className="flex items-start gap-2">
+            <span className="bg-[#E0E7FF] px-2 pb-[2.39px] pt-px text-xs font-medium text-gray-500">
+              {categoryTag}
+            </span>
+            <span className="bg-gray-200 px-2 pb-[2.39px] pt-px text-xs font-medium text-slate-600">
+              {levelTag}
+            </span>
+          </div>
+
+          <h3 className="line-clamp-2 text-lg font-bold leading-7 text-zinc-900">
+            {title}
+          </h3>
+
+          <p className="text-sm text-slate-600">{provider}</p>
+        </div>
+
+        <div className="mt-4 flex flex-col gap-1">
+          <div className="flex items-center gap-1">
+            <Star className="h-[15px] w-[15px] text-[#3525CD]" fill="currentColor" strokeWidth={0} />
+            <span className="text-sm font-semibold tracking-wide text-zinc-900">
+              {rating}
+            </span>
+            <span className="text-xs font-medium text-gray-500">({reviews})</span>
+          </div>
+
+          <div className="flex items-baseline gap-1">
+            <span className="text-2xl font-bold text-zinc-900">{price}</span>
+            {priceSuffix && (
+              <span className="text-base text-slate-600">{priceSuffix}</span>
+            )}
+          </div>
+        </div>
+      </div>
+    </article>
+  );
+}
+
+
+
+================================================================================
+FILE: apps\web\components\marketplace\Pagination.tsx
+================================================================================
+"use client";
+
+import { useState } from "react";
+import { ChevronLeft, ChevronRight } from "lucide-react";
+
+export function Pagination({ totalPages = 12 }: { totalPages?: number }) {
+  const [page, setPage] = useState(1);
+
+  const pages = [1, 2, 3];
+
+  return (
+    <div className="flex items-center justify-center gap-2">
+      <button
+        aria-label="Previous page"
+        onClick={() => setPage((p) => Math.max(1, p - 1))}
+        className="flex h-10 w-8 items-center justify-center border border-slate-300 text-slate-600 hover:bg-gray-100"
+      >
+        <ChevronLeft className="h-3 w-3" />
+      </button>
+
+      {pages.map((p) => (
+        <button
+          key={p}
+          onClick={() => setPage(p)}
+          className={`flex h-10 w-10 items-center justify-center text-sm font-semibold tracking-wide ${
+            page === p
+              ? "bg-[#3525CD] font-bold text-white shadow-[0px_1px_2px_0px_rgba(0,0,0,0.05)]"
+              : "border border-slate-300 text-slate-600 hover:bg-gray-100"
+          }`}
+        >
+          {p}
+        </button>
+      ))}
+
+      <span className="px-1 text-base text-gray-500">...</span>
+
+      <button
+        onClick={() => setPage(totalPages)}
+        className={`flex h-10 w-10 items-center justify-center text-sm font-semibold tracking-wide ${
+          page === totalPages
+            ? "bg-[#3525CD] font-bold text-white shadow-[0px_1px_2px_0px_rgba(0,0,0,0.05)]"
+            : "border border-slate-300 text-slate-600 hover:bg-gray-100"
+        }`}
+      >
+        {totalPages}
+      </button>
+
+      <button
+        aria-label="Next page"
+        onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+        className="flex h-10 w-8 items-center justify-center border border-slate-300 text-slate-600 hover:bg-gray-100"
+      >
+        <ChevronRight className="h-3 w-3" />
+      </button>
+    </div>
+  );
+}
+
+
+
+================================================================================
+FILE: apps\web\components\marketplace\SortDropdown.tsx
+================================================================================
+"use client";
+
+import { useState } from "react";
+import { ChevronDown } from "lucide-react";
+
+const options = ["Most Popular", "Highest Rated", "Newest", "Price: Low to High", "Price: High to Low"];
+
+export function SortDropdown() {
+  const [value, setValue] = useState(options[0]);
+  const [open, setOpen] = useState(false);
+
+  return (
+    <div className="relative">
+      <button
+        onClick={() => setOpen((o) => !o)}
+        className="flex items-center gap-8 border border-slate-300 bg-white px-3 py-2 text-base text-zinc-900 shadow-[0px_1px_2px_0px_rgba(0,0,0,0.05)]"
+      >
+        {value}
+        <ChevronDown className="h-4 w-4 text-gray-500" />
+      </button>
+
+      {open && (
+        <ul className="absolute right-0 top-full z-10 mt-1 w-48 border border-slate-300 bg-white shadow-[0px_4px_20px_0px_rgba(15,23,42,0.05)]">
+          {options.map((opt) => (
+            <li key={opt}>
+              <button
+                onClick={() => {
+                  setValue(opt);
+                  setOpen(false);
+                }}
+                className="block w-full px-3 py-2 text-left text-sm text-zinc-900 hover:bg-gray-100"
+              >
+                {opt}
+              </button>
+            </li>
+          ))}
+        </ul>
+      )}
+    </div>
+  );
+}
+
 
 
 ================================================================================
@@ -318,7 +1955,9 @@ const nextConfig = {
     remotePatterns: [
       { protocol: "https", hostname: "**.cloudfront.net" },
       { protocol: "https", hostname: "res.cloudinary.com" },
-      { protocol: "https", hostname: "picsum.photos" }
+      { protocol: "https", hostname: "picsum.photos" },
+      { protocol: "https", hostname: "images.unsplash.com" },
+      { protocol: "https", hostname: "placehold.co" }
     ]
   },
   async rewrites() {

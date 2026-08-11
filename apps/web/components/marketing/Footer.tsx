@@ -34,15 +34,15 @@ export function Footer() {
         <div className="flex flex-col gap-4">
           <Link href="/" className="flex items-center gap-1">
             <Zap
-              className="h-[18px] w-[18px] text-[var(--token-color-primary)]"
+              className="h-[18px] w-[18px] text-[#3525CD]"
               fill="currentColor"
               strokeWidth={0}
             />
-            <span className="text-base font-bold text-[var(--token-color-primary)]">
+            <span className="text-base font-bold text-[#3525CD]">
               Saachi AI
             </span>
           </Link>
-          <p className="text-sm text-[var(--token-color-inkSoft)]">
+          <p className="text-sm text-[#3F3F46]">
             Empowering the next generation of builders with cutting-edge
             artificial intelligence skills.
           </p>
@@ -50,7 +50,7 @@ export function Footer() {
 
         {columns.map((col) => (
           <div key={col.title} className="flex flex-col gap-4">
-            <h4 className="text-sm font-bold tracking-wide text-[var(--token-color-ink)]">
+            <h4 className="text-sm font-bold tracking-wide text-[#18181B]">
               {col.title}
             </h4>
             <nav className="flex flex-col gap-2">
@@ -58,7 +58,7 @@ export function Footer() {
                 <Link
                   key={link.label}
                   href={link.href}
-                  className="text-sm text-[var(--token-color-inkSoft)] hover:text-[var(--token-color-primary)]"
+                  className="text-sm text-[#3F3F46] hover:text-[#3525CD]"
                 >
                   {link.label}
                 </Link>
@@ -68,8 +68,8 @@ export function Footer() {
         ))}
       </div>
 
-      <div className="mx-auto flex max-w-[1280px] items-center justify-between border-t border-[var(--token-color-border)] px-6 py-6">
-        <p className="text-xs font-medium text-[var(--token-color-inkSoft)]">
+      <div className="mx-auto flex max-w-[1280px] items-center justify-between border-t border-[#CBD5E1] px-6 py-6">
+        <p className="text-xs font-medium text-[#3F3F46]">
           Â© {new Date().getFullYear()} Saachi AI Marketplace. Empowering the
           future of skills.
         </p>
