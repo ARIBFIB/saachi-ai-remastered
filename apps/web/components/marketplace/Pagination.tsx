@@ -1,19 +1,22 @@
-﻿"use client";
+"use client";
 
 import { useState } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 
 export function Pagination({ totalPages = 12 }: { totalPages?: number }) {
   const [page, setPage] = useState(1);
-
   const pages = [1, 2, 3];
 
+  const lineColor = "var(--token-color-blueprintLine)";
+  const inkSoft = "var(--token-color-inkDeepSoft)";
+
   return (
-    <div className="flex items-center justify-center gap-2">
+    <div className="flex items-center justify-center gap-2" style={{ fontFamily: "var(--token-font-monoFamily)" }}>
       <button
         aria-label="Previous page"
         onClick={() => setPage((p) => Math.max(1, p - 1))}
-        className="flex h-10 w-8 items-center justify-center border border-slate-300 text-slate-600 hover:bg-gray-100"
+        className="flex h-10 w-8 items-center justify-center border"
+        style={{ borderColor: lineColor, color: inkSoft }}
       >
         <ChevronLeft className="h-3 w-3" />
       </button>
@@ -22,25 +25,27 @@ export function Pagination({ totalPages = 12 }: { totalPages?: number }) {
         <button
           key={p}
           onClick={() => setPage(p)}
-          className={`flex h-10 w-10 items-center justify-center text-sm font-semibold tracking-wide ${
+          className="flex h-10 w-10 items-center justify-center text-sm font-semibold"
+          style={
             page === p
-              ? "bg-[#3525CD] font-bold text-white shadow-[0px_1px_2px_0px_rgba(0,0,0,0.05)]"
-              : "border border-slate-300 text-slate-600 hover:bg-gray-100"
-          }`}
+              ? { backgroundColor: "var(--token-color-inkDeep)", color: "var(--token-color-paper)" }
+              : { border: `1px solid ${lineColor}`, color: inkSoft }
+          }
         >
           {p}
         </button>
       ))}
 
-      <span className="px-1 text-base text-gray-500">...</span>
+      <span className="px-1 text-base" style={{ color: inkSoft }}>...</span>
 
       <button
         onClick={() => setPage(totalPages)}
-        className={`flex h-10 w-10 items-center justify-center text-sm font-semibold tracking-wide ${
+        className="flex h-10 w-10 items-center justify-center text-sm font-semibold"
+        style={
           page === totalPages
-            ? "bg-[#3525CD] font-bold text-white shadow-[0px_1px_2px_0px_rgba(0,0,0,0.05)]"
-            : "border border-slate-300 text-slate-600 hover:bg-gray-100"
-        }`}
+            ? { backgroundColor: "var(--token-color-inkDeep)", color: "var(--token-color-paper)" }
+            : { border: `1px solid ${lineColor}`, color: inkSoft }
+        }
       >
         {totalPages}
       </button>
@@ -48,7 +53,8 @@ export function Pagination({ totalPages = 12 }: { totalPages?: number }) {
       <button
         aria-label="Next page"
         onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
-        className="flex h-10 w-8 items-center justify-center border border-slate-300 text-slate-600 hover:bg-gray-100"
+        className="flex h-10 w-8 items-center justify-center border"
+        style={{ borderColor: lineColor, color: inkSoft }}
       >
         <ChevronRight className="h-3 w-3" />
       </button>

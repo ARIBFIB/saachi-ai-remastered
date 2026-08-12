@@ -1,4 +1,4 @@
-﻿import Image from "next/image";
+import Image from "next/image";
 import { Star } from "lucide-react";
 
 export interface MarketplaceCourseCardProps {
@@ -27,22 +27,17 @@ export function MarketplaceCourseCard({
   image,
 }: MarketplaceCourseCardProps) {
   return (
-    <article className="flex flex-1 flex-col overflow-hidden rounded-xl border border-slate-300/30 bg-white shadow-[0px_4px_20px_0px_rgba(15,23,42,0.05)]">
-      <div className="relative h-40 w-full overflow-hidden bg-zinc-200">
-        <Image
-          src={image}
-          alt={title}
-          fill
-          sizes="(max-width: 768px) 100vw, 400px"
-          className="object-cover"
-        />
+    <article className="group flex flex-1 flex-col overflow-hidden border" style={{ borderColor: "var(--token-color-blueprintLine)", backgroundColor: "var(--token-color-surface)" }}>
+      <div className="relative h-40 w-full overflow-hidden" style={{ backgroundColor: "var(--token-color-blueprintLineSoft)" }}>
+        <Image src={image} alt={title} fill sizes="(max-width: 768px) 100vw, 400px" className="object-cover transition-transform duration-300 group-hover:scale-[1.03]" />
         {badge && (
           <span
-            className={`absolute left-2 top-2 rounded-sm px-2 pb-1 pt-[3px] text-xs font-medium shadow-[0px_1px_2px_0px_rgba(0,0,0,0.05)] ${
+            className="absolute left-0 top-0 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wide"
+            style={
               badge.variant === "dark"
-                ? "bg-emerald-700 text-emerald-300"
-                : "bg-white/90 text-zinc-900 backdrop-blur-[2px]"
-            }`}
+                ? { backgroundColor: "var(--token-color-teal)", color: "var(--token-color-tealTint)" }
+                : { backgroundColor: "var(--token-color-inkDeep)", color: "var(--token-color-paper)" }
+            }
           >
             {badge.label}
           </span>
@@ -51,36 +46,35 @@ export function MarketplaceCourseCard({
 
       <div className="flex flex-1 flex-col justify-between p-6">
         <div className="flex flex-col gap-2">
-          <div className="flex items-start gap-2">
-            <span className="bg-[#E0E7FF] px-2 pb-[2.39px] pt-px text-xs font-medium text-gray-500">
+          <div className="flex items-start gap-2" style={{ fontFamily: "var(--token-font-monoFamily)" }}>
+            <span className="px-2 py-0.5 text-[10px] font-medium" style={{ backgroundColor: "var(--token-color-amberTint)", color: "var(--token-color-amberDark)" }}>
               {categoryTag}
             </span>
-            <span className="bg-gray-200 px-2 pb-[2.39px] pt-px text-xs font-medium text-slate-600">
+            <span className="px-2 py-0.5 text-[10px] font-medium" style={{ backgroundColor: "var(--token-color-bg)", color: "var(--token-color-inkDeepSoft)" }}>
               {levelTag}
             </span>
           </div>
 
-          <h3 className="line-clamp-2 text-lg font-bold leading-7 text-zinc-900">
+          <h3
+            className="line-clamp-2 text-lg font-semibold leading-7"
+            style={{ fontFamily: "var(--token-font-displayFamily)", color: "var(--token-color-inkDeep)" }}
+          >
             {title}
           </h3>
 
-          <p className="text-sm text-slate-600">{provider}</p>
+          <p className="text-sm" style={{ color: "var(--token-color-inkDeepSoft)" }}>{provider}</p>
         </div>
 
-        <div className="mt-4 flex flex-col gap-1">
+        <div className="mt-4 flex flex-col gap-1 border-t pt-4" style={{ borderColor: "var(--token-color-blueprintLineSoft)" }}>
           <div className="flex items-center gap-1">
-            <Star className="h-[15px] w-[15px] text-[#3525CD]" fill="currentColor" strokeWidth={0} />
-            <span className="text-sm font-semibold tracking-wide text-zinc-900">
-              {rating}
-            </span>
-            <span className="text-xs font-medium text-gray-500">({reviews})</span>
+            <Star className="h-[15px] w-[15px]" style={{ color: "var(--token-color-amberDark)" }} fill="currentColor" strokeWidth={0} />
+            <span className="text-sm font-semibold" style={{ color: "var(--token-color-inkDeep)" }}>{rating}</span>
+            <span className="text-xs" style={{ color: "var(--token-color-inkDeepSoft)" }}>({reviews})</span>
           </div>
 
-          <div className="flex items-baseline gap-1">
-            <span className="text-2xl font-bold text-zinc-900">{price}</span>
-            {priceSuffix && (
-              <span className="text-base text-slate-600">{priceSuffix}</span>
-            )}
+          <div className="flex items-baseline gap-1" style={{ fontFamily: "var(--token-font-monoFamily)" }}>
+            <span className="text-2xl font-semibold" style={{ color: "var(--token-color-inkDeep)" }}>{price}</span>
+            {priceSuffix && <span className="text-sm" style={{ color: "var(--token-color-inkDeepSoft)" }}>{priceSuffix}</span>}
           </div>
         </div>
       </div>
