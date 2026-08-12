@@ -1,3 +1,4 @@
+import { DUMMY_COURSES } from "@saachi/api-client";
 import { Header } from "@/components/marketing/Header";
 import { CourseHero } from "@/components/course-detail/CourseHero";
 import { WhatYoullLearn } from "@/components/course-detail/WhatYoullLearn";
@@ -6,45 +7,56 @@ import { InstructorBio } from "@/components/course-detail/InstructorBio";
 import { PurchaseCard } from "@/components/course-detail/PurchaseCard";
 import { DetailFooter } from "@/components/course-detail/DetailFooter";
 
-export default function CourseDetailPage() {
+interface CourseDetailPageProps {
+  params: Promise<{ slug: string }>;
+}
+
+export default async function CourseDetailPage({ params }: CourseDetailPageProps) {
+  const { slug } = await params;
+  const course = DUMMY_COURSES.find((c) => c.slug === slug) ?? DUMMY_COURSES[0];
+
   return (
     <div className="flex min-h-screen flex-col bg-slate-50">
       <Header />
 
       <CourseHero
-        category="AI & Machine Learning"
-        levelBadge="Beginner Friendly"
-        title="Mastering Prompt Engineering"
-        description="Unlock the full potential of AI models. Learn advanced techniques to craft effective prompts, optimize outputs, and build AI-driven applications."
-        rating={4.8}
-        ratingsCount="2,450"
-        studentsCount="12,340"
-        instructorName="Dr. Sarah Chen"
-        instructorAvatar="https://images.unsplash.com/photo-1580489944761-15a19d654956?auto=format&fit=crop&w=100&q=80"
-        previewImage="https://images.unsplash.com/photo-1677442136019-21780ecad995?auto=format&fit=crop&w=900&q=80"
+        category={course.categoryId}
+        levelBadge={course.level === "beginner" ? "Beginner Friendly" : course.level === "advanced" ? "Advanced" : "Intermediate"}
+        title={course.title}
+        description={course.description ?? course.subtitle ?? ""}
+        rating={course.rating}
+        ratingsCount={course.ratingCount.toLocaleString()}
+        studentsCount={(course.instructorStudentCount ?? 0).toLocaleString()}
+        instructorName={course.instructor.fullName}
+        instructorAvatar={course.instructor.avatarUrl ?? "https://placehold.co/100x100"}
+        previewImage={course.thumbnailUrl ?? "https://placehold.co/900x506"}
       />
 
       <main className="mx-auto w-full max-w-[1280px] px-6 py-12">
         <div className="grid grid-cols-1 gap-12 lg:grid-cols-[1fr_360px]">
           <div className="flex flex-col gap-12">
+            {/* NOTE: WhatYoullLearn and CourseCurriculum still render static
+                mock content for every course -- wiring real per-course
+                curriculum data means adding props to those two components,
+                which is a separate follow-up change. */}
             <WhatYoullLearn />
             <CourseCurriculum />
             <InstructorBio
-              name="Dr. Sarah Chen"
-              title="Senior AI Researcher & Educator"
-              rating={4.9}
-              studentsCount="50k+"
-              bio="Sarah is a leading researcher in Natural Language Processing with over 10 years of experience building and optimizing AI models for enterprise applications."
-              avatar="https://images.unsplash.com/photo-1580489944761-15a19d654956?auto=format&fit=crop&w=200&q=80"
+              name={course.instructor.fullName}
+              title="Instructor"
+              rating={course.rating}
+              studentsCount={`${(course.instructorStudentCount ?? 0).toLocaleString()}+`}
+              bio={course.instructorBio ?? ""}
+              avatar={course.instructor.avatarUrl ?? "https://placehold.co/200x200"}
             />
           </div>
 
           <div>
             <PurchaseCard
-              price="$99.00"
+              price={`$${course.price.toFixed(2)}`}
               includes={[
-                "12 hours on-demand video",
-                "25 downloadable resources",
+                "On-demand video lessons",
+                "Downloadable resources",
                 "Certificate of completion",
               ]}
             />

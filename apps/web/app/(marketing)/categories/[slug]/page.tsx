@@ -60,8 +60,13 @@ const categoryContent: Record<string, { title: string; description: string }> = 
   },
 };
 
-export default function CategoryPage({ params }: { params: { slug: string } }) {
-  const content = categoryContent[params.slug] ?? categoryContent["ai-machine-learning"];
+interface CategoryPageProps {
+  params: Promise<{ slug: string }>;
+}
+
+export default async function CategoryPage({ params }: CategoryPageProps) {
+  const { slug } = await params;
+  const content = categoryContent[slug] ?? categoryContent["ai-machine-learning"];
 
   return (
     <div className="flex min-h-screen flex-col bg-[var(--token-color-bg)]">

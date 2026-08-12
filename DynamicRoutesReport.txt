@@ -1,0 +1,1873 @@
+================================================================================
+DYNAMIC ROUTES REPORT
+Generated: 2026-08-13 02:28:14
+================================================================================
+
+================================================================================
+FILE: app\(learner)\dashboard\certificates\[certificateId]\page.tsx
+SIZE: 12609 bytes | STATUS: OK-CONTENT / NEEDS ASYNC-PARAMS FIX | ASYNC PARAMS PRESENT: False
+================================================================================
+"use client";
+
+import Link from "next/link";
+import { Button } from "antd";
+import {
+  ArrowLeft,
+  X,
+  ShieldCheck,
+  Share2,
+  Twitter,
+  FileText,
+  ImageIcon,
+} from "lucide-react";
+
+// TODO: replace with useCertificate(certificateId) hook from @saachi/api-client
+interface CertificateData {
+  recipientName: string;
+  courseTitle: string;
+  issuedDate: string;
+  certificateId: string;
+  signatoryName: string;
+  signatoryTitle: string;
+  signatureImage: string;
+  sealImage: string;
+}
+
+const certificate: CertificateData = {
+  recipientName: "Alex Morgan",
+  courseTitle: "Advanced Machine Learning Algorithms",
+  issuedDate: "October 24, 2024",
+  certificateId: "SAI-8472-991",
+  signatoryName: "Dr. Evelyn Reed",
+  signatoryTitle: "Lead AI Instructor",
+  signatureImage: "https://placehold.co/88x48",
+  sealImage: "https://placehold.co/96x96",
+};
+
+export default function CertificateDetailsPage() {
+  function handleVerify() {
+    // TODO: wire to useCertificate().verify() from @saachi/api-client
+    console.log("verify certificate", certificate.certificateId);
+  }
+
+  function handleAddToLinkedIn() {
+    // TODO: open LinkedIn "Add to Profile" share URL with certificate details
+    console.log("share to LinkedIn", certificate.certificateId);
+  }
+
+  function handleShareOnTwitter() {
+    // TODO: open Twitter intent URL with certificate details
+    console.log("share to Twitter", certificate.certificateId);
+  }
+
+  function handleDownload(format: "pdf" | "png") {
+    // TODO: wire to useCertificate().download(format) from @saachi/api-client
+    console.log("download certificate", format, certificate.certificateId);
+  }
+
+  return (
+    <div className="flex min-h-screen flex-col bg-[var(--token-color-bg)]">
+      {/* Simplified top nav -- focused/transactional view */}
+      <header className="sticky top-0 z-50 h-16 bg-[var(--token-color-bg)] shadow-[var(--token-shadow-sm)]">
+        <div className="mx-auto flex h-full max-w-[1280px] items-center justify-between px-6">
+          <Link href="/" className="text-2xl font-black" style={{ color: "var(--token-color-primary)" }}>
+            Saachi AI
+          </Link>
+          <Link
+            href="/dashboard/certificates"
+            aria-label="Close"
+            className="flex h-9 w-9 items-center justify-center rounded-full transition hover:bg-[var(--token-color-surfaceAlt)]"
+          >
+            <X size={18} color="var(--token-color-inkSoft)" />
+          </Link>
+        </div>
+      </header>
+
+      {/* Main content */}
+      <main className="flex flex-1 flex-col items-center px-6 pb-24 pt-10">
+        <div className="flex w-full max-w-[896px] flex-col gap-1.5 pb-6">
+          <Link
+            href="/dashboard/certificates"
+            className="flex w-fit items-center gap-2 text-sm font-semibold tracking-wide"
+            style={{ color: "var(--token-color-inkSoft)" }}
+          >
+            <ArrowLeft size={12} />
+            Back to Dashboard
+          </Link>
+        </div>
+
+        <div className="grid w-full max-w-[896px] grid-cols-1 gap-6 lg:grid-cols-12">
+          {/* Main certificate visual (8 cols) */}
+          <div
+            className="relative flex min-h-[500px] flex-col items-center justify-center overflow-hidden rounded-xl border bg-[var(--token-color-surface)] px-10 py-16 shadow-[var(--token-shadow-md)] lg:col-span-8"
+            style={{ borderColor: "var(--token-color-border)" }}
+          >
+            {/* Decorative corner overlays */}
+            <div
+              className="pointer-events-none absolute left-0 top-0 h-32 w-32 rounded-br-full"
+              style={{ backgroundColor: "var(--token-color-primary)", opacity: 0.05 }}
+            />
+            <div
+              className="pointer-events-none absolute bottom-0 right-0 h-48 w-48 rounded-tl-full"
+              style={{ backgroundColor: "var(--token-color-primaryTint)", opacity: 0.4 }}
+            />
+
+            {/* Brand / org */}
+            <div className="flex flex-col items-center gap-1.5 pb-4">
+              <span
+                className="text-2xl font-black uppercase tracking-wider"
+                style={{ color: "var(--token-color-primary)" }}
+              >
+                Saachi AI
+              </span>
+              <span
+                className="text-xs font-medium uppercase tracking-wider"
+                style={{ color: "var(--token-color-inkSoft)" }}
+              >
+                Certificate of Completion
+              </span>
+            </div>
+
+            {/* Recipient */}
+            <div className="flex flex-col items-center gap-1.5 pt-6">
+              <span style={{ color: "var(--token-color-inkSoft)", fontSize: "var(--token-font-size-base)" }}>
+                This is to certify that
+              </span>
+              <h1
+                className="text-5xl font-bold leading-[52.8px]"
+                style={{ color: "var(--token-color-ink)", fontFamily: "'Liberation Serif', Georgia, serif" }}
+              >
+                {certificate.recipientName}
+              </h1>
+              <span style={{ color: "var(--token-color-inkSoft)", fontSize: "var(--token-font-size-base)" }}>
+                has successfully completed the course
+              </span>
+            </div>
+
+            {/* Course title */}
+            <div className="max-w-96 pt-6">
+              <h2
+                className="text-center text-3xl font-bold leading-10"
+                style={{ color: "var(--token-color-primaryHover)" }}
+              >
+                {certificate.courseTitle}
+              </h2>
+            </div>
+
+            {/* Details */}
+            <div className="flex items-center gap-10 pt-6">
+              <div className="flex flex-col items-center gap-1">
+                <span
+                  className="text-xs font-medium uppercase tracking-tight"
+                  style={{ color: "var(--token-color-inkSoft)" }}
+                >
+                  Date
+                </span>
+                <span
+                  className="text-sm font-semibold tracking-wide"
+                  style={{ color: "var(--token-color-ink)" }}
+                >
+                  {certificate.issuedDate}
+                </span>
+              </div>
+
+              <span className="h-8 w-px" style={{ backgroundColor: "var(--token-color-border)" }} />
+
+              <div className="flex flex-col items-center gap-1">
+                <span
+                  className="text-xs font-medium uppercase tracking-tight"
+                  style={{ color: "var(--token-color-inkSoft)" }}
+                >
+                  Certificate ID
+                </span>
+                <span
+                  className="text-sm font-semibold tracking-wide"
+                  style={{ color: "var(--token-color-ink)", fontFamily: "monospace" }}
+                >
+                  {certificate.certificateId}
+                </span>
+              </div>
+            </div>
+
+            {/* Signature */}
+            <div className="absolute bottom-10 left-10 flex flex-col items-center gap-0.5">
+              <img
+                src={certificate.signatureImage}
+                alt={`${certificate.signatoryName} signature`}
+                className="h-12 w-24 object-contain opacity-80"
+              />
+              <span className="mb-1 h-px w-32" style={{ backgroundColor: "var(--token-color-border)" }} />
+              <span className="text-xs font-medium" style={{ color: "var(--token-color-inkSoft)" }}>
+                {certificate.signatoryName}
+              </span>
+              <span className="text-[10px]" style={{ color: "var(--token-color-inkSoft)" }}>
+                {certificate.signatoryTitle}
+              </span>
+            </div>
+
+            {/* Official seal */}
+            <img
+              src={certificate.sealImage}
+              alt="Official seal"
+              className="absolute bottom-10 right-10 h-24 w-24 shadow-[var(--token-shadow-md)]"
+            />
+          </div>
+
+          {/* Context & actions sidebar (4 cols) */}
+          <div className="flex flex-col gap-6 lg:col-span-4">
+            {/* Verification badge panel */}
+            <div
+              className="flex flex-col items-center gap-2 rounded-xl border bg-[var(--token-color-surface)] p-6 text-center shadow-[var(--token-shadow-md)]"
+              style={{ borderColor: "var(--token-color-border)" }}
+            >
+              <span
+                className="mb-2 flex h-16 w-16 items-center justify-center rounded-full"
+                style={{ backgroundColor: "var(--token-color-successTint)" }}
+              >
+                <ShieldCheck size={28} color="var(--token-color-success)" />
+              </span>
+
+              <h3 className="text-2xl font-semibold" style={{ color: "var(--token-color-ink)" }}>
+                Official Certificate
+              </h3>
+
+              <p style={{ color: "var(--token-color-inkSoft)", fontSize: "var(--token-font-size-base)" }}>
+                This certificate is cryptographically signed and verifiable.
+              </p>
+
+              <Button
+                type="primary"
+                block
+                size="large"
+                icon={<ShieldCheck size={14} />}
+                onClick={handleVerify}
+                className="mt-2"
+              >
+                Verify Certificate
+              </Button>
+            </div>
+
+            {/* Sharing panel */}
+            <div
+              className="flex flex-col gap-4 rounded-xl border bg-[var(--token-color-surface)] p-6 shadow-[var(--token-shadow-md)]"
+              style={{ borderColor: "var(--token-color-border)" }}
+            >
+              <h4
+                className="text-sm font-semibold uppercase tracking-wide"
+                style={{ color: "var(--token-color-ink)" }}
+              >
+                Share Your Achievement
+              </h4>
+
+              <div className="flex flex-col gap-2">
+                <Button
+                  block
+                  size="large"
+                  icon={<Share2 size={14} />}
+                  onClick={handleAddToLinkedIn}
+                  style={{ backgroundColor: "#0A66C2", borderColor: "#0A66C2", color: "#FFFFFF" }}
+                >
+                  Add to LinkedIn Profile
+                </Button>
+                <Button block size="large" icon={<Twitter size={14} />} onClick={handleShareOnTwitter}>
+                  Share on Twitter
+                </Button>
+              </div>
+            </div>
+
+            {/* Downloads panel */}
+            <div
+              className="flex flex-col gap-4 rounded-xl border bg-[var(--token-color-surface)] p-6 shadow-[var(--token-shadow-md)]"
+              style={{ borderColor: "var(--token-color-border)" }}
+            >
+              <h4
+                className="text-sm font-semibold uppercase tracking-wide"
+                style={{ color: "var(--token-color-ink)" }}
+              >
+                Downloads
+              </h4>
+
+              <div className="flex justify-center gap-2">
+                <Button
+                  className="flex-1"
+                  size="large"
+                  onClick={() => handleDownload("pdf")}
+                  icon={<FileText size={18} />}
+                >
+                  PDF
+                </Button>
+                <Button
+                  className="flex-1"
+                  size="large"
+                  onClick={() => handleDownload("png")}
+                  icon={<ImageIcon size={18} />}
+                >
+                  PNG
+                </Button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </main>
+
+      {/* Minimal footer */}
+      <footer className="bg-zinc-200 px-6 py-10">
+        <div
+          className="mx-auto flex h-12 max-w-[1280px] items-center justify-between border-t pt-6"
+          style={{ borderColor: "var(--token-color-border)" }}
+        >
+          <span className="text-base font-bold" style={{ color: "var(--token-color-primary)" }}>
+            Saachi AI
+          </span>
+          <span style={{ color: "var(--token-color-inkSoft)", fontSize: "var(--token-font-size-base)" }}>
+            &copy; {new Date().getFullYear()} Saachi AI Marketplace. Empowering the future of skills.
+          </span>
+        </div>
+      </footer>
+    </div>
+  );
+}
+
+================================================================================
+FILE: app\(learner)\dashboard\community\[courseSlug]\page.tsx
+SIZE: 22044 bytes | STATUS: OK-CONTENT / NEEDS ASYNC-PARAMS FIX | ASYNC PARAMS PRESENT: False
+================================================================================
+"use client";
+
+import { useState } from "react";
+import Link from "next/link";
+import Image from "next/image";
+import { Input, Button } from "antd";
+import {
+  LayoutGrid,
+  GraduationCap,
+  Heart,
+  Settings,
+  HelpCircle,
+  Search,
+  Plus,
+  MessageSquare,
+  Eye,
+  CheckCircle2,
+  Pin,
+  FileText,
+  ChevronLeft,
+  ChevronRight,
+} from "lucide-react";
+
+// TODO: replace with useCourseForum(courseSlug) hook from @saachi/api-client
+interface ForumThread {
+  id: string;
+  authorName: string;
+  authorAvatar?: string;
+  authorInitials?: string;
+  postedAgo: string;
+  title: string;
+  excerpt: string;
+  replies: number;
+  views: number;
+  tags: string[];
+  resolved?: boolean;
+}
+
+interface PinnedTopic {
+  id: string;
+  title: string;
+  author: string;
+}
+
+const filters = ["All Topics", "Unanswered", "Resolved", "Week 3 Project"];
+
+const threads: ForumThread[] = [
+  {
+    id: "t1",
+    authorName: "Alex Chen",
+    authorAvatar: "https://i.pravatar.cc/80?img=12",
+    postedAgo: "2 hours ago",
+    title: "Gradient Descent convergence issues in Assignment 2",
+    excerpt:
+      "I'm having trouble getting my implementation of stochastic gradient descent to converge on the provided dataset. It seems to oscillate...",
+    replies: 5,
+    views: 124,
+    tags: ["Assignment 2", "Optimization"],
+    resolved: true,
+  },
+  {
+    id: "t2",
+    authorName: "Sarah Jenkins",
+    authorInitials: "SJ",
+    postedAgo: "5 hours ago",
+    title: "Understanding Backpropagation intuition",
+    excerpt:
+      "Can someone explain the chain rule application in the backpropagation algorithm in a more intuitive way? The math in lecture 4 makes sense,...",
+    replies: 12,
+    views: 342,
+    tags: ["Theory", "Week 2"],
+  },
+];
+
+const pinnedTopics: PinnedTopic[] = [
+  { id: "p1", title: "Syllabus & Course Guidelines", author: "Instructor Team" },
+  { id: "p2", title: "Environment Setup Guide (Python/Conda)", author: "TA David" },
+];
+
+const navItems = [
+  { icon: LayoutGrid, label: "Dashboard", href: "/dashboard" },
+  { icon: GraduationCap, label: "My Courses", href: "/dashboard/my-courses" },
+  { icon: Heart, label: "Wishlist", href: "/dashboard/wishlist" },
+  { icon: Settings, label: "Settings", href: "/dashboard/settings" },
+];
+
+const forumStats = { questions: "1,248", resolvedPercent: "84%" };
+
+const TOTAL_PAGES = 12; // TODO: derive from API pagination meta
+
+export default function CommunityQAPage() {
+  const [activeFilter, setActiveFilter] = useState(filters[0]);
+  const [page, setPage] = useState(1);
+
+  function handleAskQuestion() {
+    // TODO: navigate to /dashboard/community/{courseSlug}/ask or open a modal
+    console.log("ask a question");
+  }
+
+  return (
+    <div className="flex min-h-screen bg-[var(--token-color-bg)]">
+      {/* Header */}
+      <header className="fixed inset-x-0 top-0 z-50 h-16 bg-[var(--token-color-bg)] shadow-[var(--token-shadow-sm)]">
+        <div className="flex h-full items-center justify-between px-6">
+          <div className="flex items-center gap-6">
+            <Link href="/" className="text-2xl font-black" style={{ color: "var(--token-color-primary)" }}>
+              Saachi AI
+            </Link>
+            <nav className="hidden items-center gap-4 md:flex">
+              <Link href="/courses" className="text-sm font-semibold tracking-wide" style={{ color: "var(--token-color-inkSoft)" }}>
+                Marketplace
+              </Link>
+              <Link href="/categories" className="text-sm font-semibold tracking-wide" style={{ color: "var(--token-color-inkSoft)" }}>
+                Categories
+              </Link>
+            </nav>
+          </div>
+
+          <div className="flex items-center gap-4">
+            <div className="hidden w-64 md:block">
+              <Input prefix={<Search size={14} color="var(--token-color-textMuted)" />} placeholder="Search..." />
+            </div>
+            <button aria-label="Cart" className="text-[var(--token-color-inkSoft)] hover:text-[var(--token-color-primary)]">
+              <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                <path
+                  d="M6 20C5.45 20 4.97917 19.8042 4.5875 19.4125C4.19583 19.0208 4 18.55 4 18C4 17.45 4.19583 16.9792 4.5875 16.5875C4.97917 16.1958 5.45 16 6 16C6.55 16 7.02083 16.1958 7.4125 16.5875C7.80417 16.9792 8 17.45 8 18C8 18.55 7.80417 19.0208 7.4125 19.4125C7.02083 19.8042 6.55 20 6 20V20M16 20C15.45 20 14.9792 19.8042 14.5875 19.4125C14.1958 19.0208 14 18.55 14 18C14 17.45 14.1958 16.9792 14.5875 16.5875C14.9792 16.1958 15.45 16 16 16C16.55 16 17.0208 16.1958 17.4125 16.5875C17.8042 16.9792 18 17.45 18 18C18 18.55 17.8042 19.0208 17.4125 19.4125C17.0208 19.8042 16.55 20 16 20V20M5.15 4L7.55 9H14.55V9V9L17.3 4V4V4H5.15V4M4.2 2H18.95C19.3333 2 19.625 2.17083 19.825 2.5125C20.025 2.85417 20.0333 3.2 19.85 3.55L16.3 9.95C16.1167 10.2833 15.8708 10.5417 15.5625 10.725C15.2542 10.9083 14.9167 11 14.55 11H7.1L6 13V13V13H18V15H6C5.25 15 4.68333 14.6708 4.3 14.0125C3.91667 13.3542 3.9 12.7 4.25 12.05L5.6 9.6L2 2H0V0H3.25L4.2 2V2M7.55 9V9H14.55V9V9V9H7.55V9"
+                  fill="currentColor"
+                />
+              </svg>
+            </button>
+            <Button type="primary">Sign In</Button>
+          </div>
+        </div>
+      </header>
+
+      {/* Sidebar -- kept white/light to match the rest of the dashboard */}
+      <aside className="fixed inset-y-16 left-0 hidden w-72 flex-col border-r border-[var(--token-color-border)] bg-[var(--token-color-surfaceAlt)] lg:flex">
+        <div className="flex items-center gap-4 border-b border-[var(--token-color-border)] p-6">
+          <span className="relative block h-12 w-12 shrink-0 overflow-hidden rounded-full">
+            <Image src="https://i.pravatar.cc/96?img=47" alt="Learner avatar" fill sizes="48px" className="object-cover" />
+          </span>
+          <div className="flex flex-col">
+            <span className="text-lg font-bold" style={{ color: "var(--token-color-ink)" }}>
+              Learner Portal
+            </span>
+            <span style={{ color: "var(--token-color-inkSoft)", fontSize: "var(--token-font-size-xs)" }}>
+              Manage your skills
+            </span>
+          </div>
+        </div>
+
+        <nav className="flex flex-1 flex-col gap-1 py-4">
+          {navItems.map(({ icon: Icon, label, href }) => {
+            const isActive = label === "My Courses";
+            return (
+              <Link
+                key={label}
+                href={href}
+                className="flex h-12 items-center gap-4 border-l-4 pl-4 pr-6 text-sm font-semibold tracking-wide transition"
+                style={{
+                  borderColor: isActive ? "var(--token-color-primary)" : "transparent",
+                  backgroundColor: isActive ? "var(--token-color-primaryTint)" : "transparent",
+                  color: isActive ? "var(--token-color-primary)" : "var(--token-color-inkSoft)",
+                }}
+              >
+                <Icon size={18} />
+                {label}
+              </Link>
+            );
+          })}
+        </nav>
+
+        <div className="border-t border-[var(--token-color-border)] p-4">
+          <Link
+            href="/support"
+            className="flex h-12 items-center gap-4 pl-4 text-sm font-semibold tracking-wide text-[var(--token-color-inkSoft)] hover:text-[var(--token-color-primary)]"
+          >
+            <HelpCircle size={18} />
+            Help Center
+          </Link>
+        </div>
+      </aside>
+
+      {/* Main column */}
+      <div className="flex w-full flex-col pt-16 lg:pl-72">
+        <main className="flex-1 p-12">
+          <div className="flex flex-col gap-10">
+            {/* Header & search */}
+            <div className="flex items-start justify-between gap-6">
+              <div className="flex flex-col gap-1">
+                <h1 className="text-3xl font-bold leading-10" style={{ color: "var(--token-color-ink)" }}>
+                  Advanced Machine Learning
+                </h1>
+                <p style={{ color: "var(--token-color-inkSoft)", fontSize: "var(--token-font-size-base)" }}>
+                  Course Discussion Forum
+                </p>
+              </div>
+
+              <div className="flex items-center gap-4">
+                <Input
+                  prefix={<Search size={16} color="var(--token-color-textMuted)" />}
+                  placeholder="Search questions..."
+                  size="large"
+                  style={{ width: 320 }}
+                />
+                <Button type="primary" size="large" icon={<Plus size={14} />} onClick={handleAskQuestion}>
+                  Ask a Question
+                </Button>
+              </div>
+            </div>
+
+            {/* Bento grid: discussion list + sidebar */}
+            <div className="grid grid-cols-1 gap-6 xl:grid-cols-12">
+              {/* Main discussion list */}
+              <div className="flex flex-col gap-4 xl:col-span-8">
+                {/* Filters */}
+                <div className="flex flex-wrap gap-2 pb-2">
+                  {filters.map((filter) => {
+                    const isActive = filter === activeFilter;
+                    return (
+                      <button
+                        key={filter}
+                        type="button"
+                        onClick={() => setActiveFilter(filter)}
+                        className="rounded-full px-4 py-1.5 text-xs font-semibold tracking-wide transition"
+                        style={{
+                          backgroundColor: isActive ? "var(--token-color-primaryTint)" : "var(--token-color-surface)",
+                          color: isActive ? "var(--token-color-primary)" : "var(--token-color-inkSoft)",
+                          border: `1px solid ${isActive ? "var(--token-color-primary)" : "var(--token-color-border)"}`,
+                          fontWeight: isActive ? 600 : 500,
+                        }}
+                      >
+                        {filter}
+                      </button>
+                    );
+                  })}
+                </div>
+
+                {/* Thread cards */}
+                {threads.map((thread) => (
+                  <ThreadCard key={thread.id} thread={thread} />
+                ))}
+
+                {/* Pagination */}
+                <div className="flex justify-center gap-2 pt-6">
+                  <button
+                    type="button"
+                    aria-label="Previous page"
+                    onClick={() => setPage((p) => Math.max(1, p - 1))}
+                    className="flex h-10 w-10 items-center justify-center rounded-lg border transition hover:bg-[var(--token-color-surfaceAlt)]"
+                    style={{ borderColor: "var(--token-color-border)" }}
+                  >
+                    <ChevronLeft size={14} color="var(--token-color-inkSoft)" />
+                  </button>
+
+                  {[1, 2, 3].map((p) => {
+                    const isActive = p === page;
+                    return (
+                      <button
+                        key={p}
+                        type="button"
+                        onClick={() => setPage(p)}
+                        className="flex h-10 w-10 items-center justify-center rounded-lg text-base transition"
+                        style={{
+                          backgroundColor: isActive ? "var(--token-color-primary)" : "transparent",
+                          color: isActive ? "#FFFFFF" : "var(--token-color-ink)",
+                          border: isActive ? "none" : "1px solid var(--token-color-border)",
+                        }}
+                      >
+                        {p}
+                      </button>
+                    );
+                  })}
+
+                  <span className="flex h-10 w-10 items-center justify-center" style={{ color: "var(--token-color-inkSoft)" }}>
+                    ...
+                  </span>
+
+                  <button
+                    type="button"
+                    onClick={() => setPage(TOTAL_PAGES)}
+                    className="flex h-10 w-10 items-center justify-center rounded-lg border text-base transition hover:bg-[var(--token-color-surfaceAlt)]"
+                    style={{ borderColor: "var(--token-color-border)", color: "var(--token-color-ink)" }}
+                  >
+                    {TOTAL_PAGES}
+                  </button>
+
+                  <button
+                    type="button"
+                    aria-label="Next page"
+                    onClick={() => setPage((p) => Math.min(TOTAL_PAGES, p + 1))}
+                    className="flex h-10 w-10 items-center justify-center rounded-lg border transition hover:bg-[var(--token-color-surfaceAlt)]"
+                    style={{ borderColor: "var(--token-color-border)" }}
+                  >
+                    <ChevronRight size={14} color="var(--token-color-inkSoft)" />
+                  </button>
+                </div>
+              </div>
+
+              {/* Sidebar content */}
+              <div className="flex flex-col gap-6 xl:col-span-4">
+                {/* Forum stats */}
+                <div
+                  className="flex flex-col gap-4 rounded-xl bg-[var(--token-color-surface)] p-6 shadow-[var(--token-shadow-md)]"
+                >
+                  <h4 className="text-sm font-semibold uppercase tracking-wide" style={{ color: "var(--token-color-ink)" }}>
+                    Forum Stats
+                  </h4>
+
+                  <div className="flex justify-center gap-4">
+                    <div
+                      className="flex flex-1 flex-col items-center gap-2 rounded-lg px-4 py-4"
+                      style={{ backgroundColor: "var(--token-color-surfaceAlt)" }}
+                    >
+                      <span className="text-2xl font-semibold" style={{ color: "var(--token-color-primary)" }}>
+                        {forumStats.questions}
+                      </span>
+                      <span className="text-xs font-medium" style={{ color: "var(--token-color-inkSoft)" }}>
+                        Questions
+                      </span>
+                    </div>
+                    <div
+                      className="flex flex-1 flex-col items-center gap-2 rounded-lg px-4 py-4"
+                      style={{ backgroundColor: "var(--token-color-surfaceAlt)" }}
+                    >
+                      <span className="text-2xl font-semibold" style={{ color: "var(--token-color-primary)" }}>
+                        {forumStats.resolvedPercent}
+                      </span>
+                      <span className="text-xs font-medium" style={{ color: "var(--token-color-inkSoft)" }}>
+                        Resolved
+                      </span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Pinned topics */}
+                <div className="flex flex-col gap-4 rounded-xl bg-[var(--token-color-surface)] p-6 shadow-[var(--token-shadow-md)]">
+                  <div className="flex items-center gap-2">
+                    <Pin size={14} color="var(--token-color-error)" />
+                    <h4 className="text-sm font-semibold uppercase tracking-wide" style={{ color: "var(--token-color-ink)" }}>
+                      Pinned Topics
+                    </h4>
+                  </div>
+
+                  <div className="flex flex-col gap-3">
+                    {pinnedTopics.map((topic) => (
+                      <Link
+                        key={topic.id}
+                        href="#"
+                        className="flex items-start gap-3 transition hover:opacity-80"
+                      >
+                        <FileText size={18} color="var(--token-color-textMuted)" className="mt-0.5 shrink-0" />
+                        <div className="flex flex-col">
+                          <span style={{ color: "var(--token-color-ink)", fontSize: "var(--token-font-size-base)" }}>
+                            {topic.title}
+                          </span>
+                          <span className="text-xs font-medium" style={{ color: "var(--token-color-inkSoft)" }}>
+                            By {topic.author}
+                          </span>
+                        </div>
+                      </Link>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </main>
+
+        {/* Footer */}
+        <footer className="bg-zinc-200 px-6 py-10">
+          <div className="flex flex-col gap-4">
+            <span className="text-base font-bold" style={{ color: "var(--token-color-primary)" }}>
+              Saachi AI
+            </span>
+            <p style={{ color: "var(--token-color-inkSoft)", fontSize: "var(--token-font-size-base)" }}>
+              &copy; {new Date().getFullYear()} Saachi AI Marketplace. Empowering the future of skills.
+            </p>
+
+            <div className="flex flex-col gap-4 pt-4 sm:flex-row sm:justify-between">
+              <div className="flex flex-col gap-1.5">
+                <Link href="/about" className="text-xs font-medium" style={{ color: "var(--token-color-inkSoft)" }}>
+                  About Us
+                </Link>
+                <Link href="/careers" className="text-xs font-medium" style={{ color: "var(--token-color-inkSoft)" }}>
+                  Careers
+                </Link>
+              </div>
+              <div className="flex flex-col gap-1.5">
+                <Link href="/legal/privacy" className="text-xs font-medium" style={{ color: "var(--token-color-inkSoft)" }}>
+                  Privacy Policy
+                </Link>
+                <Link href="/legal/terms" className="text-xs font-medium" style={{ color: "var(--token-color-inkSoft)" }}>
+                  Terms of Service
+                </Link>
+                <Link href="/instructor/handbook" className="text-xs font-medium" style={{ color: "var(--token-color-inkSoft)" }}>
+                  Instructor Handbook
+                </Link>
+              </div>
+            </div>
+          </div>
+        </footer>
+      </div>
+    </div>
+  );
+}
+
+function ThreadCard({ thread }: { thread: ForumThread }) {
+  return (
+    <article
+      className="relative flex flex-col gap-2 overflow-hidden rounded-xl bg-[var(--token-color-surface)] p-6 shadow-[var(--token-shadow-md)]"
+    >
+      {thread.resolved && (
+        <span
+          className="absolute left-0 top-0 h-full w-1"
+          style={{ backgroundColor: "var(--token-color-success)" }}
+        />
+      )}
+
+      <div className="flex items-start justify-between">
+        <div className="flex items-center gap-3">
+          {thread.authorAvatar ? (
+            <span className="relative block h-10 w-10 shrink-0 overflow-hidden rounded-full">
+              <Image src={thread.authorAvatar} alt={thread.authorName} fill sizes="40px" className="object-cover" />
+            </span>
+          ) : (
+            <span
+              className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-sm font-bold tracking-wide"
+              style={{ backgroundColor: "var(--token-color-primaryTint)", color: "var(--token-color-textMuted)" }}
+            >
+              {thread.authorInitials}
+            </span>
+          )}
+          <div className="flex flex-col">
+            <span className="text-sm font-semibold tracking-wide" style={{ color: "var(--token-color-ink)" }}>
+              {thread.authorName}
+            </span>
+            <span className="text-xs font-medium" style={{ color: "var(--token-color-inkSoft)" }}>
+              {thread.postedAgo}
+            </span>
+          </div>
+        </div>
+
+        {thread.resolved && (
+          <span
+            className="flex items-center gap-1 rounded-sm px-2 py-1 text-xs font-medium"
+            style={{
+              backgroundColor: "var(--token-color-successTint)",
+              color: "var(--token-color-success)",
+              border: "1px solid var(--token-color-success)",
+            }}
+          >
+            <CheckCircle2 size={12} />
+            Resolved
+          </span>
+        )}
+      </div>
+
+      <h3 className="pt-2 text-2xl font-semibold leading-8" style={{ color: "var(--token-color-ink)" }}>
+        {thread.title}
+      </h3>
+
+      <p className="pb-2" style={{ color: "var(--token-color-inkSoft)", fontSize: "var(--token-font-size-base)" }}>
+        {thread.excerpt}
+      </p>
+
+      <div className="flex items-center justify-between pt-4" style={{ borderTop: "1px solid var(--token-color-border)" }}>
+        <div className="flex items-center gap-4">
+          <span className="flex items-center gap-1.5">
+            <MessageSquare size={14} color="var(--token-color-inkSoft)" />
+            <span className="text-xs font-medium" style={{ color: "var(--token-color-inkSoft)" }}>
+              {thread.replies} Replies
+            </span>
+          </span>
+          <span className="flex items-center gap-1.5">
+            <Eye size={14} color="var(--token-color-inkSoft)" />
+            <span className="text-xs font-medium" style={{ color: "var(--token-color-inkSoft)" }}>
+              {thread.views} Views
+            </span>
+          </span>
+        </div>
+
+        <div className="flex gap-2">
+          {thread.tags.map((tag) => (
+            <span
+              key={tag}
+              className="rounded-sm px-2 py-1 text-xs font-medium"
+              style={{ backgroundColor: "var(--token-color-surfaceAlt)", color: "var(--token-color-inkSoft)" }}
+            >
+              {tag}
+            </span>
+          ))}
+        </div>
+      </div>
+    </article>
+  );
+}
+
+================================================================================
+FILE: app\(learner)\dashboard\mentorship\[instructorSlug]\page.tsx
+SIZE: 16564 bytes | STATUS: OK-CONTENT / NEEDS ASYNC-PARAMS FIX | ASYNC PARAMS PRESENT: False
+================================================================================
+"use client";
+
+import { useMemo, useState } from "react";
+import Link from "next/link";
+import Image from "next/image";
+import { Button, Input } from "antd";
+import {
+  LayoutGrid,
+  GraduationCap,
+  Heart,
+  Settings,
+  HelpCircle,
+  ChevronLeft,
+  ChevronRight,
+  CalendarDays,
+  Video,
+} from "lucide-react";
+
+const { TextArea } = Input;
+
+// TODO: replace with useInstructor(slug) / useMentorshipSlots() hooks from @saachi/api-client
+interface Instructor {
+  name: string;
+  title: string;
+  avatar: string;
+}
+
+const instructor: Instructor = {
+  name: "Dr. Alan Turing",
+  title: "Advanced AI Architecture",
+  avatar:
+    "https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&w=200&q=80",
+};
+
+const weekdayLabels = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+
+interface CalendarDay {
+  day: number;
+  disabled?: boolean;
+  isCurrentMonth: boolean;
+}
+
+// TODO: replace with a real calendar util (date-fns) once wired to the API
+const calendarDays: CalendarDay[] = [
+  { day: 29, disabled: true, isCurrentMonth: false },
+  { day: 30, disabled: true, isCurrentMonth: false },
+  ...Array.from({ length: 19 }, (_, i) => ({ day: i + 1, isCurrentMonth: true })),
+];
+
+const timeSlots = [
+  "09:00 AM",
+  "09:30 AM",
+  "10:00 AM",
+  "11:00 AM",
+  "01:30 PM",
+  "02:00 PM",
+  "03:30 PM",
+  "04:00 PM",
+];
+
+const navItems = [
+  { icon: LayoutGrid, label: "Dashboard", href: "/dashboard" },
+  { icon: GraduationCap, label: "My Courses", href: "/dashboard/my-courses" },
+  { icon: Heart, label: "Wishlist", href: "/dashboard/wishlist" },
+  { icon: Settings, label: "Settings", href: "/dashboard/settings" },
+];
+
+export default function MentorshipBookingPage() {
+  const [selectedDay, setSelectedDay] = useState<number>(14);
+  const [selectedTime, setSelectedTime] = useState<string>("10:00 AM");
+  const [message, setMessage] = useState("");
+
+  const selectedDateLabel = useMemo(() => {
+    // TODO: derive from real calendar state once wired up
+    return `Monday, October ${selectedDay}`;
+  }, [selectedDay]);
+
+  function handleConfirmBooking() {
+    // TODO: wire to useMentorship().bookSession() from @saachi/api-client
+    console.log("confirm booking", {
+      instructor: instructor.name,
+      day: selectedDay,
+      time: selectedTime,
+      message,
+    });
+  }
+
+  return (
+    <div className="flex min-h-screen bg-[var(--token-color-bg)]">
+      {/* Sidebar */}
+      <aside className="fixed inset-y-0 left-0 hidden w-72 flex-col border-r border-[var(--token-color-border)] bg-[var(--token-color-surfaceAlt)] lg:flex">
+        <div className="flex items-center gap-4 border-b border-[var(--token-color-border)] p-6">
+          <span className="relative block h-10 w-10 shrink-0 overflow-hidden rounded-full">
+            <Image
+              src="https://i.pravatar.cc/80?img=47"
+              alt="Learner avatar"
+              fill
+              sizes="40px"
+              className="object-cover"
+            />
+          </span>
+          <div className="flex flex-col">
+            <span
+              className="font-bold tracking-wide"
+              style={{ color: "var(--token-color-ink)", fontSize: "var(--token-font-size-sm)" }}
+            >
+              Learner Portal
+            </span>
+            <span style={{ color: "var(--token-color-inkSoft)", fontSize: "var(--token-font-size-xs)" }}>
+              Manage your skills
+            </span>
+          </div>
+        </div>
+
+        <nav className="flex flex-1 flex-col gap-2 py-6">
+          {navItems.map(({ icon: Icon, label, href }) => (
+            <Link
+              key={label}
+              href={href}
+              className="flex h-12 items-center gap-4 border-l-4 pl-4 pr-6 text-sm font-semibold tracking-wide transition"
+              style={{
+                borderColor: "transparent",
+                backgroundColor: "transparent",
+                color: "var(--token-color-inkSoft)",
+              }}
+            >
+              <Icon size={18} />
+              {label}
+            </Link>
+          ))}
+        </nav>
+
+        <div className="border-t border-[var(--token-color-border)] p-6">
+          <Link
+            href="/support"
+            className="flex items-center gap-4 text-sm font-semibold tracking-wide text-[var(--token-color-inkSoft)] hover:text-[var(--token-color-primary)]"
+          >
+            <HelpCircle size={18} />
+            Help Center
+          </Link>
+        </div>
+      </aside>
+
+      {/* Main column */}
+      <div className="flex w-full flex-col lg:pl-72">
+        <main className="flex-1 px-6 pb-14 pt-10">
+          <div className="mx-auto flex max-w-[1180px] flex-col gap-6">
+            {/* Breadcrumb + Header */}
+            <div className="flex flex-col gap-1.5">
+              <Link
+                href={`/instructors/${instructor.name.toLowerCase().replace(/\s+/g, "-")}`}
+                className="flex w-fit items-center gap-1 text-sm font-semibold tracking-wide text-[var(--token-color-inkSoft)] hover:text-[var(--token-color-primary)]"
+              >
+                <ChevronLeft size={14} />
+                Back to Instructor Profile
+              </Link>
+              <h1
+                className="text-3xl font-bold leading-10"
+                style={{ color: "var(--token-color-ink)" }}
+              >
+                Schedule 1:1 Session
+              </h1>
+              <p style={{ color: "var(--token-color-inkSoft)", fontSize: "var(--token-font-size-base)" }}>
+                Book a time with {instructor.name} for personalized mentorship.
+              </p>
+            </div>
+
+            {/* Content grid */}
+            <div className="grid grid-cols-1 gap-6 xl:grid-cols-12">
+              {/* Left: Calendar + Time slots */}
+              <div className="flex flex-col gap-6 xl:col-span-8">
+                {/* Step 1: Calendar */}
+                <section
+                  className="flex flex-col gap-2 rounded-xl border bg-[var(--token-color-surface)] p-6 shadow-[var(--token-shadow-md)]"
+                  style={{ borderColor: "var(--token-color-border)" }}
+                >
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <StepBadge step={1} />
+                      <h2 className="text-2xl font-semibold" style={{ color: "var(--token-color-ink)" }}>
+                        Select Date
+                      </h2>
+                    </div>
+
+                    <div className="flex items-center gap-2">
+                      <button
+                        type="button"
+                        aria-label="Previous month"
+                        className="flex h-8 w-8 items-center justify-center rounded-full hover:bg-[var(--token-color-surfaceAlt)]"
+                      >
+                        <ChevronLeft size={14} color="var(--token-color-inkSoft)" />
+                      </button>
+                      <span
+                        className="w-28 text-center text-sm font-semibold tracking-wide"
+                        style={{ color: "var(--token-color-inkSoft)" }}
+                      >
+                        October 2024
+                      </span>
+                      <button
+                        type="button"
+                        aria-label="Next month"
+                        className="flex h-8 w-8 items-center justify-center rounded-full hover:bg-[var(--token-color-surfaceAlt)]"
+                      >
+                        <ChevronRight size={14} color="var(--token-color-inkSoft)" />
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* Weekday labels */}
+                  <div className="grid grid-cols-7 gap-2 pt-2">
+                    {weekdayLabels.map((d) => (
+                      <span
+                        key={d}
+                        className="pb-2 pt-1.5 text-center text-xs font-medium"
+                        style={{ color: "var(--token-color-inkSoft)" }}
+                      >
+                        {d}
+                      </span>
+                    ))}
+                  </div>
+
+                  {/* Day grid */}
+                  <div className="grid grid-cols-7 gap-2">
+                    {calendarDays.map(({ day, disabled, isCurrentMonth }, idx) => {
+                      const isSelected = isCurrentMonth && day === selectedDay;
+                      return (
+                        <button
+                          key={`${day}-${idx}`}
+                          type="button"
+                          disabled={disabled}
+                          onClick={() => setSelectedDay(day)}
+                          className="flex items-center justify-center rounded-lg py-3 text-base transition disabled:cursor-not-allowed disabled:opacity-50"
+                          style={{
+                            backgroundColor: isSelected ? "var(--token-color-primary)" : "transparent",
+                            color: isSelected ? "#FFFFFF" : "var(--token-color-ink)",
+                            fontWeight: isSelected ? 700 : 400,
+                          }}
+                        >
+                          {day}
+                        </button>
+                      );
+                    })}
+                  </div>
+                </section>
+
+                {/* Step 2: Time slots */}
+                <section
+                  className="flex flex-col gap-4 rounded-xl border bg-[var(--token-color-surface)] p-6 shadow-[var(--token-shadow-md)]"
+                  style={{ borderColor: "var(--token-color-border)" }}
+                >
+                  <div className="flex items-center gap-2">
+                    <StepBadge step={2} />
+                    <h2 className="text-2xl font-semibold" style={{ color: "var(--token-color-ink)" }}>
+                      Select Time
+                    </h2>
+                  </div>
+
+                  <p style={{ color: "var(--token-color-inkSoft)", fontSize: "var(--token-font-size-base)" }}>
+                    Showing available slots for{" "}
+                    <span style={{ color: "var(--token-color-ink)" }}>{selectedDateLabel}</span>.
+                  </p>
+
+                  <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+                    {timeSlots.map((slot) => {
+                      const isSelected = slot === selectedTime;
+                      return (
+                        <button
+                          key={slot}
+                          type="button"
+                          onClick={() => setSelectedTime(slot)}
+                          className="rounded-lg border px-6 py-2 text-base transition"
+                          style={{
+                            borderColor: isSelected ? "var(--token-color-primary)" : "var(--token-color-border)",
+                            backgroundColor: isSelected ? "var(--token-color-primaryTint)" : "transparent",
+                            color: isSelected ? "var(--token-color-primary)" : "var(--token-color-ink)",
+                            fontWeight: isSelected ? 600 : 400,
+                            boxShadow: isSelected ? "0 0 0 2px var(--token-color-primary)" : "none",
+                          }}
+                        >
+                          {slot}
+                        </button>
+                      );
+                    })}
+                  </div>
+                </section>
+              </div>
+
+              {/* Right: Session summary */}
+              <div className="xl:col-span-4">
+                <div
+                  className="sticky top-6 flex flex-col gap-4 rounded-xl border bg-[var(--token-color-surface)] p-6 shadow-[var(--token-shadow-md)]"
+                  style={{ borderColor: "var(--token-color-border)" }}
+                >
+                  <div className="border-b pb-4" style={{ borderColor: "var(--token-color-border)" }}>
+                    <h3 className="text-2xl font-semibold" style={{ color: "var(--token-color-ink)" }}>
+                      Session Summary
+                    </h3>
+                  </div>
+
+                  <div className="flex items-center gap-4">
+                    <span className="relative block h-14 w-14 shrink-0 overflow-hidden rounded-full">
+                      <Image
+                        src={instructor.avatar}
+                        alt={instructor.name}
+                        fill
+                        sizes="56px"
+                        className="object-cover"
+                      />
+                    </span>
+                    <div className="flex flex-col">
+                      <span className="text-base font-bold" style={{ color: "var(--token-color-ink)" }}>
+                        {instructor.name}
+                      </span>
+                      <span style={{ color: "var(--token-color-inkSoft)", fontSize: "var(--token-font-size-xs)" }}>
+                        {instructor.title}
+                      </span>
+                    </div>
+                  </div>
+
+                  <div className="flex flex-col gap-2 pt-2">
+                    <SummaryRow icon={<CalendarDays size={18} color="var(--token-color-inkSoft)" />} label="Date & Time">
+                      Mon, Oct {selectedDay}
+                      <br />
+                      {selectedTime} PST
+                    </SummaryRow>
+
+                    <SummaryRow icon={<Video size={18} color="var(--token-color-inkSoft)" />} label="Location">
+                      Video Call (Zoom)
+                    </SummaryRow>
+                  </div>
+
+                  <div className="flex flex-col gap-4 pt-1.5">
+                    <div className="flex flex-col gap-1">
+                      <label
+                        htmlFor="session-topic"
+                        className="text-sm font-semibold tracking-wide"
+                        style={{ color: "var(--token-color-ink)" }}
+                      >
+                        What do you want to discuss?{" "}
+                        <span style={{ color: "var(--token-color-error)" }}>*</span>
+                      </label>
+                      <TextArea
+                        id="session-topic"
+                        value={message}
+                        onChange={(e) => setMessage(e.target.value)}
+                        rows={4}
+                        placeholder="E.g., I'd like to review my latest project architecture and get feedback on scaling strategies..."
+                      />
+                    </div>
+
+                    <Button
+                      type="primary"
+                      block
+                      size="large"
+                      disabled={!message.trim()}
+                      onClick={handleConfirmBooking}
+                    >
+                      Confirm Booking
+                    </Button>
+
+                    <p
+                      className="text-center text-xs font-medium"
+                      style={{ color: "var(--token-color-inkSoft)" }}
+                    >
+                      You won&apos;t be charged yet.
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </main>
+      </div>
+    </div>
+  );
+}
+
+function StepBadge({ step }: { step: number }) {
+  return (
+    <span
+      className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-sm font-semibold tracking-wide text-white"
+      style={{ backgroundColor: "var(--token-color-primary)" }}
+    >
+      {step}
+    </span>
+  );
+}
+
+function SummaryRow({
+  icon,
+  label,
+  children,
+}: {
+  icon: React.ReactNode;
+  label: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <div className="flex items-start gap-2">
+      <span className="pt-0.5">{icon}</span>
+      <div className="flex flex-col">
+        <span
+          className="text-xs font-medium uppercase tracking-wide"
+          style={{ color: "var(--token-color-inkSoft)" }}
+        >
+          {label}
+        </span>
+        <span className="text-base font-medium leading-6" style={{ color: "var(--token-color-ink)" }}>
+          {children}
+        </span>
+      </div>
+    </div>
+  );
+}
+
+================================================================================
+FILE: app\(marketing)\categories\[slug]\page.tsx
+SIZE: 3141 bytes | STATUS: OK-CONTENT / NEEDS ASYNC-PARAMS FIX | ASYNC PARAMS PRESENT: False
+================================================================================
+import { Header } from "@/components/marketing/Header";
+import { CompactFooter } from "@/components/marketing/CompactFooter";
+import { CategoryBanner } from "@/components/marketplace/CategoryBanner";
+import { CategoryChips } from "@/components/marketplace/CategoryChips";
+import {
+  CategoryCourseCard,
+  type CategoryCourseCardProps,
+} from "@/components/marketplace/CategoryCourseCard";
+
+const subCategories = ["NLP", "Computer Vision", "Robotics", "Deep Learning", "Generative AI"];
+
+const courses: CategoryCourseCardProps[] = [
+  {
+    title: "Applied Natural Language\u2026",
+    description: "Build real-world NLP applications using transformers, BERT, and\u2026",
+    levelTag: "Intermediate",
+    rating: 4.8,
+    reviews: "1.2k",
+    price: "$89.99",
+    image:
+      "https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?auto=format&fit=crop&w=600&q=80",
+  },
+  {
+    title: "Computer Vision with PyTorch",
+    description: "Master object detection, image segmentation, and advanced CNN architectures.",
+    levelTag: "Advanced",
+    rating: 4.9,
+    reviews: "850",
+    price: "$99.99",
+    image:
+      "https://images.unsplash.com/photo-1555255707-c07966088b7b?auto=format&fit=crop&w=600&q=80",
+  },
+  {
+    title: "Introduction to Robotics",
+    description: "Learn the fundamentals of kinematics, control systems, and robotic motion planning.",
+    levelTag: "Beginner",
+    rating: 4.7,
+    reviews: "2.1k",
+    price: "$49.99",
+    image:
+      "https://images.unsplash.com/photo-1485827404703-89b55fcc595e?auto=format&fit=crop&w=600&q=80",
+  },
+  {
+    title: "Generative AI Fundamentals",
+    description: "Understand GANs, diffusion models, and the architecture behind modern generative\u2026",
+    levelTag: "Intermediate",
+    rating: 4.9,
+    reviews: "3.5k",
+    price: "$129.99",
+    image:
+      "https://images.unsplash.com/photo-1677442136019-21780ecad995?auto=format&fit=crop&w=600&q=80",
+  },
+];
+
+const categoryContent: Record<string, { title: string; description: string }> = {
+  "ai-machine-learning": {
+    title: "AI & Machine Learning",
+    description:
+      "Master the foundational concepts and advanced techniques powering the AI revolution. From neural networks to reinforcement learning, build intelligent systems.",
+  },
+};
+
+export default function CategoryPage({ params }: { params: { slug: string } }) {
+  const content = categoryContent[params.slug] ?? categoryContent["ai-machine-learning"];
+
+  return (
+    <div className="flex min-h-screen flex-col bg-[var(--token-color-bg)]">
+      <Header />
+
+      <main className="mx-auto flex w-full max-w-[1280px] flex-1 flex-col gap-6 px-12 pb-10 pt-24">
+        <CategoryBanner title={content.title} description={content.description} />
+
+        <CategoryChips chips={subCategories} />
+
+        <div className="grid grid-cols-1 gap-6 pt-2 sm:grid-cols-2 lg:grid-cols-4">
+          {courses.map((course) => (
+            <CategoryCourseCard key={course.title} {...course} />
+          ))}
+        </div>
+      </main>
+
+      <CompactFooter />
+    </div>
+  );
+}
+
+================================================================================
+FILE: app\(marketing)\courses\[slug]\page.tsx
+SIZE: 2480 bytes | STATUS: OK-CONTENT / NEEDS ASYNC-PARAMS FIX | ASYNC PARAMS PRESENT: False
+================================================================================
+import { Header } from "@/components/marketing/Header";
+import { CourseHero } from "@/components/course-detail/CourseHero";
+import { WhatYoullLearn } from "@/components/course-detail/WhatYoullLearn";
+import { CourseCurriculum } from "@/components/course-detail/CourseCurriculum";
+import { InstructorBio } from "@/components/course-detail/InstructorBio";
+import { PurchaseCard } from "@/components/course-detail/PurchaseCard";
+import { DetailFooter } from "@/components/course-detail/DetailFooter";
+
+export default function CourseDetailPage() {
+  return (
+    <div className="flex min-h-screen flex-col bg-slate-50">
+      <Header />
+
+      <CourseHero
+        category="AI & Machine Learning"
+        levelBadge="Beginner Friendly"
+        title="Mastering Prompt Engineering"
+        description="Unlock the full potential of AI models. Learn advanced techniques to craft effective prompts, optimize outputs, and build AI-driven applications."
+        rating={4.8}
+        ratingsCount="2,450"
+        studentsCount="12,340"
+        instructorName="Dr. Sarah Chen"
+        instructorAvatar="https://images.unsplash.com/photo-1580489944761-15a19d654956?auto=format&fit=crop&w=100&q=80"
+        previewImage="https://images.unsplash.com/photo-1677442136019-21780ecad995?auto=format&fit=crop&w=900&q=80"
+      />
+
+      <main className="mx-auto w-full max-w-[1280px] px-6 py-12">
+        <div className="grid grid-cols-1 gap-12 lg:grid-cols-[1fr_360px]">
+          <div className="flex flex-col gap-12">
+            <WhatYoullLearn />
+            <CourseCurriculum />
+            <InstructorBio
+              name="Dr. Sarah Chen"
+              title="Senior AI Researcher & Educator"
+              rating={4.9}
+              studentsCount="50k+"
+              bio="Sarah is a leading researcher in Natural Language Processing with over 10 years of experience building and optimizing AI models for enterprise applications."
+              avatar="https://images.unsplash.com/photo-1580489944761-15a19d654956?auto=format&fit=crop&w=200&q=80"
+            />
+          </div>
+
+          <div>
+            <PurchaseCard
+              price="$99.00"
+              includes={[
+                "12 hours on-demand video",
+                "25 downloadable resources",
+                "Certificate of completion",
+              ]}
+            />
+          </div>
+        </div>
+      </main>
+
+      <DetailFooter />
+    </div>
+  );
+}
+
+
+================================================================================
+FILE: app\(marketing)\instructors\[slug]\page.tsx
+SIZE: 4857 bytes | STATUS: OK-CONTENT / NEEDS ASYNC-PARAMS FIX | ASYNC PARAMS PRESENT: False
+================================================================================
+import { ChevronLeft, ChevronRight } from "lucide-react";
+import { Header } from "@/components/marketing/Header";
+import { DetailFooter } from "@/components/course-detail/DetailFooter";
+import { InstructorProfileCard } from "@/components/instructor/InstructorProfileCard";
+import { InstructorStatsGrid } from "@/components/instructor/InstructorStatsGrid";
+import {
+  InstructorCourseCard,
+  type InstructorCourseCardProps,
+} from "@/components/instructor/InstructorCourseCard";
+
+const courses: InstructorCourseCardProps[] = [
+  {
+    title: "Deep Learning Foundations: From Math to PyTorch",
+    description: "Master the underlying mathematics of deep learning and build practical models\u2026",
+    category: "Machine Learning",
+    price: "$129.99",
+    rating: 4.9,
+    reviews: "8,241",
+    duration: "32h",
+    badge: { label: "Best Seller", variant: "light" },
+    image:
+      "https://images.unsplash.com/photo-1620712943543-bcc4688e7485?auto=format&fit=crop&w=800&q=80",
+  },
+  {
+    title: "Advanced NLP with Transformers & Hugging Face",
+    description: "Build state-of-the-art language models and deploy them to production environments.",
+    category: "NLP",
+    price: "$99.99",
+    rating: 4.8,
+    reviews: "4,102",
+    duration: "24h",
+    image:
+      "https://images.unsplash.com/photo-1620712943543-bcc4688e7485?auto=format&fit=crop&w=800&q=80",
+  },
+  {
+    title: "MLOps Engineering: Deploying Models at Scale",
+    description: "Learn the complete lifecycle of deploying, monitoring, and maintaining machine\u2026",
+    category: "MLOps",
+    price: "$149.99",
+    rating: 5.0,
+    reviews: "128",
+    duration: "40h",
+    badge: { label: "New", variant: "dark" },
+    image:
+      "https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=800&q=80",
+  },
+];
+
+const instructorContent = {
+  name: "Dr. Sarah Chen",
+  title: "Senior AI Researcher & Lead Educator",
+  bio: "Former Lead AI Researcher at TechGlobal with 10+ years of experience in deploying scalable machine learning models. I specialize in breaking down complex neural network architectures into digestible, practical lessons for working professionals. Passionate about ethical AI and real-world applications.",
+  avatar:
+    "https://images.unsplash.com/photo-1580489944761-15a19d654956?auto=format&fit=crop&w=240&q=80",
+  tags: ["Machine Learning", "Neural Networks", "Data Science"],
+  coursesCount: 14,
+  studentsCount: "125k+",
+  rating: 4.9,
+  reviewsCount: "15k",
+};
+
+export default function InstructorProfilePage({ params }: { params: { slug: string } }) {
+  const instructor = instructorContent;
+
+  return (
+    <div className="flex min-h-screen flex-col bg-[var(--token-color-bg)]">
+      <Header />
+
+      <main className="mx-auto flex w-full max-w-[1280px] flex-1 flex-col gap-10 px-12 py-10">
+        <section className="flex items-stretch gap-6">
+          <InstructorProfileCard
+            name={instructor.name}
+            title={instructor.title}
+            bio={instructor.bio}
+            avatar={instructor.avatar}
+            tags={instructor.tags}
+          />
+          <InstructorStatsGrid
+            coursesCount={instructor.coursesCount}
+            studentsCount={instructor.studentsCount}
+            rating={instructor.rating}
+            reviewsCount={instructor.reviewsCount}
+          />
+        </section>
+
+        <section className="flex flex-col gap-6">
+          <div className="flex items-end justify-between">
+            <h2 className="text-2xl font-semibold text-[var(--token-color-ink)]">
+              More Courses by {instructor.name.split(" ").slice(-1)}
+            </h2>
+            <div className="flex gap-2">
+              <button
+                type="button"
+                aria-label="Previous"
+                className="flex h-10 w-8 items-center justify-center rounded-lg border border-[var(--token-color-border)] text-[var(--token-color-inkSoft)] hover:bg-[var(--token-color-surfaceAlt)]"
+              >
+                <ChevronLeft className="h-3 w-3" />
+              </button>
+              <button
+                type="button"
+                aria-label="Next"
+                className="flex h-10 w-8 items-center justify-center rounded-lg border border-[var(--token-color-border)] text-[var(--token-color-inkSoft)] hover:bg-[var(--token-color-surfaceAlt)]"
+              >
+                <ChevronRight className="h-3 w-3" />
+              </button>
+            </div>
+          </div>
+
+          <div className="flex justify-center gap-6">
+            {courses.map((course) => (
+              <InstructorCourseCard key={course.title} {...course} />
+            ))}
+          </div>
+        </section>
+      </main>
+
+      <DetailFooter />
+    </div>
+  );
+}
+
+================================================================================
+FILE: app\courses\[slug]\learn\page.tsx
+SIZE: 12648 bytes | STATUS: OK-CONTENT / NEEDS ASYNC-PARAMS FIX | ASYNC PARAMS PRESENT: False
+================================================================================
+"use client";
+
+import { useState } from "react";
+import Link from "next/link";
+import { Tabs, Collapse, Button, Input, Typography } from "antd";
+import type { CollapseProps } from "antd";
+import {
+  Play,
+  Pause,
+  Volume2,
+  Subtitles,
+  Settings,
+  Maximize,
+  CheckCircle2,
+  PlayCircle,
+  Lock,
+  Clock,
+  FileText,
+  ChevronDown,
+  ShoppingCart,
+  Bell,
+} from "lucide-react";
+
+const { Text, Title } = Typography;
+const { TextArea } = Input;
+
+// TODO: replace with useCourses() / a future useLessonPlayer() hook from @saachi/api-client
+interface Lesson {
+  id: string;
+  title: string;
+  meta: string;
+  status: "completed" | "active" | "locked";
+}
+
+interface ModuleData {
+  id: string;
+  label: string;
+  title: string;
+  lessons: Lesson[];
+}
+
+const modules: ModuleData[] = [
+  {
+    id: "module-1",
+    label: "Module 1",
+    title: "Foundations of AI",
+    lessons: [
+      { id: "l1", title: "History of Machine Learning", meta: "10:20", status: "completed" },
+      { id: "l2", title: "Introduction to LLMs", meta: "15:30", status: "active" },
+      { id: "l3", title: "Understanding Neural Networks", meta: "Reading", status: "locked" },
+    ],
+  },
+  {
+    id: "module-2",
+    label: "Module 2",
+    title: "Transformers in Depth",
+    lessons: [],
+  },
+  {
+    id: "module-3",
+    label: "Module 3",
+    title: "Prompt Engineering",
+    lessons: [],
+  },
+];
+
+export default function CoursePlayerPage() {
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [notes, setNotes] = useState("");
+
+  const tabItems = [
+    {
+      key: "overview",
+      label: "Overview",
+      children: (
+        <div className="flex flex-col gap-4 p-6">
+          <Title level={5} style={{ margin: 0, color: "var(--token-color-ink)" }}>
+            About this lesson
+          </Title>
+          <Text style={{ color: "var(--token-color-inkSoft)", fontSize: "var(--token-font-size-base)" }}>
+            In this foundational lesson, we explore the core architecture of Large Language Models. You
+            will learn how transformer networks process sequential data and the mathematical principles
+            behind attention mechanisms.
+          </Text>
+          <div className="flex gap-4 pt-2">
+            <InfoPill icon={<Clock size={20} color="var(--token-color-primary)" />} label="Duration" value="15:30 mins" />
+            <InfoPill icon={<FileText size={18} color="var(--token-color-primary)" />} label="Difficulty" value="Intermediate" />
+          </div>
+        </div>
+      ),
+    },
+    {
+      key: "resources",
+      label: "Resources",
+      children: (
+        <div className="p-6">
+          <Text style={{ color: "var(--token-color-inkSoft)" }}>
+            No resources have been attached to this lesson yet.
+          </Text>
+        </div>
+      ),
+    },
+    {
+      key: "notes",
+      label: "Notes",
+      children: (
+        <div className="flex flex-col gap-4 p-6">
+          <TextArea
+            value={notes}
+            onChange={(e) => setNotes(e.target.value)}
+            placeholder="Type your personal notes here. They will be saved automatically..."
+            autoSize={{ minRows: 4, maxRows: 10 }}
+          />
+          <div className="flex justify-end">
+            <Button
+              onClick={() => {
+                // TODO: wire to notes-save endpoint via @saachi/api-client
+                console.log("save notes", notes);
+              }}
+            >
+              Save Notes
+            </Button>
+          </div>
+        </div>
+      ),
+    },
+    {
+      key: "qa",
+      label: "Q&A",
+      children: (
+        <div className="p-6">
+          <Text style={{ color: "var(--token-color-inkSoft)" }}>
+            No questions have been asked on this lesson yet.
+          </Text>
+        </div>
+      ),
+    },
+  ];
+
+  const collapseItems: CollapseProps["items"] = modules.map((mod) => ({
+    key: mod.id,
+    label: (
+      <div className="flex flex-col">
+        <span style={{ color: "var(--token-color-inkSoft)", fontSize: "var(--token-font-size-xs)" }}>
+          {mod.label}
+        </span>
+        <span
+          className="font-bold tracking-wide"
+          style={{ color: "var(--token-color-ink)", fontSize: "var(--token-font-size-sm)" }}
+        >
+          {mod.title}
+        </span>
+      </div>
+    ),
+    children:
+      mod.lessons.length > 0 ? (
+        <div className="flex flex-col">
+          {mod.lessons.map((lesson) => (
+            <LessonRow key={lesson.id} lesson={lesson} />
+          ))}
+        </div>
+      ) : undefined,
+  }));
+
+  return (
+    <div className="flex min-h-screen flex-col bg-[var(--token-color-bg)]">
+      {/* Top nav */}
+      <header className="sticky top-0 z-50 flex h-16 items-center justify-between bg-[var(--token-color-bg)] px-6 shadow-[var(--token-shadow-sm)]">
+        <div className="flex items-center gap-4">
+          <Link href="/" className="text-2xl font-black text-[var(--token-color-primary)]">
+            Saachi AI
+          </Link>
+          <nav className="flex items-center gap-6 pl-10">
+            <Link href="/courses" className="text-sm font-semibold tracking-wide text-[var(--token-color-inkSoft)] hover:text-[var(--token-color-primary)]">
+              Marketplace
+            </Link>
+            <Link href="/categories" className="text-sm font-semibold tracking-wide text-[var(--token-color-inkSoft)] hover:text-[var(--token-color-primary)]">
+              Categories
+            </Link>
+          </nav>
+        </div>
+
+        <div className="flex items-center gap-4">
+          <button aria-label="Cart" className="rounded-full p-2 text-[var(--token-color-inkSoft)] hover:bg-[var(--token-color-surfaceAlt)]">
+            <ShoppingCart size={20} />
+          </button>
+          <button aria-label="Notifications" className="rounded-full p-2 text-[var(--token-color-inkSoft)] hover:bg-[var(--token-color-surfaceAlt)]">
+            <Bell size={20} />
+          </button>
+          <Button type="primary">Sign In</Button>
+        </div>
+      </header>
+
+      {/* Main content */}
+      <div className="flex flex-1">
+        {/* Left: video + tabs */}
+        <div className="flex flex-1 flex-col border-r border-[var(--token-color-border)] bg-[var(--token-color-surface)]">
+          {/* Video stage */}
+          <div className="group relative flex flex-col justify-center overflow-hidden bg-[var(--token-color-playerBg)]">
+            <img
+              src="https://placehold.co/959x540"
+              alt="Lesson video placeholder"
+              className="aspect-video w-full opacity-90"
+            />
+
+            <div className="absolute inset-0 flex flex-col justify-end bg-gradient-to-t from-black/80 via-black/0 to-black/0 p-6 opacity-0 transition-opacity group-hover:opacity-100">
+              <div className="flex items-center justify-between pb-2">
+                <div className="flex items-center gap-4">
+                  <button aria-label={isPlaying ? "Pause" : "Play"} onClick={() => setIsPlaying((p) => !p)}>
+                    {isPlaying ? (
+                      <Pause size={40} color="var(--token-color-surface)" fill="var(--token-color-surface)" />
+                    ) : (
+                      <Play size={40} color="var(--token-color-surface)" fill="var(--token-color-surface)" />
+                    )}
+                  </button>
+                  <span className="text-xs font-medium text-[var(--token-color-surface)]">
+                    02:14 / 15:30
+                  </span>
+                </div>
+
+                <div className="flex items-center gap-4">
+                  <button aria-label="Volume"><Volume2 size={18} color="var(--token-color-surface)" /></button>
+                  <button aria-label="Subtitles"><Subtitles size={18} color="var(--token-color-surface)" /></button>
+                  <button aria-label="Settings"><Settings size={20} color="var(--token-color-surface)" /></button>
+                  <button aria-label="Fullscreen"><Maximize size={18} color="var(--token-color-surface)" /></button>
+                </div>
+              </div>
+
+              <div className="relative h-1 rounded-full bg-[var(--token-color-surface)]/30">
+                <div className="absolute left-0 top-0 h-1 w-2/5 rounded-full bg-[var(--token-color-primaryTint)]" />
+                <div className="absolute left-[38%] top-1/2 h-3 w-3 -translate-y-1/2 rounded-full bg-[var(--token-color-surface)] shadow-[var(--token-shadow-sm)]" />
+              </div>
+            </div>
+          </div>
+
+          {/* Lesson header */}
+          <div className="flex flex-col gap-1 border-b border-[var(--token-color-border)] p-6">
+            <Title level={4} style={{ margin: 0, color: "var(--token-color-ink)" }}>
+              Module 1: Introduction to LLMs
+            </Title>
+            <Text style={{ color: "var(--token-color-inkSoft)", fontSize: "var(--token-font-size-base)" }}>
+              Advanced AI Architecture Fundamentals
+            </Text>
+          </div>
+
+          {/* Tabs */}
+          <div className="flex-1 overflow-hidden px-2">
+            <Tabs items={tabItems} defaultActiveKey="overview" />
+          </div>
+        </div>
+
+        {/* Right: curriculum sidebar */}
+        <aside className="flex w-80 shrink-0 flex-col border-l border-[var(--token-color-border)] bg-[var(--token-color-surface)]">
+          <div className="flex items-center justify-between border-b border-[var(--token-color-border)] bg-[var(--token-color-surfaceAlt)] p-6">
+            <Title level={4} style={{ margin: 0, color: "var(--token-color-ink)" }}>
+              Course Content
+            </Title>
+          </div>
+
+          <Collapse
+            items={collapseItems}
+            defaultActiveKey={["module-1"]}
+            bordered={false}
+            expandIcon={({ isActive }) => (
+              <ChevronDown
+                size={12}
+                color="var(--token-color-inkSoft)"
+                style={{ transform: isActive ? "rotate(180deg)" : undefined, transition: "transform 0.2s" }}
+              />
+            )}
+            expandIconPosition="end"
+          />
+        </aside>
+      </div>
+    </div>
+  );
+}
+
+function InfoPill({ icon, label, value }: { icon: React.ReactNode; label: string; value: string }) {
+  return (
+    <div className="flex flex-1 items-center gap-2 rounded-lg bg-[var(--token-color-surfaceAlt)] p-4">
+      {icon}
+      <div className="flex flex-col">
+        <span style={{ color: "var(--token-color-inkSoft)", fontSize: "var(--token-font-size-xs)" }}>{label}</span>
+        <span
+          className="font-semibold tracking-wide"
+          style={{ color: "var(--token-color-ink)", fontSize: "var(--token-font-size-sm)" }}
+        >
+          {value}
+        </span>
+      </div>
+    </div>
+  );
+}
+
+function LessonRow({ lesson }: { lesson: Lesson }) {
+  const isActive = lesson.status === "active";
+  const isCompleted = lesson.status === "completed";
+  const isLocked = lesson.status === "locked";
+
+  return (
+    <div
+      className="flex items-start gap-4 px-4 py-2"
+      style={{
+        backgroundColor: isActive ? "var(--token-color-primaryTint)" : "transparent",
+        borderLeft: isActive ? "4px solid var(--token-color-primary)" : "4px solid transparent",
+      }}
+    >
+      {isCompleted && <CheckCircle2 size={20} color="var(--token-color-completedGreen)" style={{ marginTop: 2 }} />}
+      {isActive && <PlayCircle size={20} color="var(--token-color-primary)" style={{ marginTop: 2 }} />}
+      {isLocked && <Lock size={16} color="var(--token-color-textMuted)" style={{ marginTop: 4 }} />}
+
+      <div className="flex flex-col">
+        <span
+          style={{
+            color: isActive
+              ? "var(--token-color-primary)"
+              : isCompleted
+              ? "var(--token-color-inkSoft)"
+              : "var(--token-color-inkSoft)",
+            fontWeight: isActive ? 600 : 400,
+            textDecoration: isCompleted ? "line-through" : "none",
+            fontSize: "var(--token-font-size-base)",
+          }}
+        >
+          {lesson.title}
+        </span>
+        <span
+          style={{
+            color: isActive ? "var(--token-color-primary)" : "var(--token-color-inkSoft)",
+            fontSize: "var(--token-font-size-xs)",
+          }}
+        >
+          {lesson.meta}
+        </span>
+      </div>
+    </div>
+  );
+}

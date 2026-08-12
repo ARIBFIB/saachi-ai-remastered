@@ -7,46 +7,9 @@ import {
   InstructorCourseCard,
   type InstructorCourseCardProps,
 } from "@/components/instructor/InstructorCourseCard";
+import { findInstructorBySlug, courseDurationLabel } from "@/lib/instructor-lookup";
 
-const courses: InstructorCourseCardProps[] = [
-  {
-    title: "Deep Learning Foundations: From Math to PyTorch",
-    description: "Master the underlying mathematics of deep learning and build practical models\u2026",
-    category: "Machine Learning",
-    price: "$129.99",
-    rating: 4.9,
-    reviews: "8,241",
-    duration: "32h",
-    badge: { label: "Best Seller", variant: "light" },
-    image:
-      "https://images.unsplash.com/photo-1620712943543-bcc4688e7485?auto=format&fit=crop&w=800&q=80",
-  },
-  {
-    title: "Advanced NLP with Transformers & Hugging Face",
-    description: "Build state-of-the-art language models and deploy them to production environments.",
-    category: "NLP",
-    price: "$99.99",
-    rating: 4.8,
-    reviews: "4,102",
-    duration: "24h",
-    image:
-      "https://images.unsplash.com/photo-1620712943543-bcc4688e7485?auto=format&fit=crop&w=800&q=80",
-  },
-  {
-    title: "MLOps Engineering: Deploying Models at Scale",
-    description: "Learn the complete lifecycle of deploying, monitoring, and maintaining machine\u2026",
-    category: "MLOps",
-    price: "$149.99",
-    rating: 5.0,
-    reviews: "128",
-    duration: "40h",
-    badge: { label: "New", variant: "dark" },
-    image:
-      "https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=800&q=80",
-  },
-];
-
-const instructorContent = {
+const fallbackInstructor = {
   name: "Dr. Sarah Chen",
   title: "Senior AI Researcher & Lead Educator",
   bio: "Former Lead AI Researcher at TechGlobal with 10+ years of experience in deploying scalable machine learning models. I specialize in breaking down complex neural network architectures into digestible, practical lessons for working professionals. Passionate about ethical AI and real-world applications.",
@@ -59,8 +22,43 @@ const instructorContent = {
   reviewsCount: "15k",
 };
 
-export default function InstructorProfilePage({ params }: { params: { slug: string } }) {
-  const instructor = instructorContent;
+interface InstructorProfilePageProps {
+  params: Promise<{ slug: string }>;
+}
+
+export default async function InstructorProfilePage({ params }: InstructorProfilePageProps) {
+  const { slug } = await params;
+  const found = findInstructorBySlug(slug);
+
+  const instructor = found
+    ? {
+        name: found.fullName,
+        title: "Instructor",
+        bio: found.bio || fallbackInstructor.bio,
+        avatar: found.avatarUrl ?? fallbackInstructor.avatar,
+        tags: fallbackInstructor.tags,
+        coursesCount: found.courses.length,
+        studentsCount: `${found.courses.reduce((sum, c) => sum + (c.instructorStudentCount ?? 0), 0).toLocaleString()}+`,
+        rating:
+          found.courses.length > 0
+            ? Math.round((found.courses.reduce((sum, c) => sum + c.rating, 0) / found.courses.length) * 10) / 10
+            : fallbackInstructor.rating,
+        reviewsCount: found.courses.reduce((sum, c) => sum + c.ratingCount, 0).toLocaleString(),
+      }
+    : fallbackInstructor;
+
+  const courses: InstructorCourseCardProps[] = found
+    ? found.courses.map((c) => ({
+        title: c.title,
+        description: c.subtitle ?? "",
+        category: c.categoryId,
+        price: `$${c.price.toFixed(2)}`,
+        rating: c.rating,
+        reviews: c.ratingCount.toLocaleString(),
+        duration: courseDurationLabel(c),
+        image: c.thumbnailUrl ?? "https://placehold.co/800x450",
+      }))
+    : [];
 
   return (
     <div className="flex min-h-screen flex-col bg-[var(--token-color-bg)]">
@@ -106,11 +104,17 @@ export default function InstructorProfilePage({ params }: { params: { slug: stri
             </div>
           </div>
 
-          <div className="flex justify-center gap-6">
-            {courses.map((course) => (
-              <InstructorCourseCard key={course.title} {...course} />
-            ))}
-          </div>
+          {courses.length > 0 ? (
+            <div className="flex flex-wrap justify-center gap-6">
+              {courses.map((course) => (
+                <InstructorCourseCard key={course.title} {...course} />
+              ))}
+            </div>
+          ) : (
+            <p style={{ color: "var(--token-color-inkSoft)" }}>
+              This instructor has not published any courses yet.
+            </p>
+          )}
         </section>
       </main>
 
