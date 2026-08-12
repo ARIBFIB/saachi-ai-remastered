@@ -13,44 +13,59 @@
 
 export const tokens = {
   color: {
-    // Brand / primary
-    primary: "#3525CD",       // indigo-700 (buttons, links, active states)
+    // Brand / primary (legacy â€” still used by learner/instructor dashboards)
+    primary: "#3525CD",
     primaryHover: "#2A1DA3",
-    primaryTint: "#E0E7FF",   // indigo-100 (badges, soft backgrounds)
-    primaryDark: "#1E1B4B",    // deep indigo/violet (gradient end, dark panels)
-    decorativeCyan: "#A5F3FC", // cyan-200 (soft decorative blur accents)
+    primaryTint: "#E0E7FF",
+    primaryDark: "#1E1B4B",
+    decorativeCyan: "#A5F3FC",
 
     // Secondary accent
-    success: "#005338",       // emerald-900 (ratings, success states)
+    success: "#005338",
     successTint: "#D1FAE5",
-    completedBadgeBg: "#D1FAE5", // emerald-100 (Completed pill on course cards)
+    completedBadgeBg: "#D1FAE5",
 
     // Neutrals
-    ink: "#18181B",           // zinc-900 (headings)
-    inkSoft: "#3F3F46",       // gray-700 (body text)
-    textMuted: "#64748B",     // gray-500 (captions, meta text)
+    ink: "#18181B",
+    inkSoft: "#3F3F46",
+    textMuted: "#64748B",
 
     // Surfaces
-    bg: "#F8FAFC",            // slate-50 (page background)
-    surface: "#FFFFFF",       // card background
-    surfaceAlt: "#F4F4F5",    // zinc-100 (icon backgrounds)
-    playerBg: "#0F172A",       // slate-900 (video stage background)
-    completedGreen: "#4EDEA3", // bright mint (lesson-completed ticks)
+    bg: "#F8FAFC",
+    surface: "#FFFFFF",
+    surfaceAlt: "#F4F4F5",
+    playerBg: "#0F172A",
+    completedGreen: "#4EDEA3",
 
     // Borders
-    border: "#CBD5E1",        // slate-300
+    border: "#CBD5E1",
     borderStrong: "#94A3B8",
 
     // Status
     error: "#DC2626",
-    notificationDot: "#BA1A1A", // red badge dot on the notification bell
+    notificationDot: "#BA1A1A",
     errorTint: "#FEE2E2",
     warning: "#D97706",
-    warningTint: "#FEF3C7"
+    warningTint: "#FEF3C7",
+
+    // ---- NEW: "Blueprint" system â€” Public Website redesign only ----
+    paper: "#EEF1EC",
+    inkDeep: "#12182B",
+    inkDeepSoft: "#454C63",
+    amber: "#F2A93B",
+    amberDark: "#D6890F",
+    amberTint: "#FCEACB",
+    teal: "#0E6E62",
+    tealTint: "#DDEEEA",
+    blueprintLine: "#B9C2C7",
+    blueprintLineSoft: "#D8DEDB"
   },
 
   font: {
     family: "'Inter', -apple-system, 'Segoe UI', sans-serif",
+    displayFamily: "'Space Grotesk', -apple-system, sans-serif",
+    bodyFamily: "'IBM Plex Sans', -apple-system, sans-serif",
+    monoFamily: "'IBM Plex Mono', 'Courier New', monospace",
     size: {
       xs: "12px",
       sm: "14px",
@@ -85,9 +100,9 @@ export const tokens = {
   },
 
   spacing: {
-    section: "48px",       // py-12 sections
-    sectionLg: "80px",     // py-20 sections
-    container: "1280px"    // max-w container
+    section: "48px",
+    sectionLg: "80px",
+    container: "1280px"
   }
 } as const;
 
