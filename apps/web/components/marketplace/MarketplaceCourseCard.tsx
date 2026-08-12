@@ -1,4 +1,4 @@
-import Image from "next/image";
+﻿import Image from "next/image";
 import { Star } from "lucide-react";
 
 export interface MarketplaceCourseCardProps {
@@ -27,7 +27,7 @@ export function MarketplaceCourseCard({
   image,
 }: MarketplaceCourseCardProps) {
   return (
-    <article className="group flex flex-1 flex-col overflow-hidden border" style={{ borderColor: "var(--token-color-blueprintLine)", backgroundColor: "var(--token-color-surface)" }}>
+    <article className="group flex flex-1 flex-col overflow-hidden border-2" style={{ borderColor: "var(--token-color-blueprintLine)", backgroundColor: "var(--token-color-surface)" }}>
       <div className="relative h-40 w-full overflow-hidden" style={{ backgroundColor: "var(--token-color-blueprintLineSoft)" }}>
         <Image src={image} alt={title} fill sizes="(max-width: 768px) 100vw, 400px" className="object-cover transition-transform duration-300 group-hover:scale-[1.03]" />
         {badge && (

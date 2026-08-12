@@ -1,4 +1,4 @@
-import Link from "next/link";
+﻿import Link from "next/link";
 import { Search, ShoppingCart, Bell } from "lucide-react";
 
 export function Header() {
@@ -32,7 +32,7 @@ export function Header() {
           </Link>
 
           <div
-            className="flex items-center gap-2 rounded-sm border px-3 py-1.5"
+            className="flex items-center gap-2 rounded-sm border-2 px-3 py-1.5"
             style={{ borderColor: "var(--token-color-blueprintLine)", backgroundColor: "var(--token-color-surface)" }}
           >
             <Search size={14} color="var(--token-color-inkDeepSoft)" />

@@ -1,4 +1,4 @@
-import { Check } from "lucide-react";
+﻿import { Check } from "lucide-react";
 
 const learningPoints = [
   "Core principles of LLM architecture",
@@ -9,7 +9,7 @@ const learningPoints = [
 
 export function WhatYoullLearn() {
   return (
-    <section className="w-full rounded-xl border border-slate-300/30 bg-slate-50 p-6 shadow-[0px_1px_2px_0px_rgba(0,0,0,0.05)]">
+    <section className="w-full rounded-xl border-2 border-slate-300/30 bg-slate-50 p-6 shadow-[var(--token-shadow-sm)]">
       <h2 className="mb-6 text-2xl font-semibold text-zinc-900">
         What you&apos;ll learn
       </h2>

@@ -1,4 +1,4 @@
-import Image from "next/image";
+﻿import Image from "next/image";
 import { Star } from "lucide-react";
 
 export interface CourseCardProps {
@@ -21,7 +21,7 @@ export function CourseCard({
 }: CourseCardProps) {
   return (
     <article
-      className="group flex flex-1 flex-col overflow-hidden border transition-colors"
+      className="group flex flex-1 flex-col overflow-hidden border-2 transition-colors"
       style={{ borderColor: "var(--token-color-blueprintLine)", backgroundColor: "var(--token-color-surface)" }}
     >
       <div className="relative h-40 w-full overflow-hidden" style={{ backgroundColor: "var(--token-color-blueprintLineSoft)" }}>

@@ -1,4 +1,4 @@
-import Image from "next/image";
+﻿import Image from "next/image";
 import { Star } from "lucide-react";
 
 export interface InstructorCourseCardProps {
@@ -25,7 +25,7 @@ export function InstructorCourseCard({
   badge,
 }: InstructorCourseCardProps) {
   return (
-    <article className="flex w-96 flex-col overflow-hidden rounded-xl border border-[var(--token-color-border)]/30 bg-[var(--token-color-surface)] shadow-[0px_4px_20px_0px_rgba(15,23,42,0.05)]">
+    <article className="flex w-96 flex-col overflow-hidden rounded-xl border-2 border-[var(--token-color-border)]/30 bg-[var(--token-color-surface)] shadow-[var(--token-shadow-[var(--token-shadow-sm)])]">
       <div className="relative h-48 w-full bg-[var(--token-color-surfaceAlt)]">
         <Image src={image} alt={title} fill sizes="384px" className="object-cover" />
         {badge && (
@@ -67,7 +67,7 @@ export function InstructorCourseCard({
 
         <button
           type="button"
-          className="w-full rounded-lg border border-[var(--token-color-border)] bg-[var(--token-color-surfaceAlt)] py-2 text-sm font-semibold tracking-wide text-[var(--token-color-inkSoft)] hover:bg-[var(--token-color-border)]/20"
+          className="w-full rounded-lg border-2 border-[var(--token-color-border)] bg-[var(--token-color-surfaceAlt)] py-2 text-sm font-semibold tracking-wide text-[var(--token-color-inkSoft)] hover:bg-[var(--token-color-border)]/20"
         >
           View Course
         </button>

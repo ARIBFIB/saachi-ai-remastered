@@ -1,4 +1,4 @@
-import Image from "next/image";
+﻿import Image from "next/image";
 import { Star, Users } from "lucide-react";
 
 interface InstructorBioProps {
@@ -19,7 +19,7 @@ export function InstructorBio({
   avatar,
 }: InstructorBioProps) {
   return (
-    <section className="flex w-full gap-6 rounded-xl border border-slate-300/30 bg-slate-50 p-6 shadow-[0px_1px_2px_0px_rgba(0,0,0,0.05)]">
+    <section className="flex w-full gap-6 rounded-xl border-2 border-slate-300/30 bg-slate-50 p-6 shadow-[var(--token-shadow-sm)]">
       <span className="relative block h-32 w-32 shrink-0 overflow-hidden rounded-full">
         <Image src={avatar} alt={name} fill sizes="128px" className="object-cover" />
       </span>

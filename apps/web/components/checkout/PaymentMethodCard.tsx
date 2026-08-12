@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { CreditCard as CreditCardIcon } from "lucide-react";
 
@@ -29,7 +29,7 @@ export function PaymentMethodCard({
 
   return (
     <section
-      className="relative flex w-full flex-col gap-4 overflow-hidden rounded-xl border bg-[var(--token-color-surface)] p-6 shadow-[var(--token-shadow-sm)]"
+      className="relative flex w-full flex-col gap-4 overflow-hidden rounded-xl border-2 bg-[var(--token-color-surface)] p-6 shadow-[var(--token-shadow-sm)]"
       style={{ borderColor: "var(--token-color-border)" }}
     >
       <div className="flex items-center gap-2">
@@ -77,7 +77,7 @@ export function PaymentMethodCard({
                     onChange={(e) => updateCard("number", e.target.value)}
                     onClick={(e) => e.stopPropagation()}
                     placeholder="Card Number"
-                    className="h-10 w-full rounded-lg border bg-[var(--token-color-bg)] px-3 text-base text-[var(--token-color-ink)] placeholder:text-gray-500 focus:outline-none focus:border-[var(--token-color-primary)]"
+                    className="h-10 w-full rounded-lg border-2 bg-[var(--token-color-bg)] px-3 text-base text-[var(--token-color-ink)] placeholder:text-gray-500 focus:outline-none focus:border-[var(--token-color-primary)]"
                     style={{ borderColor: "var(--token-color-border)" }}
                   />
                   <div className="grid grid-cols-2 gap-3">
@@ -87,7 +87,7 @@ export function PaymentMethodCard({
                       onChange={(e) => updateCard("expiry", e.target.value)}
                       onClick={(e) => e.stopPropagation()}
                       placeholder="MM/YY"
-                      className="h-10 w-full rounded-lg border bg-[var(--token-color-bg)] px-3 text-base text-[var(--token-color-ink)] placeholder:text-gray-500 focus:outline-none focus:border-[var(--token-color-primary)]"
+                      className="h-10 w-full rounded-lg border-2 bg-[var(--token-color-bg)] px-3 text-base text-[var(--token-color-ink)] placeholder:text-gray-500 focus:outline-none focus:border-[var(--token-color-primary)]"
                       style={{ borderColor: "var(--token-color-border)" }}
                     />
                     <input
@@ -96,7 +96,7 @@ export function PaymentMethodCard({
                       onChange={(e) => updateCard("cvc", e.target.value)}
                       onClick={(e) => e.stopPropagation()}
                       placeholder="CVC"
-                      className="h-10 w-full rounded-lg border bg-[var(--token-color-bg)] px-3 text-base text-[var(--token-color-ink)] placeholder:text-gray-500 focus:outline-none focus:border-[var(--token-color-primary)]"
+                      className="h-10 w-full rounded-lg border-2 bg-[var(--token-color-bg)] px-3 text-base text-[var(--token-color-ink)] placeholder:text-gray-500 focus:outline-none focus:border-[var(--token-color-primary)]"
                       style={{ borderColor: "var(--token-color-border)" }}
                     />
                   </div>

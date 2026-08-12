@@ -1,4 +1,4 @@
-import Link from "next/link";
+﻿import Link from "next/link";
 import Image from "next/image";
 import { ArrowRight } from "lucide-react";
 import { Header } from "@/components/marketing/Header";
@@ -19,8 +19,8 @@ export default function BecomeInstructorPage() {
       <main className="mx-auto flex w-full max-w-[1280px] flex-1 flex-col gap-6 px-6 py-24 md:flex-row">
         {/* Left: copy card */}
         <div
-          className="flex flex-1 flex-col justify-center gap-6 rounded-xl bg-[var(--token-color-surface)] px-10 py-24 shadow-[var(--token-shadow-md)]"
-          style={{ border: "1px solid color-mix(in srgb, var(--token-color-border) 30%, transparent)" }}
+          className="flex flex-1 flex-col justify-center gap-6 rounded-xl bg-[var(--token-color-surface)] px-10 py-24 shadow-[var(--token-shadow-[var(--token-shadow-sm)])]"
+          style={{ border-2: "1px solid color-mix(in srgb, var(--token-color-border) 30%, transparent)" }}
         >
           <h1
             className="max-w-[732px] text-5xl font-bold leading-[52.8px]"
@@ -50,7 +50,7 @@ export default function BecomeInstructorPage() {
         </div>
 
         {/* Right: spotlight image */}
-        <div className="relative min-h-72 flex-1 overflow-hidden rounded-xl shadow-[var(--token-shadow-md)]">
+        <div className="relative min-h-72 flex-1 overflow-hidden rounded-xl shadow-[var(--token-shadow-[var(--token-shadow-sm)])]">
           <Image
             src={instructorSpotlight.image}
             alt="Instructor spotlight"

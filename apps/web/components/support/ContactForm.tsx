@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useState } from "react";
 import { Mail, Send } from "lucide-react";
@@ -15,7 +15,7 @@ export function ContactForm() {
   }
 
   return (
-    <div className="flex flex-1 flex-col rounded-xl border border-[var(--token-color-border)]/30 bg-[var(--token-color-surface)] p-10 shadow-[0px_4px_20px_0px_rgba(15,23,42,0.05)]">
+    <div className="flex flex-1 flex-col rounded-xl border-2 border-[var(--token-color-border)]/30 bg-[var(--token-color-surface)] p-10 shadow-[var(--token-shadow-[var(--token-shadow-sm)])]">
       <div className="flex flex-col gap-1 pb-6">
         <h2 className="flex items-center gap-2 text-2xl font-semibold text-[var(--token-color-ink)]">
           <Mail className="h-5 w-4 text-[var(--token-color-primary)]" />
@@ -37,7 +37,7 @@ export function ContactForm() {
               type="text"
               required
               placeholder="Jane Doe"
-              className="border border-[var(--token-color-border)] bg-[var(--token-color-surface)] px-4 py-2.5 text-base text-[var(--token-color-ink)] placeholder:text-[var(--token-color-inkSoft)]/50 focus:outline-none"
+              className="border-2 border-[var(--token-color-border)] bg-[var(--token-color-surface)] px-4 py-2.5 text-base text-[var(--token-color-ink)] placeholder:text-[var(--token-color-inkSoft)]/50 focus:outline-none"
             />
           </div>
 
@@ -50,7 +50,7 @@ export function ContactForm() {
               type="email"
               required
               placeholder="jane@example.com"
-              className="border border-[var(--token-color-border)] bg-[var(--token-color-surface)] px-4 py-2.5 text-base text-[var(--token-color-ink)] placeholder:text-[var(--token-color-inkSoft)]/50 focus:outline-none"
+              className="border-2 border-[var(--token-color-border)] bg-[var(--token-color-surface)] px-4 py-2.5 text-base text-[var(--token-color-ink)] placeholder:text-[var(--token-color-inkSoft)]/50 focus:outline-none"
             />
           </div>
         </div>
@@ -63,7 +63,7 @@ export function ContactForm() {
             id="subject"
             value={subject}
             onChange={(e) => setSubject(e.target.value)}
-            className="border border-[var(--token-color-border)] bg-[var(--token-color-surface)] px-4 py-2 text-base text-[var(--token-color-ink)] focus:outline-none"
+            className="border-2 border-[var(--token-color-border)] bg-[var(--token-color-surface)] px-4 py-2 text-base text-[var(--token-color-ink)] focus:outline-none"
           >
             {subjects.map((s) => (
               <option key={s} value={s}>
@@ -82,7 +82,7 @@ export function ContactForm() {
             required
             rows={6}
             placeholder="How can we help you today?"
-            className="resize-none border border-[var(--token-color-border)] bg-[var(--token-color-surface)] px-4 py-2 text-base text-[var(--token-color-ink)] placeholder:text-[var(--token-color-inkSoft)]/50 focus:outline-none"
+            className="resize-none border-2 border-[var(--token-color-border)] bg-[var(--token-color-surface)] px-4 py-2 text-base text-[var(--token-color-ink)] placeholder:text-[var(--token-color-inkSoft)]/50 focus:outline-none"
           />
         </div>
 

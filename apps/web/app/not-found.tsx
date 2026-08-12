@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -45,7 +45,7 @@ export default function NotFound() {
             <button
               type="button"
               onClick={() => router.back()}
-              className="flex items-center gap-2 rounded-lg border border-[var(--token-color-border)] bg-[var(--token-color-surface)] px-6 py-2.5 text-sm font-semibold tracking-wide text-[var(--token-color-ink)] shadow-[0px_1px_2px_0px_rgba(0,0,0,0.05)] hover:bg-[var(--token-color-surfaceAlt)]"
+              className="flex items-center gap-2 rounded-lg border-2 border-[var(--token-color-border)] bg-[var(--token-color-surface)] px-6 py-2.5 text-sm font-semibold tracking-wide text-[var(--token-color-ink)] shadow-[var(--token-shadow-sm)] hover:bg-[var(--token-color-surfaceAlt)]"
             >
               <ArrowLeft className="h-4 w-4" />
               Go Back
@@ -54,14 +54,14 @@ export default function NotFound() {
         </div>
 
         <div className="flex flex-1 justify-center">
-          <div className="relative max-w-96 flex-1 overflow-hidden rounded-[32px] border border-white/20 bg-[var(--token-color-surface)]/70 shadow-[0px_10px_40px_0px_rgba(15,23,42,0.08)] backdrop-blur-[5px]">
+          <div className="relative max-w-96 flex-1 overflow-hidden rounded-[32px] border-2 border-white/20 bg-[var(--token-color-surface)]/70 shadow-[0px_10px_40px_0px_rgba(15,23,42,0.08)] backdrop-blur-[5px]">
             <img
               src="https://placehold.co/378x378/F8FAFC/CBD5E1?text=404"
               alt="Lost robot illustration"
               className="h-full w-full object-cover"
             />
 
-            <div className="absolute -left-4 top-[289px] flex items-center gap-2 rounded-lg border border-[var(--token-color-border)] bg-[var(--token-color-surface)] p-2 shadow-lg">
+            <div className="absolute -left-4 top-[289px] flex items-center gap-2 rounded-lg border-2 border-[var(--token-color-border)] bg-[var(--token-color-surface)] p-2 shadow-[var(--token-shadow-[var(--token-shadow-sm)])]">
               <span className="flex h-8 w-8 items-center justify-center rounded-full bg-[var(--token-color-error)]/10">
                 <SearchX className="h-3.5 w-3.5 text-[var(--token-color-error)]" />
               </span>

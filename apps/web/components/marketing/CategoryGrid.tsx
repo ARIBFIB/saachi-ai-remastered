@@ -1,4 +1,4 @@
-import Link from "next/link";
+﻿import Link from "next/link";
 import { MessageSquare, Eye, Bot, LineChart } from "lucide-react";
 import { SpecLabel } from "./BlueprintMark";
 
@@ -28,7 +28,7 @@ export function CategoryGrid() {
             <Link
               key={label}
               href={href}
-              className="group flex flex-col items-start gap-6 border p-6 transition-colors"
+              className="group flex flex-col items-start gap-6 border-2 p-6 transition-colors"
               style={{ borderColor: "var(--token-color-blueprintLine)" }}
             >
               <span

@@ -1,4 +1,4 @@
-import { CheckCircle2 } from "lucide-react";
+﻿import { CheckCircle2 } from "lucide-react";
 
 export interface PricingCardProps {
   tier: string;
@@ -23,7 +23,7 @@ export function PricingCard({
 }: PricingCardProps) {
   return (
     <div
-      className={`relative flex w-96 flex-col justify-between rounded-xl border bg-[var(--token-color-surface)]/90 p-6 backdrop-blur-[6px] ${
+      className={`relative flex w-96 flex-col justify-between rounded-xl border-2 bg-[var(--token-color-surface)]/90 p-6 backdrop-blur-[6px] ${
         highlighted
           ? "border-[var(--token-color-primary)]/30 shadow-[0px_0px_40px_0px_rgba(79,70,229,0.15)]"
           : "border-[var(--token-color-border)]/60"
@@ -64,8 +64,8 @@ export function PricingCard({
         type="button"
         className={`w-full rounded-lg py-3 text-sm font-semibold tracking-wide transition ${
           highlighted
-            ? "bg-[var(--token-color-primary)] text-white shadow-md hover:bg-[var(--token-color-primaryHover)]"
-            : "border border-[var(--token-color-textMuted)] text-[var(--token-color-ink)] hover:bg-[var(--token-color-surfaceAlt)]"
+            ? "bg-[var(--token-color-primary)] text-white shadow-[var(--token-shadow-sm)] hover:bg-[var(--token-color-primaryHover)]"
+            : "border-2 border-[var(--token-color-textMuted)] text-[var(--token-color-ink)] hover:bg-[var(--token-color-surfaceAlt)]"
         }`}
       >
         {ctaLabel}

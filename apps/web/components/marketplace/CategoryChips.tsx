@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useState } from "react";
 
@@ -25,7 +25,7 @@ export function CategoryChips({ chips, defaultActive, onChange }: CategoryChipsP
             key={chip}
             type="button"
             onClick={() => handleSelect(chip)}
-            className={`rounded-full border px-4 py-2 text-sm font-semibold tracking-wide transition ${
+            className={`rounded-full border-2 px-4 py-2 text-sm font-semibold tracking-wide transition ${
               isActive
                 ? "border-[var(--token-color-primary)]/20 bg-[var(--token-color-primary)]/10 text-[var(--token-color-primary)]"
                 : "border-[var(--token-color-border)] bg-[var(--token-color-surfaceAlt)] text-[var(--token-color-inkSoft)]"

@@ -1,4 +1,4 @@
-import Image from "next/image";
+﻿import Image from "next/image";
 import { Star } from "lucide-react";
 
 export interface CategoryCourseCardProps {
@@ -21,7 +21,7 @@ export function CategoryCourseCard({
   image,
 }: CategoryCourseCardProps) {
   return (
-    <article className="flex flex-1 flex-col overflow-hidden rounded-xl border border-[var(--token-color-border)]/30 bg-[var(--token-color-surface)] shadow-[0px_4px_20px_0px_rgba(15,23,42,0.05)]">
+    <article className="flex flex-1 flex-col overflow-hidden rounded-xl border-2 border-[var(--token-color-border)]/30 bg-[var(--token-color-surface)] shadow-[var(--token-shadow-[var(--token-shadow-sm)])]">
       <div className="relative h-40 w-full shrink-0 overflow-hidden bg-[var(--token-color-surfaceAlt)]">
         <Image
           src={image}

@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useState } from "react";
 
@@ -14,7 +14,7 @@ export function Newsletter() {
   return (
     <div className="mx-auto w-full max-w-[1280px] px-6 pb-16">
       <div
-        className="flex flex-col items-center justify-between gap-6 border p-10 md:flex-row"
+        className="flex flex-col items-center justify-between gap-6 border-2 p-10 md:flex-row"
         style={{ borderColor: "var(--token-color-blueprintLine)", backgroundColor: "var(--token-color-inkDeep)" }}
       >
         <div className="flex max-w-96 flex-col gap-2">
@@ -36,7 +36,7 @@ export function Newsletter() {
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             placeholder="you@example.com"
-            className="h-11 flex-1 border px-4 text-sm focus:outline-none"
+            className="h-11 flex-1 border-2 px-4 text-sm focus:outline-none"
             style={{ borderColor: "var(--token-color-blueprintLine)", backgroundColor: "var(--token-color-paper)", color: "var(--token-color-inkDeep)" }}
           />
           <button

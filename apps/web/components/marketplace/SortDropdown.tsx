@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useState } from "react";
 import { ChevronDown } from "lucide-react";
@@ -13,7 +13,7 @@ export function SortDropdown() {
     <div className="relative">
       <button
         onClick={() => setOpen((o) => !o)}
-        className="flex items-center gap-8 border px-3 py-2 text-sm"
+        className="flex items-center gap-8 border-2 px-3 py-2 text-sm"
         style={{ borderColor: "var(--token-color-blueprintLine)", backgroundColor: "var(--token-color-surface)", color: "var(--token-color-inkDeep)" }}
       >
         {value}
@@ -22,7 +22,7 @@ export function SortDropdown() {
 
       {open && (
         <ul
-          className="absolute right-0 top-full z-10 mt-1 w-48 border shadow-[0px_4px_20px_0px_rgba(15,23,42,0.08)]"
+          className="absolute right-0 top-full z-10 mt-1 w-48 border-2 shadow-[0px_4px_20px_0px_rgba(15,23,42,0.08)]"
           style={{ borderColor: "var(--token-color-blueprintLine)", backgroundColor: "var(--token-color-surface)" }}
         >
           {options.map((opt) => (

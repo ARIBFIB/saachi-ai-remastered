@@ -1,4 +1,4 @@
-import Link from "next/link";
+﻿import Link from "next/link";
 import { BlueprintMark, SpecLabel } from "./BlueprintMark";
 
 const buildLog = [
@@ -45,7 +45,7 @@ export function HeroSection() {
             </Link>
             <Link
               href="/become-instructor"
-              className="border px-8 py-3.5 text-sm font-semibold tracking-wide"
+              className="border-2 px-8 py-3.5 text-sm font-semibold tracking-wide"
               style={{ borderColor: "var(--token-color-inkDeep)", color: "var(--token-color-inkDeep)" }}
             >
               Teach a Skill
@@ -68,7 +68,7 @@ export function HeroSection() {
 
         {/* Right: "spec card" -- a labeled artifact instead of a stock photo */}
         <div
-          className="relative border p-8"
+          className="relative border-2 p-8"
           style={{ borderColor: "var(--token-color-blueprintLine)", backgroundColor: "var(--token-color-surface)" }}
         >
           <BlueprintMark className="absolute -left-2.5 -top-2.5" />

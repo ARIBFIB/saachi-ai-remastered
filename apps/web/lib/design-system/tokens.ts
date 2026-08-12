@@ -1,4 +1,4 @@
-/**
+﻿/**
  * ============================================================================
  * DESIGN TOKENS -- SINGLE SOURCE OF TRUTH
  * ============================================================================
@@ -8,12 +8,35 @@
  * After editing colors here, run:
  *   pnpm --filter web run tokens:sync
  * (or it runs automatically via the "predev"/"prebuild" npm script)
+ *
+ * ----------------------------------------------------------------------------
+ * PUBLIC WEBSITE THEME: "Blue Neo-Brutalist SaaS"
+ * ----------------------------------------------------------------------------
+ * The public marketing site (Header, HeroSection, CourseCard,
+ * MarketplaceCourseCard, CategoryGrid, WhySaachi, Footer/CompactFooter,
+ * FilterSidebar, Pagination, SortDropdown, Pricing, Cart, Search, Legal
+ * pages, etc.) reads the "Blueprint"-prefixed tokens below
+ * (paper / inkDeep / inkDeepSoft / amber* / teal* / blueprintLine*).
+ *
+ * To re-theme the ENTIRE public site, change ONLY the values in this
+ * block -- every component listed above automatically follows, since
+ * none of them hardcode colors; they all reference these CSS vars.
+ *
+ * Design system reference: Blue Neo-Brutalist SaaS
+ *   - Thick black (--ink) borders on every surface, never soft/blurred
+ *     shadows -- only hard offset shadows (see shadow.hard below).
+ *   - Blue leads (~40-50% of colored surfaces) but is never alone --
+ *     teal / orange / purple / green always show up somewhere.
+ *   - Flat color blocks only. No gradients, no glassmorphism.
  * ============================================================================
  */
 
 export const tokens = {
   color: {
-    // Brand / primary (legacy â€” still used by learner/instructor dashboards)
+    // Brand / primary (legacy -- still used by learner/instructor dashboards,
+    // Ant Design form controls, and the auth pages). Left as the original
+    // indigo so the logged-in product experience is untouched by the public
+    // site's Neo-Brutalist re-theme.
     primary: "#3525CD",
     primaryHover: "#2A1DA3",
     primaryTint: "#E0E7FF",
@@ -48,17 +71,50 @@ export const tokens = {
     warning: "#D97706",
     warningTint: "#FEF3C7",
 
-    // ---- NEW: "Blueprint" system â€” Public Website redesign only ----
-    paper: "#EEF1EC",
-    inkDeep: "#12182B",
-    inkDeepSoft: "#454C63",
-    amber: "#F2A93B",
-    amberDark: "#D6890F",
-    amberTint: "#FCEACB",
-    teal: "#0E6E62",
+    // ------------------------------------------------------------------
+    // "Blueprint" token group -- PUBLIC WEBSITE ONLY.
+    // Repainted here to the Blue Neo-Brutalist SaaS palette. Change these
+    // values and the whole marketing site re-themes.
+    // ------------------------------------------------------------------
+
+    // Default section background across the public site.
+    paper: "#E3ECFB",
+
+    // Primary heading / ink color -- also used for every card/mockup
+    // border, since this system uses solid black borders everywhere.
+    inkDeep: "#12141C",
+
+    // Muted body copy color.
+    inkDeepSoft: "#4A4A55",
+
+    // PRIMARY accent -- "S" logo mark, hero CTA button, category icons,
+    // star ratings, price highlights. This is --accent-blue: a warmer,
+    // more saturated cobalt, NOT default Tailwind blue-500.
+    amber: "#3E6BF0",
+    amberDark: "#1F3FAE",
+    amberTint: "#D9E4FB",
+
+    // Secondary blue-family accent -- integrations/partners, "New"
+    // badges, WhySaachi feature borders.
+    teal: "#33C7C0",
     tealTint: "#DDEEEA",
-    blueprintLine: "#B9C2C7",
-    blueprintLineSoft: "#D8DEDB"
+
+    // Card / mockup-frame / divider border color. Always solid ink black.
+    blueprintLine: "#12141C",
+    blueprintLineSoft: "rgba(18,20,28,0.12)",
+
+    // ------------------------------------------------------------------
+    // Extra Neo-Brutalist palette for new sections (pricing tiers, stat
+    // banners, AI/insight cards, dark contrast section).
+    // ------------------------------------------------------------------
+    accentOrange: "#F5A25C",
+    accentOrangeTint: "#FCEACB",
+    accentPurple: "#A594F9",
+    accentPurpleTint: "#EDE9FE",
+    accentGreen: "#6FCB6B",
+    accentGreenTint: "#E3F6E1",
+    bgDark: "#0F1420",
+    bgCream: "#FBF9F5"
   },
 
   font: {
@@ -87,16 +143,16 @@ export const tokens = {
 
   radius: {
     sm: "4px",
-    md: "8px",
-    lg: "12px",
-    xl: "16px",
+    md: "14px",
+    lg: "20px",
+    xl: "20px",
     full: "9999px"
   },
 
   shadow: {
-    sm: "0px 1px 2px 0px rgba(0,0,0,0.05)",
-    md: "0px 4px 20px 0px rgba(15,23,42,0.05)",
-    lg: "0px 10px 32px 0px rgba(15,23,42,0.12)"
+    sm: "2px 2px 0 var(--token-color-blueprintLine)",
+    md: "4px 4px 0 var(--token-color-blueprintLine)",
+    lg: "4px 4px 0 var(--token-color-blueprintLine)"
   },
 
   spacing: {

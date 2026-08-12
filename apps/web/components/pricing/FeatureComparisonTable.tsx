@@ -1,4 +1,4 @@
-import { X } from "lucide-react";
+﻿import { X } from "lucide-react";
 
 interface ComparisonRow {
   feature: string;
@@ -16,7 +16,7 @@ const rows: ComparisonRow[] = [
 
 export function FeatureComparisonTable() {
   return (
-    <section className="w-full overflow-hidden rounded-xl border border-[var(--token-color-border)] bg-[var(--token-color-surface)] p-6 shadow-[0px_1px_2px_0px_rgba(0,0,0,0.05)]">
+    <section className="w-full overflow-hidden rounded-xl border-2 border-[var(--token-color-border)] bg-[var(--token-color-surface)] p-6 shadow-[var(--token-shadow-sm)]">
       <h2 className="pb-6 text-center text-3xl font-bold leading-10 text-[var(--token-color-ink)]">
         Compare Features
       </h2>

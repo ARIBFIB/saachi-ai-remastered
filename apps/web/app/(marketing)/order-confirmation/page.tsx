@@ -1,4 +1,4 @@
-import Link from "next/link";
+﻿import Link from "next/link";
 import Image from "next/image";
 import { CheckCircle2, GraduationCap, FileText } from "lucide-react";
 
@@ -37,7 +37,7 @@ export default function OrderConfirmationPage() {
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-[var(--token-color-bg)] px-6 py-24">
-      <div className="flex w-full max-w-[672px] flex-col items-center rounded-xl bg-[var(--token-color-surface)] p-10 shadow-[var(--token-shadow-lg)]">
+      <div className="flex w-full max-w-[672px] flex-col items-center rounded-xl bg-[var(--token-color-surface)] p-10 shadow-[var(--token-shadow-[var(--token-shadow-[var(--token-shadow-sm)])])]">
         <div className="flex h-24 w-24 items-center justify-center rounded-full bg-[var(--token-color-success)]/10">
           <CheckCircle2
             size={40}
@@ -63,7 +63,7 @@ export default function OrderConfirmationPage() {
         {/* Order summary */}
         <div
           className="mt-10 flex w-full flex-col gap-3.5 rounded-lg bg-[var(--token-color-surfaceAlt)] p-6"
-          style={{ border: "1px solid var(--token-color-border)" }}
+          style={{ border-2: "1px solid var(--token-color-border)" }}
         >
           <div
             className="flex items-center justify-between border-b pb-4"
@@ -160,7 +160,7 @@ export default function OrderConfirmationPage() {
 
           <Link
             href="/invoice"
-            className="flex h-11 w-44 items-center justify-center gap-2 rounded-lg border text-sm font-semibold tracking-wide"
+            className="flex h-11 w-44 items-center justify-center gap-2 rounded-lg border-2 text-sm font-semibold tracking-wide"
             style={{
               borderColor: "var(--token-color-border)",
               color: "var(--token-color-inkSoft)",

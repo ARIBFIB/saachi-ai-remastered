@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useState } from "react";
 import { Check } from "lucide-react";
@@ -20,7 +20,7 @@ function Checkbox({
       <button
         type="button"
         onClick={onChange}
-        className="flex h-4 w-4 items-center justify-center border transition"
+        className="flex h-4 w-4 items-center justify-center border-2 transition"
         style={{
           borderColor: checked ? "var(--token-color-amberDark)" : "var(--token-color-blueprintLine)",
           backgroundColor: checked ? "var(--token-color-amber)" : "var(--token-color-surface)",
@@ -42,7 +42,7 @@ export function FilterSidebar() {
   }
 
   return (
-    <aside className="w-56 border p-6" style={{ borderColor: "var(--token-color-blueprintLine)", backgroundColor: "var(--token-color-surface)" }}>
+    <aside className="w-56 border-2 p-6" style={{ borderColor: "var(--token-color-blueprintLine)", backgroundColor: "var(--token-color-surface)" }}>
       <div className="flex flex-col gap-4">
         <h3
           className="text-xs font-semibold uppercase tracking-[0.1em]"

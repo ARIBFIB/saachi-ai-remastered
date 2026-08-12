@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import Image from "next/image";
 import { Lock, ShieldCheck } from "lucide-react";
@@ -24,7 +24,7 @@ export function CheckoutOrderSummary({
 }: CheckoutOrderSummaryProps) {
   return (
     <div
-      className="flex flex-col gap-1.5 rounded-xl border bg-[var(--token-color-surface)] p-6 shadow-[var(--token-shadow-sm)]"
+      className="flex flex-col gap-1.5 rounded-xl border-2 bg-[var(--token-color-surface)] p-6 shadow-[var(--token-shadow-sm)]"
       style={{ borderColor: "var(--token-color-border)" }}
     >
       <h2

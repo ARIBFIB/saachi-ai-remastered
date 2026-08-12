@@ -1,4 +1,4 @@
-import { Map } from "lucide-react";
+﻿import { Map } from "lucide-react";
 
 interface OfficeMapCardProps {
   image?: string;
@@ -9,7 +9,7 @@ export function OfficeMapCard({ image, mapUrl = "#" }: OfficeMapCardProps) {
   return (
     <a
       href={mapUrl}
-      className="relative block h-48 overflow-hidden rounded-xl border border-[var(--token-color-border)]/30 bg-[var(--token-color-surface)] shadow-[0px_4px_20px_0px_rgba(15,23,42,0.05)]"
+      className="relative block h-48 overflow-hidden rounded-xl border-2 border-[var(--token-color-border)]/30 bg-[var(--token-color-surface)] shadow-[var(--token-shadow-[var(--token-shadow-sm)])]"
     >
       <img
         src={image ?? "https://placehold.co/393x190"}

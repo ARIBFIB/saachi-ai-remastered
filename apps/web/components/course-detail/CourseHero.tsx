@@ -1,4 +1,4 @@
-import Image from "next/image";
+﻿import Image from "next/image";
 import { Star, Play } from "lucide-react";
 
 interface CourseHeroProps {
@@ -70,7 +70,7 @@ export function CourseHero({
         <div className="w-full lg:w-96">
           <button
             type="button"
-            className="group relative block aspect-video w-full overflow-hidden rounded-xl shadow-lg"
+            className="group relative block aspect-video w-full overflow-hidden rounded-xl shadow-[var(--token-shadow-[var(--token-shadow-sm)])]"
           >
             <Image
               src={previewImage}
@@ -81,7 +81,7 @@ export function CourseHero({
             />
             <span className="absolute inset-0 bg-zinc-900/20 transition group-hover:bg-zinc-900/30" />
             <span className="absolute inset-0 flex items-center justify-center">
-              <span className="flex h-[46px] w-[46px] items-center justify-center rounded-full bg-white shadow-lg">
+              <span className="flex h-[46px] w-[46px] items-center justify-center rounded-full bg-white shadow-[var(--token-shadow-[var(--token-shadow-sm)])]">
                 <Play className="ml-0.5 h-5 w-5 text-zinc-900" fill="currentColor" />
               </span>
             </span>

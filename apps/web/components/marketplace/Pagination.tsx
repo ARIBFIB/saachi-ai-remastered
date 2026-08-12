@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useState } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
@@ -15,7 +15,7 @@ export function Pagination({ totalPages = 12 }: { totalPages?: number }) {
       <button
         aria-label="Previous page"
         onClick={() => setPage((p) => Math.max(1, p - 1))}
-        className="flex h-10 w-8 items-center justify-center border"
+        className="flex h-10 w-8 items-center justify-center border-2"
         style={{ borderColor: lineColor, color: inkSoft }}
       >
         <ChevronLeft className="h-3 w-3" />
@@ -29,7 +29,7 @@ export function Pagination({ totalPages = 12 }: { totalPages?: number }) {
           style={
             page === p
               ? { backgroundColor: "var(--token-color-inkDeep)", color: "var(--token-color-paper)" }
-              : { border: `1px solid ${lineColor}`, color: inkSoft }
+              : { border-2: `1px solid ${lineColor}`, color: inkSoft }
           }
         >
           {p}
@@ -44,7 +44,7 @@ export function Pagination({ totalPages = 12 }: { totalPages?: number }) {
         style={
           page === totalPages
             ? { backgroundColor: "var(--token-color-inkDeep)", color: "var(--token-color-paper)" }
-            : { border: `1px solid ${lineColor}`, color: inkSoft }
+            : { border-2: `1px solid ${lineColor}`, color: inkSoft }
         }
       >
         {totalPages}
@@ -53,7 +53,7 @@ export function Pagination({ totalPages = 12 }: { totalPages?: number }) {
       <button
         aria-label="Next page"
         onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
-        className="flex h-10 w-8 items-center justify-center border"
+        className="flex h-10 w-8 items-center justify-center border-2"
         style={{ borderColor: lineColor, color: inkSoft }}
       >
         <ChevronRight className="h-3 w-3" />
