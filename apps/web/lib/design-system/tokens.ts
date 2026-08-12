@@ -17,10 +17,13 @@ export const tokens = {
     primary: "#3525CD",       // indigo-700 (buttons, links, active states)
     primaryHover: "#2A1DA3",
     primaryTint: "#E0E7FF",   // indigo-100 (badges, soft backgrounds)
+    primaryDark: "#1E1B4B",    // deep indigo/violet (gradient end, dark panels)
+    decorativeCyan: "#A5F3FC", // cyan-200 (soft decorative blur accents)
 
     // Secondary accent
     success: "#005338",       // emerald-900 (ratings, success states)
     successTint: "#D1FAE5",
+    completedBadgeBg: "#D1FAE5", // emerald-100 (Completed pill on course cards)
 
     // Neutrals
     ink: "#18181B",           // zinc-900 (headings)
@@ -31,6 +34,8 @@ export const tokens = {
     bg: "#F8FAFC",            // slate-50 (page background)
     surface: "#FFFFFF",       // card background
     surfaceAlt: "#F4F4F5",    // zinc-100 (icon backgrounds)
+    playerBg: "#0F172A",       // slate-900 (video stage background)
+    completedGreen: "#4EDEA3", // bright mint (lesson-completed ticks)
 
     // Borders
     border: "#CBD5E1",        // slate-300
@@ -38,6 +43,7 @@ export const tokens = {
 
     // Status
     error: "#DC2626",
+    notificationDot: "#BA1A1A", // red badge dot on the notification bell
     errorTint: "#FEE2E2",
     warning: "#D97706",
     warningTint: "#FEF3C7"

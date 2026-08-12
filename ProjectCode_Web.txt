@@ -1,7 +1,7 @@
 ﻿================================================================================
 MODULE CODE EXPORT: Web
-Generated: 2026-08-12 04:03:08
-Total Files: 68
+Generated: 2026-08-12 05:39:22
+Total Files: 77
 ================================================================================
 
 
@@ -323,6 +323,267 @@ function RoleCard({
 
 
 ================================================================================
+FILE: apps\web\app\(auth)\register\page.tsx
+================================================================================
+"use client";
+
+import { useState } from "react";
+import Link from "next/link";
+import { Form, Input, Checkbox, Button, Typography, Avatar, Divider } from "antd";
+import { GraduationCap, Video } from "lucide-react";
+
+const { Title, Text } = Typography;
+
+type Role = "learner" | "instructor";
+
+interface RegisterFormValues {
+  fullName: string;
+  email: string;
+  password: string;
+  agree: boolean;
+}
+
+export default function CreateAccountPage() {
+  const [role, setRole] = useState<Role>("learner");
+  const [form] = Form.useForm<RegisterFormValues>();
+
+  function handleFinish(values: RegisterFormValues) {
+    // TODO: wire to useAuth().register() from @saachi/api-client
+    console.log("register", { role, ...values });
+  }
+
+  return (
+    <div className="flex min-h-screen items-center justify-center bg-[var(--token-color-bg)] px-4 py-24">
+      <div className="flex w-full max-w-[1000px] overflow-hidden rounded-2xl bg-[var(--token-color-surface)] shadow-[var(--token-shadow-md)]">
+        {/* Left panel: brand + graphic */}
+        <div
+          className="relative hidden w-96 shrink-0 flex-col justify-between overflow-hidden p-10 md:flex"
+          style={{
+            background:
+              "linear-gradient(160deg, var(--token-color-primary) 0%, var(--token-color-primaryDark) 100%)",
+          }}
+        >
+          <div className="pointer-events-none absolute -top-32 left-1/2 h-64 w-64 -translate-x-1/2 rounded-full bg-[var(--token-color-surface)]/10 blur-[32px]" />
+          <div className="pointer-events-none absolute -left-20 bottom-24 h-80 w-80 rounded-full bg-[var(--token-color-decorativeCyan)]/20 blur-[32px]" />
+
+          <span className="relative text-2xl font-black text-[var(--token-color-surface)]">
+            Saachi AI
+          </span>
+
+          <div className="relative flex flex-col gap-3.5 pb-6">
+            <h1 className="text-3xl font-bold leading-10 text-[var(--token-color-surface)]">
+              Empowering the
+              <br />
+              future of skills.
+            </h1>
+            <p className="text-lg leading-7 text-[var(--token-color-primaryTint)]">
+              Join our network of learners and industry experts to accelerate
+              your AI journey.
+            </p>
+          </div>
+
+          <div className="relative flex items-center">
+            <Avatar.Group>
+              <Avatar src="https://i.pravatar.cc/64?img=12" />
+              <Avatar src="https://i.pravatar.cc/64?img=32" />
+              <Avatar src="https://i.pravatar.cc/64?img=45" />
+              <Avatar
+                style={{
+                  backgroundColor: "var(--token-color-primaryHover)",
+                  color: "var(--token-color-primaryTint)",
+                }}
+              >
+                +5k
+              </Avatar>
+            </Avatar.Group>
+          </div>
+        </div>
+
+        {/* Right panel: form */}
+        <div className="flex w-full flex-col gap-6 px-8 py-12 sm:px-16">
+          <div className="flex flex-col gap-2">
+            <Title level={2} style={{ margin: 0, color: "var(--token-color-ink)" }}>
+              Create an account
+            </Title>
+            <Text style={{ color: "var(--token-color-inkSoft)", fontSize: "var(--token-font-size-base)" }}>
+              Join Saachi AI to start your journey.
+            </Text>
+          </div>
+
+          {/* Role selector */}
+          <div className="flex flex-col gap-2">
+            <Text strong style={{ color: "var(--token-color-ink)", fontSize: "var(--token-font-size-sm)" }}>
+              I am joining as a:
+            </Text>
+            <div className="flex gap-2">
+              <RoleCard
+                icon={<GraduationCap size={22} color="var(--token-color-primary)" />}
+                label="Learner"
+                selected={role === "learner"}
+                onSelect={() => setRole("learner")}
+              />
+              <RoleCard
+                icon={<Video size={20} color="var(--token-color-primary)" />}
+                label="Instructor"
+                selected={role === "instructor"}
+                onSelect={() => setRole("instructor")}
+              />
+            </div>
+          </div>
+
+          <Form
+            form={form}
+            layout="vertical"
+            requiredMark={false}
+            onFinish={handleFinish}
+            className="flex flex-col"
+          >
+            <Form.Item
+              label="Full Name"
+              name="fullName"
+              rules={[{ required: true, message: "Please enter your full name" }]}
+            >
+              <Input size="large" placeholder="John Doe" />
+            </Form.Item>
+
+            <Form.Item
+              label="Email Address"
+              name="email"
+              rules={[{ required: true, type: "email", message: "Please enter a valid email" }]}
+            >
+              <Input size="large" placeholder="john@example.com" />
+            </Form.Item>
+
+            <Form.Item
+              label="Password"
+              name="password"
+              rules={[{ required: true, min: 8, message: "Must be at least 8 characters long." }]}
+              extra={
+                <span style={{ color: "var(--token-color-inkSoft)", fontSize: "var(--token-font-size-xs)" }}>
+                  Must be at least 8 characters long.
+                </span>
+              }
+            >
+              <Input.Password size="large" placeholder="Enter your password" />
+            </Form.Item>
+
+            <Form.Item
+              name="agree"
+              valuePropName="checked"
+              rules={[
+                {
+                  validator: (_, value) =>
+                    value ? Promise.resolve() : Promise.reject(new Error("You must agree before continuing")),
+                },
+              ]}
+            >
+              <Checkbox>
+                <span style={{ color: "var(--token-color-inkSoft)" }}>
+                  I agree to the{" "}
+                  <Link href="/legal/terms" style={{ color: "var(--token-color-primary)" }}>
+                    Terms of Service
+                  </Link>{" "}
+                  and{" "}
+                  <Link href="/legal/privacy" style={{ color: "var(--token-color-primary)" }}>
+                    Privacy Policy
+                  </Link>
+                  .
+                </span>
+              </Checkbox>
+            </Form.Item>
+
+            <Button type="primary" htmlType="submit" size="large" block>
+              Create Account
+            </Button>
+          </Form>
+
+          <Divider
+            style={{ borderColor: "var(--token-color-border)" }}
+            plain
+          >
+            <span style={{ color: "var(--token-color-inkSoft)", fontSize: "var(--token-font-size-xs)" }}>
+              Or continue with
+            </span>
+          </Divider>
+
+          <div className="flex gap-4">
+            <Button size="large" block icon={<GoogleIcon />}>
+              Google
+            </Button>
+            <Button size="large" block icon={<GithubIcon />}>
+              GitHub
+            </Button>
+          </div>
+
+          <p className="text-center text-base" style={{ color: "var(--token-color-inkSoft)" }}>
+            Already have an account?{" "}
+            <Link href="/login" style={{ color: "var(--token-color-primary)" }}>
+              Sign in
+            </Link>
+          </p>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function RoleCard({
+  icon,
+  label,
+  selected,
+  onSelect,
+}: {
+  icon: React.ReactNode;
+  label: string;
+  selected: boolean;
+  onSelect: () => void;
+}) {
+  return (
+    <button
+      type="button"
+      onClick={onSelect}
+      className="flex flex-1 flex-col items-center gap-2 rounded-lg border px-4 pb-4 pt-3.5 text-sm font-semibold tracking-wide transition"
+      style={{
+        backgroundColor: selected ? "var(--token-color-primaryTint)" : "var(--token-color-bg)",
+        borderColor: selected ? "var(--token-color-primary)" : "var(--token-color-border)",
+        color: "var(--token-color-ink)",
+      }}
+    >
+      {icon}
+      {label}
+    </button>
+  );
+}
+
+// Google and GitHub brand marks use their official fixed multi-color logos --
+// these are not theme colors and are intentionally not tokenized, since
+// substituting them would break brand recognition.
+function GoogleIcon() {
+  return (
+    <svg width="18" height="18" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M18.8 10.2083C18.8 9.55825 18.7417 8.93325 18.6333 8.33325H10V11.8833H14.9333C14.7167 13.0249 14.0667 13.9916 13.0917 14.6416V16.9499H16.0667C17.8 15.3499 18.8 12.9999 18.8 10.2083Z" fill="#4285F4" />
+      <path d="M9.99974 19.1667C12.4747 19.1667 14.5497 18.35 16.0664 16.95L13.0914 14.6417C12.2747 15.1917 11.2331 15.525 9.99974 15.525C7.61641 15.525 5.59141 13.9167 4.86641 11.75H1.81641V14.1167C3.32474 17.1083 6.41641 19.1667 9.99974 19.1667Z" fill="#34A853" />
+      <path d="M4.86634 11.7416C4.68301 11.1916 4.57467 10.6083 4.57467 9.99993C4.57467 9.3916 4.68301 8.80827 4.86634 8.25827V5.8916H1.81634C1.19134 7.12493 0.833008 8.5166 0.833008 9.99993C0.833008 11.4833 1.19134 12.8749 1.81634 14.1083L4.19134 12.2583L4.86634 11.7416Z" fill="#FBBC05" />
+      <path d="M9.99974 4.48325C11.3497 4.48325 12.5497 4.94992 13.5081 5.84992L16.1331 3.22492C14.5414 1.74159 12.4747 0.833252 9.99974 0.833252C6.41641 0.833252 3.32474 2.89159 1.81641 5.89159L4.86641 8.25825C5.59141 6.09159 7.61641 4.48325 9.99974 4.48325Z" fill="#EA4335" />
+    </svg>
+  );
+}
+
+function GithubIcon() {
+  return (
+    <svg width="18" height="18" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path
+        fillRule="evenodd"
+        clipRule="evenodd"
+        d="M10.0003 1.66675C5.39783 1.66675 1.66699 5.40341 1.66699 10.0142C1.66699 13.7017 4.05449 16.8309 7.36616 17.9342C7.78282 18.0109 7.93449 17.7534 7.93449 17.5317C7.93449 17.3342 7.92783 16.8084 7.92366 16.1126C5.60533 16.6167 5.11616 14.9934 5.11616 14.9934C4.73783 14.0284 4.19116 13.7717 4.19116 13.7717C3.43449 13.2551 4.24866 13.2651 4.24866 13.2651C5.08449 13.3234 5.52449 14.1251 5.52449 14.1251C6.26783 15.4001 7.47533 15.0317 7.94949 14.8184C8.02616 14.2792 8.24116 13.9117 8.47949 13.7034C6.62949 13.4926 4.68366 12.7759 4.68366 9.57758C4.68366 8.66675 5.00866 7.92091 5.54116 7.33758C5.45533 7.12675 5.16949 6.27758 5.62283 5.12925C5.62283 5.12925 6.32283 4.90425 7.91449 5.98425C8.5943 5.79884 9.29569 5.70441 10.0003 5.70341C10.7087 5.70675 11.4212 5.79925 12.087 5.98425C13.6778 4.90425 14.3762 5.12841 14.3762 5.12841C14.8312 6.27758 14.5445 7.12675 14.4595 7.33758C14.9928 7.92091 15.3162 8.66675 15.3162 9.57758C15.3162 12.7842 13.367 13.4901 11.5112 13.6967C11.8103 13.9542 12.0762 14.4634 12.0762 15.2426C12.0762 16.3576 12.0662 17.2584 12.0662 17.5317C12.0662 17.7551 12.2162 18.0151 12.6395 17.9334C16.0424 16.792 18.3351 13.6035 18.3337 10.0142C18.3337 5.40341 14.602 1.66675 10.0003 1.66675Z"
+        fill="#191C1E"
+      />
+    </svg>
+  );
+}
+
+
+================================================================================
 FILE: apps\web\app\(auth)\verify-email\page.tsx
 ================================================================================
 import Link from "next/link";
@@ -364,6 +625,1086 @@ export default function EmailVerifiedPage() {
     </div>
   );
 }
+
+
+================================================================================
+FILE: apps\web\app\(learner)\dashboard\certificates\page.tsx
+================================================================================
+"use client";
+
+import Link from "next/link";
+import Image from "next/image";
+import { Button, Typography, Tag } from "antd";
+import {
+  LayoutGrid,
+  GraduationCap,
+  Award,
+  Heart,
+  Settings,
+  HelpCircle,
+  Filter,
+  Download,
+  Share2,
+  Eye,
+} from "lucide-react";
+
+const { Title, Text } = Typography;
+
+// TODO: replace with useCertificates() hook from @saachi/api-client
+type CategoryVariant = "primary" | "success" | "neutral";
+
+interface Certificate {
+  id: string;
+  title: string;
+  category: string;
+  categoryVariant: CategoryVariant;
+  issuedDate: string;
+  image: string;
+}
+
+const certificates: Certificate[] = [
+  {
+    id: "cert1",
+    title: "Advanced Machine Learning Architectures",
+    category: "AI & Data",
+    categoryVariant: "primary",
+    issuedDate: "Oct 12, 2024",
+    image:
+      "https://images.unsplash.com/photo-1620712943543-bcc4688e7485?auto=format&fit=crop&w=600&q=80",
+  },
+  {
+    id: "cert2",
+    title: "Ethical AI Governance & Policy",
+    category: "Ethics",
+    categoryVariant: "success",
+    issuedDate: "Sep 05, 2024",
+    image:
+      "https://images.unsplash.com/photo-1450101499163-c8848c66ca85?auto=format&fit=crop&w=600&q=80",
+  },
+  {
+    id: "cert3",
+    title: "Python for Data Science Bootcamp",
+    category: "Programming",
+    categoryVariant: "neutral",
+    issuedDate: "Jul 22, 2024",
+    image:
+      "https://images.unsplash.com/photo-1526379879527-8559ecfcaec0?auto=format&fit=crop&w=600&q=80",
+  },
+];
+
+const navItems = [
+  { icon: LayoutGrid, label: "Dashboard", href: "/dashboard" },
+  { icon: GraduationCap, label: "My Courses", href: "/dashboard/my-courses" },
+  { icon: Award, label: "Certificates", href: "/dashboard/certificates" },
+  { icon: Heart, label: "Wishlist", href: "/dashboard/wishlist" },
+  { icon: Settings, label: "Settings", href: "/dashboard/settings" },
+];
+
+// Category badge colors are derived entirely from design tokens (tokens.ts).
+// Add/adjust variants here -- never hardcode hex values in the JSX below.
+const categoryStyles: Record<CategoryVariant, { bg: string; color: string }> = {
+  primary: {
+    bg: "var(--token-color-primaryTint)",
+    color: "var(--token-color-primary)",
+  },
+  success: {
+    bg: "var(--token-color-successTint)",
+    color: "var(--token-color-success)",
+  },
+  neutral: {
+    bg: "var(--token-color-surfaceAlt)",
+    color: "var(--token-color-inkSoft)",
+  },
+};
+
+export default function CertificatesPage() {
+  return (
+    <div className="flex min-h-screen bg-[var(--token-color-bg)]">
+      {/* Sidebar */}
+      <aside className="fixed inset-y-0 left-0 hidden w-72 flex-col border-r border-[var(--token-color-border)] bg-[var(--token-color-surfaceAlt)] lg:flex">
+        <div className="flex flex-col gap-1.5 border-b border-[var(--token-color-border)] p-6">
+          <Title level={2} style={{ margin: 0, color: "var(--token-color-ink)" }}>
+            Learner Portal
+          </Title>
+          <Text
+            style={{
+              color: "var(--token-color-inkSoft)",
+              fontSize: "var(--token-font-size-xs)",
+            }}
+          >
+            Manage your skills
+          </Text>
+        </div>
+
+        <nav className="flex flex-1 flex-col gap-2 py-6">
+          {navItems.map(({ icon: Icon, label, href }) => {
+            const isActive = label === "Certificates";
+            return (
+              <Link
+                key={label}
+                href={href}
+                className="flex h-12 items-center gap-4 border-l-4 pl-4 pr-6 text-sm font-semibold tracking-wide transition"
+                style={{
+                  borderColor: isActive ? "var(--token-color-primary)" : "transparent",
+                  backgroundColor: isActive
+                    ? "var(--token-color-primaryTint)"
+                    : "transparent",
+                  color: isActive
+                    ? "var(--token-color-primary)"
+                    : "var(--token-color-inkSoft)",
+                }}
+              >
+                <Icon size={18} />
+                {label}
+              </Link>
+            );
+          })}
+        </nav>
+
+        <div className="border-t border-[var(--token-color-border)] p-6">
+          <Link
+            href="/support"
+            className="flex items-center gap-4 text-sm font-semibold tracking-wide text-[var(--token-color-inkSoft)] hover:text-[var(--token-color-primary)]"
+          >
+            <HelpCircle size={18} />
+            Help Center
+          </Link>
+        </div>
+      </aside>
+
+      {/* Main column */}
+      <div className="flex w-full flex-col lg:pl-72">
+        <main className="flex-1 px-6 pb-14 pt-10">
+          <div className="mx-auto flex max-w-[1000px] flex-col gap-10">
+            {/* Header */}
+            <div className="flex items-end justify-between">
+              <div className="flex flex-col gap-1.5">
+                <Title level={1} style={{ margin: 0, color: "var(--token-color-ink)" }}>
+                  My Certificates
+                </Title>
+                <Text
+                  style={{
+                    color: "var(--token-color-inkSoft)",
+                    fontSize: "var(--token-font-size-lg)",
+                  }}
+                >
+                  A record of your achievements and completed learning paths.
+                </Text>
+              </div>
+
+              <Button icon={<Filter size={14} />}>Filter</Button>
+            </div>
+
+            {/* Certificate grid */}
+            <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 xl:grid-cols-3">
+              {certificates.map((cert) => (
+                <CertificateCard key={cert.id} certificate={cert} />
+              ))}
+            </div>
+          </div>
+        </main>
+
+        {/* Footer */}
+        <footer className="bg-[var(--token-color-surfaceAlt)]/60 px-6 py-10">
+          <div className="mx-auto flex max-w-[1000px] flex-col gap-6 sm:flex-row sm:items-start sm:justify-between">
+            <div className="flex flex-col gap-4">
+              <span className="text-base font-bold text-[var(--token-color-primary)]">
+                Saachi AI
+              </span>
+              <p
+                style={{
+                  color: "var(--token-color-inkSoft)",
+                  fontSize: "var(--token-font-size-base)",
+                }}
+              >
+                &copy; {new Date().getFullYear()} Saachi AI Marketplace.
+                <br />
+                Empowering the future of skills.
+              </p>
+            </div>
+
+            <nav className="flex flex-wrap gap-6">
+              <Link
+                href="/about"
+                className="text-xs font-medium text-[var(--token-color-inkSoft)] hover:text-[var(--token-color-primary)]"
+              >
+                About Us
+              </Link>
+              <Link
+                href="/careers"
+                className="text-xs font-medium text-[var(--token-color-inkSoft)] hover:text-[var(--token-color-primary)]"
+              >
+                Careers
+              </Link>
+              <Link
+                href="/legal/privacy"
+                className="text-xs font-medium text-[var(--token-color-inkSoft)] hover:text-[var(--token-color-primary)]"
+              >
+                Privacy Policy
+              </Link>
+              <Link
+                href="/legal/terms"
+                className="text-xs font-medium text-[var(--token-color-inkSoft)] hover:text-[var(--token-color-primary)]"
+              >
+                Terms of Service
+              </Link>
+              <Link
+                href="/instructor/handbook"
+                className="text-xs font-medium text-[var(--token-color-inkSoft)] hover:text-[var(--token-color-primary)]"
+              >
+                Instructor Handbook
+              </Link>
+            </nav>
+          </div>
+        </footer>
+      </div>
+    </div>
+  );
+}
+
+function CertificateCard({ certificate }: { certificate: Certificate }) {
+  const style = categoryStyles[certificate.categoryVariant];
+
+  return (
+    <article
+      className="flex flex-col overflow-hidden rounded-xl border bg-[var(--token-color-surface)] shadow-[var(--token-shadow-md)]"
+      style={{ borderColor: "var(--token-color-border)" }}
+    >
+      <div className="group relative h-48 w-full shrink-0 overflow-hidden bg-[var(--token-color-surfaceAlt)]">
+        <Image
+          src={certificate.image}
+          alt={certificate.title}
+          fill
+          sizes="(max-width: 768px) 100vw, 33vw"
+          className="object-cover opacity-90 transition duration-300 group-hover:scale-105"
+        />
+        <div className="absolute inset-0 flex items-end bg-gradient-to-t from-[var(--token-color-ink)]/40 to-transparent p-4 opacity-0 transition group-hover:opacity-100">
+          <span className="flex items-center gap-1 rounded-full bg-white/20 px-3 pb-1 pt-[3px] text-xs font-medium text-white backdrop-blur-[6px]">
+            <Eye size={12} />
+            Preview
+          </span>
+        </div>
+      </div>
+
+      <div className="flex flex-1 flex-col gap-3 p-6">
+        <Tag
+          bordered={false}
+          style={{
+            backgroundColor: style.bg,
+            color: style.color,
+            width: "fit-content",
+            margin: 0,
+          }}
+        >
+          {certificate.category}
+        </Tag>
+
+        <h3
+          className="line-clamp-2 min-h-[3.5rem] text-lg font-semibold leading-6"
+          style={{ color: "var(--token-color-ink)" }}
+        >
+          {certificate.title}
+        </h3>
+
+        <span
+          style={{
+            color: "var(--token-color-inkSoft)",
+            fontSize: "var(--token-font-size-base)",
+          }}
+        >
+          Issued: {certificate.issuedDate}
+        </span>
+
+        <div
+          className="mt-2 flex gap-2 border-t pt-4"
+          style={{ borderColor: "var(--token-color-border)" }}
+        >
+          <Button type="primary" icon={<Download size={14} />} block>
+            PDF
+          </Button>
+          <Button icon={<Share2 size={14} />} block>
+            Share
+          </Button>
+        </div>
+      </div>
+    </article>
+  );
+}
+
+
+
+================================================================================
+FILE: apps\web\app\(learner)\dashboard\my-courses\page.tsx
+================================================================================
+"use client";
+
+import { useState } from "react";
+import Link from "next/link";
+import Image from "next/image";
+import { Progress, Button, Typography } from "antd";
+import {
+  LayoutGrid,
+  GraduationCap,
+  Heart,
+  Settings,
+  HelpCircle,
+  Clock,
+  CheckCircle2,
+} from "lucide-react";
+
+const { Title, Text } = Typography;
+
+// TODO: replace with useCourses() / a future useLearnerCourses() hook from @saachi/api-client
+interface EnrolledCourse {
+  id: string;
+  title: string;
+  category: string;
+  image: string;
+  status: "in-progress" | "completed";
+  progress?: number;
+  timeLeft?: string;
+}
+
+const courses: EnrolledCourse[] = [
+  {
+    id: "c1",
+    title: "Advanced Machine Learning Algorithms",
+    category: "Machine Learning",
+    image: "https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?auto=format&fit=crop&w=600&q=80",
+    status: "in-progress",
+    progress: 62,
+    timeLeft: "12h left",
+  },
+  {
+    id: "c2",
+    title: "Data Engineering Pipeline Mastery",
+    category: "Data Engineering",
+    image: "https://images.unsplash.com/photo-1518186285589-2f7649de83e0?auto=format&fit=crop&w=600&q=80",
+    status: "in-progress",
+    progress: 34,
+    timeLeft: "20h left",
+  },
+  {
+    id: "c3",
+    title: "Python for Data Science Basics",
+    category: "Data Science",
+    image: "https://images.unsplash.com/photo-1526379879527-8559ecfcaec0?auto=format&fit=crop&w=600&q=80",
+    status: "completed",
+  },
+];
+
+const navItems = [
+  { icon: LayoutGrid, label: "Dashboard", href: "/dashboard" },
+  { icon: GraduationCap, label: "My Courses", href: "/dashboard/my-courses" },
+  { icon: Heart, label: "Wishlist", href: "/dashboard/wishlist" },
+  { icon: Settings, label: "Settings", href: "/dashboard/settings" },
+];
+
+const filters = [
+  { key: "all", label: "All Courses", count: courses.length },
+  { key: "in-progress", label: "In Progress", count: courses.filter((c) => c.status === "in-progress").length },
+  { key: "completed", label: "Completed", count: courses.filter((c) => c.status === "completed").length },
+] as const;
+
+export default function MyCoursesPage() {
+  const [activeFilter, setActiveFilter] = useState<(typeof filters)[number]["key"]>("all");
+
+  const visibleCourses =
+    activeFilter === "all" ? courses : courses.filter((c) => c.status === activeFilter);
+
+  return (
+    <div className="flex min-h-screen bg-[var(--token-color-bg)]">
+      {/* Sidebar */}
+      <aside className="fixed inset-y-0 left-0 hidden w-72 flex-col border-r border-[var(--token-color-border)] bg-[var(--token-color-surfaceAlt)] lg:flex">
+        <div className="flex items-center gap-4 border-b border-[var(--token-color-border)] p-6">
+          <span className="relative block h-10 w-10 shrink-0 overflow-hidden rounded-full">
+            <Image
+              src="https://i.pravatar.cc/80?img=47"
+              alt="Learner avatar"
+              fill
+              sizes="40px"
+              className="object-cover"
+            />
+          </span>
+          <div className="flex flex-col">
+            <span
+              className="font-bold tracking-wide"
+              style={{ color: "var(--token-color-ink)", fontSize: "var(--token-font-size-sm)" }}
+            >
+              Learner Portal
+            </span>
+            <span style={{ color: "var(--token-color-inkSoft)", fontSize: "var(--token-font-size-xs)" }}>
+              Manage your skills
+            </span>
+          </div>
+        </div>
+
+        <nav className="flex flex-1 flex-col gap-2 py-6">
+          {navItems.map(({ icon: Icon, label, href }) => {
+            const isActive = label === "My Courses";
+            return (
+              <Link
+                key={label}
+                href={href}
+                className="flex h-12 items-center gap-4 border-l-4 pl-4 pr-6 text-sm font-semibold tracking-wide transition"
+                style={{
+                  borderColor: isActive ? "var(--token-color-primary)" : "transparent",
+                  backgroundColor: isActive ? "var(--token-color-primaryTint)" : "transparent",
+                  color: isActive ? "var(--token-color-primary)" : "var(--token-color-inkSoft)",
+                }}
+              >
+                <Icon size={18} />
+                {label}
+              </Link>
+            );
+          })}
+        </nav>
+
+        <div className="border-t border-[var(--token-color-border)] p-6">
+          <Link
+            href="/support"
+            className="flex items-center gap-4 text-sm font-semibold tracking-wide text-[var(--token-color-inkSoft)] hover:text-[var(--token-color-primary)]"
+          >
+            <HelpCircle size={18} />
+            Help Center
+          </Link>
+        </div>
+      </aside>
+
+      {/* Main column */}
+      <div className="flex w-full flex-col lg:pl-72">
+        <main className="flex-1 px-6 pb-14 pt-10">
+          <div className="mx-auto flex max-w-[1000px] flex-col gap-6">
+            {/* Header */}
+            <div className="flex flex-col gap-1.5">
+              <Title level={1} style={{ margin: 0, color: "var(--token-color-ink)" }}>
+                My Courses
+              </Title>
+              <Text style={{ color: "var(--token-color-inkSoft)", fontSize: "var(--token-font-size-lg)" }}>
+                Track your progress and pick up where you left off.
+              </Text>
+            </div>
+
+            {/* Filters */}
+            <div className="flex gap-2 border-b border-[var(--token-color-border)] pt-4">
+              {filters.map((filter) => {
+                const isActive = filter.key === activeFilter;
+                return (
+                  <button
+                    key={filter.key}
+                    type="button"
+                    onClick={() => setActiveFilter(filter.key)}
+                    className="border-b-2 px-5 py-2 text-sm font-semibold tracking-wide transition"
+                    style={{
+                      borderColor: isActive ? "var(--token-color-primary)" : "transparent",
+                      color: isActive ? "var(--token-color-primary)" : "var(--token-color-inkSoft)",
+                      fontWeight: isActive ? 700 : 600,
+                    }}
+                  >
+                    {filter.label} ({filter.count})
+                  </button>
+                );
+              })}
+            </div>
+
+            {/* Course grid */}
+            <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 xl:grid-cols-3">
+              {visibleCourses.map((course) => (
+                <CourseCard key={course.id} course={course} />
+              ))}
+            </div>
+          </div>
+        </main>
+
+        {/* Footer */}
+        <footer className="bg-[var(--token-color-surfaceAlt)]/60 px-6 py-10">
+          <div className="mx-auto flex max-w-[1000px] flex-col gap-6 sm:flex-row sm:items-start sm:justify-between">
+            <div className="flex flex-col gap-4">
+              <span className="text-base font-bold text-[var(--token-color-primary)]">Saachi AI</span>
+              <p style={{ color: "var(--token-color-inkSoft)", fontSize: "var(--token-font-size-base)" }}>
+                &copy; {new Date().getFullYear()} Saachi AI Marketplace.
+                <br />
+                Empowering the future of skills.
+              </p>
+            </div>
+
+            <nav className="flex flex-wrap gap-6">
+              <Link href="/about" className="text-xs font-medium text-[var(--token-color-inkSoft)] hover:text-[var(--token-color-primary)]">
+                About Us
+              </Link>
+              <Link href="/careers" className="text-xs font-medium text-[var(--token-color-inkSoft)] hover:text-[var(--token-color-primary)]">
+                Careers
+              </Link>
+              <Link href="/legal/privacy" className="text-xs font-medium text-[var(--token-color-inkSoft)] hover:text-[var(--token-color-primary)]">
+                Privacy Policy
+              </Link>
+              <Link href="/legal/terms" className="text-xs font-medium text-[var(--token-color-inkSoft)] hover:text-[var(--token-color-primary)]">
+                Terms of Service
+              </Link>
+              <Link href="/instructor/handbook" className="text-xs font-medium text-[var(--token-color-inkSoft)] hover:text-[var(--token-color-primary)]">
+                Instructor Handbook
+              </Link>
+            </nav>
+          </div>
+        </footer>
+      </div>
+    </div>
+  );
+}
+
+function CourseCard({ course }: { course: EnrolledCourse }) {
+  const isCompleted = course.status === "completed";
+
+  return (
+    <article className="flex flex-col overflow-hidden rounded-2xl border bg-[var(--token-color-surface)] shadow-[var(--token-shadow-md)]"
+      style={{ borderColor: "var(--token-color-border)" }}
+    >
+      <div className="relative h-40 w-full shrink-0 bg-[var(--token-color-surfaceAlt)]">
+        <Image
+          src={course.image}
+          alt={course.title}
+          fill
+          sizes="(max-width: 768px) 100vw, 33vw"
+          className="object-cover"
+          style={{ opacity: isCompleted ? 0.7 : 1 }}
+        />
+
+        {course.status === "in-progress" && course.timeLeft && (
+          <span className="absolute left-3 top-3 rounded-sm bg-[var(--token-color-surface)]/90 px-2 pb-1 pt-[3px] text-xs font-medium text-[var(--token-color-ink)] backdrop-blur-[2px]">
+            {course.timeLeft}
+          </span>
+        )}
+
+        {isCompleted && (
+          <span className="absolute right-3 top-3 flex h-9 w-9 items-center justify-center rounded-full bg-[var(--token-color-surface)] shadow-[var(--token-shadow-sm)]">
+            <CheckCircle2 size={18} color="var(--token-color-success)" />
+          </span>
+        )}
+      </div>
+
+      <div className="flex flex-1 flex-col gap-4 p-6">
+        <span
+          className="w-fit rounded-sm px-2 pb-1 pt-[3px] text-xs font-medium"
+          style={{
+            backgroundColor: isCompleted ? "var(--token-color-completedBadgeBg)" : "var(--token-color-primaryTint)",
+            color: isCompleted ? "var(--token-color-success)" : "var(--token-color-primary)",
+          }}
+        >
+          {course.category}
+        </span>
+
+        <h3
+          className="line-clamp-2 text-lg font-semibold leading-6"
+          style={{ color: "var(--token-color-ink)" }}
+        >
+          {course.title}
+        </h3>
+
+        <div className="mt-auto flex flex-col gap-3">
+          {course.status === "in-progress" && course.progress !== undefined && (
+            <div className="flex flex-col gap-1">
+              <span style={{ color: "var(--token-color-inkSoft)", fontSize: "var(--token-font-size-xs)" }}>
+                Progress
+              </span>
+              <Progress percent={course.progress} showInfo strokeColor="var(--token-color-primary)" />
+            </div>
+          )}
+
+          <Button type={isCompleted ? "default" : "primary"} block size="large">
+            {isCompleted ? "Review Certificate" : "Resume Learning"}
+          </Button>
+        </div>
+      </div>
+    </article>
+  );
+}
+
+
+================================================================================
+FILE: apps\web\app\(learner)\dashboard\page.tsx
+================================================================================
+"use client";
+
+import Link from "next/link";
+import Image from "next/image";
+import { Progress, Button, Typography } from "antd";
+import {
+  LayoutGrid,
+  GraduationCap,
+  Heart,
+  Settings,
+  HelpCircle,
+  Search,
+  Bell,
+  Sparkles,
+  Calendar,
+  BookOpen,
+  Award,
+  Timer,
+  Star,
+  ArrowRight,
+  Bookmark,
+} from "lucide-react";
+
+const { Title, Text } = Typography;
+
+// TODO: replace with useCourses() / a future useLearnerDashboard() hook from @saachi/api-client
+const continueLearning = {
+  track: "Generative AI Track",
+  title: "Prompt Engineering Masterclass",
+  description: "Master the art of crafting precise instructions for large language models...",
+  progress: 45,
+  image: "https://images.unsplash.com/photo-1677442136019-21780ecad995?auto=format&fit=crop&w=600&q=80",
+  href: "/courses/prompt-engineering-masterclass/learn",
+};
+
+const upcomingSession = {
+  title: "1:1 Mentorship",
+  mentorName: "Dr. Sarah Jenkins",
+  mentorAvatar: "https://i.pravatar.cc/96?img=13",
+  sessionTitle: "Model Fine-Tuning Review",
+  sessionTime: "Tomorrow, 10:00 AM EST",
+};
+
+const stats = [
+  { icon: BookOpen, label: "Active Courses", value: "3", tint: "primaryTint" as const },
+  { icon: Award, label: "Certificates Earned", value: "12", tint: "successTint" as const },
+  { icon: Timer, label: "Learning Hours", value: "148", tint: "surfaceAlt" as const },
+];
+
+interface RecommendedCourse {
+  id: string;
+  category: string;
+  title: string;
+  provider: string;
+  level: string;
+  rating: number;
+  image: string;
+}
+
+const recommended: RecommendedCourse[] = [
+  {
+    id: "r1",
+    category: "Data Science",
+    title: "Applied Machine Learning Algorithms",
+    provider: "Stanford Online",
+    level: "Advanced",
+    rating: 4.9,
+    image: "https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?auto=format&fit=crop&w=600&q=80",
+  },
+  {
+    id: "r2",
+    category: "AI Ethics",
+    title: "Responsible AI Implementation",
+    provider: "Google Cloud",
+    level: "Intermediate",
+    rating: 4.8,
+    image: "https://images.unsplash.com/photo-1620712943543-bcc4688e7485?auto=format&fit=crop&w=600&q=80",
+  },
+  {
+    id: "r3",
+    category: "Cloud Architecture",
+    title: "Deploying LLMs at Scale",
+    provider: "AWS Training",
+    level: "Advanced",
+    rating: 4.7,
+    image: "https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&w=600&q=80",
+  },
+];
+
+const navItems = [
+  { icon: LayoutGrid, label: "Dashboard", href: "/dashboard" },
+  { icon: GraduationCap, label: "My Courses", href: "/dashboard/my-courses" },
+  { icon: Heart, label: "Wishlist", href: "/dashboard/wishlist" },
+  { icon: Settings, label: "Settings", href: "/dashboard/settings" },
+];
+
+export default function LearnerDashboardPage() {
+  return (
+    <div className="flex min-h-screen bg-[var(--token-color-bg)]">
+      {/* Sidebar */}
+      <aside className="fixed inset-y-0 left-0 hidden w-72 flex-col border-r border-[var(--token-color-border)] bg-[var(--token-color-surfaceAlt)] lg:flex">
+        <div className="flex items-center gap-4 border-b border-[var(--token-color-border)]/30 p-6">
+          <span className="relative block h-10 w-10 shrink-0 overflow-hidden rounded-full ring-1 ring-[var(--token-color-border)]/50">
+            <Image src="https://i.pravatar.cc/80?img=47" alt="Learner avatar" fill sizes="40px" className="object-cover" />
+          </span>
+          <div className="flex flex-col">
+            <span className="font-bold" style={{ color: "var(--token-color-ink)", fontSize: "var(--token-font-size-lg)" }}>
+              Learner Portal
+            </span>
+            <span style={{ color: "var(--token-color-inkSoft)", fontSize: "var(--token-font-size-xs)" }}>
+              Manage your skills
+            </span>
+          </div>
+        </div>
+
+        <nav className="flex flex-1 flex-col gap-1 py-4">
+          {navItems.map(({ icon: Icon, label, href }) => {
+            const isActive = label === "Dashboard";
+            return (
+              <Link
+                key={label}
+                href={href}
+                className="flex items-center gap-4 border-l-4 px-4 py-3 text-sm font-semibold tracking-wide transition"
+                style={{
+                  borderColor: isActive ? "var(--token-color-primary)" : "transparent",
+                  backgroundColor: isActive ? "var(--token-color-primaryTint)" : "transparent",
+                  color: isActive ? "var(--token-color-primary)" : "var(--token-color-inkSoft)",
+                }}
+              >
+                <Icon size={18} />
+                {label}
+              </Link>
+            );
+          })}
+        </nav>
+
+        <div className="border-t border-[var(--token-color-border)]/30 p-4">
+          <Link
+            href="/support"
+            className="flex items-center gap-4 rounded-lg px-4 py-3 text-sm font-semibold tracking-wide text-[var(--token-color-inkSoft)] hover:bg-[var(--token-color-surface)]"
+          >
+            <HelpCircle size={18} />
+            Help Center
+          </Link>
+        </div>
+      </aside>
+
+      {/* Main content */}
+      <main className="w-full lg:pl-72">
+        <div className="mx-auto flex max-w-[1100px] flex-col gap-10 p-12">
+          {/* Welcome section */}
+          <div className="flex items-end justify-between">
+            <div className="flex flex-col gap-1.5">
+              <Title level={1} style={{ margin: 0, color: "var(--token-color-ink)" }}>
+                Welcome back, Alex.
+              </Title>
+              <Text style={{ color: "var(--token-color-inkSoft)", fontSize: "var(--token-font-size-lg)" }}>
+                Ready to pick up where you left off?
+              </Text>
+            </div>
+
+            <div className="flex items-center gap-2">
+              <button
+                aria-label="Search"
+                className="flex h-10 w-10 items-center justify-center rounded-full bg-[var(--token-color-surface)] shadow-[var(--token-shadow-md)]"
+              >
+                <Search size={18} color="var(--token-color-inkSoft)" />
+              </button>
+              <button
+                aria-label="Notifications"
+                className="relative flex h-10 w-10 items-center justify-center rounded-full bg-[var(--token-color-surface)] shadow-[var(--token-shadow-md)]"
+              >
+                <Bell size={18} color="var(--token-color-inkSoft)" />
+                <span
+                  className="absolute right-2 top-2 block h-2 w-2 rounded-full"
+                  style={{ backgroundColor: "var(--token-color-notificationDot)" }}
+                />
+              </button>
+            </div>
+          </div>
+
+          {/* Bento: continue learning + mentorship */}
+          <div className="grid grid-cols-1 gap-6 xl:grid-cols-12">
+            {/* Continue learning (spans 8) */}
+            <div className="flex overflow-hidden rounded-xl border bg-[var(--token-color-surface)] shadow-[var(--token-shadow-md)] xl:col-span-8"
+              style={{ borderColor: "var(--token-color-border)" }}
+            >
+              <div className="relative hidden w-60 shrink-0 bg-[var(--token-color-surfaceAlt)] sm:block">
+                <Image src={continueLearning.image} alt={continueLearning.title} fill sizes="240px" className="object-cover" />
+                <span className="absolute left-4 top-4 flex items-center gap-1 rounded-full bg-[var(--token-color-surface)]/90 px-3 pb-1 pt-[3px] text-xs font-medium text-[var(--token-color-primary)] shadow-[var(--token-shadow-sm)] backdrop-blur-[2px]">
+                  <Sparkles size={12} />
+                  In Progress
+                </span>
+              </div>
+
+              <div className="flex flex-1 flex-col justify-between p-6">
+                <div className="flex flex-col gap-2">
+                  <div className="flex items-center gap-2">
+                    <Sparkles size={12} color="var(--token-color-inkSoft)" />
+                    <span style={{ color: "var(--token-color-inkSoft)", fontSize: "var(--token-font-size-xs)" }}>
+                      {continueLearning.track}
+                    </span>
+                  </div>
+                  <Title level={3} style={{ margin: 0, color: "var(--token-color-ink)" }}>
+                    {continueLearning.title}
+                  </Title>
+                  <Text style={{ color: "var(--token-color-inkSoft)", fontSize: "var(--token-font-size-base)" }}>
+                    {continueLearning.description}
+                  </Text>
+                </div>
+
+                <div className="flex flex-col gap-3 pt-6">
+                  <div className="flex items-center justify-between">
+                    <span style={{ color: "var(--token-color-inkSoft)", fontSize: "var(--token-font-size-xs)" }}>
+                      Course Progress
+                    </span>
+                    <span
+                      className="font-bold"
+                      style={{ color: "var(--token-color-primary)", fontSize: "var(--token-font-size-xs)" }}
+                    >
+                      {continueLearning.progress}%
+                    </span>
+                  </div>
+                  <Progress percent={continueLearning.progress} showInfo={false} strokeColor="var(--token-color-primary)" />
+                  <Link href={continueLearning.href}>
+                    <Button type="primary" icon={<ArrowRight size={12} />} iconPosition="end">
+                      Resume Learning
+                    </Button>
+                  </Link>
+                </div>
+              </div>
+            </div>
+
+            {/* Mentorship (spans 4) */}
+            <div className="relative flex flex-col justify-between overflow-hidden rounded-xl border bg-[var(--token-color-surface)] p-6 shadow-[var(--token-shadow-md)] xl:col-span-4"
+              style={{ borderColor: "var(--token-color-border)" }}
+            >
+              <div className="pointer-events-none absolute -right-8 -top-8 h-32 w-32 rounded-bl-full bg-[var(--token-color-primaryTint)]/30" />
+
+              <div className="relative flex flex-col gap-1 pb-6">
+                <span className="flex w-fit items-center gap-2 rounded-full bg-[var(--token-color-primaryTint)] px-3 py-1 text-xs font-medium text-[var(--token-color-primary)]">
+                  <Calendar size={14} />
+                  Upcoming Session
+                </span>
+
+                <Title level={3} style={{ margin: 0, paddingTop: 12, color: "var(--token-color-ink)" }}>
+                  {upcomingSession.title}
+                </Title>
+                <Text style={{ color: "var(--token-color-inkSoft)", fontSize: "var(--token-font-size-base)", paddingBottom: 12 }}>
+                  with {upcomingSession.mentorName}
+                </Text>
+
+                <div className="flex items-start gap-4 rounded-lg border bg-[var(--token-color-bg)] p-4"
+                  style={{ borderColor: "var(--token-color-border)" }}
+                >
+                  <span className="relative block h-12 w-12 shrink-0 overflow-hidden rounded-full">
+                    <Image src={upcomingSession.mentorAvatar} alt={upcomingSession.mentorName} fill sizes="48px" className="object-cover" />
+                  </span>
+                  <div className="flex flex-col">
+                    <span
+                      className="font-semibold"
+                      style={{ color: "var(--token-color-ink)", fontSize: "var(--token-font-size-sm)" }}
+                    >
+                      {upcomingSession.sessionTitle}
+                    </span>
+                    <span className="flex items-center gap-1" style={{ color: "var(--token-color-inkSoft)", fontSize: "var(--token-font-size-xs)" }}>
+                      <Timer size={12} />
+                      {upcomingSession.sessionTime}
+                    </span>
+                  </div>
+                </div>
+              </div>
+
+              <Button block>Join Meeting Room</Button>
+            </div>
+          </div>
+
+          {/* Quick stats */}
+          <div className="grid grid-cols-1 gap-6 sm:grid-cols-3">
+            {stats.map(({ icon: Icon, label, value, tint }) => (
+              <div
+                key={label}
+                className="flex items-center gap-6 rounded-xl border bg-[var(--token-color-surface)] p-4 shadow-[var(--token-shadow-md)]"
+                style={{ borderColor: "var(--token-color-border)" }}
+              >
+                <span
+                  className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full"
+                  style={{ backgroundColor: `var(--token-color-${tint})` }}
+                >
+                  <Icon size={20} color="var(--token-color-primary)" />
+                </span>
+                <div className="flex flex-col">
+                  <span style={{ color: "var(--token-color-inkSoft)", fontSize: "var(--token-font-size-xs)" }}>
+                    {label}
+                  </span>
+                  <span className="font-bold" style={{ color: "var(--token-color-ink)", fontSize: "var(--token-font-size-3xl)" }}>
+                    {value}
+                  </span>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {/* Recommended for you */}
+          <div className="flex flex-col gap-6">
+            <div className="flex items-center justify-between">
+              <Title level={2} style={{ margin: 0, color: "var(--token-color-ink)" }}>
+                Recommended for You
+              </Title>
+              <Link
+                href="/courses"
+                className="flex items-center gap-1 text-sm font-semibold tracking-wide text-[var(--token-color-primary)]"
+              >
+                View All
+                <ArrowRight size={11} />
+              </Link>
+            </div>
+
+            <div className="flex gap-6 overflow-x-auto pb-4">
+              {recommended.map((course) => (
+                <RecommendedCard key={course.id} course={course} />
+              ))}
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+  );
+}
+
+function RecommendedCard({ course }: { course: RecommendedCourse }) {
+  return (
+    <article className="flex w-72 shrink-0 flex-col overflow-hidden rounded-xl border bg-[var(--token-color-surface)] shadow-[var(--token-shadow-md)]"
+      style={{ borderColor: "var(--token-color-border)" }}
+    >
+      <div className="relative h-36 w-full bg-[var(--token-color-surfaceAlt)]">
+        <Image src={course.image} alt={course.title} fill sizes="288px" className="object-cover" />
+        <span className="absolute right-2 top-2 flex items-center gap-1 rounded-sm bg-[var(--token-color-surface)]/90 px-2 pb-1 pt-[3px] text-xs font-bold text-[var(--token-color-ink)] shadow-[var(--token-shadow-sm)]">
+          {course.rating}
+          <Star size={10} color="var(--token-color-warning)" fill="var(--token-color-warning)" />
+        </span>
+      </div>
+
+      <div className="flex flex-1 flex-col justify-between gap-2 p-4">
+        <div className="flex flex-col gap-1">
+          <span style={{ color: "var(--token-color-primary)", fontSize: "var(--token-font-size-xs)" }}>
+            {course.category}
+          </span>
+          <h4 className="line-clamp-2 text-lg font-semibold leading-6" style={{ color: "var(--token-color-ink)" }}>
+            {course.title}
+          </h4>
+          <span style={{ color: "var(--token-color-inkSoft)", fontSize: "var(--token-font-size-xs)" }}>
+            {course.provider}
+          </span>
+        </div>
+
+        <div className="flex items-center justify-between border-t pt-4" style={{ borderColor: "var(--token-color-border)" }}>
+          <span className="font-bold tracking-wide" style={{ color: "var(--token-color-ink)", fontSize: "var(--token-font-size-sm)" }}>
+            {course.level}
+          </span>
+          <button aria-label="Save course" className="text-[var(--token-color-textMuted)] hover:text-[var(--token-color-primary)]">
+            <Bookmark size={16} />
+          </button>
+        </div>
+      </div>
+    </article>
+  );
+}
+
+
+================================================================================
+FILE: apps\web\app\(marketing)\cart\page.tsx
+================================================================================
+"use client";
+
+import { useMemo, useState } from "react";
+import { CartHeader } from "@/components/cart/CartHeader";
+import { CartItemCard, type CartItem } from "@/components/cart/CartItemCard";
+import { OrderSummary } from "@/components/cart/OrderSummary";
+import { DetailFooter } from "@/components/course-detail/DetailFooter";
+
+// TODO: replace with useCart() hook from @saachi/api-client
+const initialItems: CartItem[] = [
+  {
+    id: "c1",
+    title: "Advanced Machine Learning Algorithms for Predictive Analytics",
+    instructor: "Dr. Emily Chen, Lead Data Scientist",
+    price: 149.99,
+    rating: 4.8,
+    reviews: "2.4k",
+    badge: "Bestseller",
+    image:
+      "https://images.unsplash.com/photo-1620712943543-bcc4688e7485?auto=format&fit=crop&w=400&q=80",
+  },
+  {
+    id: "c2",
+    title: "Full-Stack React & Node.js Masterclass: Zero to Deployment",
+    instructor: "Marcus Rodriguez, Senior Engineer",
+    price: 89.5,
+    rating: 4.6,
+    reviews: "1.1k",
+    image:
+      "https://images.unsplash.com/photo-1517694712202-14dd9538aa97?auto=format&fit=crop&w=400&q=80",
+  },
+];
+
+export default function CartPage() {
+  const [items, setItems] = useState<CartItem[]>(initialItems);
+
+  const subtotal = useMemo(
+    () => items.reduce((sum, item) => sum + item.price, 0),
+    [items]
+  );
+
+  function handleRemove(id: string) {
+    setItems((prev) => prev.filter((item) => item.id !== id));
+  }
+
+  function handleSaveForLater(id: string) {
+    // TODO: wire to wishlist/saved-items API (packages/api-client)
+    console.log("save for later", id);
+  }
+
+  return (
+    <div className="flex min-h-screen flex-col bg-[var(--token-color-bg)]">
+      <CartHeader cartCount={items.length} />
+
+      <main className="mx-auto flex w-full max-w-[1280px] flex-1 flex-col gap-6 px-6 pb-32 pt-10">
+        <h1
+          className="text-3xl font-bold leading-10"
+          style={{ color: "var(--token-color-ink)" }}
+        >
+          Shopping Cart
+        </h1>
+
+        {items.length === 0 ? (
+          <EmptyCart />
+        ) : (
+          <div className="grid grid-cols-1 gap-8 lg:grid-cols-3">
+            <div className="flex flex-col gap-4 lg:col-span-2">
+              <p style={{ color: "var(--token-color-inkSoft)" }}>
+                {items.length} {items.length === 1 ? "Course" : "Courses"} in Cart
+              </p>
+
+              {items.map((item) => (
+                <CartItemCard
+                  key={item.id}
+                  item={item}
+                  onRemove={handleRemove}
+                  onSaveForLater={handleSaveForLater}
+                />
+              ))}
+            </div>
+
+            <div className="pb-10">
+              <OrderSummary subtotal={subtotal} />
+            </div>
+          </div>
+        )}
+      </main>
+
+      <DetailFooter />
+    </div>
+  );
+}
+
+function EmptyCart() {
+  return (
+    <div
+      className="flex flex-col items-center gap-2 rounded-xl border bg-[var(--token-color-surface)] py-20 text-center"
+      style={{ borderColor: "var(--token-color-border)" }}
+    >
+      <p className="text-lg font-semibold" style={{ color: "var(--token-color-ink)" }}>
+        Your cart is empty
+      </p>
+      <p style={{ color: "var(--token-color-inkSoft)" }}>
+        Browse the marketplace to find your next course.
+      </p>
+    </div>
+  );
+}
+
 
 
 ================================================================================
@@ -826,6 +2167,12 @@ export default function HomePage() {
 
 
 ================================================================================
+FILE: apps\web\app\courses\[slug]\learn\page.tsx
+================================================================================
+!! ERROR reading file: A parameter cannot be found that matches parameter name 'Raw'.
+
+
+================================================================================
 FILE: apps\web\app\globals.css
 ================================================================================
 @import "tailwindcss";
@@ -929,6 +2276,322 @@ export default function NotFound() {
     </div>
   );
 }
+
+
+================================================================================
+FILE: apps\web\components\cart\CartHeader.tsx
+================================================================================
+"use client";
+
+import Link from "next/link";
+import { Search, ShoppingCart, Bell } from "lucide-react";
+import { Button } from "antd";
+
+interface CartHeaderProps {
+  cartCount: number;
+}
+
+export function CartHeader({ cartCount }: CartHeaderProps) {
+  return (
+    <header className="sticky top-0 z-50 w-full bg-[var(--token-color-bg)] shadow-[var(--token-shadow-sm)]">
+      <div className="mx-auto flex h-16 max-w-[1280px] items-center justify-between px-6">
+        <div className="flex items-center gap-6">
+          <Link
+            href="/"
+            className="text-2xl font-black text-[var(--token-color-primary)]"
+          >
+            Saachi AI
+          </Link>
+
+          <nav className="flex items-center gap-4">
+            <Link
+              href="/courses"
+              className="text-sm font-semibold tracking-wide text-[var(--token-color-inkSoft)] hover:text-[var(--token-color-primary)]"
+            >
+              Marketplace
+            </Link>
+            <Link
+              href="/categories"
+              className="text-sm font-semibold tracking-wide text-[var(--token-color-inkSoft)] hover:text-[var(--token-color-primary)]"
+            >
+              Categories
+            </Link>
+          </nav>
+        </div>
+
+        <div className="flex items-center gap-6">
+          <button
+            type="button"
+            aria-label="Search"
+            className="text-[var(--token-color-inkSoft)] hover:text-[var(--token-color-primary)]"
+          >
+            <Search size={18} />
+          </button>
+
+          <div className="flex items-center gap-4">
+            <Link
+              href="/cart"
+              className="relative flex items-center text-[var(--token-color-primary)]"
+              aria-label="Shopping cart"
+            >
+              <ShoppingCart size={20} />
+              {cartCount > 0 && (
+                <span
+                  className="absolute -right-2 -top-1 flex h-4 w-4 items-center justify-center rounded-full text-[10px] font-bold text-white"
+                  style={{ backgroundColor: "var(--token-color-error)" }}
+                >
+                  {cartCount}
+                </span>
+              )}
+            </Link>
+
+            <button
+              type="button"
+              aria-label="Notifications"
+              className="text-[var(--token-color-inkSoft)] hover:text-[var(--token-color-primary)]"
+            >
+              <Bell size={18} />
+            </button>
+
+            <Link href="/login">
+              <Button type="primary">Sign In</Button>
+            </Link>
+          </div>
+        </div>
+      </div>
+    </header>
+  );
+}
+
+
+
+================================================================================
+FILE: apps\web\components\cart\CartItemCard.tsx
+================================================================================
+import Image from "next/image";
+import { Trash2, Bookmark, Star } from "lucide-react";
+
+export interface CartItem {
+  id: string;
+  title: string;
+  instructor: string;
+  price: number;
+  rating: number;
+  reviews: string;
+  image: string;
+  badge?: string;
+}
+
+interface CartItemCardProps {
+  item: CartItem;
+  onRemove: (id: string) => void;
+  onSaveForLater?: (id: string) => void;
+}
+
+export function CartItemCard({ item, onRemove, onSaveForLater }: CartItemCardProps) {
+  return (
+    <div
+      className="flex w-full gap-6 rounded-xl border bg-[var(--token-color-surface)] p-6 shadow-[var(--token-shadow-md)]"
+      style={{ borderColor: "var(--token-color-border)" }}
+    >
+      <div className="relative h-24 w-40 shrink-0 overflow-hidden rounded-lg bg-[var(--token-color-surfaceAlt)]">
+        <Image
+          src={item.image}
+          alt={item.title}
+          fill
+          sizes="160px"
+          className="object-cover"
+        />
+      </div>
+
+      <div className="flex flex-1 flex-col justify-between">
+        <div className="flex flex-col gap-1.5 pb-4">
+          <div className="flex items-start justify-between gap-4">
+            <h3
+              className="line-clamp-2 text-lg font-semibold leading-7"
+              style={{ color: "var(--token-color-ink)" }}
+            >
+              {item.title}
+            </h3>
+            <span
+              className="shrink-0 text-2xl font-bold"
+              style={{ color: "var(--token-color-primary)" }}
+            >
+              ${item.price.toFixed(2)}
+            </span>
+          </div>
+
+          <p
+            className="text-sm font-semibold tracking-wide"
+            style={{ color: "var(--token-color-inkSoft)" }}
+          >
+            By {item.instructor}
+          </p>
+
+          <div className="flex items-center gap-2 pt-2">
+            {item.badge && (
+              <span
+                className="rounded-sm px-2 pb-1 pt-[3px] text-xs font-medium"
+                style={{
+                  backgroundColor: "var(--token-color-primaryTint)",
+                  color: "var(--token-color-primary)",
+                }}
+              >
+                {item.badge}
+              </span>
+            )}
+            <span className="flex items-center gap-1">
+              <Star size={14} color="var(--token-color-warning)" fill="var(--token-color-warning)" />
+              <span
+                className="text-xs font-medium"
+                style={{ color: "var(--token-color-inkSoft)" }}
+              >
+                {item.rating} ({item.reviews} reviews)
+              </span>
+            </span>
+          </div>
+        </div>
+
+        <div
+          className="flex items-center gap-4 border-t pt-3"
+          style={{ borderColor: "var(--token-color-border)" }}
+        >
+          <button
+            type="button"
+            onClick={() => onRemove(item.id)}
+            className="flex items-center gap-1 text-xs font-medium transition hover:text-[var(--token-color-error)]"
+            style={{ color: "var(--token-color-inkSoft)" }}
+          >
+            <Trash2 size={12} />
+            Remove
+          </button>
+          <button
+            type="button"
+            onClick={() => onSaveForLater?.(item.id)}
+            className="flex items-center gap-1 text-xs font-medium"
+            style={{ color: "var(--token-color-primary)" }}
+          >
+            <Bookmark size={12} />
+            Save for Later
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+
+
+================================================================================
+FILE: apps\web\components\cart\OrderSummary.tsx
+================================================================================
+"use client";
+
+import { useState } from "react";
+import { Button, Input } from "antd";
+import { ArrowRight } from "lucide-react";
+
+interface OrderSummaryProps {
+  subtotal: number;
+  /** Decimal tax rate, e.g. 0.08 for 8%. Swap for a real quote from the
+   * checkout/tax API once available -- kept as a prop so it's never
+   * hardcoded inside this component. */
+  taxRate?: number;
+}
+
+export function OrderSummary({ subtotal, taxRate = 0.08 }: OrderSummaryProps) {
+  const [coupon, setCoupon] = useState("");
+  const tax = subtotal * taxRate;
+  const total = subtotal + tax;
+
+  function handleApplyCoupon() {
+    // TODO: wire to coupon validation API (packages/api-client)
+    console.log("apply coupon", coupon);
+  }
+
+  function handleCheckout() {
+    // TODO: wire to checkout flow (packages/api-client)
+    console.log("proceed to checkout");
+  }
+
+  return (
+    <div
+      className="flex flex-col gap-1.5 rounded-xl border bg-[var(--token-color-surface)] p-6 shadow-[var(--token-shadow-md)]"
+      style={{ borderColor: "var(--token-color-border)" }}
+    >
+      <div className="border-b pb-2" style={{ borderColor: "var(--token-color-border)" }}>
+        <h2 className="text-2xl font-semibold" style={{ color: "var(--token-color-ink)" }}>
+          Order Summary
+        </h2>
+      </div>
+
+      <div className="flex items-center justify-between pb-2 pt-4">
+        <span style={{ color: "var(--token-color-inkSoft)" }}>Subtotal</span>
+        <span className="font-semibold" style={{ color: "var(--token-color-ink)" }}>
+          ${subtotal.toFixed(2)}
+        </span>
+      </div>
+
+      <div
+        className="flex items-center justify-between border-b pb-4"
+        style={{ borderColor: "var(--token-color-border)" }}
+      >
+        <span style={{ color: "var(--token-color-inkSoft)" }}>Estimated Tax</span>
+        <span className="font-semibold" style={{ color: "var(--token-color-ink)" }}>
+          ${tax.toFixed(2)}
+        </span>
+      </div>
+
+      <div className="flex items-center justify-between pt-4">
+        <span className="text-lg font-bold" style={{ color: "var(--token-color-ink)" }}>
+          Total
+        </span>
+        <span className="text-3xl font-black" style={{ color: "var(--token-color-primary)" }}>
+          ${total.toFixed(2)}
+        </span>
+      </div>
+
+      <div className="flex flex-col gap-2 py-4">
+        <label
+          className="text-sm font-semibold tracking-wide"
+          style={{ color: "var(--token-color-inkSoft)" }}
+        >
+          Gift Card or Discount Code
+        </label>
+        <div className="flex gap-2">
+          <Input
+            value={coupon}
+            onChange={(e) => setCoupon(e.target.value)}
+            placeholder="Enter code"
+            size="large"
+          />
+          <Button size="large" onClick={handleApplyCoupon}>
+            Apply
+          </Button>
+        </div>
+      </div>
+
+      <Button
+        type="primary"
+        block
+        size="large"
+        icon={<ArrowRight size={12} />}
+        iconPosition="end"
+        onClick={handleCheckout}
+      >
+        Proceed to Checkout
+      </Button>
+
+      <p
+        className="pt-2 text-center text-xs font-medium"
+        style={{ color: "var(--token-color-inkSoft)" }}
+      >
+        30-Day Money-Back Guarantee
+      </p>
+    </div>
+  );
+}
+
 
 
 ================================================================================
@@ -3655,10 +5318,13 @@ export const tokens = {
     primary: "#3525CD",       // indigo-700 (buttons, links, active states)
     primaryHover: "#2A1DA3",
     primaryTint: "#E0E7FF",   // indigo-100 (badges, soft backgrounds)
+    primaryDark: "#1E1B4B",    // deep indigo/violet (gradient end, dark panels)
+    decorativeCyan: "#A5F3FC", // cyan-200 (soft decorative blur accents)
 
     // Secondary accent
     success: "#005338",       // emerald-900 (ratings, success states)
     successTint: "#D1FAE5",
+    completedBadgeBg: "#D1FAE5", // emerald-100 (Completed pill on course cards)
 
     // Neutrals
     ink: "#18181B",           // zinc-900 (headings)
@@ -3669,6 +5335,8 @@ export const tokens = {
     bg: "#F8FAFC",            // slate-50 (page background)
     surface: "#FFFFFF",       // card background
     surfaceAlt: "#F4F4F5",    // zinc-100 (icon backgrounds)
+    playerBg: "#0F172A",       // slate-900 (video stage background)
+    completedGreen: "#4EDEA3", // bright mint (lesson-completed ticks)
 
     // Borders
     border: "#CBD5E1",        // slate-300
@@ -3676,6 +5344,7 @@ export const tokens = {
 
     // Status
     error: "#DC2626",
+    notificationDot: "#BA1A1A", // red badge dot on the notification bell
     errorTint: "#FEE2E2",
     warning: "#D97706",
     warningTint: "#FEF3C7"
