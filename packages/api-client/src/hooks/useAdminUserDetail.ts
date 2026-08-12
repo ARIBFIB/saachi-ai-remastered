@@ -66,7 +66,7 @@ async function fetchUserDetail(id: string): Promise<UserDetailRecord> {
   return userDetailStore[id];
 }
 
-export function useAdminUserDetail(id: string) {
+export function useAdminUserDetailPage(id: string) {
   return useQuery({
     queryKey: ["admin", "user-detail", id],
     queryFn: () => fetchUserDetail(id),

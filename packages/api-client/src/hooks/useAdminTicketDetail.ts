@@ -61,7 +61,7 @@ async function fetchTicketDetail(id: string): Promise<TicketDetailRecord> {
   return ticketStore[id];
 }
 
-export function useAdminTicketDetail(id: string) {
+export function useAdminTicketDetailPage(id: string) {
   return useQuery({
     queryKey: ["admin", "ticket-detail", id],
     queryFn: () => fetchTicketDetail(id),
