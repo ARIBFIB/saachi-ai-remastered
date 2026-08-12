@@ -45,7 +45,7 @@ const orders: OrderRecord[] = [
     orderId: "ORD-8923-XZA",
     status: "completed",
     amount: 1299.0,
-    paymentMethod: "Visa â€¢â€¢â€¢â€¢ 4242",
+    paymentMethod: "Visa •••• 4242",
   },
   {
     key: "o2",
@@ -65,7 +65,7 @@ const orders: OrderRecord[] = [
     orderId: "SUB-1109-MMM",
     status: "recurring",
     amount: 299.0,
-    paymentMethod: "Visa â€¢â€¢â€¢â€¢ 4242",
+    paymentMethod: "Visa •••• 4242",
   },
 ];
 

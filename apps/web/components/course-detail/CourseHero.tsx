@@ -53,7 +53,7 @@ export function CourseHero({
               <span className="text-base font-bold text-emerald-900">{rating}</span>
               <span className="pl-1 text-base text-gray-700">({ratingsCount} ratings)</span>
             </div>
-            <span className="text-gray-700">â€¢</span>
+            <span className="text-gray-700">•</span>
             <span className="text-base text-gray-700">{studentsCount} Students Enrolled</span>
           </div>
 

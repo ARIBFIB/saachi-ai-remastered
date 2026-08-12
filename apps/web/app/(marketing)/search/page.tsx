@@ -1,4 +1,4 @@
-import { Header } from "@/components/marketing/Header";
+﻿import { Header } from "@/components/marketing/Header";
 import { CompactFooter } from "@/components/marketing/CompactFooter";
 import { ResultFilterTabs, type FilterTab } from "@/components/search/ResultFilterTabs";
 import { FeaturedResultCard } from "@/components/search/FeaturedResultCard";
@@ -42,8 +42,9 @@ interface SearchPageProps {
   searchParams: { q?: string };
 }
 
-export default function SearchResultsPage({ searchParams }: SearchPageProps) {
-  const query = searchParams.q ?? "Machine Learning";
+export default async function SearchResultsPage({ searchParams }: SearchPageProps) {
+  const resolvedParams = await searchParams;
+  const query = resolvedParams.q ?? "Machine Learning";
 
   return (
     <div className="flex min-h-screen flex-col bg-[var(--token-color-bg)]">

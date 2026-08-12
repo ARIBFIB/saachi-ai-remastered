@@ -5,10 +5,10 @@ const nextConfig = {
   reactStrictMode: true,
   transpilePackages: ["@saachi/ui", "@saachi/api-client", "@saachi/utils", "@saachi/store"],
   typescript: {
-    ignoreBuildErrors: true
+    ignoreBuildErrors: false // re-enabled by Fix-SAI2-Issues.ps1
   },
   eslint: {
-    ignoreDuringBuilds: true
+    ignoreDuringBuilds: false // re-enabled by Fix-SAI2-Issues.ps1
   },
   images: {
     remotePatterns: [

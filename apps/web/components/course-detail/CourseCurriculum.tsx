@@ -9,8 +9,8 @@ interface Module {
 }
 
 const modules: Module[] = [
-  { title: "Module 1: Introduction to Large Language Models", meta: "3 lessons â€¢ 45 mins" },
-  { title: "Module 2: Anatomy of a Perfect Prompt", meta: "5 lessons â€¢ 1hr 20 mins" },
+  { title: "Module 1: Introduction to Large Language Models", meta: "3 lessons • 45 mins" },
+  { title: "Module 2: Anatomy of a Perfect Prompt", meta: "5 lessons • 1hr 20 mins" },
 ];
 
 function ModuleRow({ module }: { module: Module }) {

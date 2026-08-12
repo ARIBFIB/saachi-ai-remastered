@@ -11,7 +11,7 @@ export function DetailFooter() {
         <div className="flex flex-1 flex-col gap-4">
           <span className="text-base font-bold text-[#3525CD]">Saachi AI</span>
           <p className="text-base text-gray-700">
-            Â© {new Date().getFullYear()} Saachi AI Marketplace.
+            © {new Date().getFullYear()} Saachi AI Marketplace.
             <br />
             Empowering the future of skills.
           </p>

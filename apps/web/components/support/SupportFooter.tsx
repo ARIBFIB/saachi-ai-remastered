@@ -15,7 +15,7 @@ export function SupportFooter() {
         <div className="flex flex-col gap-1">
           <span className="text-base font-bold text-[var(--token-color-primary)]">Saachi AI</span>
           <p className="text-xs font-medium text-zinc-200">
-            Â© {new Date().getFullYear()} Saachi AI Marketplace. Empowering the future of skills.
+            © {new Date().getFullYear()} Saachi AI Marketplace. Empowering the future of skills.
           </p>
         </div>
 

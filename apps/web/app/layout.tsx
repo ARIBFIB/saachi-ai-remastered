@@ -1,10 +1,10 @@
-﻿import type { Metadata } from "next";
+import type { Metadata } from "next";
 import type { ReactNode } from "react";
 import { AntdProvider } from "@/lib/design-system";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Saachi AI â€” Master AI, Master the Future",
+  title: "Saachi AI — Master AI, Master the Future",
   description:
     "The world's leading AI-skills marketplace. Practical, expert-led artificial intelligence courses.",
 };

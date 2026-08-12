@@ -1,4 +1,4 @@
-﻿import Link from "next/link";
+import Link from "next/link";
 import { Zap, Globe, Share2 } from "lucide-react";
 
 const columns = [
@@ -70,7 +70,7 @@ export function Footer() {
 
       <div className="mx-auto flex max-w-[1280px] items-center justify-between border-t border-[#CBD5E1] px-6 py-6">
         <p className="text-xs font-medium text-[#3F3F46]">
-          Â© {new Date().getFullYear()} Saachi AI Marketplace. Empowering the
+          © {new Date().getFullYear()} Saachi AI Marketplace. Empowering the
           future of skills.
         </p>
         <div className="flex items-center gap-4 text-slate-600">

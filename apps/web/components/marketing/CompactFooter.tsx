@@ -1,4 +1,4 @@
-﻿import Link from "next/link";
+import Link from "next/link";
 
 const links = [
   { label: "About Us", href: "/about" },
@@ -28,7 +28,7 @@ export function CompactFooter() {
         </div>
 
         <p className="text-center text-base text-gray-700">
-          Â© {new Date().getFullYear()} Saachi AI Marketplace. Empowering the
+          © {new Date().getFullYear()} Saachi AI Marketplace. Empowering the
           future of skills.
         </p>
       </div>

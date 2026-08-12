@@ -1,10 +1,10 @@
-﻿import Link from "next/link";
+import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { CourseCard, type CourseCardProps } from "./CourseCard";
 
 const courses: CourseCardProps[] = [
   {
-    title: "AI Ethics & Responsibleâ€¦",
+    title: "AI Ethics & Responsible…",
     instructor: "Dr. Sarah Jenkins",
     rating: 4.9,
     reviews: "2.4k",
@@ -31,7 +31,7 @@ const courses: CourseCardProps[] = [
     image: "https://images.unsplash.com/photo-1550439062-609e1531270e?auto=format&fit=crop&w=600&q=80",
   },
   {
-    title: "LLM Ops & Deploymentâ€¦",
+    title: "LLM Ops & Deployment…",
     instructor: "David Kim, PhD",
     rating: 4.9,
     reviews: "940",

@@ -1,4 +1,4 @@
-﻿import { Header } from "@/components/marketing/Header";
+import { Header } from "@/components/marketing/Header";
 import { CompactFooter } from "@/components/marketing/CompactFooter";
 import { FilterSidebar } from "@/components/marketplace/FilterSidebar";
 import { SortDropdown } from "@/components/marketplace/SortDropdown";
@@ -22,7 +22,7 @@ const courses: MarketplaceCourseCardProps[] = [
       "https://images.unsplash.com/photo-1550439062-609e1531270e?auto=format&fit=crop&w=600&q=80",
   },
   {
-    title: "Deep Learning Specialization (Andrewâ€¦",
+    title: "Deep Learning Specialization (Andrew…",
     provider: "DeepLearning.AI",
     rating: 4.9,
     reviews: "89.1k",
@@ -34,7 +34,7 @@ const courses: MarketplaceCourseCardProps[] = [
       "https://images.unsplash.com/photo-1677442136019-21780ecad995?auto=format&fit=crop&w=600&q=80",
   },
   {
-    title: "Natural Language Processing withâ€¦",
+    title: "Natural Language Processing with…",
     provider: "Hugging Face",
     rating: 4.7,
     reviews: "2.3k",

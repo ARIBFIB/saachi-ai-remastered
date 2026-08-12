@@ -1,7 +1,7 @@
 ﻿================================================================================
 MODULE CODE EXPORT: Web
-Generated: 2026-08-13 01:34:34
-Total Files: 91
+Generated: 2026-08-13 02:08:22
+Total Files: 93
 ================================================================================
 
 
@@ -203,7 +203,7 @@ export default function LoginPage() {
                 id="password"
                 type="password"
                 required
-                placeholder="Ã¢â‚¬Â¢Ã¢â‚¬Â¢Ã¢â‚¬Â¢Ã¢â‚¬Â¢Ã¢â‚¬Â¢Ã¢â‚¬Â¢Ã¢â‚¬Â¢Ã¢â‚¬Â¢"
+                placeholder="â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢"
                 className="rounded-lg border border-slate-300 bg-slate-50 px-4 py-2.5 text-base text-zinc-900 placeholder:text-gray-500 focus:border-[#3525CD] focus:outline-none"
               />
             </div>
@@ -2671,7 +2671,7 @@ const orders: OrderRecord[] = [
     orderId: "ORD-8923-XZA",
     status: "completed",
     amount: 1299.0,
-    paymentMethod: "Visa Ã¢â‚¬Â¢Ã¢â‚¬Â¢Ã¢â‚¬Â¢Ã¢â‚¬Â¢ 4242",
+    paymentMethod: "Visa â€¢â€¢â€¢â€¢ 4242",
   },
   {
     key: "o2",
@@ -2691,7 +2691,7 @@ const orders: OrderRecord[] = [
     orderId: "SUB-1109-MMM",
     status: "recurring",
     amount: 299.0,
-    paymentMethod: "Visa Ã¢â‚¬Â¢Ã¢â‚¬Â¢Ã¢â‚¬Â¢Ã¢â‚¬Â¢ 4242",
+    paymentMethod: "Visa â€¢â€¢â€¢â€¢ 4242",
   },
 ];
 
@@ -5500,24 +5500,24 @@ const standardResults = [
   {
     title: "Practical ML for Product Managers",
     description: "Bridge the gap between business requirements and AI capabilities.",
-    meta: "8 Weeks Ã¢â‚¬Â¢ Intermediate",
-    price: "Ã‚Â£299",
+    meta: "8 Weeks â€¢ Intermediate",
+    price: "Â£299",
     image:
       "https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=600&q=80",
   },
   {
     title: "Computer Vision Fundamentals",
     description: "Implement image recognition systems from scratch using PyTorch.",
-    meta: "12 Weeks Ã¢â‚¬Â¢ Advanced",
-    price: "Ã‚Â£450",
+    meta: "12 Weeks â€¢ Advanced",
+    price: "Â£450",
     image:
       "https://images.unsplash.com/photo-1485827404703-89b55fcc595e?auto=format&fit=crop&w=600&q=80",
   },
   {
     title: "MLOps: Deploying Models",
     description: "Learn to scale and monitor machine learning pipelines in production.",
-    meta: "6 Weeks Ã¢â‚¬Â¢ Intermediate",
-    price: "Ã‚Â£199",
+    meta: "6 Weeks â€¢ Intermediate",
+    price: "Â£199",
     // no image -- design shows a placeholder icon tile for this card
   },
 ];
@@ -5526,8 +5526,9 @@ interface SearchPageProps {
   searchParams: { q?: string };
 }
 
-export default function SearchResultsPage({ searchParams }: SearchPageProps) {
-  const query = searchParams.q ?? "Machine Learning";
+export default async function SearchResultsPage({ searchParams }: SearchPageProps) {
+  const resolvedParams = await searchParams;
+  const query = resolvedParams.q ?? "Machine Learning";
 
   return (
     <div className="flex min-h-screen flex-col bg-[var(--token-color-bg)]">
@@ -5577,6 +5578,7 @@ export default function SearchResultsPage({ searchParams }: SearchPageProps) {
     </div>
   );
 }
+
 
 
 ================================================================================
@@ -6052,8 +6054,8 @@ interface Module {
 }
 
 const modules: Module[] = [
-  { title: "Module 1: Introduction to Large Language Models", meta: "3 lessons Ã¢â‚¬Â¢ 45 mins" },
-  { title: "Module 2: Anatomy of a Perfect Prompt", meta: "5 lessons Ã¢â‚¬Â¢ 1hr 20 mins" },
+  { title: "Module 1: Introduction to Large Language Models", meta: "3 lessons â€¢ 45 mins" },
+  { title: "Module 2: Anatomy of a Perfect Prompt", meta: "5 lessons â€¢ 1hr 20 mins" },
 ];
 
 function ModuleRow({ module }: { module: Module }) {
@@ -6161,7 +6163,7 @@ export function CourseHero({
               <span className="text-base font-bold text-emerald-900">{rating}</span>
               <span className="pl-1 text-base text-gray-700">({ratingsCount} ratings)</span>
             </div>
-            <span className="text-gray-700">Ã¢â‚¬Â¢</span>
+            <span className="text-gray-700">â€¢</span>
             <span className="text-base text-gray-700">{studentsCount} Students Enrolled</span>
           </div>
 
@@ -6218,7 +6220,7 @@ export function DetailFooter() {
         <div className="flex flex-1 flex-col gap-4">
           <span className="text-base font-bold text-[#3525CD]">Saachi AI</span>
           <p className="text-base text-gray-700">
-            Ã‚Â© {new Date().getFullYear()} Saachi AI Marketplace.
+            Â© {new Date().getFullYear()} Saachi AI Marketplace.
             <br />
             Empowering the future of skills.
           </p>
@@ -6384,6 +6386,79 @@ export function WhatYoullLearn() {
         ))}
       </div>
     </section>
+  );
+}
+
+
+
+================================================================================
+FILE: apps\web\components\dashboard\DashboardSidebar.tsx
+================================================================================
+"use client";
+
+// ============================================================================
+// DashboardSidebar.tsx
+// Shared learner-portal sidebar. Reads nav items from
+// lib/dashboard-nav-config.ts so every dashboard page renders the SAME
+// links in the SAME order. Replaces the per-page inline <aside> blocks.
+//
+// Migration: in each dashboard page, remove the local navItems array and
+// the inline <aside>...</aside> JSX, then render <DashboardSidebar /> in
+// its place (or better, move it once into
+// app/(learner)/dashboard/layout.tsx so it is not repeated at all).
+// ============================================================================
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { HelpCircle } from "lucide-react";
+import { dashboardNavItems } from "@/lib/dashboard-nav-config";
+
+export function DashboardSidebar() {
+  const pathname = usePathname();
+
+  return (
+    <aside className="fixed inset-y-0 left-0 hidden w-72 flex-col justify-between border-r border-[var(--token-color-border)] bg-[var(--token-color-surfaceAlt)] lg:flex">
+      <div className="flex flex-col">
+        <div className="flex flex-col gap-1.5 border-b border-[var(--token-color-border)] p-6">
+          <span className="text-2xl font-bold" style={{ color: "var(--token-color-ink)" }}>
+            Learner Portal
+          </span>
+          <span style={{ color: "var(--token-color-inkSoft)", fontSize: "var(--token-font-size-xs)" }}>
+            Manage your skills
+          </span>
+        </div>
+
+        <nav className="flex flex-1 flex-col gap-1 py-4">
+          {dashboardNavItems.map(({ icon: Icon, label, href }) => {
+            const isActive = pathname === href;
+            return (
+              <Link
+                key={href}
+                href={href}
+                className="flex h-12 items-center gap-4 border-l-4 pl-4 pr-6 text-sm font-semibold tracking-wide transition"
+                style={{
+                  borderColor: isActive ? "var(--token-color-primary)" : "transparent",
+                  backgroundColor: isActive ? "var(--token-color-primaryTint)" : "transparent",
+                  color: isActive ? "var(--token-color-primary)" : "var(--token-color-inkSoft)",
+                }}
+              >
+                <Icon size={18} />
+                {label}
+              </Link>
+            );
+          })}
+        </nav>
+      </div>
+
+      <div className="border-t border-[var(--token-color-border)] p-4">
+        <Link
+          href="/support"
+          className="flex h-12 items-center gap-4 rounded-lg pl-4 text-sm font-semibold tracking-wide text-[var(--token-color-inkSoft)] hover:bg-[var(--token-color-surface)]"
+        >
+          <HelpCircle size={18} />
+          Help Center
+        </Link>
+      </div>
+    </aside>
   );
 }
 
@@ -8570,7 +8645,7 @@ export function SupportFooter() {
         <div className="flex flex-col gap-1">
           <span className="text-base font-bold text-[var(--token-color-primary)]">Saachi AI</span>
           <p className="text-xs font-medium text-zinc-200">
-            Ã‚Â© {new Date().getFullYear()} Saachi AI Marketplace. Empowering the future of skills.
+            Â© {new Date().getFullYear()} Saachi AI Marketplace. Empowering the future of skills.
           </p>
         </div>
 
@@ -8887,6 +8962,49 @@ export type DesignTokens = typeof tokens;
 
 
 ================================================================================
+FILE: apps\web\lib\dashboard-nav-config.ts
+================================================================================
+// ============================================================================
+// dashboard-nav-config.ts
+// SINGLE SOURCE OF TRUTH for the learner dashboard sidebar nav.
+// Every dashboard page/layout should import `dashboardNavItems` from here
+// instead of redefining its own local `navItems` array. This file was
+// generated because multiple dashboard pages had drifted out of sync
+// (e.g. the Mentorship page was missing its own nav entry).
+//
+// To add a new dashboard route: add ONE entry here. Do not copy this
+// array into individual page files.
+// ============================================================================
+import type { LucideIcon } from "lucide-react";
+import {
+  LayoutGrid,
+  GraduationCap,
+  Award,
+  Users,
+  Heart,
+  Bell,
+  Settings,
+} from "lucide-react";
+
+export interface DashboardNavItem {
+  icon: LucideIcon;
+  label: string;
+  href: string;
+}
+
+export const dashboardNavItems: DashboardNavItem[] = [
+  { icon: LayoutGrid, label: "Dashboard", href: "/dashboard" },
+  { icon: GraduationCap, label: "My Courses", href: "/dashboard/my-courses" },
+  { icon: Award, label: "Certificates", href: "/dashboard/certificates" },
+  { icon: Users, label: "Mentorship", href: "/dashboard/mentorship" },
+  { icon: Heart, label: "Wishlist", href: "/dashboard/wishlist" },
+  { icon: Bell, label: "Notifications", href: "/dashboard/notifications" },
+  { icon: Settings, label: "Settings", href: "/dashboard/settings" },
+];
+
+
+
+================================================================================
 FILE: apps\web\public\animations\loading.json
 ================================================================================
 {"nm":"newScene","ddd":0,"h":600,"w":800,"meta":{"g":"@lottiefiles/toolkit-js 0.33.2"},"layers":[{"ty":0,"nm":"Komplet","sr":1,"st":-18,"op":15,"ip":0,"hd":false,"ddd":0,"bm":0,"hasMask":false,"ao":0,"ks":{"a":{"a":0,"k":[400,300,0]},"s":{"a":0,"k":[100,100,100]},"sk":{"a":0,"k":0},"p":{"a":0,"k":[400,300,0]},"r":{"a":0,"k":0},"sa":{"a":0,"k":0},"o":{"a":0,"k":100}},"ef":[],"w":800,"h":600,"refId":"comp_0","ind":1},{"ty":0,"nm":"Komplet","sr":1,"st":15,"op":33,"ip":15,"hd":false,"ddd":0,"bm":0,"hasMask":false,"ao":0,"ks":{"a":{"a":0,"k":[400,300,0]},"s":{"a":0,"k":[100,100,100]},"sk":{"a":0,"k":0},"p":{"a":0,"k":[400,300,0]},"r":{"a":0,"k":0},"sa":{"a":0,"k":0},"o":{"a":0,"k":100}},"ef":[],"w":800,"h":600,"refId":"comp_0","ind":2}],"v":"4.5.7","fr":25,"op":33,"ip":0,"assets":[{"nm":"","id":"comp_0","layers":[{"ty":3,"nm":"Null 1","sr":1,"st":0,"op":33,"ip":0,"hd":false,"ddd":0,"bm":0,"hasMask":false,"ao":0,"ks":{"a":{"a":0,"k":[0,0,0]},"s":{"a":0,"k":[200,200,100]},"sk":{"a":0,"k":0},"p":{"a":1,"k":[{"o":{"x":0.721,"y":0},"i":{"x":0.277,"y":1},"s":[460,304,0],"t":0,"ti":[20.3333339691162,1,0],"to":[-20.3333339691162,-1,0]},{"s":[338,298,0],"t":33}]},"r":{"a":1,"k":[{"o":{"x":0.73,"y":0},"i":{"x":0.268,"y":1},"s":[0],"t":0},{"s":[180],"t":33}]},"sa":{"a":0,"k":0},"o":{"a":0,"k":0}},"ef":[],"ind":1},{"ty":4,"nm":"Shape Layer 4","sr":1,"st":0,"op":33,"ip":0,"hd":false,"ddd":0,"bm":0,"hasMask":false,"ao":0,"ks":{"a":{"a":0,"k":[-99.5,-5.375,0]},"s":{"a":1,"k":[{"o":{"x":0.728,"y":0},"i":{"x":0.279,"y":1},"s":[75,75,100],"t":6},{"o":{"x":0.729,"y":0},"i":{"x":0.275,"y":1},"s":[150,150,100],"t":19},{"s":[75,75,100],"t":32}]},"sk":{"a":0,"k":0},"p":{"a":1,"k":[{"o":{"x":0.731,"y":0},"i":{"x":0.26,"y":1},"s":[14.5,-1.375,0],"t":6,"ti":[0,0,0],"to":[0,0,0]},{"o":{"x":0.716,"y":0},"i":{"x":0.267,"y":1},"s":[14.5,28.625,0],"t":19,"ti":[0,0,0],"to":[0,0,0]},{"s":[14.5,-1.375,0],"t":32}]},"r":{"a":0,"k":0},"sa":{"a":0,"k":0},"o":{"a":0,"k":100}},"ef":[],"shapes":[{"ty":"gr","bm":0,"hd":false,"mn":"ADBE Vector Group","nm":"Ellipse 1","np":3,"it":[{"ty":"el","bm":0,"hd":false,"mn":"ADBE Vector Shape - Ellipse","nm":"Ellipse Path 1","d":1,"p":{"a":0,"k":[0,0]},"s":{"a":0,"k":[20.969,20.969]}},{"ty":"st","bm":0,"hd":false,"mn":"ADBE Vector Graphic - Stroke","nm":"Stroke 1","lc":1,"lj":1,"ml":4,"o":{"a":0,"k":100},"w":{"a":0,"k":0},"c":{"a":0,"k":[0.902,0.8748,0.698,1]}},{"ty":"fl","bm":0,"hd":false,"mn":"ADBE Vector Graphic - Fill","nm":"Fill 1","c":{"a":1,"k":[{"o":{"x":0.167,"y":0.167},"i":{"x":0.833,"y":0.833},"s":[0.835,0.7457,0.165,1],"t":0},{"o":{"x":0.167,"y":0.167},"i":{"x":0.833,"y":0.833},"s":[0.902,0.8748,0.698,1],"t":17},{"s":[0.835,0.7457,0.165,1],"t":33}]},"r":2,"o":{"a":0,"k":100}},{"ty":"tr","a":{"a":0,"k":[0,0],"ix":1},"s":{"a":0,"k":[100,100],"ix":3},"sk":{"a":0,"k":0,"ix":4},"p":{"a":0,"k":[-99.516,-5.516],"ix":2},"r":{"a":0,"k":0,"ix":6},"sa":{"a":0,"k":0,"ix":5},"o":{"a":0,"k":100,"ix":7}}]}],"ind":2,"parent":1},{"ty":4,"nm":"Shape Layer 3","sr":1,"st":0,"op":33,"ip":0,"hd":false,"ddd":0,"bm":0,"hasMask":false,"ao":0,"ks":{"a":{"a":0,"k":[-99.5,-5.375,0]},"s":{"a":1,"k":[{"o":{"x":0.728,"y":0},"i":{"x":0.279,"y":1},"s":[75,75,100],"t":4},{"o":{"x":0.729,"y":0},"i":{"x":0.275,"y":1},"s":[150,150,100],"t":17},{"s":[75,75,100],"t":30}]},"sk":{"a":0,"k":0},"p":{"a":1,"k":[{"o":{"x":0.73,"y":0},"i":{"x":0.281,"y":1},"s":[-15.5,-1.375,0],"t":4,"ti":[0,0,0],"to":[0,0,0]},{"o":{"x":0.737,"y":0},"i":{"x":0.266,"y":1},"s":[-15.5,-31.375,0],"t":17,"ti":[0,0,0],"to":[0,0,0]},{"s":[-15.5,-1.375,0],"t":30}]},"r":{"a":0,"k":0},"sa":{"a":0,"k":0},"o":{"a":0,"k":100}},"ef":[],"shapes":[{"ty":"gr","bm":0,"hd":false,"mn":"ADBE Vector Group","nm":"Ellipse 1","np":3,"it":[{"ty":"el","bm":0,"hd":false,"mn":"ADBE Vector Shape - Ellipse","nm":"Ellipse Path 1","d":1,"p":{"a":0,"k":[0,0]},"s":{"a":0,"k":[20.969,20.969]}},{"ty":"st","bm":0,"hd":false,"mn":"ADBE Vector Graphic - Stroke","nm":"Stroke 1","lc":1,"lj":1,"ml":4,"o":{"a":0,"k":100},"w":{"a":0,"k":0},"c":{"a":0,"k":[0.902,0.8748,0.698,1]}},{"ty":"fl","bm":0,"hd":false,"mn":"ADBE Vector Graphic - Fill","nm":"Fill 1","c":{"a":1,"k":[{"o":{"x":0.167,"y":0.167},"i":{"x":0.833,"y":0.833},"s":[0.835,0.7457,0.165,1],"t":0},{"o":{"x":0.167,"y":0.167},"i":{"x":0.833,"y":0.833},"s":[0.9961,0.9608,0.7412,1],"t":17},{"s":[0.835,0.7457,0.165,1],"t":33}]},"r":2,"o":{"a":0,"k":100}},{"ty":"tr","a":{"a":0,"k":[0,0],"ix":1},"s":{"a":0,"k":[100,100],"ix":3},"sk":{"a":0,"k":0,"ix":4},"p":{"a":0,"k":[-99.516,-5.516],"ix":2},"r":{"a":0,"k":0,"ix":6},"sa":{"a":0,"k":0,"ix":5},"o":{"a":0,"k":100,"ix":7}}]}],"ind":3,"parent":1},{"ty":4,"nm":"Shape Layer 2","sr":1,"st":0,"op":33,"ip":0,"hd":false,"ddd":0,"bm":0,"hasMask":false,"ao":0,"ks":{"a":{"a":0,"k":[-99.5,-5.375,0]},"s":{"a":1,"k":[{"o":{"x":0.728,"y":0},"i":{"x":0.279,"y":1},"s":[75,75,100],"t":2},{"o":{"x":0.729,"y":0},"i":{"x":0.275,"y":1},"s":[150,150,100],"t":15},{"s":[75,75,100],"t":28}]},"sk":{"a":0,"k":0},"p":{"a":1,"k":[{"o":{"x":0.729,"y":0},"i":{"x":0.28,"y":1},"s":[-45.5,-1.375,0],"t":2,"ti":[0,0,0],"to":[0,0,0]},{"o":{"x":0.714,"y":0},"i":{"x":0.287,"y":1},"s":[-45.5,28.625,0],"t":15,"ti":[0,0,0],"to":[0,0,0]},{"s":[-45.5,-1.375,0],"t":28}]},"r":{"a":0,"k":0},"sa":{"a":0,"k":0},"o":{"a":0,"k":100}},"ef":[],"shapes":[{"ty":"gr","bm":0,"hd":false,"mn":"ADBE Vector Group","nm":"Ellipse 1","np":3,"it":[{"ty":"el","bm":0,"hd":false,"mn":"ADBE Vector Shape - Ellipse","nm":"Ellipse Path 1","d":1,"p":{"a":0,"k":[0,0]},"s":{"a":0,"k":[20.969,20.969]}},{"ty":"st","bm":0,"hd":false,"mn":"ADBE Vector Graphic - Stroke","nm":"Stroke 1","lc":1,"lj":1,"ml":4,"o":{"a":0,"k":100},"w":{"a":0,"k":0},"c":{"a":0,"k":[0.902,0.8748,0.698,1]}},{"ty":"fl","bm":0,"hd":false,"mn":"ADBE Vector Graphic - Fill","nm":"Fill 1","c":{"a":1,"k":[{"o":{"x":0.167,"y":0.167},"i":{"x":0.833,"y":0.833},"s":[0.835,0.7457,0.165,1],"t":0},{"o":{"x":0.167,"y":0.167},"i":{"x":0.833,"y":0.833},"s":[0.9725,0.8824,0.3216,1],"t":17},{"s":[0.835,0.7457,0.165,1],"t":33}]},"r":2,"o":{"a":0,"k":100}},{"ty":"tr","a":{"a":0,"k":[0,0],"ix":1},"s":{"a":0,"k":[100,100],"ix":3},"sk":{"a":0,"k":0,"ix":4},"p":{"a":0,"k":[-99.516,-5.516],"ix":2},"r":{"a":0,"k":0,"ix":6},"sa":{"a":0,"k":0,"ix":5},"o":{"a":0,"k":100,"ix":7}}]}],"ind":4,"parent":1},{"ty":4,"nm":"Shape Layer 1","sr":1,"st":0,"op":33,"ip":0,"hd":false,"ddd":0,"bm":0,"hasMask":false,"ao":0,"ks":{"a":{"a":0,"k":[-99.5,-5.375,0]},"s":{"a":1,"k":[{"o":{"x":0.728,"y":0},"i":{"x":0.279,"y":1},"s":[75,75,100],"t":0},{"o":{"x":0.729,"y":0},"i":{"x":0.275,"y":1},"s":[150,150,100],"t":13},{"s":[75,75,100],"t":26}]},"sk":{"a":0,"k":0},"p":{"a":1,"k":[{"o":{"x":0.728,"y":0},"i":{"x":0.279,"y":1},"s":[-75.5,-1.375,0],"t":0,"ti":[0,0,0],"to":[0,-5,0]},{"o":{"x":0.735,"y":0},"i":{"x":0.264,"y":1},"s":[-75.5,-31.375,0],"t":13,"ti":[0,-5,0],"to":[0,0,0]},{"s":[-75.5,-1.375,0],"t":26}]},"r":{"a":0,"k":0},"sa":{"a":0,"k":0},"o":{"a":0,"k":100}},"ef":[],"shapes":[{"ty":"gr","bm":0,"hd":false,"mn":"ADBE Vector Group","nm":"Ellipse 1","np":3,"it":[{"ty":"el","bm":0,"hd":false,"mn":"ADBE Vector Shape - Ellipse","nm":"Ellipse Path 1","d":1,"p":{"a":0,"k":[0,0]},"s":{"a":0,"k":[20.969,20.969]}},{"ty":"st","bm":0,"hd":false,"mn":"ADBE Vector Graphic - Stroke","nm":"Stroke 1","lc":1,"lj":1,"ml":4,"o":{"a":0,"k":100},"w":{"a":0,"k":0},"c":{"a":0,"k":[0.902,0.8748,0.698,1]}},{"ty":"fl","bm":0,"hd":false,"mn":"ADBE Vector Graphic - Fill","nm":"Fill 1","c":{"a":0,"k":[0.835,0.7457,0.165,1]},"r":2,"o":{"a":0,"k":100}},{"ty":"tr","a":{"a":0,"k":[0,0],"ix":1},"s":{"a":0,"k":[100,100],"ix":3},"sk":{"a":0,"k":0,"ix":4},"p":{"a":0,"k":[-99.516,-5.516],"ix":2},"r":{"a":0,"k":0,"ix":6},"sa":{"a":0,"k":0,"ix":5},"o":{"a":0,"k":100,"ix":7}}]}],"ind":5,"parent":1}]}]}
@@ -8954,10 +9072,10 @@ const nextConfig = {
   reactStrictMode: true,
   transpilePackages: ["@saachi/ui", "@saachi/api-client", "@saachi/utils", "@saachi/store"],
   typescript: {
-    ignoreBuildErrors: true
+    ignoreBuildErrors: false // re-enabled by Fix-SAI2-Issues.ps1
   },
   eslint: {
-    ignoreDuringBuilds: true
+    ignoreDuringBuilds: false // re-enabled by Fix-SAI2-Issues.ps1
   },
   images: {
     remotePatterns: [
@@ -8979,6 +9097,7 @@ const nextConfig = {
 };
 
 module.exports = nextConfig;
+
 
 
 ================================================================================
