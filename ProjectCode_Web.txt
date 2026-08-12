@@ -1,7 +1,7 @@
 ﻿================================================================================
 MODULE CODE EXPORT: Web
-Generated: 2026-08-12 12:54:15
-Total Files: 84
+Generated: 2026-08-13 01:34:34
+Total Files: 91
 ================================================================================
 
 
@@ -1598,6 +1598,1030 @@ function CourseCard({ course }: { course: EnrolledCourse }) {
 
 
 ================================================================================
+FILE: apps\web\app\(learner)\dashboard\notifications\page.tsx
+================================================================================
+"use client";
+
+import { useState } from "react";
+import Link from "next/link";
+import Image from "next/image";
+import { Button } from "antd";
+import {
+  LayoutGrid,
+  GraduationCap,
+  Heart,
+  Settings,
+  HelpCircle,
+  CheckCheck,
+  SlidersHorizontal,
+  BookOpen,
+  Users,
+  Info,
+  AlertTriangle,
+} from "lucide-react";
+
+// TODO: replace with useNotifications() hook from @saachi/api-client
+type NotificationCategory = "course" | "mentorship" | "system";
+
+interface BaseNotification {
+  id: string;
+  timestamp: string;
+  title: string;
+  description: string;
+  read: boolean;
+}
+
+interface CourseNotification extends BaseNotification {
+  actionLabel?: string;
+  actionHref?: string;
+}
+
+interface MentorshipNotification extends BaseNotification {
+  mentorName: string;
+  mentorTitle: string;
+  mentorAvatar: string;
+  actionLabel?: string;
+}
+
+interface SystemNotification extends BaseNotification {
+  actionRequired?: boolean;
+  actionLabel?: string;
+}
+
+const initialCourseNotifications: CourseNotification[] = [
+  {
+    id: "course-1",
+    timestamp: "2 hours ago",
+    title: "New Module Available",
+    description:
+      '"Advanced Neural Networks" module is now unlocked in your Deep Learning track.',
+    read: false,
+    actionLabel: "View Module",
+    actionHref: "/dashboard/my-courses",
+  },
+  {
+    id: "course-2",
+    timestamp: "Yesterday",
+    title: "Assignment Graded",
+    description:
+      'Your submission for "Data Preprocessing" has been graded. Score: 95/100.',
+    read: true,
+  },
+];
+
+const initialMentorshipNotifications: MentorshipNotification[] = [
+  {
+    id: "mentorship-1",
+    timestamp: "5 hours ago",
+    title: "Mentor Response",
+    description:
+      "Responded to your question about backpropagation optimization strategies.",
+    read: false,
+    mentorName: "Sarah Jenkins",
+    mentorTitle: "Senior ML Engineer",
+    mentorAvatar: "https://i.pravatar.cc/80?img=32",
+    actionLabel: "Reply",
+  },
+];
+
+const initialSystemNotifications: SystemNotification[] = [
+  {
+    id: "system-1",
+    timestamp: "Today",
+    title: "Subscription Expiring Soon",
+    description:
+      "Your Saachi Pro subscription will expire in 3 days. Renew now to avoid losing access to premium courses.",
+    read: false,
+    actionRequired: true,
+    actionLabel: "Renew Subscription",
+  },
+  {
+    id: "system-2",
+    timestamp: "Oct 12",
+    title: "Scheduled Maintenance",
+    description:
+      "The platform will undergo maintenance on Oct 15th from 02:00 AM to 04:00 AM UTC.",
+    read: true,
+  },
+];
+
+const navItems = [
+  { icon: LayoutGrid, label: "Dashboard", href: "/dashboard" },
+  { icon: GraduationCap, label: "My Courses", href: "/dashboard/my-courses" },
+  { icon: Heart, label: "Wishlist", href: "/dashboard/wishlist" },
+  { icon: Settings, label: "Settings", href: "/dashboard/settings" },
+];
+
+export default function NotificationsPage() {
+  const [courseNotifications, setCourseNotifications] = useState(initialCourseNotifications);
+  const [mentorshipNotifications, setMentorshipNotifications] = useState(
+    initialMentorshipNotifications
+  );
+  const [systemNotifications, setSystemNotifications] = useState(initialSystemNotifications);
+
+  const unreadCourseCount = courseNotifications.filter((n) => !n.read).length;
+  const unreadMentorshipCount = mentorshipNotifications.filter((n) => !n.read).length;
+
+  function handleMarkAllAsRead() {
+    // TODO: wire to useNotifications().markAllAsRead() from @saachi/api-client
+    setCourseNotifications((prev) => prev.map((n) => ({ ...n, read: true })));
+    setMentorshipNotifications((prev) => prev.map((n) => ({ ...n, read: true })));
+    setSystemNotifications((prev) => prev.map((n) => ({ ...n, read: true })));
+  }
+
+  function handleOpenPreferences() {
+    // TODO: navigate to /dashboard/settings/notifications once that route exists
+    console.log("open notification preferences");
+  }
+
+  return (
+    <div className="flex min-h-screen bg-[var(--token-color-bg)]">
+      {/* Sidebar */}
+      <aside className="fixed inset-y-0 left-0 hidden w-72 flex-col justify-between border-r border-[var(--token-color-border)] bg-[var(--token-color-surfaceAlt)] lg:flex">
+        <div className="flex flex-col">
+          <div className="flex items-center gap-4 border-b border-[var(--token-color-border)] p-6">
+            <span className="relative block h-12 w-12 shrink-0 overflow-hidden rounded-full">
+              <Image
+                src="https://i.pravatar.cc/96?img=47"
+                alt="Learner avatar"
+                fill
+                sizes="48px"
+                className="object-cover"
+              />
+            </span>
+            <div className="flex flex-col">
+              <span className="text-lg font-bold" style={{ color: "var(--token-color-ink)" }}>
+                Learner Portal
+              </span>
+              <span
+                style={{ color: "var(--token-color-inkSoft)", fontSize: "var(--token-font-size-xs)" }}
+              >
+                Manage your skills
+              </span>
+            </div>
+          </div>
+
+          <nav className="flex flex-col gap-2 py-6">
+            {navItems.map(({ icon: Icon, label, href }) => (
+              <Link
+                key={label}
+                href={href}
+                className="flex h-12 items-center gap-4 border-l-4 border-transparent pl-4 pr-6 text-sm font-semibold tracking-wide text-[var(--token-color-inkSoft)] transition hover:bg-[var(--token-color-surface)]"
+              >
+                <Icon size={18} />
+                {label}
+              </Link>
+            ))}
+          </nav>
+        </div>
+
+        <div className="border-t border-[var(--token-color-border)] p-4">
+          <Link
+            href="/support"
+            className="flex h-12 items-center gap-4 rounded-lg pl-4 text-sm font-semibold tracking-wide text-[var(--token-color-inkSoft)] hover:bg-[var(--token-color-surface)]"
+          >
+            <HelpCircle size={18} />
+            Help Center
+          </Link>
+        </div>
+      </aside>
+
+      {/* Main column */}
+      <div className="flex w-full flex-col lg:pl-72">
+        <main className="flex-1 px-12 py-10">
+          <div className="flex flex-col gap-10">
+            {/* Header */}
+            <div className="flex items-end justify-between gap-6">
+              <div className="flex flex-col gap-1">
+                <h1 className="text-3xl font-bold leading-10" style={{ color: "var(--token-color-ink)" }}>
+                  Notifications
+                </h1>
+                <p style={{ color: "var(--token-color-inkSoft)", fontSize: "var(--token-font-size-base)" }}>
+                  Stay updated with your courses, mentorships, and system alerts.
+                </p>
+              </div>
+
+              <div className="flex items-center gap-2">
+                <Button icon={<CheckCheck size={14} />} onClick={handleMarkAllAsRead}>
+                  Mark all as read
+                </Button>
+                <Button icon={<SlidersHorizontal size={14} />} onClick={handleOpenPreferences}>
+                  Preferences
+                </Button>
+              </div>
+            </div>
+
+            {/* Bento grid */}
+            <div className="grid grid-cols-1 items-start gap-6 lg:grid-cols-3">
+              {/* Column 1: Course Updates */}
+              <section className="flex flex-col gap-4">
+                <ColumnHeader
+                  icon={<BookOpen size={20} color="var(--token-color-primary)" />}
+                  label="Course Updates"
+                  count={unreadCourseCount}
+                  countBg="var(--token-color-primaryTint)"
+                  countColor="var(--token-color-primary)"
+                />
+
+                {courseNotifications.map((notification) => (
+                  <NotificationCard
+                    key={notification.id}
+                    timestamp={notification.timestamp}
+                    title={notification.title}
+                    description={notification.description}
+                    read={notification.read}
+                    accentColor="var(--token-color-primary)"
+                    action={
+                      notification.actionLabel
+                        ? {
+                            label: notification.actionLabel,
+                            variant: "link",
+                            color: "var(--token-color-primary)",
+                          }
+                        : undefined
+                    }
+                  />
+                ))}
+              </section>
+
+              {/* Column 2: Mentorship */}
+              <section className="flex flex-col gap-4">
+                <ColumnHeader
+                  icon={<Users size={20} color="var(--token-color-success)" />}
+                  label="Mentorship"
+                  count={unreadMentorshipCount}
+                  countBg="var(--token-color-successTint)"
+                  countColor="var(--token-color-success)"
+                />
+
+                {mentorshipNotifications.map((notification) => (
+                  <NotificationCard
+                    key={notification.id}
+                    timestamp={notification.timestamp}
+                    title={notification.title}
+                    description={notification.description}
+                    read={notification.read}
+                    accentColor="var(--token-color-success)"
+                    avatar={{
+                      name: notification.mentorName,
+                      title: notification.mentorTitle,
+                      image: notification.mentorAvatar,
+                    }}
+                    action={
+                      notification.actionLabel
+                        ? {
+                            label: notification.actionLabel,
+                            variant: "solid",
+                            color: "var(--token-color-success)",
+                          }
+                        : undefined
+                    }
+                  />
+                ))}
+
+                {mentorshipNotifications.length === 0 && <EmptyColumn label="No mentorship activity yet." />}
+              </section>
+
+              {/* Column 3: System */}
+              <section className="flex flex-col gap-4">
+                <ColumnHeader
+                  icon={<Info size={20} color="var(--token-color-inkSoft)" />}
+                  label="System"
+                />
+
+                {systemNotifications.map((notification) => (
+                  <NotificationCard
+                    key={notification.id}
+                    timestamp={notification.timestamp}
+                    title={notification.title}
+                    description={notification.description}
+                    read={notification.read}
+                    actionRequired={notification.actionRequired}
+                    action={
+                      notification.actionLabel
+                        ? {
+                            label: notification.actionLabel,
+                            variant: notification.actionRequired ? "outline-danger" : "solid",
+                            color: "var(--token-color-error)",
+                          }
+                        : undefined
+                    }
+                  />
+                ))}
+              </section>
+            </div>
+          </div>
+        </main>
+
+        {/* Footer */}
+        <footer className="bg-[var(--token-color-surfaceAlt)]/60 px-6 py-10">
+          <div className="mx-auto flex max-w-[1000px] flex-col gap-6 sm:flex-row sm:items-start sm:justify-between">
+            <div className="flex flex-col gap-4">
+              <span className="text-base font-bold text-[var(--token-color-primary)]">
+                Saachi AI
+              </span>
+              <p style={{ color: "var(--token-color-inkSoft)", fontSize: "var(--token-font-size-base)" }}>
+                &copy; {new Date().getFullYear()} Saachi AI Marketplace.
+                <br />
+                Empowering the future of skills.
+              </p>
+            </div>
+
+            <nav className="flex flex-wrap gap-6">
+              {[
+                { label: "About Us", href: "/about" },
+                { label: "Careers", href: "/careers" },
+                { label: "Privacy Policy", href: "/legal/privacy" },
+                { label: "Terms of Service", href: "/legal/terms" },
+                { label: "Instructor Handbook", href: "/instructor/handbook" },
+              ].map((link) => (
+                <Link
+                  key={link.label}
+                  href={link.href}
+                  className="text-xs font-medium text-[var(--token-color-inkSoft)] hover:text-[var(--token-color-primary)]"
+                >
+                  {link.label}
+                </Link>
+              ))}
+            </nav>
+          </div>
+        </footer>
+      </div>
+    </div>
+  );
+}
+
+function ColumnHeader({
+  icon,
+  label,
+  count,
+  countBg,
+  countColor,
+}: {
+  icon: React.ReactNode;
+  label: string;
+  count?: number;
+  countBg?: string;
+  countColor?: string;
+}) {
+  return (
+    <div className="flex items-center justify-between px-2 pb-2">
+      <div className="flex items-center gap-2">
+        {icon}
+        <h2 className="text-2xl font-semibold leading-8" style={{ color: "var(--token-color-ink)" }}>
+          {label}
+        </h2>
+      </div>
+
+      {typeof count === "number" && count > 0 && (
+        <span
+          className="rounded-full px-3 py-1 text-xs font-medium"
+          style={{ backgroundColor: countBg, color: countColor }}
+        >
+          {count} New
+        </span>
+      )}
+    </div>
+  );
+}
+
+function NotificationCard({
+  timestamp,
+  title,
+  description,
+  read,
+  accentColor,
+  actionRequired,
+  avatar,
+  action,
+}: {
+  timestamp: string;
+  title: string;
+  description: string;
+  read: boolean;
+  accentColor?: string;
+  actionRequired?: boolean;
+  avatar?: { name: string; title: string; image: string };
+  action?: { label: string; variant: "link" | "solid" | "outline-danger"; color: string };
+}) {
+  const isUnread = !read;
+
+  return (
+    <article
+      className="flex flex-col gap-2 rounded-xl bg-[var(--token-color-surface)] p-6 shadow-[var(--token-shadow-md)]"
+      style={{
+        opacity: read && !actionRequired ? 0.75 : 1,
+        borderLeft: isUnread && accentColor ? `4px solid ${accentColor}` : undefined,
+        border: actionRequired
+          ? "1px solid color-mix(in srgb, var(--token-color-error) 30%, transparent)"
+          : !isUnread
+            ? "1px solid var(--token-color-border)"
+            : undefined,
+      }}
+    >
+      <div className="flex items-center justify-between">
+        {actionRequired ? (
+          <span className="flex items-center gap-2 text-xs font-medium" style={{ color: "var(--token-color-error)" }}>
+            <AlertTriangle size={14} />
+            Action Required
+          </span>
+        ) : (
+          <span className="flex items-center gap-2">
+            {isUnread && accentColor && (
+              <span className="block h-2 w-2 rounded-full" style={{ backgroundColor: accentColor }} />
+            )}
+            <span className="text-xs font-medium" style={{ color: "var(--token-color-inkSoft)" }}>
+              {timestamp}
+            </span>
+          </span>
+        )}
+      </div>
+
+      {avatar && (
+        <div className="flex items-center gap-4 pt-1">
+          <span className="relative block h-10 w-10 shrink-0 overflow-hidden rounded-full">
+            <Image src={avatar.image} alt={avatar.name} fill sizes="40px" className="object-cover" />
+          </span>
+          <div className="flex flex-col">
+            <span className="text-sm font-semibold tracking-wide" style={{ color: "var(--token-color-ink)" }}>
+              {avatar.name}
+            </span>
+            <span className="text-xs font-medium" style={{ color: "var(--token-color-inkSoft)" }}>
+              {avatar.title}
+            </span>
+          </div>
+        </div>
+      )}
+
+      <h3 className="pt-1 text-sm font-semibold tracking-wide" style={{ color: "var(--token-color-ink)" }}>
+        {title}
+      </h3>
+
+      <p className="text-sm leading-5" style={{ color: "var(--token-color-inkSoft)" }}>
+        {description}
+      </p>
+
+      {action && (
+        <div className="pt-2">
+          {action.variant === "link" && (
+            <button
+              type="button"
+              className="text-xs font-semibold"
+              style={{ color: action.color }}
+              onClick={() => console.log("notification action:", action.label)}
+            >
+              {action.label}
+            </button>
+          )}
+
+          {action.variant === "solid" && (
+            <button
+              type="button"
+              className="rounded-lg px-3 py-1.5 text-xs font-medium text-white"
+              style={{ backgroundColor: action.color }}
+              onClick={() => console.log("notification action:", action.label)}
+            >
+              {action.label}
+            </button>
+          )}
+
+          {action.variant === "outline-danger" && (
+            <button
+              type="button"
+              className="rounded-lg border px-3 py-1.5 text-xs font-medium"
+              style={{ borderColor: action.color, color: action.color }}
+              onClick={() => console.log("notification action:", action.label)}
+            >
+              {action.label}
+            </button>
+          )}
+        </div>
+      )}
+    </article>
+  );
+}
+
+function EmptyColumn({ label }: { label: string }) {
+  return (
+    <div
+      className="flex flex-col items-center gap-1 rounded-xl border border-dashed p-8 text-center"
+      style={{ borderColor: "var(--token-color-border)" }}
+    >
+      <p style={{ color: "var(--token-color-inkSoft)", fontSize: "var(--token-font-size-sm)" }}>{label}</p>
+    </div>
+  );
+}
+
+
+
+================================================================================
+FILE: apps\web\app\(learner)\dashboard\settings\billing\page.tsx
+================================================================================
+"use client";
+
+import { useState } from "react";
+import Link from "next/link";
+import Image from "next/image";
+import { Button as AntButton, Dropdown, Tag, message } from "antd";
+import type { MenuProps } from "antd";
+import {
+  LayoutGrid,
+  GraduationCap,
+  Heart,
+  Settings,
+  HelpCircle,
+  Award,
+  ArrowUp,
+  XCircle,
+  Plus,
+  CreditCard,
+  MoreVertical,
+  FileText,
+  Download,
+} from "lucide-react";
+import { SettingsNav } from "@/components/settings/SettingsNav";
+
+// TODO: replace with useBilling() / useSubscription() hooks from @saachi/api-client
+interface PaymentMethod {
+  id: string;
+  brand: "Visa" | "Mastercard";
+  last4: string;
+  expiry: string;
+  isDefault: boolean;
+}
+
+interface Invoice {
+  id: string;
+  invoiceNumber: string;
+  date: string;
+  amount: number;
+}
+
+const initialPaymentMethods: PaymentMethod[] = [
+  { id: "pm-1", brand: "Visa", last4: "4242", expiry: "12/25", isDefault: true },
+  { id: "pm-2", brand: "Mastercard", last4: "8899", expiry: "08/24", isDefault: false },
+];
+
+const invoices: Invoice[] = [
+  { id: "inv-1", invoiceNumber: "#INV-2024-09", date: "Sep 15, 2024", amount: 29.0 },
+  { id: "inv-2", invoiceNumber: "#INV-2024-08", date: "Aug 15, 2024", amount: 29.0 },
+  { id: "inv-3", invoiceNumber: "#INV-2024-07", date: "Jul 15, 2024", amount: 29.0 },
+];
+
+const accountSummary = {
+  memberSince: "Jan 2023",
+  totalSaved: 120.0,
+  dataUsedGb: 15,
+  dataLimitGb: 50,
+};
+
+const currentPlan = {
+  name: "Pro Plan",
+  status: "Active" as const,
+  description: "Premium access to advanced AI learning modules.",
+  price: 29.0,
+  billingCycle: "month" as const,
+  nextPaymentDate: "October 15, 2024",
+};
+
+const navItems = [
+  { icon: LayoutGrid, label: "Dashboard", href: "/dashboard" },
+  { icon: GraduationCap, label: "My Courses", href: "/dashboard/my-courses" },
+  { icon: Heart, label: "Wishlist", href: "/dashboard/wishlist" },
+  { icon: Settings, label: "Settings", href: "/dashboard/settings" },
+];
+
+export default function BillingSettingsPage() {
+  const [paymentMethods, setPaymentMethods] = useState(initialPaymentMethods);
+
+  function handleChangePlan() {
+    // TODO: wire to /dashboard/settings/billing/change-plan or a plan-selection modal
+    console.log("change plan");
+  }
+
+  function handleCancelSubscription() {
+    // TODO: wire to useSubscription().cancel() from @saachi/api-client
+    console.log("cancel subscription");
+  }
+
+  function handleAddPaymentMethod() {
+    // TODO: wire to useBilling().addPaymentMethod() -- likely a Stripe Elements modal
+    console.log("add payment method");
+  }
+
+  function handleSetDefault(id: string) {
+    // TODO: wire to useBilling().setDefaultPaymentMethod(id) from @saachi/api-client
+    setPaymentMethods((prev) => prev.map((pm) => ({ ...pm, isDefault: pm.id === id })));
+    message.success("Default payment method updated.");
+  }
+
+  function handleRemovePaymentMethod(id: string) {
+    // TODO: wire to useBilling().removePaymentMethod(id) from @saachi/api-client
+    setPaymentMethods((prev) => prev.filter((pm) => pm.id !== id));
+  }
+
+  function handleDownloadInvoice(invoiceId: string) {
+    // TODO: wire to useBilling().downloadInvoice(invoiceId) from @saachi/api-client
+    console.log("download invoice", invoiceId);
+  }
+
+  function getPaymentMenuItems(pm: PaymentMethod): MenuProps["items"] {
+    const items: MenuProps["items"] = [];
+    if (!pm.isDefault) {
+      items.push({ key: "default", label: "Set as Default", onClick: () => handleSetDefault(pm.id) });
+    }
+    items.push({
+      key: "remove",
+      label: "Remove Card",
+      danger: true,
+      onClick: () => handleRemovePaymentMethod(pm.id),
+    });
+    return items;
+  }
+
+  return (
+    <div className="flex min-h-screen bg-[var(--token-color-bg)]">
+      {/* Sidebar */}
+      <aside className="fixed inset-y-0 left-0 hidden w-72 flex-col justify-between border-r border-[var(--token-color-border)] bg-[var(--token-color-surfaceAlt)] lg:flex">
+        <div className="flex flex-col">
+          <div className="flex items-center gap-4 border-b border-[var(--token-color-border)] p-6">
+            <span className="relative block h-12 w-12 shrink-0 overflow-hidden rounded-full">
+              <Image
+                src="https://i.pravatar.cc/96?img=47"
+                alt="Learner avatar"
+                fill
+                sizes="48px"
+                className="object-cover"
+              />
+            </span>
+            <div className="flex flex-col">
+              <span className="text-lg font-bold" style={{ color: "var(--token-color-ink)" }}>
+                Learner Portal
+              </span>
+              <span
+                style={{ color: "var(--token-color-inkSoft)", fontSize: "var(--token-font-size-xs)" }}
+              >
+                Manage your skills
+              </span>
+            </div>
+          </div>
+
+          <nav className="flex flex-col gap-2 p-4">
+            {navItems.map(({ icon: Icon, label, href }) => {
+              const isActive = label === "Settings";
+              return (
+                <Link
+                  key={label}
+                  href={href}
+                  className="flex items-center gap-4 rounded-lg border-l-4 px-4 py-3 text-sm font-semibold tracking-wide transition"
+                  style={{
+                    borderColor: isActive ? "var(--token-color-primary)" : "transparent",
+                    backgroundColor: isActive ? "var(--token-color-primaryTint)" : "transparent",
+                    color: isActive ? "var(--token-color-primary)" : "var(--token-color-inkSoft)",
+                  }}
+                >
+                  <Icon size={18} />
+                  {label}
+                </Link>
+              );
+            })}
+          </nav>
+        </div>
+
+        <div className="border-t border-[var(--token-color-border)] p-4">
+          <Link
+            href="/support"
+            className="flex h-12 items-center gap-4 rounded-lg pl-4 text-sm font-semibold tracking-wide text-[var(--token-color-inkSoft)] hover:bg-[var(--token-color-surface)]"
+          >
+            <HelpCircle size={18} />
+            Help Center
+          </Link>
+        </div>
+      </aside>
+
+      {/* Main column */}
+      <div className="flex w-full flex-col lg:pl-72">
+        <main className="flex-1 px-12 py-12">
+          <div className="mx-auto flex w-full max-w-[1280px] flex-col gap-10">
+            {/* Header */}
+            <div className="flex flex-col gap-1.5">
+              <h1 className="text-3xl font-bold leading-10" style={{ color: "var(--token-color-ink)" }}>
+                Subscription &amp; Billing
+              </h1>
+              <p style={{ color: "var(--token-color-inkSoft)", fontSize: "var(--token-font-size-lg)" }}>
+                Manage your payment methods and subscription plan.
+              </p>
+            </div>
+
+            <div className="flex flex-col gap-10 lg:flex-row lg:items-start">
+              <SettingsNav />
+
+              <div className="grid w-full flex-1 grid-cols-1 items-start gap-6 lg:grid-cols-[2fr_1fr]">
+                {/* Left column: Current Plan & Payment Methods */}
+                <div className="flex flex-col gap-6">
+                  {/* Current Plan */}
+                  <div
+                    className="relative flex flex-col gap-6 overflow-hidden rounded-xl bg-[var(--token-color-surface)] p-6 shadow-[var(--token-shadow-sm)]"
+                    style={{ border: "1px solid var(--token-color-border)" }}
+                  >
+                    <div
+                      className="pointer-events-none absolute -right-8 -top-16 h-32 w-32 rounded-bl-full"
+                      style={{ backgroundColor: "var(--token-color-primaryTint)" }}
+                    />
+
+                    <div className="relative flex items-start justify-between">
+                      <div className="flex flex-col gap-1">
+                        <div className="flex items-center gap-2">
+                          <h2 className="text-2xl font-semibold leading-8" style={{ color: "var(--token-color-ink)" }}>
+                            {currentPlan.name}
+                          </h2>
+                          <Tag
+                            bordered={false}
+                            style={{
+                              backgroundColor: "var(--token-color-primaryTint)",
+                              color: "var(--token-color-primary)",
+                              margin: 0,
+                            }}
+                          >
+                            {currentPlan.status}
+                          </Tag>
+                        </div>
+                        <p style={{ color: "var(--token-color-inkSoft)", fontSize: "var(--token-font-size-base)" }}>
+                          {currentPlan.description}
+                        </p>
+                      </div>
+
+                      <Award size={28} color="var(--token-color-primary)" />
+                    </div>
+
+                    <div className="relative flex flex-col gap-4 sm:flex-row">
+                      <div
+                        className="flex flex-1 flex-col gap-1 rounded-lg p-4"
+                        style={{
+                          backgroundColor: "var(--token-color-surfaceAlt)",
+                          border: "1px solid color-mix(in srgb, var(--token-color-border) 50%, transparent)",
+                        }}
+                      >
+                        <span
+                          className="text-xs font-medium uppercase tracking-wide"
+                          style={{ color: "var(--token-color-inkSoft)" }}
+                        >
+                          Billing Cycle
+                        </span>
+                        <span className="text-lg font-semibold leading-7" style={{ color: "var(--token-color-ink)" }}>
+                          ${currentPlan.price.toFixed(2)} / {currentPlan.billingCycle}
+                        </span>
+                      </div>
+
+                      <div
+                        className="flex flex-1 flex-col gap-1 rounded-lg p-4"
+                        style={{
+                          backgroundColor: "var(--token-color-surfaceAlt)",
+                          border: "1px solid color-mix(in srgb, var(--token-color-border) 50%, transparent)",
+                        }}
+                      >
+                        <span
+                          className="text-xs font-medium uppercase tracking-wide"
+                          style={{ color: "var(--token-color-inkSoft)" }}
+                        >
+                          Next Payment
+                        </span>
+                        <span className="text-lg font-semibold leading-7" style={{ color: "var(--token-color-ink)" }}>
+                          {currentPlan.nextPaymentDate}
+                        </span>
+                      </div>
+                    </div>
+
+                    <div
+                      className="relative flex items-center justify-between pt-6"
+                      style={{ borderTop: "1px solid color-mix(in srgb, var(--token-color-border) 50%, transparent)" }}
+                    >
+                      <AntButton type="primary" icon={<ArrowUp size={14} />} onClick={handleChangePlan}>
+                        Change Plan
+                      </AntButton>
+
+                      <button
+                        type="button"
+                        onClick={handleCancelSubscription}
+                        className="flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-semibold tracking-wide"
+                        style={{ color: "var(--token-color-error)" }}
+                      >
+                        <XCircle size={15} />
+                        Cancel Subscription
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* Payment Methods */}
+                  <div
+                    className="flex flex-col gap-6 rounded-xl bg-[var(--token-color-surface)] p-6 shadow-[var(--token-shadow-sm)]"
+                    style={{ border: "1px solid var(--token-color-border)" }}
+                  >
+                    <div className="flex items-center justify-between">
+                      <h2 className="text-2xl font-semibold leading-8" style={{ color: "var(--token-color-ink)" }}>
+                        Payment Methods
+                      </h2>
+                      <button
+                        type="button"
+                        onClick={handleAddPaymentMethod}
+                        className="flex items-center gap-1 text-sm font-semibold tracking-wide"
+                        style={{ color: "var(--token-color-primary)" }}
+                      >
+                        <Plus size={15} />
+                        Add New
+                      </button>
+                    </div>
+
+                    <div className="flex flex-col gap-4">
+                      {paymentMethods.map((pm) => (
+                        <div
+                          key={pm.id}
+                          className="flex items-center justify-between rounded-lg p-4"
+                          style={{
+                            backgroundColor: pm.isDefault
+                              ? "color-mix(in srgb, var(--token-color-primary) 5%, transparent)"
+                              : "var(--token-color-bg)",
+                            border: pm.isDefault
+                              ? "1px solid var(--token-color-primary)"
+                              : "1px solid var(--token-color-border)",
+                          }}
+                        >
+                          <div className="flex items-center gap-4">
+                            <span
+                              className="flex h-8 w-12 items-center justify-center rounded-sm"
+                              style={{
+                                backgroundColor: "var(--token-color-surfaceAlt)",
+                                border: "1px solid var(--token-color-border)",
+                              }}
+                            >
+                              <CreditCard size={18} color="var(--token-color-inkSoft)" />
+                            </span>
+
+                            <div className="flex flex-col">
+                              <div className="flex items-center gap-2">
+                                <span className="text-base font-semibold leading-6" style={{ color: "var(--token-color-ink)" }}>
+                                  {pm.brand} ending in {pm.last4}
+                                </span>
+                                {pm.isDefault && (
+                                  <span
+                                    className="rounded-full px-2 py-0.5 text-[10px] font-bold uppercase"
+                                    style={{
+                                      backgroundColor: "var(--token-color-primaryTint)",
+                                      color: "var(--token-color-primary)",
+                                    }}
+                                  >
+                                    Default
+                                  </span>
+                                )}
+                              </div>
+                              <span className="text-xs font-medium" style={{ color: "var(--token-color-inkSoft)" }}>
+                                Expires {pm.expiry}
+                              </span>
+                            </div>
+                          </div>
+
+                          <Dropdown menu={{ items: getPaymentMenuItems(pm) }} trigger={["click"]}>
+                            <button
+                              type="button"
+                              aria-label="Payment method options"
+                              className="flex h-9 w-9 items-center justify-center rounded-full transition hover:bg-[var(--token-color-surfaceAlt)]"
+                            >
+                              <MoreVertical size={16} color="var(--token-color-inkSoft)" />
+                            </button>
+                          </Dropdown>
+                        </div>
+                      ))}
+
+                      {paymentMethods.length === 0 && (
+                        <p style={{ color: "var(--token-color-inkSoft)", fontSize: "var(--token-font-size-sm)" }}>
+                          No payment methods on file.
+                        </p>
+                      )}
+                    </div>
+                  </div>
+                </div>
+
+                {/* Right column: Account Summary & Billing History */}
+                <div className="flex flex-col gap-6">
+                  {/* Account Summary */}
+                  <div
+                    className="flex flex-col gap-4 rounded-xl bg-[var(--token-color-surface)] p-6 shadow-[var(--token-shadow-sm)]"
+                    style={{ border: "1px solid var(--token-color-border)" }}
+                  >
+                    <h3
+                      className="text-sm font-semibold uppercase tracking-wide"
+                      style={{ color: "var(--token-color-inkSoft)" }}
+                    >
+                      Account Summary
+                    </h3>
+
+                    <div className="flex flex-col gap-2">
+                      <div
+                        className="flex items-center justify-between py-2"
+                        style={{ borderBottom: "1px solid var(--token-color-border)" }}
+                      >
+                        <span style={{ color: "var(--token-color-inkSoft)", fontSize: "var(--token-font-size-base)" }}>
+                          Member since
+                        </span>
+                        <span className="font-medium" style={{ color: "var(--token-color-ink)" }}>
+                          {accountSummary.memberSince}
+                        </span>
+                      </div>
+
+                      <div
+                        className="flex items-center justify-between py-2"
+                        style={{ borderBottom: "1px solid var(--token-color-border)" }}
+                      >
+                        <span style={{ color: "var(--token-color-inkSoft)", fontSize: "var(--token-font-size-base)" }}>
+                          Total saved
+                        </span>
+                        <span className="font-medium" style={{ color: "var(--token-color-success)" }}>
+                          ${accountSummary.totalSaved.toFixed(2)}
+                        </span>
+                      </div>
+
+                      <div className="flex items-center justify-between py-2">
+                        <span style={{ color: "var(--token-color-inkSoft)", fontSize: "var(--token-font-size-base)" }}>
+                          Data storage
+                        </span>
+                        <span className="font-medium" style={{ color: "var(--token-color-ink)" }}>
+                          {accountSummary.dataUsedGb}GB / {accountSummary.dataLimitGb}GB
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Recent Invoices */}
+                  <div
+                    className="flex flex-col gap-4 rounded-xl bg-[var(--token-color-surface)] p-6 shadow-[var(--token-shadow-sm)]"
+                    style={{ border: "1px solid var(--token-color-border)" }}
+                  >
+                    <div className="flex items-center justify-between">
+                      <h3 className="text-2xl font-semibold leading-8" style={{ color: "var(--token-color-ink)" }}>
+                        Recent Invoices
+                      </h3>
+                      <Link
+                        href="/dashboard/settings/billing/invoices"
+                        className="text-xs font-medium"
+                        style={{ color: "var(--token-color-primary)" }}
+                      >
+                        View All
+                      </Link>
+                    </div>
+
+                    <div className="flex flex-col">
+                      {invoices.map((invoice, idx) => (
+                        <div
+                          key={invoice.id}
+                          className="flex items-center justify-between px-2 py-3"
+                          style={
+                            idx < invoices.length - 1
+                              ? { borderBottom: "1px solid var(--token-color-border)" }
+                              : undefined
+                          }
+                        >
+                          <div className="flex items-center gap-2">
+                            <FileText size={16} color="var(--token-color-inkSoft)" />
+                            <div className="flex flex-col">
+                              <span className="text-sm font-semibold tracking-wide" style={{ color: "var(--token-color-ink)" }}>
+                                {invoice.date}
+                              </span>
+                              <span className="text-xs font-medium" style={{ color: "var(--token-color-inkSoft)" }}>
+                                {invoice.invoiceNumber}
+                              </span>
+                            </div>
+                          </div>
+
+                          <div className="flex items-center gap-4">
+                            <span className="text-base font-medium" style={{ color: "var(--token-color-ink)" }}>
+                              ${invoice.amount.toFixed(2)}
+                            </span>
+                            <button
+                              type="button"
+                              aria-label={`Download invoice ${invoice.invoiceNumber}`}
+                              onClick={() => handleDownloadInvoice(invoice.id)}
+                              className="flex h-7 w-7 items-center justify-center rounded-full transition hover:bg-[var(--token-color-surfaceAlt)]"
+                            >
+                              <Download size={14} color="var(--token-color-inkSoft)" />
+                            </button>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </main>
+      </div>
+    </div>
+  );
+}
+
+
+
+================================================================================
 FILE: apps\web\app\(learner)\dashboard\settings\orders\page.tsx
 ================================================================================
 "use client";
@@ -2037,6 +3061,979 @@ export default function OrderHistoryPage() {
     </div>
   );
 }
+
+
+================================================================================
+FILE: apps\web\app\(learner)\dashboard\settings\privacy\page.tsx
+================================================================================
+"use client";
+
+import { useState } from "react";
+import Link from "next/link";
+import Image from "next/image";
+import { Switch, Button as AntButton, Modal, message } from "antd";
+import {
+  LayoutGrid,
+  GraduationCap,
+  Heart,
+  Settings,
+  HelpCircle,
+  Eye,
+  Download,
+  Trash2,
+} from "lucide-react";
+import { SettingsNav } from "@/components/settings/SettingsNav";
+
+// TODO: replace with usePrivacySettings() hook from @saachi/api-client
+interface PrivacyToggle {
+  key: "publicProfile" | "showCourseProgress" | "displayAchievements";
+  title: string;
+  description: string;
+  enabled: boolean;
+}
+
+const initialToggles: PrivacyToggle[] = [
+  {
+    key: "publicProfile",
+    title: "Public Profile",
+    description: "Allow your profile to be discoverable by other users.",
+    enabled: true,
+  },
+  {
+    key: "showCourseProgress",
+    title: "Show Course Progress",
+    description: "Let others see which courses you are currently taking.",
+    enabled: false,
+  },
+  {
+    key: "displayAchievements",
+    title: "Display Achievements",
+    description: "Show earned certificates and badges on your profile.",
+    enabled: true,
+  },
+];
+
+const navItems = [
+  { icon: LayoutGrid, label: "Dashboard", href: "/dashboard" },
+  { icon: GraduationCap, label: "My Courses", href: "/dashboard/my-courses" },
+  { icon: Heart, label: "Wishlist", href: "/dashboard/wishlist" },
+  { icon: Settings, label: "Settings", href: "/dashboard/settings" },
+];
+
+export default function PrivacySettingsPage() {
+  const [toggles, setToggles] = useState(initialToggles);
+  const [exporting, setExporting] = useState(false);
+  const [modal, contextHolder] = Modal.useModal();
+
+  function handleToggle(key: PrivacyToggle["key"], checked: boolean) {
+    // TODO: wire to usePrivacySettings().update(key, checked) from @saachi/api-client
+    setToggles((prev) => prev.map((t) => (t.key === key ? { ...t, enabled: checked } : t)));
+  }
+
+  function handleRequestExport() {
+    // TODO: wire to usePrivacySettings().requestDataExport() from @saachi/api-client
+    setExporting(true);
+    setTimeout(() => {
+      setExporting(false);
+      message.success("Export requested. We'll email you a download link shortly.");
+    }, 1200);
+  }
+
+  function handleDeleteAccount() {
+    modal.confirm({
+      title: "Delete your account?",
+      content:
+        "This will permanently delete your account and all associated data, including course history, certificates, and progress. This action cannot be undone.",
+      okText: "Delete Account",
+      okButtonProps: { danger: true },
+      cancelText: "Cancel",
+      onOk: () => {
+        // TODO: wire to usePrivacySettings().deleteAccount() from @saachi/api-client
+        console.log("delete account confirmed");
+      },
+    });
+  }
+
+  return (
+    <div className="flex min-h-screen bg-[var(--token-color-bg)]">
+      {contextHolder}
+
+      {/* Sidebar */}
+      <aside className="fixed inset-y-0 left-0 hidden w-72 flex-col justify-between border-r border-[var(--token-color-border)] bg-[var(--token-color-surfaceAlt)] lg:flex">
+        <div className="flex flex-col">
+          <div className="flex items-center gap-4 border-b border-[var(--token-color-border)] p-6">
+            <span className="relative block h-12 w-12 shrink-0 overflow-hidden rounded-full">
+              <Image
+                src="https://i.pravatar.cc/96?img=47"
+                alt="Learner avatar"
+                fill
+                sizes="48px"
+                className="object-cover"
+              />
+            </span>
+            <div className="flex flex-col">
+              <span className="text-lg font-bold" style={{ color: "var(--token-color-ink)" }}>
+                Learner Portal
+              </span>
+              <span
+                style={{ color: "var(--token-color-inkSoft)", fontSize: "var(--token-font-size-xs)" }}
+              >
+                Manage your skills
+              </span>
+            </div>
+          </div>
+
+          <nav className="flex flex-col gap-2 p-4">
+            {navItems.map(({ icon: Icon, label, href }) => {
+              const isActive = label === "Settings";
+              return (
+                <Link
+                  key={label}
+                  href={href}
+                  className="flex items-center gap-4 rounded-lg border-l-4 px-4 py-3 text-sm font-semibold tracking-wide transition"
+                  style={{
+                    borderColor: isActive ? "var(--token-color-primary)" : "transparent",
+                    backgroundColor: isActive ? "var(--token-color-primaryTint)" : "transparent",
+                    color: isActive ? "var(--token-color-primary)" : "var(--token-color-inkSoft)",
+                  }}
+                >
+                  <Icon size={18} />
+                  {label}
+                </Link>
+              );
+            })}
+          </nav>
+        </div>
+
+        <div className="border-t border-[var(--token-color-border)] p-4">
+          <Link
+            href="/support"
+            className="flex h-12 items-center gap-4 rounded-lg pl-4 text-sm font-semibold tracking-wide text-[var(--token-color-inkSoft)] hover:bg-[var(--token-color-surface)]"
+          >
+            <HelpCircle size={18} />
+            Help Center
+          </Link>
+        </div>
+      </aside>
+
+      {/* Main column */}
+      <div className="flex w-full flex-col lg:pl-72">
+        <main className="flex-1 px-12 pb-20 pt-12">
+          <div className="mx-auto flex w-full max-w-[896px] flex-col gap-6">
+            {/* Header */}
+            <div className="flex flex-col gap-1.5">
+              <h1
+                className="text-5xl font-bold leading-[52.8px]"
+                style={{ color: "var(--token-color-ink)" }}
+              >
+                Privacy &amp; Data
+              </h1>
+              <p style={{ color: "var(--token-color-inkSoft)", fontSize: "var(--token-font-size-lg)" }}>
+                Manage how your data is used and your visibility within the Saachi AI community.
+              </p>
+            </div>
+
+            <div className="flex flex-col gap-6 lg:flex-row lg:items-start">
+              <SettingsNav />
+
+              <div className="flex w-full flex-1 flex-col gap-6">
+                {/* Community Visibility */}
+                <section
+                  className="relative flex flex-col gap-6 overflow-hidden rounded-xl bg-[var(--token-color-surface)] px-10 pb-10 pt-14 shadow-[var(--token-shadow-md)]"
+                  style={{ border: "1px solid var(--token-color-border)" }}
+                >
+                  <div
+                    className="pointer-events-none absolute -right-8 -top-16 h-64 w-64 rounded-full blur-[32px]"
+                    style={{ backgroundColor: "color-mix(in srgb, var(--token-color-primaryTint) 20%, transparent)" }}
+                  />
+
+                  <div className="relative flex items-start gap-4">
+                    <span
+                      className="flex h-12 w-12 shrink-0 items-center justify-center rounded-lg"
+                      style={{ backgroundColor: "var(--token-color-primaryTint)" }}
+                    >
+                      <Eye size={20} color="var(--token-color-primary)" />
+                    </span>
+                    <div className="flex flex-col gap-1">
+                      <h2 className="text-2xl font-semibold leading-8" style={{ color: "var(--token-color-ink)" }}>
+                        Community Visibility
+                      </h2>
+                      <p style={{ color: "var(--token-color-inkSoft)", fontSize: "var(--token-font-size-base)" }}>
+                        Control what other learners and instructors can see about your profile.
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="relative flex flex-col">
+                    {toggles.map((toggle, idx) => (
+                      <div
+                        key={toggle.key}
+                        className="flex items-center justify-between gap-6 py-4"
+                        style={
+                          idx < toggles.length - 1
+                            ? { borderBottom: "1px solid var(--token-color-border)" }
+                            : undefined
+                        }
+                      >
+                        <div className="flex flex-col gap-1">
+                          <h3 className="text-sm font-semibold tracking-wide" style={{ color: "var(--token-color-ink)" }}>
+                            {toggle.title}
+                          </h3>
+                          <p className="text-xs font-medium" style={{ color: "var(--token-color-inkSoft)" }}>
+                            {toggle.description}
+                          </p>
+                        </div>
+
+                        <Switch
+                          checked={toggle.enabled}
+                          onChange={(checked) => handleToggle(toggle.key, checked)}
+                        />
+                      </div>
+                    ))}
+                  </div>
+                </section>
+
+                {/* Export Data + Danger Zone */}
+                <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
+                  {/* Export Data */}
+                  <div
+                    className="flex flex-col gap-4 rounded-xl bg-[var(--token-color-surface)] p-6 shadow-[var(--token-shadow-md)]"
+                    style={{ border: "1px solid var(--token-color-border)" }}
+                  >
+                    <span
+                      className="flex h-10 w-10 items-center justify-center rounded-lg"
+                      style={{ backgroundColor: "var(--token-color-success)" }}
+                    >
+                      <Download size={16} color="var(--token-color-completedGreen)" />
+                    </span>
+
+                    <h2 className="text-2xl font-semibold leading-8" style={{ color: "var(--token-color-ink)" }}>
+                      Export Data
+                    </h2>
+
+                    <p style={{ color: "var(--token-color-inkSoft)", fontSize: "var(--token-font-size-base)" }}>
+                      Download a copy of your personal data, including course history, certificates, and
+                      profile information.
+                    </p>
+
+                    <AntButton
+                      type="primary"
+                      block
+                      loading={exporting}
+                      onClick={handleRequestExport}
+                    >
+                      Request Export
+                    </AntButton>
+                  </div>
+
+                  {/* Danger Zone */}
+                  <div
+                    className="relative flex flex-col gap-4 overflow-hidden rounded-xl bg-[var(--token-color-surface)] p-6 shadow-[var(--token-shadow-md)]"
+                    style={{ border: "1px solid color-mix(in srgb, var(--token-color-error) 20%, transparent)" }}
+                  >
+                    <div
+                      className="pointer-events-none absolute -right-2 -top-2 h-32 w-32 rounded-bl-full"
+                      style={{ backgroundColor: "color-mix(in srgb, var(--token-color-errorTint) 50%, transparent)" }}
+                    />
+
+                    <span
+                      className="relative flex h-10 w-10 items-center justify-center rounded-lg"
+                      style={{ backgroundColor: "var(--token-color-errorTint)" }}
+                    >
+                      <Trash2 size={16} color="var(--token-color-error)" />
+                    </span>
+
+                    <h2 className="relative text-2xl font-semibold leading-8" style={{ color: "var(--token-color-ink)" }}>
+                      Danger Zone
+                    </h2>
+
+                    <p className="relative" style={{ color: "var(--token-color-inkSoft)", fontSize: "var(--token-font-size-base)" }}>
+                      Permanently delete your account and all associated data. This action cannot be
+                      undone.
+                    </p>
+
+                    <button
+                      type="button"
+                      onClick={handleDeleteAccount}
+                      className="relative rounded-lg px-6 py-2 text-sm font-semibold tracking-wide"
+                      style={{
+                        backgroundColor: "var(--token-color-surfaceAlt)",
+                        border: "1px solid color-mix(in srgb, var(--token-color-error) 30%, transparent)",
+                        color: "var(--token-color-error)",
+                      }}
+                    >
+                      Delete Account
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </main>
+      </div>
+    </div>
+  );
+}
+
+
+
+================================================================================
+FILE: apps\web\app\(learner)\dashboard\settings\profile\page.tsx
+================================================================================
+"use client";
+
+import { useRef, useState } from "react";
+import Link from "next/link";
+import Image from "next/image";
+import { Form, Input, Button as AntButton, message } from "antd";
+import {
+  LayoutGrid,
+  GraduationCap,
+  Heart,
+  Settings,
+  HelpCircle,
+  User,
+  Link2,
+  Linkedin,
+  Github,
+} from "lucide-react";
+import { SettingsNav } from "@/components/settings/SettingsNav";
+
+// TODO: replace with useAuth() / useProfile() hooks from @saachi/api-client
+interface ProfileFormValues {
+  firstName: string;
+  lastName: string;
+  headline: string;
+  bio: string;
+  linkedin: string;
+  github: string;
+}
+
+const initialProfile: ProfileFormValues = {
+  firstName: "Alex",
+  lastName: "Morgan",
+  headline: "Senior Data Scientist @ TechCorp",
+  bio: "Passionate about machine learning and building scalable AI solutions. Always eager to learn and share knowledge with the community.",
+  linkedin: "",
+  github: "",
+};
+
+const navItems = [
+  { icon: LayoutGrid, label: "Dashboard", href: "/dashboard" },
+  { icon: GraduationCap, label: "My Courses", href: "/dashboard/my-courses" },
+  { icon: Heart, label: "Wishlist", href: "/dashboard/wishlist" },
+  { icon: Settings, label: "Settings", href: "/dashboard/settings" },
+];
+
+export default function ProfileSettingsPage() {
+  const [form] = Form.useForm<ProfileFormValues>();
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [avatarUrl, setAvatarUrl] = useState("https://i.pravatar.cc/128?img=47");
+  const [displayName, setDisplayName] = useState(`${initialProfile.firstName} ${initialProfile.lastName}`);
+  const [displayHeadline, setDisplayHeadline] = useState(initialProfile.headline);
+
+  function handleChangeAvatarClick() {
+    fileInputRef.current?.click();
+  }
+
+  function handleAvatarFileSelected(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    // TODO: wire to useProfile().uploadAvatar(file) from @saachi/api-client
+    const previewUrl = URL.createObjectURL(file);
+    setAvatarUrl(previewUrl);
+  }
+
+  function handleSubmit(values: ProfileFormValues) {
+    // TODO: wire to useProfile().updateProfile(values) from @saachi/api-client
+    console.log("save profile", values);
+    setDisplayName(`${values.firstName} ${values.lastName}`);
+    setDisplayHeadline(values.headline);
+    message.success("Profile updated successfully.");
+  }
+
+  function handleCancel() {
+    form.resetFields();
+  }
+
+  return (
+    <div className="flex min-h-screen bg-[var(--token-color-bg)]">
+      {/* Sidebar */}
+      <aside className="fixed inset-y-0 left-0 hidden w-72 flex-col justify-between border-r border-[var(--token-color-border)] bg-[var(--token-color-surfaceAlt)] lg:flex">
+        <div className="flex flex-col">
+          <div className="flex items-center gap-4 border-b border-[var(--token-color-border)] p-6">
+            <span className="relative block h-12 w-12 shrink-0 overflow-hidden rounded-full">
+              <Image
+                src="https://i.pravatar.cc/96?img=47"
+                alt="Learner avatar"
+                fill
+                sizes="48px"
+                className="object-cover"
+              />
+            </span>
+            <div className="flex flex-col">
+              <span className="text-lg font-bold" style={{ color: "var(--token-color-ink)" }}>
+                Learner Portal
+              </span>
+              <span
+                style={{ color: "var(--token-color-inkSoft)", fontSize: "var(--token-font-size-xs)" }}
+              >
+                Manage your skills
+              </span>
+            </div>
+          </div>
+
+          <nav className="flex flex-col gap-2 p-4">
+            {navItems.map(({ icon: Icon, label, href }) => {
+              const isActive = label === "Settings";
+              return (
+                <Link
+                  key={label}
+                  href={href}
+                  className="flex items-center gap-4 rounded-lg border-l-4 px-4 py-3 text-sm font-semibold tracking-wide transition"
+                  style={{
+                    borderColor: isActive ? "var(--token-color-primary)" : "transparent",
+                    backgroundColor: isActive ? "var(--token-color-primaryTint)" : "transparent",
+                    color: isActive ? "var(--token-color-primary)" : "var(--token-color-inkSoft)",
+                  }}
+                >
+                  <Icon size={18} />
+                  {label}
+                </Link>
+              );
+            })}
+          </nav>
+        </div>
+
+        <div className="border-t border-[var(--token-color-border)] p-4">
+          <Link
+            href="/support"
+            className="flex h-12 items-center gap-4 rounded-lg pl-4 text-sm font-semibold tracking-wide text-[var(--token-color-inkSoft)] hover:bg-[var(--token-color-surface)]"
+          >
+            <HelpCircle size={18} />
+            Help Center
+          </Link>
+        </div>
+      </aside>
+
+      {/* Main column */}
+      <div className="flex w-full flex-col lg:pl-72">
+        <main className="flex-1 px-12 pb-28 pt-12">
+          <div className="mx-auto flex w-full max-w-[896px] flex-col gap-10">
+            {/* Header */}
+            <div className="flex flex-col gap-2">
+              <h1 className="text-3xl font-bold leading-10" style={{ color: "var(--token-color-ink)" }}>
+                Profile Settings
+              </h1>
+              <p style={{ color: "var(--token-color-inkSoft)", fontSize: "var(--token-font-size-base)" }}>
+                Manage your personal information and social connections.
+              </p>
+            </div>
+
+            <div className="flex flex-col gap-10 lg:flex-row lg:items-start">
+              <SettingsNav />
+
+              <Form
+                form={form}
+                layout="vertical"
+                requiredMark={false}
+                initialValues={initialProfile}
+                onFinish={handleSubmit}
+                className="flex w-full flex-1 flex-col gap-6 lg:grid lg:grid-cols-[1fr_2fr] lg:items-start lg:gap-6"
+              >
+                {/* Avatar & Quick Info Card */}
+                <div
+                  className="flex flex-col items-center gap-1 rounded-xl bg-[var(--token-color-surface)] p-6 pb-8 pt-8 text-center shadow-[var(--token-shadow-md)]"
+                >
+                  <span className="relative block h-32 w-32 shrink-0 overflow-hidden rounded-full shadow-[var(--token-shadow-sm)]">
+                    <Image src={avatarUrl} alt={displayName} fill sizes="128px" className="object-cover" />
+                  </span>
+
+                  <input
+                    ref={fileInputRef}
+                    type="file"
+                    accept="image/*"
+                    className="hidden"
+                    onChange={handleAvatarFileSelected}
+                  />
+
+                  <h2 className="pt-4 text-2xl font-semibold leading-8" style={{ color: "var(--token-color-ink)" }}>
+                    {displayName}
+                  </h2>
+                  <span className="text-xs font-medium" style={{ color: "var(--token-color-inkSoft)" }}>
+                    {displayHeadline}
+                  </span>
+
+                  <AntButton className="mt-6 w-full" onClick={handleChangeAvatarClick}>
+                    Change Avatar
+                  </AntButton>
+                </div>
+
+                {/* Right column */}
+                <div className="flex flex-col gap-6">
+                  {/* Personal Information */}
+                  <div className="flex flex-col gap-6 rounded-xl bg-[var(--token-color-surface)] p-6 shadow-[var(--token-shadow-md)]">
+                    <h2 className="flex items-center gap-2 text-2xl font-semibold leading-8" style={{ color: "var(--token-color-ink)" }}>
+                      <User size={18} color="var(--token-color-primary)" />
+                      Personal Information
+                    </h2>
+
+                    <div className="flex flex-col gap-6">
+                      <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
+                        <Form.Item
+                          label="First Name"
+                          name="firstName"
+                          rules={[{ required: true, message: "Please enter your first name" }]}
+                          className="mb-0"
+                        >
+                          <Input size="large" />
+                        </Form.Item>
+
+                        <Form.Item
+                          label="Last Name"
+                          name="lastName"
+                          rules={[{ required: true, message: "Please enter your last name" }]}
+                          className="mb-0"
+                        >
+                          <Input size="large" />
+                        </Form.Item>
+                      </div>
+
+                      <Form.Item label="Professional Headline" name="headline" className="mb-0">
+                        <Input size="large" placeholder="e.g. Senior Data Scientist @ TechCorp" />
+                      </Form.Item>
+
+                      <Form.Item label="Bio" name="bio" className="mb-0">
+                        <Input.TextArea rows={4} placeholder="Tell us a bit about yourself" />
+                      </Form.Item>
+                    </div>
+                  </div>
+
+                  {/* Social Links */}
+                  <div className="flex flex-col gap-6 rounded-xl bg-[var(--token-color-surface)] p-6 shadow-[var(--token-shadow-md)]">
+                    <h2 className="flex items-center gap-2 text-2xl font-semibold leading-8" style={{ color: "var(--token-color-ink)" }}>
+                      <Link2 size={16} color="var(--token-color-primary)" />
+                      Social Links
+                    </h2>
+
+                    <div className="flex flex-col gap-3.5">
+                      <Form.Item label="LinkedIn" name="linkedin" className="mb-0">
+                        <Input
+                          size="large"
+                          prefix={<Linkedin size={16} color="var(--token-color-inkSoft)" />}
+                          placeholder="https://linkedin.com/in/username"
+                        />
+                      </Form.Item>
+
+                      <Form.Item label="GitHub" name="github" className="mb-0">
+                        <Input
+                          size="large"
+                          prefix={<Github size={16} color="var(--token-color-inkSoft)" />}
+                          placeholder="https://github.com/username"
+                        />
+                      </Form.Item>
+                    </div>
+                  </div>
+
+                  {/* Action buttons */}
+                  <div className="flex justify-end gap-4 pt-1">
+                    <AntButton onClick={handleCancel}>Cancel</AntButton>
+                    <AntButton type="primary" htmlType="submit">
+                      Save Changes
+                    </AntButton>
+                  </div>
+                </div>
+              </Form>
+            </div>
+          </div>
+        </main>
+      </div>
+    </div>
+  );
+}
+
+
+
+================================================================================
+FILE: apps\web\app\(learner)\dashboard\settings\security\page.tsx
+================================================================================
+"use client";
+
+import { useState } from "react";
+import Link from "next/link";
+import Image from "next/image";
+import { Form, Input, Button as AntButton, Tag, message } from "antd";
+import {
+  LayoutGrid,
+  GraduationCap,
+  Heart,
+  Settings,
+  HelpCircle,
+  ShieldCheck,
+  Smartphone,
+  Monitor,
+  LogOut,
+} from "lucide-react";
+import { SettingsNav } from "@/components/settings/SettingsNav";
+
+// TODO: replace with useAuth() / useSessions() hooks from @saachi/api-client
+interface Session {
+  id: string;
+  device: string;
+  location: string;
+  lastActive: string;
+  isCurrent: boolean;
+  deviceType: "desktop" | "mobile";
+}
+
+const initialSessions: Session[] = [
+  {
+    id: "session-1",
+    device: "Mac OS - Safari",
+    location: "New York, USA",
+    lastActive: "Active Now",
+    isCurrent: true,
+    deviceType: "desktop",
+  },
+  {
+    id: "session-2",
+    device: "iOS - Safari",
+    location: "New York, USA",
+    lastActive: "Last seen 2h ago",
+    isCurrent: false,
+    deviceType: "mobile",
+  },
+];
+
+const navItems = [
+  { icon: LayoutGrid, label: "Dashboard", href: "/dashboard" },
+  { icon: GraduationCap, label: "My Courses", href: "/dashboard/my-courses" },
+  { icon: Heart, label: "Wishlist", href: "/dashboard/wishlist" },
+  { icon: Settings, label: "Settings", href: "/dashboard/settings" },
+];
+
+interface PasswordFormValues {
+  currentPassword: string;
+  newPassword: string;
+  confirmPassword: string;
+}
+
+export default function SecuritySettingsPage() {
+  const [form] = Form.useForm<PasswordFormValues>();
+  const [twoFactorEnabled, setTwoFactorEnabled] = useState(false);
+  const [sessions, setSessions] = useState<Session[]>(initialSessions);
+
+  function handlePasswordSubmit(values: PasswordFormValues) {
+    // TODO: wire to useAuth().changePassword() from @saachi/api-client
+    console.log("update password", values);
+    message.success("Password updated successfully.");
+    form.resetFields();
+  }
+
+  function handleToggleTwoFactor() {
+    // TODO: wire to useAuth().toggleTwoFactor() from @saachi/api-client
+    setTwoFactorEnabled((prev) => !prev);
+  }
+
+  function handleRevokeSession(sessionId: string) {
+    // TODO: wire to useSessions().revoke(sessionId) from @saachi/api-client
+    setSessions((prev) => prev.filter((s) => s.id !== sessionId));
+  }
+
+  function handleRevokeAllSessions() {
+    // TODO: wire to useSessions().revokeAll() from @saachi/api-client
+    setSessions((prev) => prev.filter((s) => s.isCurrent));
+  }
+
+  const otherSessionsCount = sessions.filter((s) => !s.isCurrent).length;
+
+  return (
+    <div className="flex min-h-screen bg-[var(--token-color-bg)]">
+      {/* Sidebar */}
+      <aside className="fixed inset-y-0 left-0 hidden w-72 flex-col justify-between border-r border-[var(--token-color-border)] bg-[var(--token-color-surfaceAlt)] lg:flex">
+        <div className="flex flex-col">
+          <div className="flex items-center gap-4 border-b border-[var(--token-color-border)] p-6">
+            <span className="relative block h-12 w-12 shrink-0 overflow-hidden rounded-full">
+              <Image
+                src="https://i.pravatar.cc/96?img=47"
+                alt="Learner avatar"
+                fill
+                sizes="48px"
+                className="object-cover"
+              />
+            </span>
+            <div className="flex flex-col">
+              <span className="text-lg font-bold" style={{ color: "var(--token-color-ink)" }}>
+                Learner Portal
+              </span>
+              <span
+                style={{ color: "var(--token-color-inkSoft)", fontSize: "var(--token-font-size-xs)" }}
+              >
+                Manage your skills
+              </span>
+            </div>
+          </div>
+
+          <nav className="flex flex-col gap-2 p-4">
+            {navItems.map(({ icon: Icon, label, href }) => {
+              const isActive = label === "Settings";
+              return (
+                <Link
+                  key={label}
+                  href={href}
+                  className="flex items-center gap-4 rounded-lg border-l-4 px-4 py-3 text-sm font-semibold tracking-wide transition"
+                  style={{
+                    borderColor: isActive ? "var(--token-color-primary)" : "transparent",
+                    backgroundColor: isActive ? "var(--token-color-primaryTint)" : "transparent",
+                    color: isActive ? "var(--token-color-primary)" : "var(--token-color-inkSoft)",
+                  }}
+                >
+                  <Icon size={18} />
+                  {label}
+                </Link>
+              );
+            })}
+          </nav>
+        </div>
+
+        <div className="border-t border-[var(--token-color-border)] p-4">
+          <Link
+            href="/support"
+            className="flex h-12 items-center gap-4 rounded-lg pl-4 text-sm font-semibold tracking-wide text-[var(--token-color-inkSoft)] hover:bg-[var(--token-color-surface)]"
+          >
+            <HelpCircle size={18} />
+            Help Center
+          </Link>
+        </div>
+      </aside>
+
+      {/* Main column */}
+      <div className="flex w-full flex-col lg:pl-72">
+        <main className="flex-1 px-12 pb-16 pt-12">
+          <div className="flex flex-col gap-10">
+            {/* Header */}
+            <div className="flex flex-col gap-1.5">
+              <h1
+                className="text-5xl font-bold leading-[52.8px]"
+                style={{ color: "var(--token-color-ink)" }}
+              >
+                Security Settings
+              </h1>
+              <p style={{ color: "var(--token-color-inkSoft)", fontSize: "var(--token-font-size-lg)" }}>
+                Manage your password, authentication, and active sessions.
+              </p>
+            </div>
+
+            {/* Nav + content */}
+            <div className="flex flex-col gap-10 lg:flex-row lg:items-start">
+              <SettingsNav />
+
+              <div className="flex w-full flex-1 flex-col gap-10">
+                {/* Change Password */}
+                <section
+                  className="flex flex-col gap-3.5 rounded-xl bg-[var(--token-color-surface)] p-6 shadow-[var(--token-shadow-sm)]"
+                  style={{ border: "1px solid color-mix(in srgb, var(--token-color-border) 30%, transparent)" }}
+                >
+                  <h2 className="text-2xl font-semibold leading-8" style={{ color: "var(--token-color-ink)" }}>
+                    Change Password
+                  </h2>
+
+                  <Form
+                    form={form}
+                    layout="vertical"
+                    requiredMark={false}
+                    onFinish={handlePasswordSubmit}
+                    className="flex w-full max-w-96 flex-col"
+                  >
+                    <Form.Item
+                      label="Current Password"
+                      name="currentPassword"
+                      rules={[{ required: true, message: "Please enter your current password" }]}
+                    >
+                      <Input.Password size="large" />
+                    </Form.Item>
+
+                    <Form.Item
+                      label="New Password"
+                      name="newPassword"
+                      rules={[
+                        { required: true, message: "Please enter a new password" },
+                        { min: 8, message: "Must be at least 8 characters long." },
+                      ]}
+                    >
+                      <Input.Password size="large" />
+                    </Form.Item>
+
+                    <Form.Item
+                      label="Confirm New Password"
+                      name="confirmPassword"
+                      dependencies={["newPassword"]}
+                      rules={[
+                        { required: true, message: "Please confirm your new password" },
+                        ({ getFieldValue }) => ({
+                          validator(_, value) {
+                            if (!value || getFieldValue("newPassword") === value) {
+                              return Promise.resolve();
+                            }
+                            return Promise.reject(new Error("Passwords do not match"));
+                          },
+                        }),
+                      ]}
+                    >
+                      <Input.Password size="large" />
+                    </Form.Item>
+
+                    <div className="flex justify-end pt-px">
+                      <AntButton type="primary" htmlType="submit">
+                        Update Password
+                      </AntButton>
+                    </div>
+                  </Form>
+                </section>
+
+                {/* Two-Factor Authentication */}
+                <section
+                  className="flex flex-col gap-4 rounded-xl bg-[var(--token-color-surface)] p-6 shadow-[var(--token-shadow-sm)]"
+                  style={{ border: "1px solid color-mix(in srgb, var(--token-color-border) 30%, transparent)" }}
+                >
+                  <div className="flex items-center justify-between gap-4">
+                    <div className="flex flex-col gap-1">
+                      <h2 className="flex items-center gap-2 text-2xl font-semibold leading-8" style={{ color: "var(--token-color-ink)" }}>
+                        <ShieldCheck size={20} color="var(--token-color-primary)" />
+                        Two-Factor Authentication
+                      </h2>
+                      <p style={{ color: "var(--token-color-inkSoft)", fontSize: "var(--token-font-size-base)" }}>
+                        Add an extra layer of security to your account.
+                      </p>
+                    </div>
+
+                    <Tag
+                      bordered={false}
+                      style={{
+                        backgroundColor: twoFactorEnabled
+                          ? "var(--token-color-successTint)"
+                          : "var(--token-color-primaryTint)",
+                        color: twoFactorEnabled ? "var(--token-color-success)" : "var(--token-color-textMuted)",
+                        margin: 0,
+                      }}
+                    >
+                      Status: {twoFactorEnabled ? "Enabled" : "Disabled"}
+                    </Tag>
+                  </div>
+
+                  <div
+                    className="flex items-center justify-between gap-4 rounded-lg p-4"
+                    style={{
+                      backgroundColor: "var(--token-color-bg)",
+                      border: "1px solid color-mix(in srgb, var(--token-color-border) 50%, transparent)",
+                    }}
+                  >
+                    <div className="flex items-center gap-4">
+                      <span
+                        className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full"
+                        style={{ backgroundColor: "var(--token-color-primaryTint)" }}
+                      >
+                        <Smartphone size={20} color="var(--token-color-primary)" />
+                      </span>
+                      <div className="flex flex-col">
+                        <span className="text-sm font-semibold tracking-wide" style={{ color: "var(--token-color-ink)" }}>
+                          Authenticator App
+                        </span>
+                        <span className="text-xs font-medium" style={{ color: "var(--token-color-inkSoft)" }}>
+                          Use an app like Google Authenticator.
+                        </span>
+                      </div>
+                    </div>
+
+                    <AntButton onClick={handleToggleTwoFactor}>
+                      {twoFactorEnabled ? "Disable" : "Enable"}
+                    </AntButton>
+                  </div>
+                </section>
+
+                {/* Active Sessions */}
+                <section
+                  className="flex flex-col gap-6 rounded-xl bg-[var(--token-color-surface)] p-6 shadow-[var(--token-shadow-sm)]"
+                  style={{ border: "1px solid color-mix(in srgb, var(--token-color-border) 30%, transparent)" }}
+                >
+                  <div className="flex items-center justify-between">
+                    <h2 className="text-2xl font-semibold leading-8" style={{ color: "var(--token-color-ink)" }}>
+                      Active Sessions
+                    </h2>
+
+                    {otherSessionsCount > 0 && (
+                      <button
+                        type="button"
+                        onClick={handleRevokeAllSessions}
+                        className="text-sm font-semibold tracking-wide"
+                        style={{ color: "var(--token-color-error)" }}
+                      >
+                        Revoke All
+                      </button>
+                    )}
+                  </div>
+
+                  <div className="flex flex-col gap-4">
+                    {sessions.map((session) => (
+                      <div
+                        key={session.id}
+                        className="flex items-center justify-between gap-4 rounded-lg p-4"
+                        style={{
+                          backgroundColor: "var(--token-color-bg)",
+                          border: session.isCurrent
+                            ? "1px solid color-mix(in srgb, var(--token-color-primary) 20%, transparent)"
+                            : "1px solid color-mix(in srgb, var(--token-color-border) 50%, transparent)",
+                        }}
+                      >
+                        <div className="flex items-center gap-4">
+                          {session.deviceType === "desktop" ? (
+                            <Monitor size={22} color={session.isCurrent ? "var(--token-color-primary)" : "var(--token-color-inkSoft)"} />
+                          ) : (
+                            <Smartphone size={20} color={session.isCurrent ? "var(--token-color-primary)" : "var(--token-color-inkSoft)"} />
+                          )}
+                          <div className="flex flex-col">
+                            <span className="text-sm font-semibold tracking-wide" style={{ color: "var(--token-color-ink)" }}>
+                              {session.device}
+                            </span>
+                            <span className="text-xs font-medium" style={{ color: "var(--token-color-inkSoft)" }}>
+                              {session.location} &bull; {session.lastActive}
+                            </span>
+                          </div>
+                        </div>
+
+                        {session.isCurrent ? (
+                          <span className="text-xs font-bold" style={{ color: "var(--token-color-primary)" }}>
+                            Current
+                          </span>
+                        ) : (
+                          <button
+                            type="button"
+                            aria-label={`Revoke ${session.device} session`}
+                            onClick={() => handleRevokeSession(session.id)}
+                            className="flex h-9 w-9 items-center justify-center rounded-full transition hover:bg-[var(--token-color-surfaceAlt)]"
+                          >
+                            <LogOut size={18} color="var(--token-color-inkSoft)" />
+                          </button>
+                        )}
+                      </div>
+                    ))}
+
+                    {sessions.length === 0 && (
+                      <p style={{ color: "var(--token-color-inkSoft)", fontSize: "var(--token-font-size-sm)" }}>
+                        No active sessions.
+                      </p>
+                    )}
+                  </div>
+                </section>
+              </div>
+            </div>
+          </div>
+        </main>
+      </div>
+    </div>
+  );
+}
+
 
 
 ================================================================================
@@ -2756,6 +4753,98 @@ function RecommendedCard({ course }: { course: RecommendedCourse }) {
     </article>
   );
 }
+
+
+================================================================================
+FILE: apps\web\app\(marketing)\become-instructor\page.tsx
+================================================================================
+import Link from "next/link";
+import Image from "next/image";
+import { ArrowRight } from "lucide-react";
+import { Header } from "@/components/marketing/Header";
+import { CompactFooter } from "@/components/marketing/CompactFooter";
+
+// TODO: replace with data from a CMS/marketing content API once available
+const instructorSpotlight = {
+  quote: '"Saachi AI amplified my reach tenfold."',
+  image:
+    "https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&w=800&q=80",
+};
+
+export default function BecomeInstructorPage() {
+  return (
+    <div className="flex min-h-screen flex-col bg-[var(--token-color-bg)]">
+      <Header />
+
+      <main className="mx-auto flex w-full max-w-[1280px] flex-1 flex-col gap-6 px-6 py-24 md:flex-row">
+        {/* Left: copy card */}
+        <div
+          className="flex flex-1 flex-col justify-center gap-6 rounded-xl bg-[var(--token-color-surface)] px-10 py-24 shadow-[var(--token-shadow-md)]"
+          style={{ border: "1px solid color-mix(in srgb, var(--token-color-border) 30%, transparent)" }}
+        >
+          <h1
+            className="max-w-[732px] text-5xl font-bold leading-[52.8px]"
+            style={{ color: "var(--token-color-ink)" }}
+          >
+            Inspire the Next Generation of AI Professionals.
+          </h1>
+
+          <p
+            className="max-w-[672px] text-lg leading-7"
+            style={{ color: "var(--token-color-inkSoft)" }}
+          >
+            Join our elite network of instructors. Share your expertise, monetize your knowledge, and
+            shape the future of artificial intelligence learning globally.
+          </p>
+
+          <div>
+            <Link
+              href="/instructors/onboarding"
+              className="inline-flex items-center gap-2 rounded-lg px-6 py-3 text-sm font-semibold tracking-wide text-white shadow-[var(--token-shadow-sm)]"
+              style={{ backgroundColor: "var(--token-color-primary)" }}
+            >
+              Start Your Application
+              <ArrowRight size={12} />
+            </Link>
+          </div>
+        </div>
+
+        {/* Right: spotlight image */}
+        <div className="relative min-h-72 flex-1 overflow-hidden rounded-xl shadow-[var(--token-shadow-md)]">
+          <Image
+            src={instructorSpotlight.image}
+            alt="Instructor spotlight"
+            fill
+            sizes="(max-width: 768px) 100vw, 396px"
+            className="object-cover"
+            priority
+          />
+
+          <div
+            className="absolute inset-0 flex items-end p-6"
+            style={{
+              background:
+                "linear-gradient(0deg, rgba(0,0,0,0.6) 0%, rgba(0,0,0,0) 60%)",
+            }}
+          >
+            <div className="flex flex-col gap-1">
+              <span
+                className="text-sm font-semibold uppercase tracking-wide"
+                style={{ color: "var(--token-color-primaryTint)" }}
+              >
+                Instructor Spotlight
+              </span>
+              <span className="text-base font-semibold text-white">{instructorSpotlight.quote}</span>
+            </div>
+          </div>
+        </div>
+      </main>
+
+      <CompactFooter />
+    </div>
+  );
+}
+
 
 
 ================================================================================
@@ -6215,6 +8304,53 @@ export function StandardResultCard({ title, description, meta, price, image }: S
     </article>
   );
 }
+
+
+================================================================================
+FILE: apps\web\components\settings\SettingsNav.tsx
+================================================================================
+"use client";
+
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+
+// TODO: as each page is built, its route below is already wired -- just add
+// the matching page.tsx file under app/(learner)/dashboard/settings/<route>.
+const settingsNavItems = [
+  { label: "Profile Details", href: "/dashboard/settings/profile" },
+  { label: "Security", href: "/dashboard/settings/security" },
+  { label: "Notifications", href: "/dashboard/settings/notifications" },
+  { label: "Billing & Payments", href: "/dashboard/settings/billing" },
+  { label: "Privacy & Data", href: "/dashboard/settings/privacy" },
+];
+
+export function SettingsNav() {
+  const pathname = usePathname();
+
+  return (
+    <nav className="flex w-56 shrink-0 flex-col gap-2">
+      {settingsNavItems.map((item) => {
+        const isActive = pathname === item.href;
+        return (
+          <Link
+            key={item.href}
+            href={item.href}
+            className="rounded-lg px-4 py-5 text-sm tracking-wide transition"
+            style={{
+              backgroundColor: isActive ? "var(--token-color-surfaceAlt)" : "transparent",
+              borderLeft: isActive ? "4px solid var(--token-color-primary)" : "4px solid transparent",
+              color: isActive ? "var(--token-color-ink)" : "var(--token-color-inkSoft)",
+              fontWeight: isActive ? 700 : 600,
+            }}
+          >
+            {item.label}
+          </Link>
+        );
+      })}
+    </nav>
+  );
+}
+
 
 
 ================================================================================
