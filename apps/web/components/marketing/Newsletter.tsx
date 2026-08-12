@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { useState } from "react";
 
@@ -12,36 +12,42 @@ export function Newsletter() {
   }
 
   return (
-    <div className="mx-auto flex w-full max-w-[896px] flex-col items-center justify-between gap-6 rounded-xl bg-[#3525CD] p-10 shadow-[0px_10px_32px_0px_rgba(15,23,42,0.12)] md:flex-row">
-      <div className="flex max-w-96 flex-col gap-2">
-        <h2 className="text-2xl font-semibold text-white">
-          Stay ahead of the curve.
-        </h2>
-        <p className="text-base text-violet-300">
-          Join our newsletter for weekly AI insights, course updates, and
-          exclusive discounts.
-        </p>
-      </div>
-
-      <form
-        onSubmit={handleSubmit}
-        className="flex h-12 w-full max-w-96 items-center overflow-hidden rounded-sm bg-white shadow-[0px_1px_2px_0px_rgba(0,0,0,0.05)]"
+    <div className="mx-auto w-full max-w-[1280px] px-6 pb-16">
+      <div
+        className="flex flex-col items-center justify-between gap-6 border p-10 md:flex-row"
+        style={{ borderColor: "var(--token-color-blueprintLine)", backgroundColor: "var(--token-color-inkDeep)" }}
       >
-        <input
-          type="email"
-          required
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          placeholder="Enter your email"
-          className="h-full flex-1 px-4 py-2.5 text-base text-[#18181B] placeholder:text-gray-500 focus:outline-none"
-        />
-        <button
-          type="submit"
-          className="m-1 rounded-sm bg-slate-600 px-6 py-2 text-sm font-semibold tracking-wide text-white hover:bg-slate-700"
-        >
-          Subscribe
-        </button>
-      </form>
+        <div className="flex max-w-96 flex-col gap-2">
+          <h2
+            className="text-2xl font-semibold"
+            style={{ fontFamily: "var(--token-font-displayFamily)", color: "var(--token-color-paper)" }}
+          >
+            Get one practical AI tip a week.
+          </h2>
+          <p className="text-sm" style={{ color: "var(--token-color-blueprintLine)" }}>
+            New courses, real build breakdowns, no hype.
+          </p>
+        </div>
+
+        <form onSubmit={handleSubmit} className="flex w-full max-w-96 gap-2">
+          <input
+            type="email"
+            required
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            placeholder="you@example.com"
+            className="h-11 flex-1 border px-4 text-sm focus:outline-none"
+            style={{ borderColor: "var(--token-color-blueprintLine)", backgroundColor: "var(--token-color-paper)", color: "var(--token-color-inkDeep)" }}
+          />
+          <button
+            type="submit"
+            className="h-11 shrink-0 px-6 text-sm font-semibold tracking-wide"
+            style={{ backgroundColor: "var(--token-color-amber)", color: "var(--token-color-inkDeep)" }}
+          >
+            Subscribe
+          </button>
+        </form>
+      </div>
     </div>
   );
 }

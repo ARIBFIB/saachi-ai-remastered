@@ -1,47 +1,56 @@
-﻿import { GraduationCap, Wrench, BadgeCheck } from "lucide-react";
+import { GraduationCap, Wrench, BadgeCheck } from "lucide-react";
+import { SpecLabel } from "./BlueprintMark";
 
 const reasons = [
   {
     icon: GraduationCap,
-    title: "Industry Experts",
+    title: "Taught by people who ship",
     description:
-      "Learn directly from senior engineers and researchers from top tech companies.",
+      "Instructors are practitioners with real, demonstrable work â€” not narrators reading slides.",
   },
   {
     icon: Wrench,
-    title: "Hands-on Projects",
+    title: "Hands-on, from lesson one",
     description:
-      "Build real-world AI applications in cloud environments straight from your browser.",
+      "Every course ends in a working artifact: a bot, an automation, a deployed feature.",
   },
   {
     icon: BadgeCheck,
-    title: "AI-Verified Certificates",
+    title: "Verified, not just watched",
     description:
-      "Earn credentials verified on the blockchain, trusted by top employers globally.",
+      "Certificates carry a verification ID tied to actual completion, not video runtime.",
   },
 ];
 
 export function WhySaachi() {
   return (
-    <section className="w-full bg-[#F8FAFC] pb-20 pt-12">
+    <section className="w-full py-16" style={{ backgroundColor: "var(--token-color-bg)" }}>
       <div className="mx-auto flex max-w-[1280px] flex-col gap-10 px-6">
-        <h2 className="text-center text-2xl font-semibold text-[#18181B]">
-          Why Learn with Saachi?
-        </h2>
+        <div className="flex flex-col gap-3">
+          <SpecLabel index="04" label="Why Saachi" />
+          <h2
+            className="text-3xl font-semibold"
+            style={{ fontFamily: "var(--token-font-displayFamily)", color: "var(--token-color-inkDeep)" }}
+          >
+            Built for outcomes, not watch-time
+          </h2>
+        </div>
 
-        <div className="flex justify-center gap-10 pt-6">
+        <div className="grid grid-cols-1 gap-6 sm:grid-cols-3">
           {reasons.map(({ icon: Icon, title, description }) => (
             <div
               key={title}
-              className="flex flex-1 flex-col items-center gap-4 p-6 text-center"
+              className="flex flex-col gap-4 border-t-2 p-6"
+              style={{ borderColor: "var(--token-color-teal)", backgroundColor: "var(--token-color-surface)" }}
             >
-              <span className="flex h-12 w-12 items-center justify-center rounded-sm bg-gray-200">
-                <Icon className="h-6 w-6 text-[#3525CD]" />
-              </span>
-              <h3 className="text-lg font-semibold text-[#18181B]">
+              <Icon className="h-6 w-6" style={{ color: "var(--token-color-teal)" }} />
+              <h3
+                className="text-lg font-semibold"
+                style={{ fontFamily: "var(--token-font-displayFamily)", color: "var(--token-color-inkDeep)" }}
+              >
                 {title}
               </h3>
-              <p className="max-w-[280px] text-base text-[#3F3F46]">
+              <p className="text-sm leading-6" style={{ color: "var(--token-color-inkDeepSoft)" }}>
                 {description}
               </p>
             </div>

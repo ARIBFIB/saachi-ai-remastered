@@ -1,5 +1,4 @@
 import Link from "next/link";
-import { Zap, Globe, Share2 } from "lucide-react";
 
 const columns = [
   {
@@ -7,7 +6,7 @@ const columns = [
     links: [
       { label: "Marketplace", href: "/courses" },
       { label: "Enterprise", href: "/pricing" },
-      { label: "Instructor Handbook", href: "/instructor/handbook" },
+      { label: "Teach a Skill", href: "/become-instructor" },
     ],
   },
   {
@@ -29,28 +28,34 @@ const columns = [
 
 export function Footer() {
   return (
-    <footer className="w-full bg-zinc-200">
-      <div className="mx-auto grid max-w-[1280px] grid-cols-1 gap-8 px-6 py-10 md:grid-cols-4">
+    <footer className="w-full border-t" style={{ borderColor: "var(--token-color-blueprintLineSoft)", backgroundColor: "var(--token-color-paper)" }}>
+      <div className="mx-auto grid max-w-[1280px] grid-cols-1 gap-8 px-6 py-12 md:grid-cols-4">
         <div className="flex flex-col gap-4">
-          <Link href="/" className="flex items-center gap-1">
-            <Zap
-              className="h-[18px] w-[18px] text-[#3525CD]"
-              fill="currentColor"
-              strokeWidth={0}
-            />
-            <span className="text-base font-bold text-[#3525CD]">
+          <div className="flex items-center gap-2">
+            <span
+              className="flex h-6 w-6 items-center justify-center text-xs font-bold"
+              style={{ backgroundColor: "var(--token-color-amber)", color: "var(--token-color-inkDeep)", fontFamily: "var(--token-font-monoFamily)" }}
+            >
+              S
+            </span>
+            <span
+              className="text-base font-semibold"
+              style={{ fontFamily: "var(--token-font-displayFamily)", color: "var(--token-color-inkDeep)" }}
+            >
               Saachi AI
             </span>
-          </Link>
-          <p className="text-sm text-[#3F3F46]">
-            Empowering the next generation of builders with cutting-edge
-            artificial intelligence skills.
+          </div>
+          <p className="text-sm" style={{ color: "var(--token-color-inkDeepSoft)" }}>
+            A skills exchange for the AI era. Learn to build, not just watch.
           </p>
         </div>
 
         {columns.map((col) => (
           <div key={col.title} className="flex flex-col gap-4">
-            <h4 className="text-sm font-bold tracking-wide text-[#18181B]">
+            <h4
+              className="text-xs font-semibold uppercase tracking-[0.12em]"
+              style={{ color: "var(--token-color-inkDeepSoft)" }}
+            >
               {col.title}
             </h4>
             <nav className="flex flex-col gap-2">
@@ -58,7 +63,8 @@ export function Footer() {
                 <Link
                   key={link.label}
                   href={link.href}
-                  className="text-sm text-[#3F3F46] hover:text-[#3525CD]"
+                  className="text-sm hover:opacity-70"
+                  style={{ color: "var(--token-color-inkDeep)" }}
                 >
                   {link.label}
                 </Link>
@@ -68,15 +74,13 @@ export function Footer() {
         ))}
       </div>
 
-      <div className="mx-auto flex max-w-[1280px] items-center justify-between border-t border-[#CBD5E1] px-6 py-6">
-        <p className="text-xs font-medium text-[#3F3F46]">
-          © {new Date().getFullYear()} Saachi AI Marketplace. Empowering the
-          future of skills.
+      <div
+        className="mx-auto flex max-w-[1280px] items-center justify-between border-t px-6 py-5"
+        style={{ borderColor: "var(--token-color-blueprintLineSoft)", fontFamily: "var(--token-font-monoFamily)" }}
+      >
+        <p className="text-xs" style={{ color: "var(--token-color-inkDeepSoft)" }}>
+          &copy; {new Date().getFullYear()} Saachi AI Marketplace
         </p>
-        <div className="flex items-center gap-4 text-slate-600">
-          <Globe className="h-[18px] w-[18px]" />
-          <Share2 className="h-[18px] w-[18px]" />
-        </div>
       </div>
     </footer>
   );
