@@ -2,19 +2,48 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { GraduationCap, UserSquare2, Check } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { GraduationCap, UserSquare2, Check, AlertCircle } from "lucide-react";
+import { useLogin, useRegister } from "@saachi/api-client";
 
 type Mode = "signin" | "register";
 type Role = "learner" | "instructor";
 
 export default function LoginPage() {
+  const router = useRouter();
   const [mode, setMode] = useState<Mode>("signin");
   const [role, setRole] = useState<Role>("learner");
 
-  function handleSubmit(e: React.FormEvent) {
+  const [fullName, setFullName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+
+  const login = useLogin();
+  const register = useRegister();
+
+  const isSubmitting = login.isPending || register.isPending;
+  const errorMessage = login.isError
+    ? "Could not sign in. Please try again."
+    : register.isError
+      ? "Could not create your account. Please try again."
+      : null;
+
+  async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    // TODO: wire to useAuth() from @saachi/api-client
-    console.log("submit", { mode, role });
+
+    if (mode === "signin") {
+      await login.mutateAsync({ email, password });
+    } else {
+      await register.mutateAsync({
+        fullName: fullName || email.split("@")[0] || "New User",
+        email,
+        password,
+        confirmPassword: password,
+        role
+      });
+    }
+
+    router.push("/dashboard");
   }
 
   return (
@@ -61,6 +90,23 @@ export default function LoginPage() {
 
           {/* Form */}
           <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+            {mode === "register" && (
+              <div className="flex flex-col gap-1">
+                <label htmlFor="fullName" className="text-sm font-semibold tracking-wide text-gray-700">
+                  Full Name
+                </label>
+                <input
+                  id="fullName"
+                  type="text"
+                  required
+                  value={fullName}
+                  onChange={(e) => setFullName(e.target.value)}
+                  placeholder="Jane Doe"
+                  className="rounded-lg border border-slate-300 bg-slate-50 px-4 py-2.5 text-base text-zinc-900 placeholder:text-gray-500 focus:border-[#3525CD] focus:outline-none"
+                />
+              </div>
+            )}
+
             <div className="flex flex-col gap-1">
               <label htmlFor="email" className="text-sm font-semibold tracking-wide text-gray-700">
                 Email Address
@@ -69,6 +115,8 @@ export default function LoginPage() {
                 id="email"
                 type="email"
                 required
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
                 placeholder="name@company.com"
                 className="rounded-lg border border-slate-300 bg-slate-50 px-4 py-2.5 text-base text-zinc-900 placeholder:text-gray-500 focus:border-[#3525CD] focus:outline-none"
               />
@@ -89,16 +137,30 @@ export default function LoginPage() {
                 id="password"
                 type="password"
                 required
-                placeholder="••••••••"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                placeholder="Enter your password"
                 className="rounded-lg border border-slate-300 bg-slate-50 px-4 py-2.5 text-base text-zinc-900 placeholder:text-gray-500 focus:border-[#3525CD] focus:outline-none"
               />
             </div>
 
+            {errorMessage && (
+              <div className="flex items-center gap-2 rounded-lg bg-red-50 px-3 py-2 text-sm text-red-600">
+                <AlertCircle className="h-4 w-4 shrink-0" />
+                {errorMessage}
+              </div>
+            )}
+
             <button
               type="submit"
-              className="rounded-lg bg-[#3525CD] py-4 text-sm font-semibold tracking-wide text-white shadow-[0px_1px_2px_0px_rgba(0,0,0,0.05)] hover:bg-[#2A1DA3]"
+              disabled={isSubmitting}
+              className="rounded-lg bg-[#3525CD] py-4 text-sm font-semibold tracking-wide text-white shadow-[0px_1px_2px_0px_rgba(0,0,0,0.05)] hover:bg-[#2A1DA3] disabled:cursor-not-allowed disabled:opacity-60"
             >
-              {mode === "signin" ? "Sign In" : "Create Account"}
+              {isSubmitting
+                ? "Please wait..."
+                : mode === "signin"
+                  ? "Sign In"
+                  : "Create Account"}
             </button>
           </form>
 

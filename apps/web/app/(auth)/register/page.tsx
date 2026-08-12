@@ -1,9 +1,11 @@
-"use client";
+﻿"use client";
 
 import { useState } from "react";
 import Link from "next/link";
 import { Form, Input, Checkbox, Button, Typography, Avatar, Divider } from "antd";
 import { GraduationCap, Video } from "lucide-react";
+import { useRegister } from "@saachi/api-client";
+import { useRouter } from "next/navigation";
 
 const { Title, Text } = Typography;
 
@@ -17,12 +19,24 @@ interface RegisterFormValues {
 }
 
 export default function CreateAccountPage() {
+  const router = useRouter();
+  const registerMutation = useRegister();
   const [role, setRole] = useState<Role>("learner");
   const [form] = Form.useForm<RegisterFormValues>();
 
-  function handleFinish(values: RegisterFormValues) {
-    // TODO: wire to useAuth().register() from @saachi/api-client
-    console.log("register", { role, ...values });
+  async function handleFinish(values: RegisterFormValues) {
+    try {
+      await registerMutation.mutateAsync({
+        fullName: values.fullName,
+        email: values.email,
+        password: values.password,
+        confirmPassword: values.password,
+        role
+      });
+      router.push("/dashboard");
+    } catch {
+      // registerMutation.isError below drives the inline antd message
+    }
   }
 
   return (
