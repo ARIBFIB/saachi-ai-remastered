@@ -1,4 +1,4 @@
-﻿import { Header } from "@/components/marketing/Header";
+import { Header } from "@/components/marketing/Header";
 import { CompactFooter } from "@/components/marketing/CompactFooter";
 import { ResultFilterTabs, type FilterTab } from "@/components/search/ResultFilterTabs";
 import { FeaturedResultCard } from "@/components/search/FeaturedResultCard";
@@ -39,7 +39,7 @@ const standardResults = [
 ];
 
 interface SearchPageProps {
-  searchParams: { q?: string };
+  searchParams: Promise<{ q?: string }>;
 }
 
 export default async function SearchResultsPage({ searchParams }: SearchPageProps) {
