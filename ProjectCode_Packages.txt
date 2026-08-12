@@ -1,6 +1,6 @@
 ﻿================================================================================
 MODULE CODE EXPORT: Packages
-Generated: 2026-08-13 02:08:25
+Generated: 2026-08-13 02:50:55
 Total Files: 77
 ================================================================================
 
@@ -756,7 +756,7 @@ async function fetchTicketDetail(id: string): Promise<TicketDetailRecord> {
   return ticketStore[id];
 }
 
-export function useAdminTicketDetail(id: string) {
+export function useAdminTicketDetailPage(id: string) {
   return useQuery({
     queryKey: ["admin", "ticket-detail", id],
     queryFn: () => fetchTicketDetail(id),
@@ -909,7 +909,7 @@ async function fetchUserDetail(id: string): Promise<UserDetailRecord> {
   return userDetailStore[id];
 }
 
-export function useAdminUserDetail(id: string) {
+export function useAdminUserDetailPage(id: string) {
   return useQuery({
     queryKey: ["admin", "user-detail", id],
     queryFn: () => fetchUserDetail(id),
