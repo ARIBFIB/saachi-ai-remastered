@@ -1,7 +1,7 @@
 ﻿================================================================================
 MODULE CODE EXPORT: Web
-Generated: 2026-08-13 02:50:52
-Total Files: 98
+Generated: 2026-08-13 04:09:41
+Total Files: 99
 ================================================================================
 
 
@@ -5594,30 +5594,30 @@ const standardResults = [
   {
     title: "Practical ML for Product Managers",
     description: "Bridge the gap between business requirements and AI capabilities.",
-    meta: "8 Weeks â€¢ Intermediate",
-    price: "Â£299",
+    meta: "8 Weeks Ã¢â‚¬Â¢ Intermediate",
+    price: "Ã‚Â£299",
     image:
       "https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=600&q=80",
   },
   {
     title: "Computer Vision Fundamentals",
     description: "Implement image recognition systems from scratch using PyTorch.",
-    meta: "12 Weeks â€¢ Advanced",
-    price: "Â£450",
+    meta: "12 Weeks Ã¢â‚¬Â¢ Advanced",
+    price: "Ã‚Â£450",
     image:
       "https://images.unsplash.com/photo-1485827404703-89b55fcc595e?auto=format&fit=crop&w=600&q=80",
   },
   {
     title: "MLOps: Deploying Models",
     description: "Learn to scale and monitor machine learning pipelines in production.",
-    meta: "6 Weeks â€¢ Intermediate",
-    price: "Â£199",
+    meta: "6 Weeks Ã¢â‚¬Â¢ Intermediate",
+    price: "Ã‚Â£199",
     // no image -- design shows a placeholder icon tile for this card
   },
 ];
 
 interface SearchPageProps {
-  searchParams: { q?: string };
+  searchParams: Promise<{ q?: string }>;
 }
 
 export default async function SearchResultsPage({ searchParams }: SearchPageProps) {
@@ -9157,6 +9157,41 @@ export function courseDurationLabel(course: DummyCourse): string {
   const hours = Math.floor(totalSeconds / 3600);
   const minutes = Math.floor((totalSeconds % 3600) / 60);
   return hours > 0 ? `${hours}h ${minutes}m` : `${minutes}m`;
+}
+
+
+================================================================================
+FILE: apps\web\lib\query-provider.tsx
+================================================================================
+"use client";
+
+import { useState } from "react";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+
+/**
+ * Wraps the app with a TanStack Query QueryClient.
+ *
+ * IMPORTANT: the QueryClient is created inside useState so that each
+ * request/browser session gets its own instance (avoids sharing cached
+ * data across different users on the server, and avoids the
+ * "No QueryClient set" error during Next.js static prerendering).
+ *
+ * See: https://tanstack.com/query/latest/docs/framework/react/guides/ssr#using-the-app-router
+ */
+export function QueryProvider({ children }: { children: React.ReactNode }) {
+  const [queryClient] = useState(
+    () =>
+      new QueryClient({
+        defaultOptions: {
+          queries: {
+            staleTime: 60 * 1000,
+            refetchOnWindowFocus: false
+          }
+        }
+      })
+  );
+
+  return <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>;
 }
 
 
