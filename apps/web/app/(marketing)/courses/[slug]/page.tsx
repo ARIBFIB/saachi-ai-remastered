@@ -4,14 +4,14 @@ import { useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import { Star, Clock, BarChart3, Globe2, PlayCircle, CheckCircle2, ChevronDown } from "lucide-react";
-import { useCourseDetail } from "@saachi/api-client";
+import { useCourseDetailDemo } from "@saachi/api-client";
 import { useCartStore, useWishlistStore } from "@saachi/store";
 import { Button, Loading, EmptyState, Badge } from "@saachi/ui";
 
 export default function CourseDetailPage() {
   const params = useParams<{ slug: string }>();
   const router = useRouter();
-  const { data: course, isLoading } = useCourseDetail(params.slug);
+  const { data: course, isLoading } = useCourseDetailDemo(params.slug);
   const addToCart = useCartStore((s) => s.addItem);
   const addToWishlist = useWishlistStore((s) => s.add);
   const [openModuleId, setOpenModuleId] = useState<string | null>(null);

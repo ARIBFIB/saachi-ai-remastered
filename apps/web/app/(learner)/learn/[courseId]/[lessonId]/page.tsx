@@ -42,7 +42,6 @@ export default function CoursePlayerPage() {
   const params = useParams<{ courseId: string; lessonId: string }>();
   const router = useRouter();
   const enrollments = useEnrollmentStore((s) => s.enrollments);
-  const updateProgress = useEnrollmentStore((s) => s.updateProgress);
 
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [completedIds, setCompletedIds] = useState<Set<string>>(new Set());
@@ -76,10 +75,9 @@ export default function CoursePlayerPage() {
 
   function handleMarkComplete() {
     setCompletedIds((prev) => new Set(prev).add(currentLesson.id));
-    const pct = Math.round(((completedIds.size + 1) / allLessons.length) * 100);
-    if (enrollment && updateProgress) {
-      updateProgress(enrollment.courseId, Math.min(100, pct));
-    }
+    // NOTE: demo-only local completion tracking. Wire this up to the real
+    // enrollment progress mutation once packages/store's enrollment API
+    // exposes a progress-update action.
     if (nextLesson) {
       router.push(`/learn/${params.courseId}/${nextLesson.id}`);
     }

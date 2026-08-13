@@ -146,7 +146,7 @@ function buildDummyCertificate(id: string): CertificateDetail {
 
 // ---- Hooks ----
 
-export function useCourseDetail(slug: string) {
+export function useCourseDetailDemo(slug: string) {
   return useQuery({
     queryKey: ["course-detail", slug],
     queryFn: async () => buildDummyCourse(slug),
