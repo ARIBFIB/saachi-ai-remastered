@@ -1,5 +1,5 @@
 export * from "./cn";
-export * from "./components/Button";
+// export * from "./components/Button"; // removed: duplicate Button export, canonical Button now comes from ./Button
 export * from "./components/Card";
 export * from "./components/Badge";
 export * from "./components/Input";
