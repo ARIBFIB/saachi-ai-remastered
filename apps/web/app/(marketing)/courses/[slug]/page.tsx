@@ -7,8 +7,8 @@ import { CourseCurriculum } from "@/components/course-detail/CourseCurriculum";
 import { InstructorBio } from "@/components/course-detail/InstructorBio";
 import { PurchaseCard } from "@/components/course-detail/PurchaseCard";
 
-// TODO: replace with useCourse(slug) hook from @saachi/api-client
-interface CourseDetail {
+// TODO: replace with useCourseDetail(slug) hook from @saachi/api-client
+interface CourseDetailData {
   slug: string;
   category: string;
   levelBadge: string;
@@ -26,47 +26,63 @@ interface CourseDetail {
   includes: string[];
 }
 
-const DUMMY_COURSE_DETAILS: Record<string, CourseDetail> = {
+const DUMMY_COURSES: Record<string, CourseDetailData> = {
   "prompt-engineering-masterclass": {
     slug: "prompt-engineering-masterclass",
-    category: "Generative AI",
+    category: "Prompt Engineering",
     levelBadge: "Intermediate",
     title: "Prompt Engineering Masterclass",
     description:
-      "Master the art of crafting precise instructions for large language models, from zero-shot prompting to advanced chain-of-thought reasoning.",
+      "Master the art of crafting precise instructions for large language models -- from zero-shot prompting to advanced chain-of-thought reasoning.",
     rating: 4.8,
-    ratingsCount: "2.4k",
-    studentsCount: "18,204",
+    ratingsCount: "3.2k",
+    studentsCount: "18,400",
     instructorName: "Dr. Sarah Chen",
     instructorAvatar: "https://i.pravatar.cc/128?img=32",
     instructorTitle: "Lead AI Architect",
     instructorBio:
-      "Sarah has spent the last decade building and teaching large-scale NLP systems, and has helped thousands of engineers level up their prompting skills.",
+      "Sarah has spent the last 6 years building production LLM systems and has taught prompt engineering to over 20,000 students worldwide.",
     previewImage:
-      "https://images.unsplash.com/photo-1677442136019-21780ecad995?auto=format&fit=crop&w=1200&q=80",
+      "https://images.unsplash.com/photo-1677442136019-21780ecad995?auto=format&fit=crop&w=800&q=80",
     price: "$89.99",
-    includes: ["12 hours on-demand video", "Downloadable resources", "Certificate of completion"],
+    includes: ["8 hours on-demand video", "Downloadable resources", "Certificate of completion"],
+  },
+  "whatsapp-ai-auto-responder": {
+    slug: "whatsapp-ai-auto-responder",
+    category: "AI Automation",
+    levelBadge: "Intermediate",
+    title: "WhatsApp AI Auto-Responder for Small Business",
+    description:
+      "Build a working AI-powered WhatsApp auto-responder from scratch using n8n and an LLM API -- ship a real automation, not just a demo.",
+    rating: 4.9,
+    ratingsCount: "940",
+    studentsCount: "6,100",
+    instructorName: "Marcus Johnson",
+    instructorAvatar: "https://i.pravatar.cc/128?img=13",
+    instructorTitle: "Automation Engineer",
+    instructorBio:
+      "Marcus builds automation systems for small businesses across South Asia and has shipped over 40 production WhatsApp bots.",
+    previewImage:
+      "https://images.unsplash.com/photo-1531482615713-2afd69097998?auto=format&fit=crop&w=800&q=80",
+    price: "Rs 4,999",
+    includes: ["6h 40m on-demand video", "Starter n8n workflow file", "Certificate of completion"],
   },
 };
 
-function getCourseBySlug(slug: string): CourseDetail | null {
-  return DUMMY_COURSE_DETAILS[slug] ?? null;
-}
-
-interface CourseDetailPageProps {
+interface CoursePageProps {
   params: Promise<{ slug: string }>;
 }
 
-export default async function CourseDetailPage({ params }: CourseDetailPageProps) {
+export default async function CourseDetailPage({ params }: CoursePageProps) {
   const { slug } = await params;
-  const course = getCourseBySlug(slug);
+  const course = DUMMY_COURSES[slug];
 
   if (!course) {
     notFound();
   }
 
   return (
-    <div className="flex min-h-screen flex-col bg-[var(--token-color-bg)]">
+    <div className="flex min-h-screen flex-col bg-white">
       <Header />
 
       <CourseHero
@@ -82,8 +98,8 @@ export default async function CourseDetailPage({ params }: CourseDetailPageProps
         previewImage={course.previewImage}
       />
 
-      <main className="mx-auto flex w-full max-w-[1280px] flex-col gap-6 px-6 py-12 lg:flex-row lg:items-start">
-        <div className="flex flex-1 flex-col gap-6">
+      <main className="mx-auto flex w-full max-w-[1280px] flex-col gap-10 px-6 py-12 lg:flex-row lg:items-start">
+        <div className="flex flex-1 flex-col gap-10">
           <WhatYoullLearn />
           <CourseCurriculum />
           <InstructorBio
@@ -96,7 +112,7 @@ export default async function CourseDetailPage({ params }: CourseDetailPageProps
           />
         </div>
 
-        <div className="w-full lg:w-80">
+        <div className="w-full lg:w-80 lg:shrink-0">
           <PurchaseCard price={course.price} includes={course.includes} />
         </div>
       </main>
