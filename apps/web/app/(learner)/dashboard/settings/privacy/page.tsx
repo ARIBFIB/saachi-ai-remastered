@@ -122,11 +122,11 @@ export default function PrivacySettingsPage() {
                 <Link
                   key={label}
                   href={href}
-                  className="flex items-center gap-4 rounded-lg border-l-4 px-4 py-3 text-sm font-semibold tracking-wide transition"
+                  className="flex items-center gap-4 rounded-[var(--token-radius-md)] border-l-4 px-4 py-3 text-sm font-semibold tracking-wide transition"
                   style={{
-                    borderColor: isActive ? "var(--token-color-primary)" : "transparent",
-                    backgroundColor: isActive ? "var(--token-color-primaryTint)" : "transparent",
-                    color: isActive ? "var(--token-color-primary)" : "var(--token-color-inkSoft)",
+                    borderColor: isActive ? "var(--token-color-amber)" : "transparent",
+                    backgroundColor: isActive ? "var(--token-color-amberTint)" : "transparent",
+                    color: isActive ? "var(--token-color-amber)" : "var(--token-color-inkSoft)",
                   }}
                 >
                   <Icon size={18} />
@@ -140,7 +140,7 @@ export default function PrivacySettingsPage() {
         <div className="border-t border-[var(--token-color-border)] p-4">
           <Link
             href="/support"
-            className="flex h-12 items-center gap-4 rounded-lg pl-4 text-sm font-semibold tracking-wide text-[var(--token-color-inkSoft)] hover:bg-[var(--token-color-surface)]"
+            className="flex h-12 items-center gap-4 rounded-[var(--token-radius-md)] pl-4 text-sm font-semibold tracking-wide text-[var(--token-color-inkSoft)] hover:bg-[var(--token-color-surface)]"
           >
             <HelpCircle size={18} />
             Help Center
@@ -171,20 +171,20 @@ export default function PrivacySettingsPage() {
               <div className="flex w-full flex-1 flex-col gap-6">
                 {/* Community Visibility */}
                 <section
-                  className="relative flex flex-col gap-6 overflow-hidden rounded-xl bg-[var(--token-color-surface)] px-10 pb-10 pt-14 shadow-[var(--token-shadow-md)]"
+                  className="relative flex flex-col gap-6 overflow-hidden rounded-[var(--token-radius-lg)] bg-[var(--token-color-surface)] px-10 pb-10 pt-14 shadow-[var(--token-shadow-md)]"
                   style={{ border: "1px solid var(--token-color-border)" }}
                 >
                   <div
                     className="pointer-events-none absolute -right-8 -top-16 h-64 w-64 rounded-full blur-[32px]"
-                    style={{ backgroundColor: "color-mix(in srgb, var(--token-color-primaryTint) 20%, transparent)" }}
+                    style={{ backgroundColor: "color-mix(in srgb, var(--token-color-amberTint) 20%, transparent)" }}
                   />
 
                   <div className="relative flex items-start gap-4">
                     <span
-                      className="flex h-12 w-12 shrink-0 items-center justify-center rounded-lg"
-                      style={{ backgroundColor: "var(--token-color-primaryTint)" }}
+                      className="flex h-12 w-12 shrink-0 items-center justify-center rounded-[var(--token-radius-md)]"
+                      style={{ backgroundColor: "var(--token-color-amberTint)" }}
                     >
-                      <Eye size={20} color="var(--token-color-primary)" />
+                      <Eye size={20} color="var(--token-color-amber)" />
                     </span>
                     <div className="flex flex-col gap-1">
                       <h2 className="text-2xl font-semibold leading-8" style={{ color: "var(--token-color-ink)" }}>
@@ -229,11 +229,11 @@ export default function PrivacySettingsPage() {
                 <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
                   {/* Export Data */}
                   <div
-                    className="flex flex-col gap-4 rounded-xl bg-[var(--token-color-surface)] p-6 shadow-[var(--token-shadow-md)]"
+                    className="flex flex-col gap-4 rounded-[var(--token-radius-lg)] bg-[var(--token-color-surface)] p-6 shadow-[var(--token-shadow-md)]"
                     style={{ border: "1px solid var(--token-color-border)" }}
                   >
                     <span
-                      className="flex h-10 w-10 items-center justify-center rounded-lg"
+                      className="flex h-10 w-10 items-center justify-center rounded-[var(--token-radius-md)]"
                       style={{ backgroundColor: "var(--token-color-success)" }}
                     >
                       <Download size={16} color="var(--token-color-completedGreen)" />
@@ -260,7 +260,7 @@ export default function PrivacySettingsPage() {
 
                   {/* Danger Zone */}
                   <div
-                    className="relative flex flex-col gap-4 overflow-hidden rounded-xl bg-[var(--token-color-surface)] p-6 shadow-[var(--token-shadow-md)]"
+                    className="relative flex flex-col gap-4 overflow-hidden rounded-[var(--token-radius-lg)] bg-[var(--token-color-surface)] p-6 shadow-[var(--token-shadow-md)]"
                     style={{ border: "1px solid color-mix(in srgb, var(--token-color-error) 20%, transparent)" }}
                   >
                     <div
@@ -269,7 +269,7 @@ export default function PrivacySettingsPage() {
                     />
 
                     <span
-                      className="relative flex h-10 w-10 items-center justify-center rounded-lg"
+                      className="relative flex h-10 w-10 items-center justify-center rounded-[var(--token-radius-md)]"
                       style={{ backgroundColor: "var(--token-color-errorTint)" }}
                     >
                       <Trash2 size={16} color="var(--token-color-error)" />
@@ -287,7 +287,7 @@ export default function PrivacySettingsPage() {
                     <button
                       type="button"
                       onClick={handleDeleteAccount}
-                      className="relative rounded-lg px-6 py-2 text-sm font-semibold tracking-wide"
+                      className="relative rounded-[var(--token-radius-md)] px-6 py-2 text-sm font-semibold tracking-wide"
                       style={{
                         backgroundColor: "var(--token-color-surfaceAlt)",
                         border: "1px solid color-mix(in srgb, var(--token-color-error) 30%, transparent)",

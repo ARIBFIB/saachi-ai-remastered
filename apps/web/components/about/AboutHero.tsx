@@ -18,9 +18,9 @@ export function AboutHero({ heading, description, image }: AboutHeroProps) {
         </p>
       </div>
 
-      <div className="relative h-96 flex-1 overflow-hidden rounded-2xl shadow-[var(--token-shadow-sm)]">
+      <div className="relative h-96 flex-1 overflow-hidden rounded-[var(--token-radius-lg)] shadow-[var(--token-shadow-sm)]">
         <Image src={image} alt="About Saachi AI" fill sizes="572px" className="object-cover" />
-        <div className="absolute inset-0 bg-gradient-to-br from-[var(--token-color-primary)]/20 to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-br from-[var(--token-color-amber)]/20 to-transparent" />
       </div>
     </section>
   );

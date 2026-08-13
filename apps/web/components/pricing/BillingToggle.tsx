@@ -29,7 +29,7 @@ export function BillingToggle({ onChange }: BillingToggleProps) {
         aria-checked={isAnnual}
         onClick={toggle}
         className={`relative h-6 w-11 shrink-0 rounded-full transition ${
-          isAnnual ? "bg-[var(--token-color-primary)]" : "bg-[var(--token-color-border)]"
+          isAnnual ? "bg-[var(--token-color-amber)]" : "bg-[var(--token-color-border)]"
         }`}
       >
         <span
@@ -41,7 +41,7 @@ export function BillingToggle({ onChange }: BillingToggleProps) {
 
       <span className="flex items-end gap-1 pb-px">
         <span className="text-sm font-semibold tracking-wide text-[var(--token-color-ink)]">Annually</span>
-        <span className="text-xs font-bold tracking-wide text-[var(--token-color-primary)]">(Save 20%)</span>
+        <span className="text-xs font-bold tracking-wide text-[var(--token-color-amber)]">(Save 20%)</span>
       </span>
     </div>
   );

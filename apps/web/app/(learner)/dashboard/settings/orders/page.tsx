@@ -83,7 +83,7 @@ const statusStyles: Record<OrderStatus, { bg: string; color: string; label: stri
     label: "COMPLETED",
   },
   recurring: {
-    bg: "var(--token-color-primaryTint)",
+    bg: "var(--token-color-amberTint)",
     color: "var(--token-color-inkSoft)",
     label: "RECURRING",
   },
@@ -204,7 +204,7 @@ export default function OrderHistoryPage() {
           type="link"
           icon={<FileText size={14} />}
           onClick={() => handleDownloadReceipt(record.orderId)}
-          style={{ color: "var(--token-color-primary)", fontWeight: 600, paddingRight: 0 }}
+          style={{ color: "var(--token-color-amber)", fontWeight: 600, paddingRight: 0 }}
         >
           Receipt
         </Button>
@@ -218,7 +218,7 @@ export default function OrderHistoryPage() {
       <header className="fixed inset-x-0 top-0 z-50 h-16 border-b border-[var(--token-color-border)] bg-[var(--token-color-bg)] shadow-[var(--token-shadow-sm)]">
         <div className="flex h-full items-center justify-between px-6">
           <div className="flex items-center gap-10">
-            <Link href="/" className="text-2xl font-black" style={{ color: "var(--token-color-primary)" }}>
+            <Link href="/" className="text-2xl font-black" style={{ color: "var(--token-color-amber)" }}>
               Saachi AI
             </Link>
             <nav className="hidden items-center gap-6 md:flex">
@@ -248,10 +248,10 @@ export default function OrderHistoryPage() {
           </div>
 
           <div className="flex items-center gap-4">
-            <button aria-label="Cart" className="text-[var(--token-color-inkSoft)] hover:text-[var(--token-color-primary)]">
+            <button aria-label="Cart" className="text-[var(--token-color-inkSoft)] hover:text-[var(--token-color-amber)]">
               <ShoppingCart size={20} />
             </button>
-            <button aria-label="Notifications" className="text-[var(--token-color-inkSoft)] hover:text-[var(--token-color-primary)]">
+            <button aria-label="Notifications" className="text-[var(--token-color-inkSoft)] hover:text-[var(--token-color-amber)]">
               <Bell size={20} />
             </button>
             <Link href="/settings/profile">
@@ -288,9 +288,9 @@ export default function OrderHistoryPage() {
                 href={href}
                 className="flex h-12 items-center gap-4 border-l-4 pl-4 pr-6 text-sm font-semibold tracking-wide transition"
                 style={{
-                  borderColor: isActive ? "var(--token-color-primary)" : "transparent",
-                  backgroundColor: isActive ? "var(--token-color-primaryTint)" : "transparent",
-                  color: isActive ? "var(--token-color-primary)" : "var(--token-color-inkSoft)",
+                  borderColor: isActive ? "var(--token-color-amber)" : "transparent",
+                  backgroundColor: isActive ? "var(--token-color-amberTint)" : "transparent",
+                  color: isActive ? "var(--token-color-amber)" : "var(--token-color-inkSoft)",
                 }}
               >
                 <Icon size={18} />
@@ -303,7 +303,7 @@ export default function OrderHistoryPage() {
         <div className="border-t border-[var(--token-color-border)] p-4">
           <Link
             href="/support"
-            className="flex h-10 items-center gap-4 pl-4 text-sm font-semibold tracking-wide text-[var(--token-color-inkSoft)] hover:text-[var(--token-color-primary)]"
+            className="flex h-10 items-center gap-4 pl-4 text-sm font-semibold tracking-wide text-[var(--token-color-inkSoft)] hover:text-[var(--token-color-amber)]"
           >
             <HelpCircle size={18} />
             Help Center
@@ -336,7 +336,7 @@ export default function OrderHistoryPage() {
 
             {/* Orders table card */}
             <div
-              className="overflow-hidden rounded-2xl border bg-[var(--token-color-surface)] shadow-[var(--token-shadow-md)]"
+              className="overflow-hidden rounded-[var(--token-radius-lg)] border bg-[var(--token-color-surface)] shadow-[var(--token-shadow-md)]"
               style={{ borderColor: "var(--token-color-border)" }}
             >
               <Table<OrderRecord>
@@ -380,15 +380,15 @@ export default function OrderHistoryPage() {
 
             {/* Support banner */}
             <div
-              className="flex items-center justify-between rounded-2xl border p-6"
+              className="flex items-center justify-between rounded-[var(--token-radius-lg)] border p-6"
               style={{ backgroundColor: "var(--token-color-surfaceAlt)", borderColor: "var(--token-color-border)" }}
             >
               <div className="flex items-center gap-4">
                 <span
                   className="flex h-10 w-10 items-center justify-center rounded-full"
-                  style={{ backgroundColor: "var(--token-color-primaryTint)" }}
+                  style={{ backgroundColor: "var(--token-color-amberTint)" }}
                 >
-                  <HelpIcon size={18} color="var(--token-color-primary)" />
+                  <HelpIcon size={18} color="var(--token-color-amber)" />
                 </span>
                 <div className="flex flex-col">
                   <span className="text-base font-bold" style={{ color: "var(--token-color-ink)" }}>
@@ -410,7 +410,7 @@ export default function OrderHistoryPage() {
         {/* Footer */}
         <footer className="bg-zinc-200 px-6 py-10 lg:pl-[19rem]">
           <div className="flex flex-col gap-4">
-            <span className="text-base font-bold" style={{ color: "var(--token-color-primary)" }}>
+            <span className="text-base font-bold" style={{ color: "var(--token-color-amber)" }}>
               Saachi AI
             </span>
             <p style={{ color: "var(--token-color-inkSoft)", fontSize: "var(--token-font-size-base)" }}>
@@ -422,7 +422,7 @@ export default function OrderHistoryPage() {
                 <Link
                   key={link.label}
                   href={link.href}
-                  className="text-xs font-medium hover:text-[var(--token-color-primary)]"
+                  className="text-xs font-medium hover:text-[var(--token-color-amber)]"
                   style={{ color: "var(--token-color-inkSoft)" }}
                 >
                   {link.label}

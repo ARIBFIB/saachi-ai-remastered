@@ -1,4 +1,4 @@
-﻿import Link from "next/link";
+import Link from "next/link";
 import { Search, ShoppingCart, Bell } from "lucide-react";
 
 export function SupportHeader() {
@@ -38,7 +38,7 @@ export function SupportHeader() {
           </button>
           <Link
             href="/login"
-            className="rounded-lg bg-[var(--token-color-primary)] px-4 py-2 text-sm font-semibold tracking-wide text-white hover:bg-[var(--token-color-primaryHover)]"
+            className="rounded-[var(--token-radius-md)] bg-[var(--token-color-amber)] px-4 py-2 text-sm font-semibold tracking-wide text-white hover:bg-[var(--token-color-amberDark)]"
           >
             Sign In
           </Link>

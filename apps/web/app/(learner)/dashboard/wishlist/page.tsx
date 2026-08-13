@@ -128,12 +128,12 @@ export default function WishlistPage() {
                 href={href}
                 className="flex h-12 items-center gap-4 border-l-4 pl-4 pr-6 text-sm font-semibold tracking-wide transition"
                 style={{
-                  borderColor: isActive ? "var(--token-color-primary)" : "transparent",
+                  borderColor: isActive ? "var(--token-color-amber)" : "transparent",
                   backgroundColor: isActive
-                    ? "var(--token-color-primaryTint)"
+                    ? "var(--token-color-amberTint)"
                     : "transparent",
                   color: isActive
-                    ? "var(--token-color-primary)"
+                    ? "var(--token-color-amber)"
                     : "var(--token-color-inkSoft)",
                 }}
               >
@@ -147,7 +147,7 @@ export default function WishlistPage() {
         <div className="border-t border-[var(--token-color-border)] p-6">
           <Link
             href="/support"
-            className="flex items-center gap-4 text-sm font-semibold tracking-wide text-[var(--token-color-inkSoft)] hover:text-[var(--token-color-primary)]"
+            className="flex items-center gap-4 text-sm font-semibold tracking-wide text-[var(--token-color-inkSoft)] hover:text-[var(--token-color-amber)]"
           >
             <HelpCircle size={18} />
             Help Center
@@ -196,7 +196,7 @@ export default function WishlistPage() {
         <footer className="bg-zinc-200 px-6 py-10">
           <div className="flex flex-col gap-4">
             <div className="border-b border-[var(--token-color-border)] pb-4">
-              <span className="text-base font-bold text-[var(--token-color-primary)]">
+              <span className="text-base font-bold text-[var(--token-color-amber)]">
                 Saachi AI
               </span>
             </div>
@@ -211,7 +211,7 @@ export default function WishlistPage() {
                 <Link
                   key={link.label}
                   href={link.href}
-                  className="text-xs font-medium text-gray-700 hover:text-[var(--token-color-primary)]"
+                  className="text-xs font-medium text-gray-700 hover:text-[var(--token-color-amber)]"
                 >
                   {link.label}
                 </Link>
@@ -234,7 +234,7 @@ function WishlistCourseCard({
   onMoveToCart: (id: string) => void;
 }) {
   return (
-    <article className="flex w-full flex-col overflow-hidden rounded-xl border border-[var(--token-color-border)]/30 bg-[var(--token-color-surface)] shadow-[var(--token-shadow-md)]">
+    <article className="flex w-full flex-col overflow-hidden rounded-[var(--token-radius-lg)] border border-[var(--token-color-border)]/30 bg-[var(--token-color-surface)] shadow-[var(--token-shadow-md)]">
       <div className="relative h-48 w-full shrink-0 bg-[var(--token-color-surfaceAlt)]">
         <Image
           src={item.image}
@@ -253,7 +253,7 @@ function WishlistCourseCard({
 
       <div className="flex flex-1 flex-col gap-4 p-6">
         <div className="flex items-start gap-2">
-          <span className="rounded-sm bg-[var(--token-color-primaryTint)] px-2 pb-1 pt-[3px] text-xs font-medium text-[var(--token-color-primary)]">
+          <span className="rounded-sm bg-[var(--token-color-amberTint)] px-2 pb-1 pt-[3px] text-xs font-medium text-[var(--token-color-amber)]">
             {item.category}
           </span>
           <span className="rounded-sm bg-[var(--token-color-surfaceAlt)] px-2 pb-1 pt-[3px] text-xs font-medium" style={{ color: "var(--token-color-inkSoft)" }}>
@@ -295,7 +295,7 @@ function WishlistCourseCard({
           className="mt-auto flex items-center justify-between border-t pt-4"
           style={{ borderColor: "var(--token-color-border)" }}
         >
-          <span className="text-2xl font-semibold" style={{ color: "var(--token-color-primary)" }}>
+          <span className="text-2xl font-semibold" style={{ color: "var(--token-color-amber)" }}>
             ${item.price.toFixed(2)}
           </span>
 
@@ -304,7 +304,7 @@ function WishlistCourseCard({
               type="button"
               onClick={() => onRemove(item.id)}
               aria-label="Remove from wishlist"
-              className="rounded-lg p-2 transition hover:bg-[var(--token-color-surfaceAlt)]"
+              className="rounded-[var(--token-radius-md)] p-2 transition hover:bg-[var(--token-color-surfaceAlt)]"
               style={{ color: "var(--token-color-inkSoft)" }}
             >
               <Trash2 size={16} />
@@ -326,7 +326,7 @@ function WishlistCourseCard({
 function EmptyWishlist() {
   return (
     <div
-      className="flex flex-col items-center gap-2 rounded-xl border bg-[var(--token-color-surface)] py-20 text-center"
+      className="flex flex-col items-center gap-2 rounded-[var(--token-radius-lg)] border bg-[var(--token-color-surface)] py-20 text-center"
       style={{ borderColor: "var(--token-color-border)" }}
     >
       <p className="text-lg font-semibold" style={{ color: "var(--token-color-ink)" }}>

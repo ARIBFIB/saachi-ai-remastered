@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { UserRound, ChevronDown } from "lucide-react";
 
@@ -37,11 +37,11 @@ export function BillingInformationCard({
 
   return (
     <section
-      className="flex w-full flex-col gap-4 rounded-xl border-2 bg-[var(--token-color-surface)] p-6 shadow-[var(--token-shadow-sm)]"
+      className="flex w-full flex-col gap-4 rounded-[var(--token-radius-lg)] border-2 bg-[var(--token-color-surface)] p-6 shadow-[var(--token-shadow-sm)]"
       style={{ borderColor: "var(--token-color-border)" }}
     >
       <div className="flex items-center gap-2">
-        <UserRound size={16} color="var(--token-color-primary)" />
+        <UserRound size={16} color="var(--token-color-amber)" />
         <h2
           className="text-2xl font-semibold"
           style={{ color: "var(--token-color-ink)" }}
@@ -57,7 +57,7 @@ export function BillingInformationCard({
             value={details.fullName}
             onChange={(e) => update("fullName", e.target.value)}
             placeholder="Jane Doe"
-            className="w-full rounded-lg border-2 bg-[var(--token-color-bg)] px-3 py-2.5 text-base text-[var(--token-color-ink)] placeholder:text-gray-500 focus:outline-none focus:border-[var(--token-color-primary)]"
+            className="w-full rounded-[var(--token-radius-md)] border-2 bg-[var(--token-color-bg)] px-3 py-2.5 text-base text-[var(--token-color-ink)] placeholder:text-gray-500 focus:outline-none focus:border-[var(--token-color-amber)]"
             style={{ borderColor: "var(--token-color-border)" }}
           />
         </Field>
@@ -68,7 +68,7 @@ export function BillingInformationCard({
             value={details.email}
             onChange={(e) => update("email", e.target.value)}
             placeholder="jane@example.com"
-            className="w-full rounded-lg border-2 bg-[var(--token-color-bg)] px-3 py-2.5 text-base text-[var(--token-color-ink)] placeholder:text-gray-500 focus:outline-none focus:border-[var(--token-color-primary)]"
+            className="w-full rounded-[var(--token-radius-md)] border-2 bg-[var(--token-color-bg)] px-3 py-2.5 text-base text-[var(--token-color-ink)] placeholder:text-gray-500 focus:outline-none focus:border-[var(--token-color-amber)]"
             style={{ borderColor: "var(--token-color-border)" }}
           />
         </Field>
@@ -79,7 +79,7 @@ export function BillingInformationCard({
               <select
                 value={details.country}
                 onChange={(e) => update("country", e.target.value)}
-                className="w-full appearance-none rounded-lg border-2 bg-[var(--token-color-bg)] px-3 py-2.5 text-base text-[var(--token-color-ink)] focus:outline-none focus:border-[var(--token-color-primary)]"
+                className="w-full appearance-none rounded-[var(--token-radius-md)] border-2 bg-[var(--token-color-bg)] px-3 py-2.5 text-base text-[var(--token-color-ink)] focus:outline-none focus:border-[var(--token-color-amber)]"
                 style={{ borderColor: "var(--token-color-border)" }}
               >
                 {countries.map((c) => (
@@ -101,7 +101,7 @@ export function BillingInformationCard({
               value={details.zip}
               onChange={(e) => update("zip", e.target.value)}
               placeholder="10001"
-              className="w-full rounded-lg border-2 bg-[var(--token-color-bg)] px-3 py-2.5 text-base text-[var(--token-color-ink)] placeholder:text-gray-500 focus:outline-none focus:border-[var(--token-color-primary)]"
+              className="w-full rounded-[var(--token-radius-md)] border-2 bg-[var(--token-color-bg)] px-3 py-2.5 text-base text-[var(--token-color-ink)] placeholder:text-gray-500 focus:outline-none focus:border-[var(--token-color-amber)]"
               style={{ borderColor: "var(--token-color-border)" }}
             />
           </Field>

@@ -13,7 +13,7 @@ export function SupportFooter() {
     <footer className="w-full border-t border-[var(--token-color-border)]/20 bg-zinc-900 px-6 py-10">
       <div className="mx-auto flex max-w-[1280px] flex-col justify-between gap-6 sm:flex-row sm:items-start">
         <div className="flex flex-col gap-1">
-          <span className="text-base font-bold text-[var(--token-color-primary)]">Saachi AI</span>
+          <span className="text-base font-bold text-[var(--token-color-amber)]">Saachi AI</span>
           <p className="text-xs font-medium text-zinc-200">
             © {new Date().getFullYear()} Saachi AI Marketplace. Empowering the future of skills.
           </p>

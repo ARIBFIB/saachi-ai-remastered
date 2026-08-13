@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import Image from "next/image";
 import { Lock, ShieldCheck } from "lucide-react";
@@ -24,7 +24,7 @@ export function CheckoutOrderSummary({
 }: CheckoutOrderSummaryProps) {
   return (
     <div
-      className="flex flex-col gap-1.5 rounded-xl border-2 bg-[var(--token-color-surface)] p-6 shadow-[var(--token-shadow-sm)]"
+      className="flex flex-col gap-1.5 rounded-[var(--token-radius-lg)] border-2 bg-[var(--token-color-surface)] p-6 shadow-[var(--token-shadow-sm)]"
       style={{ borderColor: "var(--token-color-border)" }}
     >
       <h2
@@ -37,7 +37,7 @@ export function CheckoutOrderSummary({
       <div className="flex flex-col gap-4 py-2">
         {items.map((item) => (
           <div key={item.id} className="flex items-start gap-4">
-            <div className="relative h-16 w-16 shrink-0 overflow-hidden rounded-lg bg-[var(--token-color-surfaceAlt)]">
+            <div className="relative h-16 w-16 shrink-0 overflow-hidden rounded-[var(--token-radius-md)] bg-[var(--token-color-surfaceAlt)]">
               <Image
                 src={item.image}
                 alt={item.title}
@@ -100,7 +100,7 @@ export function CheckoutOrderSummary({
         </span>
         <span
           className="text-5xl font-bold leading-none"
-          style={{ color: "var(--token-color-primary)" }}
+          style={{ color: "var(--token-color-amber)" }}
         >
           ${subtotal.toFixed(2)}
         </span>
@@ -109,8 +109,8 @@ export function CheckoutOrderSummary({
       <button
         type="button"
         onClick={onCompletePurchase}
-        className="flex h-11 items-center justify-center gap-2 rounded-lg text-sm font-semibold tracking-wide text-white shadow-[var(--token-shadow-sm)]"
-        style={{ backgroundColor: "var(--token-color-primary)" }}
+        className="flex h-11 items-center justify-center gap-2 rounded-[var(--token-radius-md)] text-sm font-semibold tracking-wide text-white shadow-[var(--token-shadow-sm)]"
+        style={{ backgroundColor: "var(--token-color-amber)" }}
       >
         <Lock size={14} />
         Complete Purchase

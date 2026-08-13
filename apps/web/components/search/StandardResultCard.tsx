@@ -11,7 +11,7 @@ export interface StandardResultCardProps {
 
 export function StandardResultCard({ title, description, meta, price, image }: StandardResultCardProps) {
   return (
-    <article className="overflow-hidden rounded-xl border-2 border-[var(--token-color-border)] bg-[var(--token-color-surface)] shadow-[var(--token-shadow-sm)]">
+    <article className="overflow-hidden rounded-[var(--token-radius-lg)] border-2 border-[var(--token-color-border)] bg-[var(--token-color-surface)] shadow-[var(--token-shadow-sm)]">
       <div className="relative h-40 w-full bg-zinc-200">
         {image ? (
           <Image src={image} alt={title} fill sizes="400px" className="object-cover" />
@@ -28,7 +28,7 @@ export function StandardResultCard({ title, description, meta, price, image }: S
 
         <div className="flex items-center justify-between border-t border-[var(--token-color-border)] pt-3">
           <span className="text-xs font-medium text-[var(--token-color-inkSoft)]">{meta}</span>
-          <span className="text-xs font-bold text-[var(--token-color-primary)]">{price}</span>
+          <span className="text-xs font-bold text-[var(--token-color-amber)]">{price}</span>
         </div>
       </div>
     </article>

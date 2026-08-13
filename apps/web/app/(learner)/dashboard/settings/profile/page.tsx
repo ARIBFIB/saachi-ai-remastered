@@ -108,11 +108,11 @@ export default function ProfileSettingsPage() {
                 <Link
                   key={label}
                   href={href}
-                  className="flex items-center gap-4 rounded-lg border-l-4 px-4 py-3 text-sm font-semibold tracking-wide transition"
+                  className="flex items-center gap-4 rounded-[var(--token-radius-md)] border-l-4 px-4 py-3 text-sm font-semibold tracking-wide transition"
                   style={{
-                    borderColor: isActive ? "var(--token-color-primary)" : "transparent",
-                    backgroundColor: isActive ? "var(--token-color-primaryTint)" : "transparent",
-                    color: isActive ? "var(--token-color-primary)" : "var(--token-color-inkSoft)",
+                    borderColor: isActive ? "var(--token-color-amber)" : "transparent",
+                    backgroundColor: isActive ? "var(--token-color-amberTint)" : "transparent",
+                    color: isActive ? "var(--token-color-amber)" : "var(--token-color-inkSoft)",
                   }}
                 >
                   <Icon size={18} />
@@ -126,7 +126,7 @@ export default function ProfileSettingsPage() {
         <div className="border-t border-[var(--token-color-border)] p-4">
           <Link
             href="/support"
-            className="flex h-12 items-center gap-4 rounded-lg pl-4 text-sm font-semibold tracking-wide text-[var(--token-color-inkSoft)] hover:bg-[var(--token-color-surface)]"
+            className="flex h-12 items-center gap-4 rounded-[var(--token-radius-md)] pl-4 text-sm font-semibold tracking-wide text-[var(--token-color-inkSoft)] hover:bg-[var(--token-color-surface)]"
           >
             <HelpCircle size={18} />
             Help Center
@@ -161,7 +161,7 @@ export default function ProfileSettingsPage() {
               >
                 {/* Avatar & Quick Info Card */}
                 <div
-                  className="flex flex-col items-center gap-1 rounded-xl bg-[var(--token-color-surface)] p-6 pb-8 pt-8 text-center shadow-[var(--token-shadow-md)]"
+                  className="flex flex-col items-center gap-1 rounded-[var(--token-radius-lg)] bg-[var(--token-color-surface)] p-6 pb-8 pt-8 text-center shadow-[var(--token-shadow-md)]"
                 >
                   <span className="relative block h-32 w-32 shrink-0 overflow-hidden rounded-full shadow-[var(--token-shadow-sm)]">
                     <Image src={avatarUrl} alt={displayName} fill sizes="128px" className="object-cover" />
@@ -190,9 +190,9 @@ export default function ProfileSettingsPage() {
                 {/* Right column */}
                 <div className="flex flex-col gap-6">
                   {/* Personal Information */}
-                  <div className="flex flex-col gap-6 rounded-xl bg-[var(--token-color-surface)] p-6 shadow-[var(--token-shadow-md)]">
+                  <div className="flex flex-col gap-6 rounded-[var(--token-radius-lg)] bg-[var(--token-color-surface)] p-6 shadow-[var(--token-shadow-md)]">
                     <h2 className="flex items-center gap-2 text-2xl font-semibold leading-8" style={{ color: "var(--token-color-ink)" }}>
-                      <User size={18} color="var(--token-color-primary)" />
+                      <User size={18} color="var(--token-color-amber)" />
                       Personal Information
                     </h2>
 
@@ -228,9 +228,9 @@ export default function ProfileSettingsPage() {
                   </div>
 
                   {/* Social Links */}
-                  <div className="flex flex-col gap-6 rounded-xl bg-[var(--token-color-surface)] p-6 shadow-[var(--token-shadow-md)]">
+                  <div className="flex flex-col gap-6 rounded-[var(--token-radius-lg)] bg-[var(--token-color-surface)] p-6 shadow-[var(--token-shadow-md)]">
                     <h2 className="flex items-center gap-2 text-2xl font-semibold leading-8" style={{ color: "var(--token-color-ink)" }}>
-                      <Link2 size={16} color="var(--token-color-primary)" />
+                      <Link2 size={16} color="var(--token-color-amber)" />
                       Social Links
                     </h2>
 

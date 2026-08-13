@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { useState } from "react";
 import Link from "next/link";
@@ -48,10 +48,10 @@ export default function LoginPage() {
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-slate-50 p-6">
-      <div className="flex w-full max-w-[1200px] overflow-hidden rounded-xl bg-slate-50 shadow-[0px_4px_20px_0px_rgba(15,23,42,0.05)]">
+      <div className="flex w-full max-w-[1200px] overflow-hidden rounded-[var(--token-radius-lg)] bg-slate-50 shadow-[var(--token-shadow-sm)]">
         <div className="flex-1 bg-white p-10">
           <div className="mb-8 flex flex-col gap-2">
-            <Link href="/" className="text-3xl font-bold leading-10 text-[#3525CD]">
+            <Link href="/" className="text-3xl font-bold leading-10 text-[var(--token-color-amber)]">
               Saachi AI
             </Link>
             <p className="text-base text-slate-600">
@@ -61,13 +61,13 @@ export default function LoginPage() {
             </p>
           </div>
 
-          <div className="mb-6 flex rounded-lg bg-gray-100 p-1">
+          <div className="mb-6 flex rounded-[var(--token-radius-md)] bg-gray-100 p-1">
             <button
               type="button"
               onClick={() => setMode("signin")}
               className={`flex-1 rounded-sm py-2 text-sm font-semibold tracking-wide transition ${
                 mode === "signin"
-                  ? "bg-[#3525CD] text-white shadow-[0px_1px_2px_0px_rgba(0,0,0,0.05)]"
+                  ? "bg-[var(--token-color-amber)] text-white shadow-[var(--token-shadow-sm)]"
                   : "text-slate-600"
               }`}
             >
@@ -78,7 +78,7 @@ export default function LoginPage() {
               onClick={() => setMode("register")}
               className={`flex-1 rounded-sm py-2 text-sm font-semibold tracking-wide transition ${
                 mode === "register"
-                  ? "bg-[#3525CD] text-white shadow-[0px_1px_2px_0px_rgba(0,0,0,0.05)]"
+                  ? "bg-[var(--token-color-amber)] text-white shadow-[var(--token-shadow-sm)]"
                   : "text-slate-600"
               }`}
             >
@@ -99,7 +99,7 @@ export default function LoginPage() {
                   value={fullName}
                   onChange={(e) => setFullName(e.target.value)}
                   placeholder="Jane Doe"
-                  className="rounded-lg border border-slate-300 bg-slate-50 px-4 py-2.5 text-base text-zinc-900 placeholder:text-gray-500 focus:border-[#3525CD] focus:outline-none"
+                  className="rounded-[var(--token-radius-md)] border border-slate-300 bg-slate-50 px-4 py-2.5 text-base text-zinc-900 placeholder:text-gray-500 focus:border-[var(--token-color-amber)] focus:outline-none"
                 />
               </div>
             )}
@@ -115,7 +115,7 @@ export default function LoginPage() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="name@company.com"
-                className="rounded-lg border border-slate-300 bg-slate-50 px-4 py-2.5 text-base text-zinc-900 placeholder:text-gray-500 focus:border-[#3525CD] focus:outline-none"
+                className="rounded-[var(--token-radius-md)] border border-slate-300 bg-slate-50 px-4 py-2.5 text-base text-zinc-900 placeholder:text-gray-500 focus:border-[var(--token-color-amber)] focus:outline-none"
               />
             </div>
 
@@ -125,7 +125,7 @@ export default function LoginPage() {
                   Password
                 </label>
                 {mode === "signin" && (
-                  <Link href="/forgot-password" className="text-xs font-medium text-[#3525CD]">
+                  <Link href="/forgot-password" className="text-xs font-medium text-[var(--token-color-amber)]">
                     Forgot?
                   </Link>
                 )}
@@ -137,12 +137,12 @@ export default function LoginPage() {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="Enter your password"
-                className="rounded-lg border border-slate-300 bg-slate-50 px-4 py-2.5 text-base text-zinc-900 placeholder:text-gray-500 focus:border-[#3525CD] focus:outline-none"
+                className="rounded-[var(--token-radius-md)] border border-slate-300 bg-slate-50 px-4 py-2.5 text-base text-zinc-900 placeholder:text-gray-500 focus:border-[var(--token-color-amber)] focus:outline-none"
               />
             </div>
 
             {errorMessage && (
-              <div className="flex items-center gap-2 rounded-lg bg-red-50 px-3 py-2 text-sm text-red-600">
+              <div className="flex items-center gap-2 rounded-[var(--token-radius-md)] bg-red-50 px-3 py-2 text-sm text-red-600">
                 <AlertCircle className="h-4 w-4 shrink-0" />
                 {errorMessage}
               </div>
@@ -151,7 +151,7 @@ export default function LoginPage() {
             <button
               type="submit"
               disabled={isSubmitting}
-              className="rounded-lg bg-[#3525CD] py-4 text-sm font-semibold tracking-wide text-white shadow-[0px_1px_2px_0px_rgba(0,0,0,0.05)] hover:bg-[#2A1DA3] disabled:cursor-not-allowed disabled:opacity-60"
+              className="rounded-[var(--token-radius-md)] bg-[var(--token-color-amber)] py-4 text-sm font-semibold tracking-wide text-white shadow-[var(--token-shadow-sm)] hover:bg-[var(--token-color-amberDark)] disabled:cursor-not-allowed disabled:opacity-60"
             >
               {isSubmitting
                 ? "Please wait..."
@@ -171,13 +171,13 @@ export default function LoginPage() {
           <div className="flex gap-4">
             <button
               type="button"
-              className="flex-1 rounded-lg border border-slate-300 py-2 text-sm font-semibold text-zinc-900 hover:bg-gray-50"
+              className="flex-1 rounded-[var(--token-radius-md)] border border-slate-300 py-2 text-sm font-semibold text-zinc-900 hover:bg-gray-50"
             >
               Google
             </button>
             <button
               type="button"
-              className="flex-1 rounded-lg border border-slate-300 py-2 text-sm font-semibold text-zinc-900 hover:bg-gray-50"
+              className="flex-1 rounded-[var(--token-radius-md)] border border-slate-300 py-2 text-sm font-semibold text-zinc-900 hover:bg-gray-50"
             >
               LinkedIn
             </button>
@@ -196,7 +196,7 @@ export default function LoginPage() {
 
             <div className="flex flex-col gap-4 pt-6">
               <RoleCard
-                icon={<GraduationCap className="h-6 w-6 text-[#3525CD]" />}
+                icon={<GraduationCap className="h-6 w-6 text-[var(--token-color-amber)]" />}
                 title="I am a Learner"
                 description="Access courses, track progress, and build your skill portfolio."
                 selected={role === "learner"}
@@ -234,13 +234,13 @@ function RoleCard({
     <button
       type="button"
       onClick={onSelect}
-      className={`flex items-start gap-4 rounded-xl border-2 bg-white p-4 text-left transition ${
-        selected ? "border-[#3525CD]" : "border-transparent"
+      className={`flex items-start gap-4 rounded-[var(--token-radius-lg)] border-2 bg-white p-4 text-left transition ${
+        selected ? "border-[var(--token-color-amber)]" : "border-transparent"
       }`}
     >
       <span
-        className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-lg ${
-          selected ? "bg-[#3525CD]/10" : "bg-gray-200"
+        className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-[var(--token-radius-md)] ${
+          selected ? "bg-[var(--token-color-amber)]/10" : "bg-gray-200"
         }`}
       >
         {icon}
@@ -255,10 +255,10 @@ function RoleCard({
 
       <span
         className={`mt-1 flex h-5 w-5 shrink-0 items-center justify-center rounded-full border-2 ${
-          selected ? "border-[#3525CD]" : "border-[#C7C4D8]"
+          selected ? "border-[var(--token-color-amber)]" : "border-[#C7C4D8]"
         }`}
       >
-        {selected && <span className="h-2.5 w-2.5 rounded-full bg-[#3525CD]" />}
+        {selected && <span className="h-2.5 w-2.5 rounded-full bg-[var(--token-color-amber)]" />}
       </span>
     </button>
   );

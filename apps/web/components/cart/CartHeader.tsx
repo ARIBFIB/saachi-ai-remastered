@@ -15,7 +15,7 @@ export function CartHeader({ cartCount }: CartHeaderProps) {
         <div className="flex items-center gap-6">
           <Link
             href="/"
-            className="text-2xl font-black text-[var(--token-color-primary)]"
+            className="text-2xl font-black text-[var(--token-color-amber)]"
           >
             Saachi AI
           </Link>
@@ -23,13 +23,13 @@ export function CartHeader({ cartCount }: CartHeaderProps) {
           <nav className="flex items-center gap-4">
             <Link
               href="/courses"
-              className="text-sm font-semibold tracking-wide text-[var(--token-color-inkSoft)] hover:text-[var(--token-color-primary)]"
+              className="text-sm font-semibold tracking-wide text-[var(--token-color-inkSoft)] hover:text-[var(--token-color-amber)]"
             >
               Marketplace
             </Link>
             <Link
               href="/categories"
-              className="text-sm font-semibold tracking-wide text-[var(--token-color-inkSoft)] hover:text-[var(--token-color-primary)]"
+              className="text-sm font-semibold tracking-wide text-[var(--token-color-inkSoft)] hover:text-[var(--token-color-amber)]"
             >
               Categories
             </Link>
@@ -40,7 +40,7 @@ export function CartHeader({ cartCount }: CartHeaderProps) {
           <button
             type="button"
             aria-label="Search"
-            className="text-[var(--token-color-inkSoft)] hover:text-[var(--token-color-primary)]"
+            className="text-[var(--token-color-inkSoft)] hover:text-[var(--token-color-amber)]"
           >
             <Search size={18} />
           </button>
@@ -48,7 +48,7 @@ export function CartHeader({ cartCount }: CartHeaderProps) {
           <div className="flex items-center gap-4">
             <Link
               href="/cart"
-              className="relative flex items-center text-[var(--token-color-primary)]"
+              className="relative flex items-center text-[var(--token-color-amber)]"
               aria-label="Shopping cart"
             >
               <ShoppingCart size={20} />
@@ -65,7 +65,7 @@ export function CartHeader({ cartCount }: CartHeaderProps) {
             <button
               type="button"
               aria-label="Notifications"
-              className="text-[var(--token-color-inkSoft)] hover:text-[var(--token-color-primary)]"
+              className="text-[var(--token-color-inkSoft)] hover:text-[var(--token-color-amber)]"
             >
               <Bell size={18} />
             </button>

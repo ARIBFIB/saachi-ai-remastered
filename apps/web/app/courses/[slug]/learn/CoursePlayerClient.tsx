@@ -62,7 +62,7 @@ export function CoursePlayerClient({ courseSlug }: { courseSlug: string }) {
           </Link>
         </div>
 
-        <div className="relative mx-6 flex aspect-video items-center justify-center rounded-xl bg-black/60">
+        <div className="relative mx-6 flex aspect-video items-center justify-center rounded-[var(--token-radius-lg)] bg-black/60">
           <PlayCircle size={64} className="text-white/80" />
         </div>
 

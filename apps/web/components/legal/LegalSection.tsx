@@ -1,4 +1,4 @@
-﻿import { Info } from "lucide-react";
+import { Info } from "lucide-react";
 
 interface LegalSectionProps {
   heading: string;
@@ -34,9 +34,9 @@ export function LegalSection({ heading, paragraphs, eyebrow, listItems, callout 
       )}
 
       {callout && (
-        <div className="flex flex-col gap-1 rounded-lg border-2 border-[var(--token-color-border)]/20 bg-[var(--token-color-surfaceAlt)] px-4 py-4">
+        <div className="flex flex-col gap-1 rounded-[var(--token-radius-md)] border-2 border-[var(--token-color-border)]/20 bg-[var(--token-color-surfaceAlt)] px-4 py-4">
           <h4 className="flex items-center gap-1.5 text-sm font-semibold tracking-wide text-[var(--token-color-ink)]">
-            <Info className="h-3 w-3 text-[var(--token-color-primary)]" />
+            <Info className="h-3 w-3 text-[var(--token-color-amber)]" />
             {callout.title}
           </h4>
           <p className="text-base text-[var(--token-color-inkSoft)]">{callout.body}</p>

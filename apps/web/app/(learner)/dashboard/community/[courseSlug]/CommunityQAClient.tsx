@@ -75,7 +75,7 @@ export function CommunityQAClient({ courseSlug }: { courseSlug: string }) {
       </div>
 
       <div
-        className="flex flex-col gap-3 rounded-xl border p-5"
+        className="flex flex-col gap-3 rounded-[var(--token-radius-lg)] border p-5"
         style={{ borderColor: "var(--token-color-border)", backgroundColor: "var(--token-color-surface)" }}
       >
         <Input.TextArea
@@ -95,9 +95,9 @@ export function CommunityQAClient({ courseSlug }: { courseSlug: string }) {
         {threads.map((post) => (
           <article
             key={post.id}
-            className="flex gap-4 rounded-xl border p-5"
+            className="flex gap-4 rounded-[var(--token-radius-lg)] border p-5"
             style={{
-              borderColor: post.isInstructor ? "var(--token-color-primary)" : "var(--token-color-border)",
+              borderColor: post.isInstructor ? "var(--token-color-amber)" : "var(--token-color-border)",
               backgroundColor: "var(--token-color-surface)",
             }}
           >
@@ -113,7 +113,7 @@ export function CommunityQAClient({ courseSlug }: { courseSlug: string }) {
                 {post.isInstructor && (
                   <span
                     className="flex items-center gap-1 rounded-full px-2 py-0.5 text-[10px] font-bold uppercase"
-                    style={{ backgroundColor: "var(--token-color-primaryTint)", color: "var(--token-color-primary)" }}
+                    style={{ backgroundColor: "var(--token-color-amberTint)", color: "var(--token-color-amber)" }}
                   >
                     <BadgeCheck size={10} />
                     Instructor

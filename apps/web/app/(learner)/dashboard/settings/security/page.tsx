@@ -122,11 +122,11 @@ export default function SecuritySettingsPage() {
                 <Link
                   key={label}
                   href={href}
-                  className="flex items-center gap-4 rounded-lg border-l-4 px-4 py-3 text-sm font-semibold tracking-wide transition"
+                  className="flex items-center gap-4 rounded-[var(--token-radius-md)] border-l-4 px-4 py-3 text-sm font-semibold tracking-wide transition"
                   style={{
-                    borderColor: isActive ? "var(--token-color-primary)" : "transparent",
-                    backgroundColor: isActive ? "var(--token-color-primaryTint)" : "transparent",
-                    color: isActive ? "var(--token-color-primary)" : "var(--token-color-inkSoft)",
+                    borderColor: isActive ? "var(--token-color-amber)" : "transparent",
+                    backgroundColor: isActive ? "var(--token-color-amberTint)" : "transparent",
+                    color: isActive ? "var(--token-color-amber)" : "var(--token-color-inkSoft)",
                   }}
                 >
                   <Icon size={18} />
@@ -140,7 +140,7 @@ export default function SecuritySettingsPage() {
         <div className="border-t border-[var(--token-color-border)] p-4">
           <Link
             href="/support"
-            className="flex h-12 items-center gap-4 rounded-lg pl-4 text-sm font-semibold tracking-wide text-[var(--token-color-inkSoft)] hover:bg-[var(--token-color-surface)]"
+            className="flex h-12 items-center gap-4 rounded-[var(--token-radius-md)] pl-4 text-sm font-semibold tracking-wide text-[var(--token-color-inkSoft)] hover:bg-[var(--token-color-surface)]"
           >
             <HelpCircle size={18} />
             Help Center
@@ -172,7 +172,7 @@ export default function SecuritySettingsPage() {
               <div className="flex w-full flex-1 flex-col gap-10">
                 {/* Change Password */}
                 <section
-                  className="flex flex-col gap-3.5 rounded-xl bg-[var(--token-color-surface)] p-6 shadow-[var(--token-shadow-sm)]"
+                  className="flex flex-col gap-3.5 rounded-[var(--token-radius-lg)] bg-[var(--token-color-surface)] p-6 shadow-[var(--token-shadow-sm)]"
                   style={{ border: "1px solid color-mix(in srgb, var(--token-color-border) 30%, transparent)" }}
                 >
                   <h2 className="text-2xl font-semibold leading-8" style={{ color: "var(--token-color-ink)" }}>
@@ -234,13 +234,13 @@ export default function SecuritySettingsPage() {
 
                 {/* Two-Factor Authentication */}
                 <section
-                  className="flex flex-col gap-4 rounded-xl bg-[var(--token-color-surface)] p-6 shadow-[var(--token-shadow-sm)]"
+                  className="flex flex-col gap-4 rounded-[var(--token-radius-lg)] bg-[var(--token-color-surface)] p-6 shadow-[var(--token-shadow-sm)]"
                   style={{ border: "1px solid color-mix(in srgb, var(--token-color-border) 30%, transparent)" }}
                 >
                   <div className="flex items-center justify-between gap-4">
                     <div className="flex flex-col gap-1">
                       <h2 className="flex items-center gap-2 text-2xl font-semibold leading-8" style={{ color: "var(--token-color-ink)" }}>
-                        <ShieldCheck size={20} color="var(--token-color-primary)" />
+                        <ShieldCheck size={20} color="var(--token-color-amber)" />
                         Two-Factor Authentication
                       </h2>
                       <p style={{ color: "var(--token-color-inkSoft)", fontSize: "var(--token-font-size-base)" }}>
@@ -253,7 +253,7 @@ export default function SecuritySettingsPage() {
                       style={{
                         backgroundColor: twoFactorEnabled
                           ? "var(--token-color-successTint)"
-                          : "var(--token-color-primaryTint)",
+                          : "var(--token-color-amberTint)",
                         color: twoFactorEnabled ? "var(--token-color-success)" : "var(--token-color-textMuted)",
                         margin: 0,
                       }}
@@ -263,7 +263,7 @@ export default function SecuritySettingsPage() {
                   </div>
 
                   <div
-                    className="flex items-center justify-between gap-4 rounded-lg p-4"
+                    className="flex items-center justify-between gap-4 rounded-[var(--token-radius-md)] p-4"
                     style={{
                       backgroundColor: "var(--token-color-bg)",
                       border: "1px solid color-mix(in srgb, var(--token-color-border) 50%, transparent)",
@@ -272,9 +272,9 @@ export default function SecuritySettingsPage() {
                     <div className="flex items-center gap-4">
                       <span
                         className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full"
-                        style={{ backgroundColor: "var(--token-color-primaryTint)" }}
+                        style={{ backgroundColor: "var(--token-color-amberTint)" }}
                       >
-                        <Smartphone size={20} color="var(--token-color-primary)" />
+                        <Smartphone size={20} color="var(--token-color-amber)" />
                       </span>
                       <div className="flex flex-col">
                         <span className="text-sm font-semibold tracking-wide" style={{ color: "var(--token-color-ink)" }}>
@@ -294,7 +294,7 @@ export default function SecuritySettingsPage() {
 
                 {/* Active Sessions */}
                 <section
-                  className="flex flex-col gap-6 rounded-xl bg-[var(--token-color-surface)] p-6 shadow-[var(--token-shadow-sm)]"
+                  className="flex flex-col gap-6 rounded-[var(--token-radius-lg)] bg-[var(--token-color-surface)] p-6 shadow-[var(--token-shadow-sm)]"
                   style={{ border: "1px solid color-mix(in srgb, var(--token-color-border) 30%, transparent)" }}
                 >
                   <div className="flex items-center justify-between">
@@ -318,19 +318,19 @@ export default function SecuritySettingsPage() {
                     {sessions.map((session) => (
                       <div
                         key={session.id}
-                        className="flex items-center justify-between gap-4 rounded-lg p-4"
+                        className="flex items-center justify-between gap-4 rounded-[var(--token-radius-md)] p-4"
                         style={{
                           backgroundColor: "var(--token-color-bg)",
                           border: session.isCurrent
-                            ? "1px solid color-mix(in srgb, var(--token-color-primary) 20%, transparent)"
+                            ? "1px solid color-mix(in srgb, var(--token-color-amber) 20%, transparent)"
                             : "1px solid color-mix(in srgb, var(--token-color-border) 50%, transparent)",
                         }}
                       >
                         <div className="flex items-center gap-4">
                           {session.deviceType === "desktop" ? (
-                            <Monitor size={22} color={session.isCurrent ? "var(--token-color-primary)" : "var(--token-color-inkSoft)"} />
+                            <Monitor size={22} color={session.isCurrent ? "var(--token-color-amber)" : "var(--token-color-inkSoft)"} />
                           ) : (
-                            <Smartphone size={20} color={session.isCurrent ? "var(--token-color-primary)" : "var(--token-color-inkSoft)"} />
+                            <Smartphone size={20} color={session.isCurrent ? "var(--token-color-amber)" : "var(--token-color-inkSoft)"} />
                           )}
                           <div className="flex flex-col">
                             <span className="text-sm font-semibold tracking-wide" style={{ color: "var(--token-color-ink)" }}>
@@ -343,7 +343,7 @@ export default function SecuritySettingsPage() {
                         </div>
 
                         {session.isCurrent ? (
-                          <span className="text-xs font-bold" style={{ color: "var(--token-color-primary)" }}>
+                          <span className="text-xs font-bold" style={{ color: "var(--token-color-amber)" }}>
                             Current
                           </span>
                         ) : (

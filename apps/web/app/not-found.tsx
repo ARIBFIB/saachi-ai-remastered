@@ -11,7 +11,7 @@ export default function NotFound() {
     <div className="relative flex min-h-screen items-center justify-center overflow-hidden bg-[var(--token-color-bg)] p-12">
       <div
         className="pointer-events-none absolute -top-28 right-0 h-[600px] w-[600px] rounded-full opacity-5 blur-[32px]"
-        style={{ backgroundColor: "var(--token-color-primary)" }}
+        style={{ backgroundColor: "var(--token-color-amber)" }}
       />
       <div
         className="pointer-events-none absolute -left-32 bottom-0 h-[500px] w-[500px] rounded-full opacity-5 blur-[32px]"
@@ -25,7 +25,7 @@ export default function NotFound() {
           </span>
 
           <h1 className="pt-2 text-5xl font-bold leading-[52.8px] text-[var(--token-color-ink)]">
-            Looks like you&apos;re lost in the <span className="text-[var(--token-color-primary)]">void</span>.
+            Looks like you&apos;re lost in the <span className="text-[var(--token-color-amber)]">void</span>.
           </h1>
 
           <p className="max-w-96 text-lg leading-7 text-gray-700">
@@ -36,7 +36,7 @@ export default function NotFound() {
           <div className="flex items-center gap-4 pt-4">
             <Link
               href="/"
-              className="flex items-center gap-2 rounded-lg bg-[var(--token-color-primary)] px-6 py-3 text-sm font-semibold tracking-wide text-white shadow-[0px_4px_14px_0px_rgba(53,37,205,0.25)] hover:bg-[var(--token-color-primaryHover)]"
+              className="flex items-center gap-2 rounded-[var(--token-radius-md)] bg-[var(--token-color-amber)] px-6 py-3 text-sm font-semibold tracking-wide text-white shadow-[var(--token-shadow-sm)] hover:bg-[var(--token-color-amberDark)]"
             >
               <Home className="h-[18px] w-4" />
               Back to Home
@@ -45,7 +45,7 @@ export default function NotFound() {
             <button
               type="button"
               onClick={() => router.back()}
-              className="flex items-center gap-2 rounded-lg border-2 border-[var(--token-color-border)] bg-[var(--token-color-surface)] px-6 py-2.5 text-sm font-semibold tracking-wide text-[var(--token-color-ink)] shadow-[var(--token-shadow-sm)] hover:bg-[var(--token-color-surfaceAlt)]"
+              className="flex items-center gap-2 rounded-[var(--token-radius-md)] border-2 border-[var(--token-color-border)] bg-[var(--token-color-surface)] px-6 py-2.5 text-sm font-semibold tracking-wide text-[var(--token-color-ink)] shadow-[var(--token-shadow-sm)] hover:bg-[var(--token-color-surfaceAlt)]"
             >
               <ArrowLeft className="h-4 w-4" />
               Go Back
@@ -54,14 +54,14 @@ export default function NotFound() {
         </div>
 
         <div className="flex flex-1 justify-center">
-          <div className="relative max-w-96 flex-1 overflow-hidden rounded-[32px] border-2 border-white/20 bg-[var(--token-color-surface)]/70 shadow-[0px_10px_40px_0px_rgba(15,23,42,0.08)] backdrop-blur-[5px]">
+          <div className="relative max-w-96 flex-1 overflow-hidden rounded-[32px] border-2 border-white/20 bg-[var(--token-color-surface)]/70 shadow-[var(--token-shadow-sm)] backdrop-blur-[5px]">
             <img
               src="https://placehold.co/378x378/F8FAFC/CBD5E1?text=404"
               alt="Lost robot illustration"
               className="h-full w-full object-cover"
             />
 
-            <div className="absolute -left-4 top-[289px] flex items-center gap-2 rounded-lg border-2 border-[var(--token-color-border)] bg-[var(--token-color-surface)] p-2 shadow-[var(--token-shadow-sm)]">
+            <div className="absolute -left-4 top-[289px] flex items-center gap-2 rounded-[var(--token-radius-md)] border-2 border-[var(--token-color-border)] bg-[var(--token-color-surface)] p-2 shadow-[var(--token-shadow-sm)]">
               <span className="flex h-8 w-8 items-center justify-center rounded-full bg-[var(--token-color-error)]/10">
                 <SearchX className="h-3.5 w-3.5 text-[var(--token-color-error)]" />
               </span>

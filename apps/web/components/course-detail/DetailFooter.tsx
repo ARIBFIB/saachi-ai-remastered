@@ -9,7 +9,7 @@ export function DetailFooter() {
     <footer className="w-full bg-zinc-200 px-6 py-10">
       <div className="mx-auto flex max-w-[1280px] flex-col gap-8 sm:flex-row sm:items-end sm:gap-6">
         <div className="flex flex-1 flex-col gap-4">
-          <span className="text-base font-bold text-[#3525CD]">Saachi AI</span>
+          <span className="text-base font-bold text-[var(--token-color-amber)]">Saachi AI</span>
           <p className="text-base text-gray-700">
             © {new Date().getFullYear()} Saachi AI Marketplace.
             <br />
@@ -23,7 +23,7 @@ export function DetailFooter() {
               <a
                 key={link.label}
                 href={link.href}
-                className="text-xs font-medium text-gray-700 hover:text-[#3525CD]"
+                className="text-xs font-medium text-gray-700 hover:text-[var(--token-color-amber)]"
               >
                 {link.label}
               </a>

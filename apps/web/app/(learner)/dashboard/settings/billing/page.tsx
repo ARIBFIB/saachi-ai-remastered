@@ -154,11 +154,11 @@ export default function BillingSettingsPage() {
                 <Link
                   key={label}
                   href={href}
-                  className="flex items-center gap-4 rounded-lg border-l-4 px-4 py-3 text-sm font-semibold tracking-wide transition"
+                  className="flex items-center gap-4 rounded-[var(--token-radius-md)] border-l-4 px-4 py-3 text-sm font-semibold tracking-wide transition"
                   style={{
-                    borderColor: isActive ? "var(--token-color-primary)" : "transparent",
-                    backgroundColor: isActive ? "var(--token-color-primaryTint)" : "transparent",
-                    color: isActive ? "var(--token-color-primary)" : "var(--token-color-inkSoft)",
+                    borderColor: isActive ? "var(--token-color-amber)" : "transparent",
+                    backgroundColor: isActive ? "var(--token-color-amberTint)" : "transparent",
+                    color: isActive ? "var(--token-color-amber)" : "var(--token-color-inkSoft)",
                   }}
                 >
                   <Icon size={18} />
@@ -172,7 +172,7 @@ export default function BillingSettingsPage() {
         <div className="border-t border-[var(--token-color-border)] p-4">
           <Link
             href="/support"
-            className="flex h-12 items-center gap-4 rounded-lg pl-4 text-sm font-semibold tracking-wide text-[var(--token-color-inkSoft)] hover:bg-[var(--token-color-surface)]"
+            className="flex h-12 items-center gap-4 rounded-[var(--token-radius-md)] pl-4 text-sm font-semibold tracking-wide text-[var(--token-color-inkSoft)] hover:bg-[var(--token-color-surface)]"
           >
             <HelpCircle size={18} />
             Help Center
@@ -202,12 +202,12 @@ export default function BillingSettingsPage() {
                 <div className="flex flex-col gap-6">
                   {/* Current Plan */}
                   <div
-                    className="relative flex flex-col gap-6 overflow-hidden rounded-xl bg-[var(--token-color-surface)] p-6 shadow-[var(--token-shadow-sm)]"
+                    className="relative flex flex-col gap-6 overflow-hidden rounded-[var(--token-radius-lg)] bg-[var(--token-color-surface)] p-6 shadow-[var(--token-shadow-sm)]"
                     style={{ border: "1px solid var(--token-color-border)" }}
                   >
                     <div
                       className="pointer-events-none absolute -right-8 -top-16 h-32 w-32 rounded-bl-full"
-                      style={{ backgroundColor: "var(--token-color-primaryTint)" }}
+                      style={{ backgroundColor: "var(--token-color-amberTint)" }}
                     />
 
                     <div className="relative flex items-start justify-between">
@@ -219,8 +219,8 @@ export default function BillingSettingsPage() {
                           <Tag
                             bordered={false}
                             style={{
-                              backgroundColor: "var(--token-color-primaryTint)",
-                              color: "var(--token-color-primary)",
+                              backgroundColor: "var(--token-color-amberTint)",
+                              color: "var(--token-color-amber)",
                               margin: 0,
                             }}
                           >
@@ -232,12 +232,12 @@ export default function BillingSettingsPage() {
                         </p>
                       </div>
 
-                      <Award size={28} color="var(--token-color-primary)" />
+                      <Award size={28} color="var(--token-color-amber)" />
                     </div>
 
                     <div className="relative flex flex-col gap-4 sm:flex-row">
                       <div
-                        className="flex flex-1 flex-col gap-1 rounded-lg p-4"
+                        className="flex flex-1 flex-col gap-1 rounded-[var(--token-radius-md)] p-4"
                         style={{
                           backgroundColor: "var(--token-color-surfaceAlt)",
                           border: "1px solid color-mix(in srgb, var(--token-color-border) 50%, transparent)",
@@ -255,7 +255,7 @@ export default function BillingSettingsPage() {
                       </div>
 
                       <div
-                        className="flex flex-1 flex-col gap-1 rounded-lg p-4"
+                        className="flex flex-1 flex-col gap-1 rounded-[var(--token-radius-md)] p-4"
                         style={{
                           backgroundColor: "var(--token-color-surfaceAlt)",
                           border: "1px solid color-mix(in srgb, var(--token-color-border) 50%, transparent)",
@@ -284,7 +284,7 @@ export default function BillingSettingsPage() {
                       <button
                         type="button"
                         onClick={handleCancelSubscription}
-                        className="flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-semibold tracking-wide"
+                        className="flex items-center gap-2 rounded-[var(--token-radius-md)] px-4 py-2 text-sm font-semibold tracking-wide"
                         style={{ color: "var(--token-color-error)" }}
                       >
                         <XCircle size={15} />
@@ -295,7 +295,7 @@ export default function BillingSettingsPage() {
 
                   {/* Payment Methods */}
                   <div
-                    className="flex flex-col gap-6 rounded-xl bg-[var(--token-color-surface)] p-6 shadow-[var(--token-shadow-sm)]"
+                    className="flex flex-col gap-6 rounded-[var(--token-radius-lg)] bg-[var(--token-color-surface)] p-6 shadow-[var(--token-shadow-sm)]"
                     style={{ border: "1px solid var(--token-color-border)" }}
                   >
                     <div className="flex items-center justify-between">
@@ -306,7 +306,7 @@ export default function BillingSettingsPage() {
                         type="button"
                         onClick={handleAddPaymentMethod}
                         className="flex items-center gap-1 text-sm font-semibold tracking-wide"
-                        style={{ color: "var(--token-color-primary)" }}
+                        style={{ color: "var(--token-color-amber)" }}
                       >
                         <Plus size={15} />
                         Add New
@@ -317,13 +317,13 @@ export default function BillingSettingsPage() {
                       {paymentMethods.map((pm) => (
                         <div
                           key={pm.id}
-                          className="flex items-center justify-between rounded-lg p-4"
+                          className="flex items-center justify-between rounded-[var(--token-radius-md)] p-4"
                           style={{
                             backgroundColor: pm.isDefault
-                              ? "color-mix(in srgb, var(--token-color-primary) 5%, transparent)"
+                              ? "color-mix(in srgb, var(--token-color-amber) 5%, transparent)"
                               : "var(--token-color-bg)",
                             border: pm.isDefault
-                              ? "1px solid var(--token-color-primary)"
+                              ? "1px solid var(--token-color-amber)"
                               : "1px solid var(--token-color-border)",
                           }}
                         >
@@ -347,8 +347,8 @@ export default function BillingSettingsPage() {
                                   <span
                                     className="rounded-full px-2 py-0.5 text-[10px] font-bold uppercase"
                                     style={{
-                                      backgroundColor: "var(--token-color-primaryTint)",
-                                      color: "var(--token-color-primary)",
+                                      backgroundColor: "var(--token-color-amberTint)",
+                                      color: "var(--token-color-amber)",
                                     }}
                                   >
                                     Default
@@ -386,7 +386,7 @@ export default function BillingSettingsPage() {
                 <div className="flex flex-col gap-6">
                   {/* Account Summary */}
                   <div
-                    className="flex flex-col gap-4 rounded-xl bg-[var(--token-color-surface)] p-6 shadow-[var(--token-shadow-sm)]"
+                    className="flex flex-col gap-4 rounded-[var(--token-radius-lg)] bg-[var(--token-color-surface)] p-6 shadow-[var(--token-shadow-sm)]"
                     style={{ border: "1px solid var(--token-color-border)" }}
                   >
                     <h3
@@ -434,7 +434,7 @@ export default function BillingSettingsPage() {
 
                   {/* Recent Invoices */}
                   <div
-                    className="flex flex-col gap-4 rounded-xl bg-[var(--token-color-surface)] p-6 shadow-[var(--token-shadow-sm)]"
+                    className="flex flex-col gap-4 rounded-[var(--token-radius-lg)] bg-[var(--token-color-surface)] p-6 shadow-[var(--token-shadow-sm)]"
                     style={{ border: "1px solid var(--token-color-border)" }}
                   >
                     <div className="flex items-center justify-between">
@@ -444,7 +444,7 @@ export default function BillingSettingsPage() {
                       <Link
                         href="/dashboard/settings/billing/invoices"
                         className="text-xs font-medium"
-                        style={{ color: "var(--token-color-primary)" }}
+                        style={{ color: "var(--token-color-amber)" }}
                       >
                         View All
                       </Link>

@@ -37,7 +37,7 @@ export default function OrderConfirmationPage() {
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-[var(--token-color-bg)] px-6 py-24">
-      <div className="flex w-full max-w-[672px] flex-col items-center rounded-xl bg-[var(--token-color-surface)] p-10 shadow-[var(--token-shadow-sm)]">
+      <div className="flex w-full max-w-[672px] flex-col items-center rounded-[var(--token-radius-lg)] bg-[var(--token-color-surface)] p-10 shadow-[var(--token-shadow-sm)]">
         <div className="flex h-24 w-24 items-center justify-center rounded-full bg-[var(--token-color-success)]/10">
           <CheckCircle2
             size={40}
@@ -62,7 +62,7 @@ export default function OrderConfirmationPage() {
 
         {/* Order summary */}
         <div
-          className="mt-10 flex w-full flex-col gap-3.5 rounded-lg bg-[var(--token-color-surfaceAlt)] p-6"
+          className="mt-10 flex w-full flex-col gap-3.5 rounded-[var(--token-radius-md)] bg-[var(--token-color-surfaceAlt)] p-6"
           style={{ border: "1px solid var(--token-color-border)" }}
         >
           <div
@@ -140,7 +140,7 @@ export default function OrderConfirmationPage() {
             </span>
             <span
               className="text-5xl font-bold leading-none"
-              style={{ color: "var(--token-color-primary)" }}
+              style={{ color: "var(--token-color-amber)" }}
             >
               ${total.toFixed(2)}
             </span>
@@ -151,8 +151,8 @@ export default function OrderConfirmationPage() {
         <div className="flex items-center justify-center gap-4 pt-10">
           <Link
             href="/dashboard/my-courses"
-            className="flex h-11 w-56 items-center justify-center gap-2 rounded-lg text-sm font-semibold tracking-wide text-white shadow-[var(--token-shadow-sm)]"
-            style={{ backgroundColor: "var(--token-color-primary)" }}
+            className="flex h-11 w-56 items-center justify-center gap-2 rounded-[var(--token-radius-md)] text-sm font-semibold tracking-wide text-white shadow-[var(--token-shadow-sm)]"
+            style={{ backgroundColor: "var(--token-color-amber)" }}
           >
             <GraduationCap size={16} />
             Go to My Courses
@@ -160,7 +160,7 @@ export default function OrderConfirmationPage() {
 
           <Link
             href="/invoice"
-            className="flex h-11 w-44 items-center justify-center gap-2 rounded-lg border-2 text-sm font-semibold tracking-wide"
+            className="flex h-11 w-44 items-center justify-center gap-2 rounded-[var(--token-radius-md)] border-2 text-sm font-semibold tracking-wide"
             style={{
               borderColor: "var(--token-color-border)",
               color: "var(--token-color-inkSoft)",

@@ -46,12 +46,12 @@ export function MentorshipBookingClient({ instructorSlug }: { instructorSlug: st
       </div>
 
       <div
-        className="flex flex-col gap-6 rounded-xl border p-6"
+        className="flex flex-col gap-6 rounded-[var(--token-radius-lg)] border p-6"
         style={{ borderColor: "var(--token-color-border)", backgroundColor: "var(--token-color-surface)" }}
       >
         <div className="flex flex-col gap-3">
           <h2 className="flex items-center gap-2 text-sm font-semibold" style={{ color: "var(--token-color-ink)" }}>
-            <CalendarDays size={16} color="var(--token-color-primary)" />
+            <CalendarDays size={16} color="var(--token-color-amber)" />
             Select a day
           </h2>
           <div className="flex flex-wrap gap-2">
@@ -60,11 +60,11 @@ export function MentorshipBookingClient({ instructorSlug }: { instructorSlug: st
                 key={day}
                 type="button"
                 onClick={() => setSelectedDay(day)}
-                className="rounded-lg border px-4 py-2 text-sm font-medium transition"
+                className="rounded-[var(--token-radius-md)] border px-4 py-2 text-sm font-medium transition"
                 style={{
-                  borderColor: day === selectedDay ? "var(--token-color-primary)" : "var(--token-color-border)",
-                  backgroundColor: day === selectedDay ? "var(--token-color-primaryTint)" : "var(--token-color-bg)",
-                  color: day === selectedDay ? "var(--token-color-primary)" : "var(--token-color-inkSoft)",
+                  borderColor: day === selectedDay ? "var(--token-color-amber)" : "var(--token-color-border)",
+                  backgroundColor: day === selectedDay ? "var(--token-color-amberTint)" : "var(--token-color-bg)",
+                  color: day === selectedDay ? "var(--token-color-amber)" : "var(--token-color-inkSoft)",
                 }}
               >
                 {day}
@@ -75,7 +75,7 @@ export function MentorshipBookingClient({ instructorSlug }: { instructorSlug: st
 
         <div className="flex flex-col gap-3">
           <h2 className="flex items-center gap-2 text-sm font-semibold" style={{ color: "var(--token-color-ink)" }}>
-            <Clock size={16} color="var(--token-color-primary)" />
+            <Clock size={16} color="var(--token-color-amber)" />
             Select a time
           </h2>
           <div className="flex flex-wrap gap-2">
@@ -84,11 +84,11 @@ export function MentorshipBookingClient({ instructorSlug }: { instructorSlug: st
                 key={time}
                 type="button"
                 onClick={() => setSelectedTime(time)}
-                className="rounded-lg border px-4 py-2 text-sm font-medium transition"
+                className="rounded-[var(--token-radius-md)] border px-4 py-2 text-sm font-medium transition"
                 style={{
-                  borderColor: time === selectedTime ? "var(--token-color-primary)" : "var(--token-color-border)",
-                  backgroundColor: time === selectedTime ? "var(--token-color-primaryTint)" : "var(--token-color-bg)",
-                  color: time === selectedTime ? "var(--token-color-primary)" : "var(--token-color-inkSoft)",
+                  borderColor: time === selectedTime ? "var(--token-color-amber)" : "var(--token-color-border)",
+                  backgroundColor: time === selectedTime ? "var(--token-color-amberTint)" : "var(--token-color-bg)",
+                  color: time === selectedTime ? "var(--token-color-amber)" : "var(--token-color-inkSoft)",
                 }}
               >
                 {time}

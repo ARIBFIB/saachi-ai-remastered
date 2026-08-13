@@ -51,14 +51,14 @@ export function CertificateDetailClient({ certificateId }: { certificateId: stri
         </Link>
 
         <div
-          className="flex flex-col items-center gap-6 rounded-2xl border-2 bg-[var(--token-color-surface)] p-12 text-center shadow-[var(--token-shadow-md)]"
-          style={{ borderColor: "var(--token-color-primary)" }}
+          className="flex flex-col items-center gap-6 rounded-[var(--token-radius-lg)] border-2 bg-[var(--token-color-surface)] p-12 text-center shadow-[var(--token-shadow-md)]"
+          style={{ borderColor: "var(--token-color-amber)" }}
         >
           <span
             className="flex h-16 w-16 items-center justify-center rounded-full"
-            style={{ backgroundColor: "var(--token-color-primaryTint)" }}
+            style={{ backgroundColor: "var(--token-color-amberTint)" }}
           >
-            <Award size={28} color="var(--token-color-primary)" />
+            <Award size={28} color="var(--token-color-amber)" />
           </span>
 
           <div className="flex flex-col gap-1">

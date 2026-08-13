@@ -19,7 +19,7 @@ export default function BecomeInstructorPage() {
       <main className="mx-auto flex w-full max-w-[1280px] flex-1 flex-col gap-6 px-6 py-24 md:flex-row">
         {/* Left: copy card */}
         <div
-          className="flex flex-1 flex-col justify-center gap-6 rounded-xl bg-[var(--token-color-surface)] px-10 py-24 shadow-[var(--token-shadow-sm)]"
+          className="flex flex-1 flex-col justify-center gap-6 rounded-[var(--token-radius-lg)] bg-[var(--token-color-surface)] px-10 py-24 shadow-[var(--token-shadow-sm)]"
           style={{ border: "1px solid color-mix(in srgb, var(--token-color-border) 30%, transparent)" }}
         >
           <h1
@@ -40,8 +40,8 @@ export default function BecomeInstructorPage() {
           <div>
             <Link
               href="/instructors/onboarding"
-              className="inline-flex items-center gap-2 rounded-lg px-6 py-3 text-sm font-semibold tracking-wide text-white shadow-[var(--token-shadow-sm)]"
-              style={{ backgroundColor: "var(--token-color-primary)" }}
+              className="inline-flex items-center gap-2 rounded-[var(--token-radius-md)] px-6 py-3 text-sm font-semibold tracking-wide text-white shadow-[var(--token-shadow-sm)]"
+              style={{ backgroundColor: "var(--token-color-amber)" }}
             >
               Start Your Application
               <ArrowRight size={12} />
@@ -50,7 +50,7 @@ export default function BecomeInstructorPage() {
         </div>
 
         {/* Right: spotlight image */}
-        <div className="relative min-h-72 flex-1 overflow-hidden rounded-xl shadow-[var(--token-shadow-sm)]">
+        <div className="relative min-h-72 flex-1 overflow-hidden rounded-[var(--token-radius-lg)] shadow-[var(--token-shadow-sm)]">
           <Image
             src={instructorSpotlight.image}
             alt="Instructor spotlight"
@@ -70,7 +70,7 @@ export default function BecomeInstructorPage() {
             <div className="flex flex-col gap-1">
               <span
                 className="text-sm font-semibold uppercase tracking-wide"
-                style={{ color: "var(--token-color-primaryTint)" }}
+                style={{ color: "var(--token-color-amberTint)" }}
               >
                 Instructor Spotlight
               </span>

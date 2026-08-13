@@ -70,7 +70,7 @@ export function CourseHero({
         <div className="w-full lg:w-96">
           <button
             type="button"
-            className="group relative block aspect-video w-full overflow-hidden rounded-xl shadow-[var(--token-shadow-sm)]"
+            className="group relative block aspect-video w-full overflow-hidden rounded-[var(--token-radius-lg)] shadow-[var(--token-shadow-sm)]"
           >
             <Image
               src={previewImage}

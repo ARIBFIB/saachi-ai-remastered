@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 // ============================================================================
 // DashboardSidebar.tsx
@@ -40,9 +40,9 @@ export function DashboardSidebar() {
                 href={href}
                 className="flex h-12 items-center gap-4 border-l-4 pl-4 pr-6 text-sm font-semibold tracking-wide transition"
                 style={{
-                  borderColor: isActive ? "var(--token-color-primary)" : "transparent",
-                  backgroundColor: isActive ? "var(--token-color-primaryTint)" : "transparent",
-                  color: isActive ? "var(--token-color-primary)" : "var(--token-color-inkSoft)",
+                  borderColor: isActive ? "var(--token-color-amber)" : "transparent",
+                  backgroundColor: isActive ? "var(--token-color-amberTint)" : "transparent",
+                  color: isActive ? "var(--token-color-amber)" : "var(--token-color-inkSoft)",
                 }}
               >
                 <Icon size={18} />
@@ -56,7 +56,7 @@ export function DashboardSidebar() {
       <div className="border-t border-[var(--token-color-border)] p-4">
         <Link
           href="/support"
-          className="flex h-12 items-center gap-4 rounded-lg pl-4 text-sm font-semibold tracking-wide text-[var(--token-color-inkSoft)] hover:bg-[var(--token-color-surface)]"
+          className="flex h-12 items-center gap-4 rounded-[var(--token-radius-md)] pl-4 text-sm font-semibold tracking-wide text-[var(--token-color-inkSoft)] hover:bg-[var(--token-color-surface)]"
         >
           <HelpCircle size={18} />
           Help Center

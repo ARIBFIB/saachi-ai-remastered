@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { useState } from "react";
 import { ChevronDown } from "lucide-react";
@@ -38,7 +38,7 @@ export function FaqAccordion() {
           return (
             <div
               key={faq.question}
-              className="overflow-hidden rounded-lg border-2 border-[var(--token-color-border)] bg-[var(--token-color-surface)]"
+              className="overflow-hidden rounded-[var(--token-radius-md)] border-2 border-[var(--token-color-border)] bg-[var(--token-color-surface)]"
             >
               <button
                 type="button"

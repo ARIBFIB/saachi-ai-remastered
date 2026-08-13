@@ -9,7 +9,7 @@ export function CheckoutHeader() {
       <div className="mx-auto flex h-16 max-w-[1280px] items-center justify-between px-6">
         <Link
           href="/"
-          className="text-2xl font-black text-[var(--token-color-primary)]"
+          className="text-2xl font-black text-[var(--token-color-amber)]"
         >
           Saachi AI
         </Link>

@@ -17,7 +17,7 @@ const values: Value[] = [
   },
   {
     icon: BrainCircuit,
-    iconColor: "var(--token-color-primary)",
+    iconColor: "var(--token-color-amber)",
     title: "Predictive Insight",
     description: "Anticipating learner bottlenecks before they happen using behavioral data models.",
   },
@@ -46,8 +46,8 @@ export function CoreDirectivesGrid({ missionTitle, missionBody }: CoreDirectives
       <h2 className="text-3xl font-bold leading-10 text-[var(--token-color-ink)]">Our Core Directives</h2>
 
       <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-        <div className="flex flex-col justify-center gap-2 rounded-2xl border-2 border-[var(--token-color-border)]/30 bg-[var(--token-color-surface)] p-10 shadow-[var(--token-shadow-sm)] md:col-span-2">
-          <Rocket className="mb-2 h-[30px] w-[30px] text-[var(--token-color-primary)]" />
+        <div className="flex flex-col justify-center gap-2 rounded-[var(--token-radius-lg)] border-2 border-[var(--token-color-border)]/30 bg-[var(--token-color-surface)] p-10 shadow-[var(--token-shadow-sm)] md:col-span-2">
+          <Rocket className="mb-2 h-[30px] w-[30px] text-[var(--token-color-amber)]" />
           <h3 className="text-2xl font-semibold leading-8 text-[var(--token-color-ink)]">{missionTitle}</h3>
           <p className="max-w-4xl text-base leading-6 text-[var(--token-color-inkSoft)]">{missionBody}</p>
         </div>
@@ -55,7 +55,7 @@ export function CoreDirectivesGrid({ missionTitle, missionBody }: CoreDirectives
         {values.map(({ icon: Icon, iconColor, title, description }) => (
           <div
             key={title}
-            className="flex flex-col gap-1 rounded-2xl border-2 border-[var(--token-color-border)]/30 bg-[var(--token-color-surface)] p-6 shadow-[var(--token-shadow-sm)]"
+            className="flex flex-col gap-1 rounded-[var(--token-radius-lg)] border-2 border-[var(--token-color-border)]/30 bg-[var(--token-color-surface)] p-6 shadow-[var(--token-shadow-sm)]"
           >
             <Icon className="h-6 w-6" style={{ color: iconColor }} />
             <h4 className="pt-1 text-lg font-semibold leading-7 text-[var(--token-color-ink)]">{title}</h4>

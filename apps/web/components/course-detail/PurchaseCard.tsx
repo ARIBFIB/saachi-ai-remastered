@@ -9,7 +9,7 @@ const icons = [PlayCircle, FileText, Award];
 
 export function PurchaseCard({ price, includes }: PurchaseCardProps) {
   return (
-    <div className="sticky top-24 flex w-full flex-col gap-6 rounded-xl border-2 border-slate-300/20 bg-slate-50 px-6 py-6 shadow-[var(--token-shadow-sm)]">
+    <div className="sticky top-24 flex w-full flex-col gap-6 rounded-[var(--token-radius-lg)] border-2 border-slate-300/20 bg-slate-50 px-6 py-6 shadow-[var(--token-shadow-sm)]">
       <div className="flex flex-col items-center gap-1">
         <span className="text-5xl font-bold leading-[52.8px] text-zinc-900">{price}</span>
         <span className="text-xs font-medium text-gray-700">
@@ -20,13 +20,13 @@ export function PurchaseCard({ price, includes }: PurchaseCardProps) {
       <div className="flex flex-col gap-3">
         <button
           type="button"
-          className="w-full rounded-lg bg-[#3525CD] py-3 text-sm font-bold tracking-wide text-white hover:bg-[#2A1DA3]"
+          className="w-full rounded-[var(--token-radius-md)] bg-[var(--token-color-amber)] py-3 text-sm font-bold tracking-wide text-white hover:bg-[var(--token-color-amberDark)]"
         >
           Buy Now
         </button>
         <button
           type="button"
-          className="w-full rounded-lg border-2 border-gray-500 bg-white py-3 text-sm font-bold tracking-wide text-zinc-900 hover:bg-gray-50"
+          className="w-full rounded-[var(--token-radius-md)] border-2 border-gray-500 bg-white py-3 text-sm font-bold tracking-wide text-zinc-900 hover:bg-gray-50"
         >
           Add to Cart
         </button>
@@ -40,7 +40,7 @@ export function PurchaseCard({ price, includes }: PurchaseCardProps) {
           const Icon = icons[i % icons.length];
           return (
             <div key={item} className="flex items-center gap-3">
-              <Icon className="h-5 w-5 shrink-0 text-[#3525CD]" />
+              <Icon className="h-5 w-5 shrink-0 text-[var(--token-color-amber)]" />
               <span className="text-base text-gray-700">{item}</span>
             </div>
           );

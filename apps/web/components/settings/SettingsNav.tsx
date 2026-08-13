@@ -24,10 +24,10 @@ export function SettingsNav() {
           <Link
             key={item.href}
             href={item.href}
-            className="rounded-lg px-4 py-5 text-sm tracking-wide transition"
+            className="rounded-[var(--token-radius-md)] px-4 py-5 text-sm tracking-wide transition"
             style={{
               backgroundColor: isActive ? "var(--token-color-surfaceAlt)" : "transparent",
-              borderLeft: isActive ? "4px solid var(--token-color-primary)" : "4px solid transparent",
+              borderLeft: isActive ? "4px solid var(--token-color-amber)" : "4px solid transparent",
               color: isActive ? "var(--token-color-ink)" : "var(--token-color-inkSoft)",
               fontWeight: isActive ? 700 : 600,
             }}

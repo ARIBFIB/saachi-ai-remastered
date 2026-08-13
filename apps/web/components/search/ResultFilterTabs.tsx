@@ -25,7 +25,7 @@ export function ResultFilterTabs({ tabs }: ResultFilterTabsProps) {
             onClick={() => setActive(tab.label)}
             className={`rounded-full px-4 pb-2 pt-1.5 text-xs font-medium transition ${
               isActive
-                ? "bg-[var(--token-color-primaryTint)] text-[var(--token-color-primary)] outline outline-1 outline-offset-[-1px] outline-[var(--token-color-primary)]"
+                ? "bg-[var(--token-color-amberTint)] text-[var(--token-color-amber)] outline outline-1 outline-offset-[-1px] outline-[var(--token-color-amber)]"
                 : "bg-zinc-200 text-[var(--token-color-inkSoft)] outline outline-1 outline-offset-[-1px] outline-[var(--token-color-border)]"
             }`}
           >

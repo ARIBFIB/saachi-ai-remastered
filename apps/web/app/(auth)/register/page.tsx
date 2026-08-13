@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { useState } from "react";
 import Link from "next/link";
@@ -41,13 +41,13 @@ export default function CreateAccountPage() {
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-[var(--token-color-bg)] px-4 py-24">
-      <div className="flex w-full max-w-[1000px] overflow-hidden rounded-2xl bg-[var(--token-color-surface)] shadow-[var(--token-shadow-md)]">
+      <div className="flex w-full max-w-[1000px] overflow-hidden rounded-[var(--token-radius-lg)] bg-[var(--token-color-surface)] shadow-[var(--token-shadow-md)]">
         {/* Left panel: brand + graphic */}
         <div
           className="relative hidden w-96 shrink-0 flex-col justify-between overflow-hidden p-10 md:flex"
           style={{
             background:
-              "linear-gradient(160deg, var(--token-color-primary) 0%, var(--token-color-primaryDark) 100%)",
+              "linear-gradient(160deg, var(--token-color-amber) 0%, var(--token-color-inkDeep) 100%)",
           }}
         >
           <div className="pointer-events-none absolute -top-32 left-1/2 h-64 w-64 -translate-x-1/2 rounded-full bg-[var(--token-color-surface)]/10 blur-[32px]" />
@@ -63,7 +63,7 @@ export default function CreateAccountPage() {
               <br />
               future of skills.
             </h1>
-            <p className="text-lg leading-7 text-[var(--token-color-primaryTint)]">
+            <p className="text-lg leading-7 text-[var(--token-color-amberTint)]">
               Join our network of learners and industry experts to accelerate
               your AI journey.
             </p>
@@ -76,8 +76,8 @@ export default function CreateAccountPage() {
               <Avatar src="https://i.pravatar.cc/64?img=45" />
               <Avatar
                 style={{
-                  backgroundColor: "var(--token-color-primaryHover)",
-                  color: "var(--token-color-primaryTint)",
+                  backgroundColor: "var(--token-color-amberDark)",
+                  color: "var(--token-color-amberTint)",
                 }}
               >
                 +5k
@@ -104,13 +104,13 @@ export default function CreateAccountPage() {
             </Text>
             <div className="flex gap-2">
               <RoleCard
-                icon={<GraduationCap size={22} color="var(--token-color-primary)" />}
+                icon={<GraduationCap size={22} color="var(--token-color-amber)" />}
                 label="Learner"
                 selected={role === "learner"}
                 onSelect={() => setRole("learner")}
               />
               <RoleCard
-                icon={<Video size={20} color="var(--token-color-primary)" />}
+                icon={<Video size={20} color="var(--token-color-amber)" />}
                 label="Instructor"
                 selected={role === "instructor"}
                 onSelect={() => setRole("instructor")}
@@ -167,11 +167,11 @@ export default function CreateAccountPage() {
               <Checkbox>
                 <span style={{ color: "var(--token-color-inkSoft)" }}>
                   I agree to the{" "}
-                  <Link href="/legal/terms" style={{ color: "var(--token-color-primary)" }}>
+                  <Link href="/legal/terms" style={{ color: "var(--token-color-amber)" }}>
                     Terms of Service
                   </Link>{" "}
                   and{" "}
-                  <Link href="/legal/privacy" style={{ color: "var(--token-color-primary)" }}>
+                  <Link href="/legal/privacy" style={{ color: "var(--token-color-amber)" }}>
                     Privacy Policy
                   </Link>
                   .
@@ -204,7 +204,7 @@ export default function CreateAccountPage() {
 
           <p className="text-center text-base" style={{ color: "var(--token-color-inkSoft)" }}>
             Already have an account?{" "}
-            <Link href="/login" style={{ color: "var(--token-color-primary)" }}>
+            <Link href="/login" style={{ color: "var(--token-color-amber)" }}>
               Sign in
             </Link>
           </p>
@@ -229,10 +229,10 @@ function RoleCard({
     <button
       type="button"
       onClick={onSelect}
-      className="flex flex-1 flex-col items-center gap-2 rounded-lg border px-4 pb-4 pt-3.5 text-sm font-semibold tracking-wide transition"
+      className="flex flex-1 flex-col items-center gap-2 rounded-[var(--token-radius-md)] border px-4 pb-4 pt-3.5 text-sm font-semibold tracking-wide transition"
       style={{
-        backgroundColor: selected ? "var(--token-color-primaryTint)" : "var(--token-color-bg)",
-        borderColor: selected ? "var(--token-color-primary)" : "var(--token-color-border)",
+        backgroundColor: selected ? "var(--token-color-amberTint)" : "var(--token-color-bg)",
+        borderColor: selected ? "var(--token-color-amber)" : "var(--token-color-border)",
         color: "var(--token-color-ink)",
       }}
     >

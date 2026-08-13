@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { useState } from "react";
 import Link from "next/link";
@@ -18,11 +18,11 @@ export default function ForgotPasswordPage() {
   return (
     <div className="flex min-h-screen items-center justify-center bg-[var(--token-color-bg)] px-12 py-32">
       <div className="flex w-96 max-w-96 flex-col gap-6">
-        <Link href="/" className="text-center text-3xl font-bold text-[var(--token-color-primary)]">
+        <Link href="/" className="text-center text-3xl font-bold text-[var(--token-color-amber)]">
           Saachi AI
         </Link>
 
-        <div className="overflow-hidden rounded-xl bg-[var(--token-color-surface)] px-10 py-10 shadow-[0px_4px_20px_0px_rgba(15,23,42,0.05)]">
+        <div className="overflow-hidden rounded-[var(--token-radius-lg)] bg-[var(--token-color-surface)] px-10 py-10 shadow-[var(--token-shadow-sm)]">
           {submitted ? (
             <div className="flex flex-col items-center gap-2 text-center">
               <CheckCircle2 className="h-10 w-10 text-[var(--token-color-success)]" />
@@ -33,7 +33,7 @@ export default function ForgotPasswordPage() {
 
               <Link
                 href="/login"
-                className="mt-5 flex items-center gap-1 text-base text-[var(--token-color-inkSoft)] hover:text-[var(--token-color-primary)]"
+                className="mt-5 flex items-center gap-1 text-base text-[var(--token-color-inkSoft)] hover:text-[var(--token-color-amber)]"
               >
                 <ArrowLeft className="h-3 w-3" />
                 Back to Login
@@ -60,14 +60,14 @@ export default function ForgotPasswordPage() {
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
                       placeholder="name@company.com"
-                      className="w-full rounded-lg border border-[var(--token-color-border)] bg-[var(--token-color-surface)] py-3.5 pl-10 pr-4 text-base text-[var(--token-color-ink)] placeholder:text-gray-500 focus:border-[var(--token-color-primary)] focus:outline-none"
+                      className="w-full rounded-[var(--token-radius-md)] border border-[var(--token-color-border)] bg-[var(--token-color-surface)] py-3.5 pl-10 pr-4 text-base text-[var(--token-color-ink)] placeholder:text-gray-500 focus:border-[var(--token-color-amber)] focus:outline-none"
                     />
                   </div>
                 </div>
 
                 <button
                   type="submit"
-                  className="flex items-center justify-center gap-2 rounded-lg bg-[var(--token-color-primary)] px-4 py-3 text-sm font-semibold tracking-wide text-white hover:bg-[var(--token-color-primaryHover)]"
+                  className="flex items-center justify-center gap-2 rounded-[var(--token-radius-md)] bg-[var(--token-color-amber)] px-4 py-3 text-sm font-semibold tracking-wide text-white hover:bg-[var(--token-color-amberDark)]"
                 >
                   Send Reset Link
                   <ArrowRight className="h-3 w-3" />
@@ -77,7 +77,7 @@ export default function ForgotPasswordPage() {
               <div className="flex flex-col items-center pb-1 pt-5">
                 <Link
                   href="/login"
-                  className="flex items-center gap-1 text-base text-[var(--token-color-inkSoft)] hover:text-[var(--token-color-primary)]"
+                  className="flex items-center gap-1 text-base text-[var(--token-color-inkSoft)] hover:text-[var(--token-color-amber)]"
                 >
                   <ArrowLeft className="h-3 w-3" />
                   Back to Login
@@ -89,7 +89,7 @@ export default function ForgotPasswordPage() {
 
         <p className="text-center text-xs font-medium text-[var(--token-color-inkSoft)]">
           Need help?{" "}
-          <Link href="/contact" className="text-[var(--token-color-primary)]">
+          <Link href="/contact" className="text-[var(--token-color-amber)]">
             Contact Support
           </Link>
         </p>

@@ -124,9 +124,9 @@ export default function MentorshipSessionsPage() {
                 href={href}
                 className="flex h-12 items-center gap-4 border-l-4 pl-4 pr-6 text-sm font-semibold tracking-wide transition"
                 style={{
-                  borderColor: isActive ? "var(--token-color-primary)" : "transparent",
-                  backgroundColor: isActive ? "var(--token-color-primaryTint)" : "transparent",
-                  color: isActive ? "var(--token-color-primary)" : "var(--token-color-inkSoft)",
+                  borderColor: isActive ? "var(--token-color-amber)" : "transparent",
+                  backgroundColor: isActive ? "var(--token-color-amberTint)" : "transparent",
+                  color: isActive ? "var(--token-color-amber)" : "var(--token-color-inkSoft)",
                 }}
               >
                 <Icon size={18} />
@@ -139,7 +139,7 @@ export default function MentorshipSessionsPage() {
         <div className="border-t border-[var(--token-color-border)] p-4">
           <Link
             href="/support"
-            className="flex h-12 items-center gap-4 pl-4 text-sm font-semibold tracking-wide text-[var(--token-color-inkSoft)] hover:text-[var(--token-color-primary)]"
+            className="flex h-12 items-center gap-4 pl-4 text-sm font-semibold tracking-wide text-[var(--token-color-inkSoft)] hover:text-[var(--token-color-amber)]"
           >
             <HelpCircle size={18} />
             Help Center
@@ -172,7 +172,7 @@ export default function MentorshipSessionsPage() {
             {/* Upcoming sessions */}
             <section className="flex flex-col gap-6">
               <div className="flex items-center gap-2">
-                <History size={20} color="var(--token-color-primary)" style={{ transform: "scaleX(-1)" }} />
+                <History size={20} color="var(--token-color-amber)" style={{ transform: "scaleX(-1)" }} />
                 <h2 className="text-2xl font-semibold" style={{ color: "var(--token-color-ink)" }}>
                   Upcoming
                 </h2>
@@ -195,7 +195,7 @@ export default function MentorshipSessionsPage() {
               </div>
 
               <div
-                className="overflow-hidden rounded-xl border bg-[var(--token-color-surface)] shadow-[var(--token-shadow-md)]"
+                className="overflow-hidden rounded-[var(--token-radius-lg)] border bg-[var(--token-color-surface)] shadow-[var(--token-shadow-md)]"
                 style={{ borderColor: "var(--token-color-border)" }}
               >
                 {pastSessions.map((session, idx) => (
@@ -206,7 +206,7 @@ export default function MentorshipSessionsPage() {
                   >
                     <div className="flex flex-1 items-center gap-6">
                       <div
-                        className="flex h-16 w-16 shrink-0 flex-col items-center justify-center gap-0 rounded-lg py-3"
+                        className="flex h-16 w-16 shrink-0 flex-col items-center justify-center gap-0 rounded-[var(--token-radius-md)] py-3"
                         style={{ backgroundColor: "var(--token-color-surfaceAlt)" }}
                       >
                         <span
@@ -254,7 +254,7 @@ export default function MentorshipSessionsPage() {
                       type="link"
                       icon={<FileText size={14} />}
                       onClick={() => handleViewNotes(session.id)}
-                      style={{ color: "var(--token-color-primary)", fontWeight: 600 }}
+                      style={{ color: "var(--token-color-amber)", fontWeight: 600 }}
                     >
                       View Notes
                     </Button>
@@ -274,9 +274,9 @@ function UpcomingSessionCard({ session }: { session: UpcomingSession }) {
 
   return (
     <div
-      className="flex flex-col justify-between rounded-xl border bg-[var(--token-color-surface)] p-6 shadow-[var(--token-shadow-md)]"
+      className="flex flex-col justify-between rounded-[var(--token-radius-lg)] border bg-[var(--token-color-surface)] p-6 shadow-[var(--token-shadow-md)]"
       style={{
-        borderColor: isStartingNow ? "var(--token-color-primary)" : "var(--token-color-border)",
+        borderColor: isStartingNow ? "var(--token-color-amber)" : "var(--token-color-border)",
         borderWidth: isStartingNow ? 1 : 1,
       }}
     >
@@ -305,9 +305,9 @@ function UpcomingSessionCard({ session }: { session: UpcomingSession }) {
           {isStartingNow ? (
             <span
               className="flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-medium"
-              style={{ backgroundColor: "var(--token-color-primaryTint)", color: "var(--token-color-primary)" }}
+              style={{ backgroundColor: "var(--token-color-amberTint)", color: "var(--token-color-amber)" }}
             >
-              <span className="h-1.5 w-1.5 rounded-full" style={{ backgroundColor: "var(--token-color-primary)" }} />
+              <span className="h-1.5 w-1.5 rounded-full" style={{ backgroundColor: "var(--token-color-amber)" }} />
               Starting Now
             </span>
           ) : (

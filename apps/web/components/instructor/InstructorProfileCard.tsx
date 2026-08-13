@@ -17,7 +17,7 @@ export function InstructorProfileCard({
   tags,
 }: InstructorProfileCardProps) {
   return (
-    <div className="flex flex-1 items-start gap-6 rounded-xl border-2 border-[var(--token-color-border)]/30 bg-[var(--token-color-surface)] p-6 shadow-[var(--token-shadow-sm)]">
+    <div className="flex flex-1 items-start gap-6 rounded-[var(--token-radius-lg)] border-2 border-[var(--token-color-border)]/30 bg-[var(--token-color-surface)] p-6 shadow-[var(--token-shadow-sm)]">
       <span className="relative block h-32 w-32 shrink-0 overflow-hidden rounded-full ring-4 ring-[var(--token-color-surfaceAlt)]">
         <Image src={avatar} alt={name} fill sizes="128px" className="object-cover" />
       </span>
@@ -31,7 +31,7 @@ export function InstructorProfileCard({
 
           <button
             type="button"
-            className="flex shrink-0 items-center gap-2 rounded-lg bg-[var(--token-color-primary)] px-4 py-2 text-sm font-semibold tracking-wide text-white hover:bg-[var(--token-color-primaryHover)]"
+            className="flex shrink-0 items-center gap-2 rounded-[var(--token-radius-md)] bg-[var(--token-color-amber)] px-4 py-2 text-sm font-semibold tracking-wide text-white hover:bg-[var(--token-color-amberDark)]"
           >
             <Mail className="h-3.5 w-3.5" />
             Message Instructor
@@ -42,7 +42,7 @@ export function InstructorProfileCard({
           {tags.map((tag) => (
             <span
               key={tag}
-              className="rounded-sm bg-[var(--token-color-primaryTint)] px-3 pb-1 pt-[3px] text-xs font-medium text-[var(--token-color-primary)]"
+              className="rounded-sm bg-[var(--token-color-amberTint)] px-3 pb-1 pt-[3px] text-xs font-medium text-[var(--token-color-amber)]"
             >
               {tag}
             </span>

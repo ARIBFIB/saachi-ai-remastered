@@ -122,9 +122,9 @@ export default function LearnerDashboardPage() {
                 href={href}
                 className="flex items-center gap-4 border-l-4 px-4 py-3 text-sm font-semibold tracking-wide transition"
                 style={{
-                  borderColor: isActive ? "var(--token-color-primary)" : "transparent",
-                  backgroundColor: isActive ? "var(--token-color-primaryTint)" : "transparent",
-                  color: isActive ? "var(--token-color-primary)" : "var(--token-color-inkSoft)",
+                  borderColor: isActive ? "var(--token-color-amber)" : "transparent",
+                  backgroundColor: isActive ? "var(--token-color-amberTint)" : "transparent",
+                  color: isActive ? "var(--token-color-amber)" : "var(--token-color-inkSoft)",
                 }}
               >
                 <Icon size={18} />
@@ -137,7 +137,7 @@ export default function LearnerDashboardPage() {
         <div className="border-t border-[var(--token-color-border)]/30 p-4">
           <Link
             href="/support"
-            className="flex items-center gap-4 rounded-lg px-4 py-3 text-sm font-semibold tracking-wide text-[var(--token-color-inkSoft)] hover:bg-[var(--token-color-surface)]"
+            className="flex items-center gap-4 rounded-[var(--token-radius-md)] px-4 py-3 text-sm font-semibold tracking-wide text-[var(--token-color-inkSoft)] hover:bg-[var(--token-color-surface)]"
           >
             <HelpCircle size={18} />
             Help Center
@@ -182,12 +182,12 @@ export default function LearnerDashboardPage() {
           {/* Bento: continue learning + mentorship */}
           <div className="grid grid-cols-1 gap-6 xl:grid-cols-12">
             {/* Continue learning (spans 8) */}
-            <div className="flex overflow-hidden rounded-xl border bg-[var(--token-color-surface)] shadow-[var(--token-shadow-md)] xl:col-span-8"
+            <div className="flex overflow-hidden rounded-[var(--token-radius-lg)] border bg-[var(--token-color-surface)] shadow-[var(--token-shadow-md)] xl:col-span-8"
               style={{ borderColor: "var(--token-color-border)" }}
             >
               <div className="relative hidden w-60 shrink-0 bg-[var(--token-color-surfaceAlt)] sm:block">
                 <Image src={continueLearning.image} alt={continueLearning.title} fill sizes="240px" className="object-cover" />
-                <span className="absolute left-4 top-4 flex items-center gap-1 rounded-full bg-[var(--token-color-surface)]/90 px-3 pb-1 pt-[3px] text-xs font-medium text-[var(--token-color-primary)] shadow-[var(--token-shadow-sm)] backdrop-blur-[2px]">
+                <span className="absolute left-4 top-4 flex items-center gap-1 rounded-full bg-[var(--token-color-surface)]/90 px-3 pb-1 pt-[3px] text-xs font-medium text-[var(--token-color-amber)] shadow-[var(--token-shadow-sm)] backdrop-blur-[2px]">
                   <Sparkles size={12} />
                   In Progress
                 </span>
@@ -216,12 +216,12 @@ export default function LearnerDashboardPage() {
                     </span>
                     <span
                       className="font-bold"
-                      style={{ color: "var(--token-color-primary)", fontSize: "var(--token-font-size-xs)" }}
+                      style={{ color: "var(--token-color-amber)", fontSize: "var(--token-font-size-xs)" }}
                     >
                       {continueLearning.progress}%
                     </span>
                   </div>
-                  <Progress percent={continueLearning.progress} showInfo={false} strokeColor="var(--token-color-primary)" />
+                  <Progress percent={continueLearning.progress} showInfo={false} strokeColor="var(--token-color-amber)" />
                   <Link href={continueLearning.href}>
                     <Button type="primary" icon={<ArrowRight size={12} />} iconPosition="end">
                       Resume Learning
@@ -232,13 +232,13 @@ export default function LearnerDashboardPage() {
             </div>
 
             {/* Mentorship (spans 4) */}
-            <div className="relative flex flex-col justify-between overflow-hidden rounded-xl border bg-[var(--token-color-surface)] p-6 shadow-[var(--token-shadow-md)] xl:col-span-4"
+            <div className="relative flex flex-col justify-between overflow-hidden rounded-[var(--token-radius-lg)] border bg-[var(--token-color-surface)] p-6 shadow-[var(--token-shadow-md)] xl:col-span-4"
               style={{ borderColor: "var(--token-color-border)" }}
             >
-              <div className="pointer-events-none absolute -right-8 -top-8 h-32 w-32 rounded-bl-full bg-[var(--token-color-primaryTint)]/30" />
+              <div className="pointer-events-none absolute -right-8 -top-8 h-32 w-32 rounded-bl-full bg-[var(--token-color-amberTint)]/30" />
 
               <div className="relative flex flex-col gap-1 pb-6">
-                <span className="flex w-fit items-center gap-2 rounded-full bg-[var(--token-color-primaryTint)] px-3 py-1 text-xs font-medium text-[var(--token-color-primary)]">
+                <span className="flex w-fit items-center gap-2 rounded-full bg-[var(--token-color-amberTint)] px-3 py-1 text-xs font-medium text-[var(--token-color-amber)]">
                   <Calendar size={14} />
                   Upcoming Session
                 </span>
@@ -250,7 +250,7 @@ export default function LearnerDashboardPage() {
                   with {upcomingSession.mentorName}
                 </Text>
 
-                <div className="flex items-start gap-4 rounded-lg border bg-[var(--token-color-bg)] p-4"
+                <div className="flex items-start gap-4 rounded-[var(--token-radius-md)] border bg-[var(--token-color-bg)] p-4"
                   style={{ borderColor: "var(--token-color-border)" }}
                 >
                   <span className="relative block h-12 w-12 shrink-0 overflow-hidden rounded-full">
@@ -280,14 +280,14 @@ export default function LearnerDashboardPage() {
             {stats.map(({ icon: Icon, label, value, tint }) => (
               <div
                 key={label}
-                className="flex items-center gap-6 rounded-xl border bg-[var(--token-color-surface)] p-4 shadow-[var(--token-shadow-md)]"
+                className="flex items-center gap-6 rounded-[var(--token-radius-lg)] border bg-[var(--token-color-surface)] p-4 shadow-[var(--token-shadow-md)]"
                 style={{ borderColor: "var(--token-color-border)" }}
               >
                 <span
                   className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full"
                   style={{ backgroundColor: `var(--token-color-${tint})` }}
                 >
-                  <Icon size={20} color="var(--token-color-primary)" />
+                  <Icon size={20} color="var(--token-color-amber)" />
                 </span>
                 <div className="flex flex-col">
                   <span style={{ color: "var(--token-color-inkSoft)", fontSize: "var(--token-font-size-xs)" }}>
@@ -309,7 +309,7 @@ export default function LearnerDashboardPage() {
               </Title>
               <Link
                 href="/courses"
-                className="flex items-center gap-1 text-sm font-semibold tracking-wide text-[var(--token-color-primary)]"
+                className="flex items-center gap-1 text-sm font-semibold tracking-wide text-[var(--token-color-amber)]"
               >
                 View All
                 <ArrowRight size={11} />
@@ -330,7 +330,7 @@ export default function LearnerDashboardPage() {
 
 function RecommendedCard({ course }: { course: RecommendedCourse }) {
   return (
-    <article className="flex w-72 shrink-0 flex-col overflow-hidden rounded-xl border bg-[var(--token-color-surface)] shadow-[var(--token-shadow-md)]"
+    <article className="flex w-72 shrink-0 flex-col overflow-hidden rounded-[var(--token-radius-lg)] border bg-[var(--token-color-surface)] shadow-[var(--token-shadow-md)]"
       style={{ borderColor: "var(--token-color-border)" }}
     >
       <div className="relative h-36 w-full bg-[var(--token-color-surfaceAlt)]">
@@ -343,7 +343,7 @@ function RecommendedCard({ course }: { course: RecommendedCourse }) {
 
       <div className="flex flex-1 flex-col justify-between gap-2 p-4">
         <div className="flex flex-col gap-1">
-          <span style={{ color: "var(--token-color-primary)", fontSize: "var(--token-font-size-xs)" }}>
+          <span style={{ color: "var(--token-color-amber)", fontSize: "var(--token-font-size-xs)" }}>
             {course.category}
           </span>
           <h4 className="line-clamp-2 text-lg font-semibold leading-6" style={{ color: "var(--token-color-ink)" }}>
@@ -358,7 +358,7 @@ function RecommendedCard({ course }: { course: RecommendedCourse }) {
           <span className="font-bold tracking-wide" style={{ color: "var(--token-color-ink)", fontSize: "var(--token-font-size-sm)" }}>
             {course.level}
           </span>
-          <button aria-label="Save course" className="text-[var(--token-color-textMuted)] hover:text-[var(--token-color-primary)]">
+          <button aria-label="Save course" className="text-[var(--token-color-textMuted)] hover:text-[var(--token-color-amber)]">
             <Bookmark size={16} />
           </button>
         </div>

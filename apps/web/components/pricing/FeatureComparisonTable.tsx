@@ -1,4 +1,4 @@
-﻿import { X } from "lucide-react";
+import { X } from "lucide-react";
 
 interface ComparisonRow {
   feature: string;
@@ -16,7 +16,7 @@ const rows: ComparisonRow[] = [
 
 export function FeatureComparisonTable() {
   return (
-    <section className="w-full overflow-hidden rounded-xl border-2 border-[var(--token-color-border)] bg-[var(--token-color-surface)] p-6 shadow-[var(--token-shadow-sm)]">
+    <section className="w-full overflow-hidden rounded-[var(--token-radius-lg)] border-2 border-[var(--token-color-border)] bg-[var(--token-color-surface)] p-6 shadow-[var(--token-shadow-sm)]">
       <h2 className="pb-6 text-center text-3xl font-bold leading-10 text-[var(--token-color-ink)]">
         Compare Features
       </h2>
@@ -25,7 +25,7 @@ export function FeatureComparisonTable() {
         <div className="grid grid-cols-[1.5fr_1fr_1fr_1fr] border-b border-[var(--token-color-border)]">
           <div className="p-4 text-sm font-medium tracking-wide text-[var(--token-color-inkSoft)]">Feature</div>
           <div className="p-4 text-center text-sm font-semibold tracking-wide text-[var(--token-color-ink)]">Free</div>
-          <div className="p-4 text-center text-sm font-bold tracking-wide text-[var(--token-color-primary)]">Pro</div>
+          <div className="p-4 text-center text-sm font-bold tracking-wide text-[var(--token-color-amber)]">Pro</div>
           <div className="p-4 text-center text-sm font-semibold tracking-wide text-[var(--token-color-ink)]">Enterprise</div>
         </div>
 
@@ -40,7 +40,7 @@ export function FeatureComparisonTable() {
             <div className="flex items-center justify-center p-4 text-center text-base text-[var(--token-color-inkSoft)]">
               {row.free ?? <X className="h-3 w-3 text-[var(--token-color-textMuted)]" />}
             </div>
-            <div className="p-4 text-center text-base font-medium text-[var(--token-color-primary)]">{row.pro}</div>
+            <div className="p-4 text-center text-base font-medium text-[var(--token-color-amber)]">{row.pro}</div>
             <div className="p-4 text-center text-base text-[var(--token-color-inkSoft)]">{row.enterprise}</div>
           </div>
         ))}

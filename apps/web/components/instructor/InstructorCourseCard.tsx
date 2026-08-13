@@ -25,7 +25,7 @@ export function InstructorCourseCard({
   badge,
 }: InstructorCourseCardProps) {
   return (
-    <article className="flex w-96 flex-col overflow-hidden rounded-xl border-2 border-[var(--token-color-border)]/30 bg-[var(--token-color-surface)] shadow-[var(--token-shadow-sm)]">
+    <article className="flex w-96 flex-col overflow-hidden rounded-[var(--token-radius-lg)] border-2 border-[var(--token-color-border)]/30 bg-[var(--token-color-surface)] shadow-[var(--token-shadow-sm)]">
       <div className="relative h-48 w-full bg-[var(--token-color-surfaceAlt)]">
         <Image src={image} alt={title} fill sizes="384px" className="object-cover" />
         {badge && (
@@ -43,7 +43,7 @@ export function InstructorCourseCard({
 
       <div className="flex flex-col gap-4 p-6">
         <div className="flex items-center justify-between">
-          <span className="text-xs font-medium uppercase tracking-wide text-[var(--token-color-primary)]">
+          <span className="text-xs font-medium uppercase tracking-wide text-[var(--token-color-amber)]">
             {category}
           </span>
           <span className="text-sm font-bold tracking-wide text-[var(--token-color-ink)]">{price}</span>
@@ -67,7 +67,7 @@ export function InstructorCourseCard({
 
         <button
           type="button"
-          className="w-full rounded-lg border-2 border-[var(--token-color-border)] bg-[var(--token-color-surfaceAlt)] py-2 text-sm font-semibold tracking-wide text-[var(--token-color-inkSoft)] hover:bg-[var(--token-color-border)]/20"
+          className="w-full rounded-[var(--token-radius-md)] border-2 border-[var(--token-color-border)] bg-[var(--token-color-surfaceAlt)] py-2 text-sm font-semibold tracking-wide text-[var(--token-color-inkSoft)] hover:bg-[var(--token-color-border)]/20"
         >
           View Course
         </button>

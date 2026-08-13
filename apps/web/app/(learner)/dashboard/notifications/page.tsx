@@ -176,7 +176,7 @@ export default function NotificationsPage() {
         <div className="border-t border-[var(--token-color-border)] p-4">
           <Link
             href="/support"
-            className="flex h-12 items-center gap-4 rounded-lg pl-4 text-sm font-semibold tracking-wide text-[var(--token-color-inkSoft)] hover:bg-[var(--token-color-surface)]"
+            className="flex h-12 items-center gap-4 rounded-[var(--token-radius-md)] pl-4 text-sm font-semibold tracking-wide text-[var(--token-color-inkSoft)] hover:bg-[var(--token-color-surface)]"
           >
             <HelpCircle size={18} />
             Help Center
@@ -214,11 +214,11 @@ export default function NotificationsPage() {
               {/* Column 1: Course Updates */}
               <section className="flex flex-col gap-4">
                 <ColumnHeader
-                  icon={<BookOpen size={20} color="var(--token-color-primary)" />}
+                  icon={<BookOpen size={20} color="var(--token-color-amber)" />}
                   label="Course Updates"
                   count={unreadCourseCount}
-                  countBg="var(--token-color-primaryTint)"
-                  countColor="var(--token-color-primary)"
+                  countBg="var(--token-color-amberTint)"
+                  countColor="var(--token-color-amber)"
                 />
 
                 {courseNotifications.map((notification) => (
@@ -228,13 +228,13 @@ export default function NotificationsPage() {
                     title={notification.title}
                     description={notification.description}
                     read={notification.read}
-                    accentColor="var(--token-color-primary)"
+                    accentColor="var(--token-color-amber)"
                     action={
                       notification.actionLabel
                         ? {
                             label: notification.actionLabel,
                             variant: "link",
-                            color: "var(--token-color-primary)",
+                            color: "var(--token-color-amber)",
                           }
                         : undefined
                     }
@@ -315,7 +315,7 @@ export default function NotificationsPage() {
         <footer className="bg-[var(--token-color-surfaceAlt)]/60 px-6 py-10">
           <div className="mx-auto flex max-w-[1000px] flex-col gap-6 sm:flex-row sm:items-start sm:justify-between">
             <div className="flex flex-col gap-4">
-              <span className="text-base font-bold text-[var(--token-color-primary)]">
+              <span className="text-base font-bold text-[var(--token-color-amber)]">
                 Saachi AI
               </span>
               <p style={{ color: "var(--token-color-inkSoft)", fontSize: "var(--token-font-size-base)" }}>
@@ -336,7 +336,7 @@ export default function NotificationsPage() {
                 <Link
                   key={link.label}
                   href={link.href}
-                  className="text-xs font-medium text-[var(--token-color-inkSoft)] hover:text-[var(--token-color-primary)]"
+                  className="text-xs font-medium text-[var(--token-color-inkSoft)] hover:text-[var(--token-color-amber)]"
                 >
                   {link.label}
                 </Link>
@@ -406,7 +406,7 @@ function NotificationCard({
 
   return (
     <article
-      className="flex flex-col gap-2 rounded-xl bg-[var(--token-color-surface)] p-6 shadow-[var(--token-shadow-md)]"
+      className="flex flex-col gap-2 rounded-[var(--token-radius-lg)] bg-[var(--token-color-surface)] p-6 shadow-[var(--token-shadow-md)]"
       style={{
         opacity: read && !actionRequired ? 0.75 : 1,
         borderLeft: isUnread && accentColor ? `4px solid ${accentColor}` : undefined,
@@ -475,7 +475,7 @@ function NotificationCard({
           {action.variant === "solid" && (
             <button
               type="button"
-              className="rounded-lg px-3 py-1.5 text-xs font-medium text-white"
+              className="rounded-[var(--token-radius-md)] px-3 py-1.5 text-xs font-medium text-white"
               style={{ backgroundColor: action.color }}
               onClick={() => console.log("notification action:", action.label)}
             >
@@ -486,7 +486,7 @@ function NotificationCard({
           {action.variant === "outline-danger" && (
             <button
               type="button"
-              className="rounded-lg border px-3 py-1.5 text-xs font-medium"
+              className="rounded-[var(--token-radius-md)] border px-3 py-1.5 text-xs font-medium"
               style={{ borderColor: action.color, color: action.color }}
               onClick={() => console.log("notification action:", action.label)}
             >
@@ -502,7 +502,7 @@ function NotificationCard({
 function EmptyColumn({ label }: { label: string }) {
   return (
     <div
-      className="flex flex-col items-center gap-1 rounded-xl border border-dashed p-8 text-center"
+      className="flex flex-col items-center gap-1 rounded-[var(--token-radius-lg)] border border-dashed p-8 text-center"
       style={{ borderColor: "var(--token-color-border)" }}
     >
       <p style={{ color: "var(--token-color-inkSoft)", fontSize: "var(--token-font-size-sm)" }}>{label}</p>

@@ -110,9 +110,9 @@ export default function MyCoursesPage() {
                 href={href}
                 className="flex h-12 items-center gap-4 border-l-4 pl-4 pr-6 text-sm font-semibold tracking-wide transition"
                 style={{
-                  borderColor: isActive ? "var(--token-color-primary)" : "transparent",
-                  backgroundColor: isActive ? "var(--token-color-primaryTint)" : "transparent",
-                  color: isActive ? "var(--token-color-primary)" : "var(--token-color-inkSoft)",
+                  borderColor: isActive ? "var(--token-color-amber)" : "transparent",
+                  backgroundColor: isActive ? "var(--token-color-amberTint)" : "transparent",
+                  color: isActive ? "var(--token-color-amber)" : "var(--token-color-inkSoft)",
                 }}
               >
                 <Icon size={18} />
@@ -125,7 +125,7 @@ export default function MyCoursesPage() {
         <div className="border-t border-[var(--token-color-border)] p-6">
           <Link
             href="/support"
-            className="flex items-center gap-4 text-sm font-semibold tracking-wide text-[var(--token-color-inkSoft)] hover:text-[var(--token-color-primary)]"
+            className="flex items-center gap-4 text-sm font-semibold tracking-wide text-[var(--token-color-inkSoft)] hover:text-[var(--token-color-amber)]"
           >
             <HelpCircle size={18} />
             Help Center
@@ -158,8 +158,8 @@ export default function MyCoursesPage() {
                     onClick={() => setActiveFilter(filter.key)}
                     className="border-b-2 px-5 py-2 text-sm font-semibold tracking-wide transition"
                     style={{
-                      borderColor: isActive ? "var(--token-color-primary)" : "transparent",
-                      color: isActive ? "var(--token-color-primary)" : "var(--token-color-inkSoft)",
+                      borderColor: isActive ? "var(--token-color-amber)" : "transparent",
+                      color: isActive ? "var(--token-color-amber)" : "var(--token-color-inkSoft)",
                       fontWeight: isActive ? 700 : 600,
                     }}
                   >
@@ -182,7 +182,7 @@ export default function MyCoursesPage() {
         <footer className="bg-[var(--token-color-surfaceAlt)]/60 px-6 py-10">
           <div className="mx-auto flex max-w-[1000px] flex-col gap-6 sm:flex-row sm:items-start sm:justify-between">
             <div className="flex flex-col gap-4">
-              <span className="text-base font-bold text-[var(--token-color-primary)]">Saachi AI</span>
+              <span className="text-base font-bold text-[var(--token-color-amber)]">Saachi AI</span>
               <p style={{ color: "var(--token-color-inkSoft)", fontSize: "var(--token-font-size-base)" }}>
                 &copy; {new Date().getFullYear()} Saachi AI Marketplace.
                 <br />
@@ -191,19 +191,19 @@ export default function MyCoursesPage() {
             </div>
 
             <nav className="flex flex-wrap gap-6">
-              <Link href="/about" className="text-xs font-medium text-[var(--token-color-inkSoft)] hover:text-[var(--token-color-primary)]">
+              <Link href="/about" className="text-xs font-medium text-[var(--token-color-inkSoft)] hover:text-[var(--token-color-amber)]">
                 About Us
               </Link>
-              <Link href="/careers" className="text-xs font-medium text-[var(--token-color-inkSoft)] hover:text-[var(--token-color-primary)]">
+              <Link href="/careers" className="text-xs font-medium text-[var(--token-color-inkSoft)] hover:text-[var(--token-color-amber)]">
                 Careers
               </Link>
-              <Link href="/legal/privacy" className="text-xs font-medium text-[var(--token-color-inkSoft)] hover:text-[var(--token-color-primary)]">
+              <Link href="/legal/privacy" className="text-xs font-medium text-[var(--token-color-inkSoft)] hover:text-[var(--token-color-amber)]">
                 Privacy Policy
               </Link>
-              <Link href="/legal/terms" className="text-xs font-medium text-[var(--token-color-inkSoft)] hover:text-[var(--token-color-primary)]">
+              <Link href="/legal/terms" className="text-xs font-medium text-[var(--token-color-inkSoft)] hover:text-[var(--token-color-amber)]">
                 Terms of Service
               </Link>
-              <Link href="/instructor/handbook" className="text-xs font-medium text-[var(--token-color-inkSoft)] hover:text-[var(--token-color-primary)]">
+              <Link href="/instructor/handbook" className="text-xs font-medium text-[var(--token-color-inkSoft)] hover:text-[var(--token-color-amber)]">
                 Instructor Handbook
               </Link>
             </nav>
@@ -218,7 +218,7 @@ function CourseCard({ course }: { course: EnrolledCourse }) {
   const isCompleted = course.status === "completed";
 
   return (
-    <article className="flex flex-col overflow-hidden rounded-2xl border bg-[var(--token-color-surface)] shadow-[var(--token-shadow-md)]"
+    <article className="flex flex-col overflow-hidden rounded-[var(--token-radius-lg)] border bg-[var(--token-color-surface)] shadow-[var(--token-shadow-md)]"
       style={{ borderColor: "var(--token-color-border)" }}
     >
       <div className="relative h-40 w-full shrink-0 bg-[var(--token-color-surfaceAlt)]">
@@ -248,8 +248,8 @@ function CourseCard({ course }: { course: EnrolledCourse }) {
         <span
           className="w-fit rounded-sm px-2 pb-1 pt-[3px] text-xs font-medium"
           style={{
-            backgroundColor: isCompleted ? "var(--token-color-completedBadgeBg)" : "var(--token-color-primaryTint)",
-            color: isCompleted ? "var(--token-color-success)" : "var(--token-color-primary)",
+            backgroundColor: isCompleted ? "var(--token-color-completedBadgeBg)" : "var(--token-color-amberTint)",
+            color: isCompleted ? "var(--token-color-success)" : "var(--token-color-amber)",
           }}
         >
           {course.category}
@@ -268,7 +268,7 @@ function CourseCard({ course }: { course: EnrolledCourse }) {
               <span style={{ color: "var(--token-color-inkSoft)", fontSize: "var(--token-font-size-xs)" }}>
                 Progress
               </span>
-              <Progress percent={course.progress} showInfo strokeColor="var(--token-color-primary)" />
+              <Progress percent={course.progress} showInfo strokeColor="var(--token-color-amber)" />
             </div>
           )}
 

@@ -21,10 +21,10 @@ interface CartItemCardProps {
 export function CartItemCard({ item, onRemove, onSaveForLater }: CartItemCardProps) {
   return (
     <div
-      className="flex w-full gap-6 rounded-xl border-2 bg-[var(--token-color-surface)] p-6 shadow-[var(--token-shadow-sm)]"
+      className="flex w-full gap-6 rounded-[var(--token-radius-lg)] border-2 bg-[var(--token-color-surface)] p-6 shadow-[var(--token-shadow-sm)]"
       style={{ borderColor: "var(--token-color-border)" }}
     >
-      <div className="relative h-24 w-40 shrink-0 overflow-hidden rounded-lg bg-[var(--token-color-surfaceAlt)]">
+      <div className="relative h-24 w-40 shrink-0 overflow-hidden rounded-[var(--token-radius-md)] bg-[var(--token-color-surfaceAlt)]">
         <Image
           src={item.image}
           alt={item.title}
@@ -45,7 +45,7 @@ export function CartItemCard({ item, onRemove, onSaveForLater }: CartItemCardPro
             </h3>
             <span
               className="shrink-0 text-2xl font-bold"
-              style={{ color: "var(--token-color-primary)" }}
+              style={{ color: "var(--token-color-amber)" }}
             >
               ${item.price.toFixed(2)}
             </span>
@@ -63,8 +63,8 @@ export function CartItemCard({ item, onRemove, onSaveForLater }: CartItemCardPro
               <span
                 className="rounded-sm px-2 pb-1 pt-[3px] text-xs font-medium"
                 style={{
-                  backgroundColor: "var(--token-color-primaryTint)",
-                  color: "var(--token-color-primary)",
+                  backgroundColor: "var(--token-color-amberTint)",
+                  color: "var(--token-color-amber)",
                 }}
               >
                 {item.badge}
@@ -99,7 +99,7 @@ export function CartItemCard({ item, onRemove, onSaveForLater }: CartItemCardPro
             type="button"
             onClick={() => onSaveForLater?.(item.id)}
             className="flex items-center gap-1 text-xs font-medium"
-            style={{ color: "var(--token-color-primary)" }}
+            style={{ color: "var(--token-color-amber)" }}
           >
             <Bookmark size={12} />
             Save for Later

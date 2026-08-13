@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { useState } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
@@ -29,7 +29,7 @@ export function ResultsPagination({ totalPages = 12 }: ResultsPaginationProps) {
           onClick={() => setPage(p)}
           className={`flex h-10 w-10 items-center justify-center text-sm font-semibold tracking-wide ${
             page === p
-              ? "bg-[var(--token-color-primary)] text-white"
+              ? "bg-[var(--token-color-amber)] text-white"
               : "border-2 border-[var(--token-color-border)] text-[var(--token-color-inkSoft)] hover:bg-[var(--token-color-surfaceAlt)]"
           }`}
         >
@@ -44,7 +44,7 @@ export function ResultsPagination({ totalPages = 12 }: ResultsPaginationProps) {
         onClick={() => setPage(totalPages)}
         className={`flex h-10 w-10 items-center justify-center text-sm font-semibold tracking-wide ${
           page === totalPages
-            ? "bg-[var(--token-color-primary)] text-white"
+            ? "bg-[var(--token-color-amber)] text-white"
             : "border-2 border-[var(--token-color-border)] text-[var(--token-color-inkSoft)] hover:bg-[var(--token-color-surfaceAlt)]"
         }`}
       >

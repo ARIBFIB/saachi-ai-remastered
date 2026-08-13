@@ -15,10 +15,10 @@ export function ContactForm() {
   }
 
   return (
-    <div className="flex flex-1 flex-col rounded-xl border-2 border-[var(--token-color-border)]/30 bg-[var(--token-color-surface)] p-10 shadow-[var(--token-shadow-sm)]">
+    <div className="flex flex-1 flex-col rounded-[var(--token-radius-lg)] border-2 border-[var(--token-color-border)]/30 bg-[var(--token-color-surface)] p-10 shadow-[var(--token-shadow-sm)]">
       <div className="flex flex-col gap-1 pb-6">
         <h2 className="flex items-center gap-2 text-2xl font-semibold text-[var(--token-color-ink)]">
-          <Mail className="h-5 w-4 text-[var(--token-color-primary)]" />
+          <Mail className="h-5 w-4 text-[var(--token-color-amber)]" />
           Send us a Message
         </h2>
         <p className="text-base text-[var(--token-color-inkSoft)]">
@@ -89,7 +89,7 @@ export function ContactForm() {
         <div className="flex justify-end pt-2">
           <button
             type="submit"
-            className="flex w-48 items-center justify-center gap-2 rounded-lg bg-[var(--token-color-primary)] py-3 text-sm font-semibold tracking-wide text-white hover:bg-[var(--token-color-primaryHover)]"
+            className="flex w-48 items-center justify-center gap-2 rounded-[var(--token-radius-md)] bg-[var(--token-color-amber)] py-3 text-sm font-semibold tracking-wide text-white hover:bg-[var(--token-color-amberDark)]"
           >
             Submit Inquiry
             <Send className="h-3.5 w-4" />

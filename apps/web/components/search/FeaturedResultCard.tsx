@@ -25,11 +25,11 @@ export function FeaturedResultCard({
   image,
 }: FeaturedResultCardProps) {
   return (
-    <article className="flex h-96 overflow-hidden rounded-xl border-2 border-[var(--token-color-border)] bg-[var(--token-color-surface)] shadow-[var(--token-shadow-sm)]">
+    <article className="flex h-96 overflow-hidden rounded-[var(--token-radius-lg)] border-2 border-[var(--token-color-border)] bg-[var(--token-color-surface)] shadow-[var(--token-shadow-sm)]">
       <div className="relative w-80 shrink-0">
         <Image src={image} alt={title} fill sizes="320px" className="object-cover" />
         {badge && (
-          <span className="absolute left-4 top-4 bg-[var(--token-color-primary)] px-2 pb-1 pt-[3px] text-xs font-medium text-white">
+          <span className="absolute left-4 top-4 bg-[var(--token-color-amber)] px-2 pb-1 pt-[3px] text-xs font-medium text-white">
             {badge}
           </span>
         )}
@@ -54,8 +54,8 @@ export function FeaturedResultCard({
           </div>
 
           <div className="flex items-center gap-1">
-            <Star className="h-3.5 w-3.5 text-[var(--token-color-primary)]" fill="currentColor" strokeWidth={0} />
-            <span className="text-xs font-bold text-[var(--token-color-primary)]">
+            <Star className="h-3.5 w-3.5 text-[var(--token-color-amber)]" fill="currentColor" strokeWidth={0} />
+            <span className="text-xs font-bold text-[var(--token-color-amber)]">
               {rating} ({reviews})
             </span>
           </div>

@@ -72,8 +72,8 @@ const navItems = [
 // Add/adjust variants here -- never hardcode hex values in the JSX below.
 const categoryStyles: Record<CategoryVariant, { bg: string; color: string }> = {
   primary: {
-    bg: "var(--token-color-primaryTint)",
-    color: "var(--token-color-primary)",
+    bg: "var(--token-color-amberTint)",
+    color: "var(--token-color-amber)",
   },
   success: {
     bg: "var(--token-color-successTint)",
@@ -113,12 +113,12 @@ export default function CertificatesPage() {
                 href={href}
                 className="flex h-12 items-center gap-4 border-l-4 pl-4 pr-6 text-sm font-semibold tracking-wide transition"
                 style={{
-                  borderColor: isActive ? "var(--token-color-primary)" : "transparent",
+                  borderColor: isActive ? "var(--token-color-amber)" : "transparent",
                   backgroundColor: isActive
-                    ? "var(--token-color-primaryTint)"
+                    ? "var(--token-color-amberTint)"
                     : "transparent",
                   color: isActive
-                    ? "var(--token-color-primary)"
+                    ? "var(--token-color-amber)"
                     : "var(--token-color-inkSoft)",
                 }}
               >
@@ -132,7 +132,7 @@ export default function CertificatesPage() {
         <div className="border-t border-[var(--token-color-border)] p-6">
           <Link
             href="/support"
-            className="flex items-center gap-4 text-sm font-semibold tracking-wide text-[var(--token-color-inkSoft)] hover:text-[var(--token-color-primary)]"
+            className="flex items-center gap-4 text-sm font-semibold tracking-wide text-[var(--token-color-inkSoft)] hover:text-[var(--token-color-amber)]"
           >
             <HelpCircle size={18} />
             Help Center
@@ -176,7 +176,7 @@ export default function CertificatesPage() {
         <footer className="bg-[var(--token-color-surfaceAlt)]/60 px-6 py-10">
           <div className="mx-auto flex max-w-[1000px] flex-col gap-6 sm:flex-row sm:items-start sm:justify-between">
             <div className="flex flex-col gap-4">
-              <span className="text-base font-bold text-[var(--token-color-primary)]">
+              <span className="text-base font-bold text-[var(--token-color-amber)]">
                 Saachi AI
               </span>
               <p
@@ -194,31 +194,31 @@ export default function CertificatesPage() {
             <nav className="flex flex-wrap gap-6">
               <Link
                 href="/about"
-                className="text-xs font-medium text-[var(--token-color-inkSoft)] hover:text-[var(--token-color-primary)]"
+                className="text-xs font-medium text-[var(--token-color-inkSoft)] hover:text-[var(--token-color-amber)]"
               >
                 About Us
               </Link>
               <Link
                 href="/careers"
-                className="text-xs font-medium text-[var(--token-color-inkSoft)] hover:text-[var(--token-color-primary)]"
+                className="text-xs font-medium text-[var(--token-color-inkSoft)] hover:text-[var(--token-color-amber)]"
               >
                 Careers
               </Link>
               <Link
                 href="/legal/privacy"
-                className="text-xs font-medium text-[var(--token-color-inkSoft)] hover:text-[var(--token-color-primary)]"
+                className="text-xs font-medium text-[var(--token-color-inkSoft)] hover:text-[var(--token-color-amber)]"
               >
                 Privacy Policy
               </Link>
               <Link
                 href="/legal/terms"
-                className="text-xs font-medium text-[var(--token-color-inkSoft)] hover:text-[var(--token-color-primary)]"
+                className="text-xs font-medium text-[var(--token-color-inkSoft)] hover:text-[var(--token-color-amber)]"
               >
                 Terms of Service
               </Link>
               <Link
                 href="/instructor/handbook"
-                className="text-xs font-medium text-[var(--token-color-inkSoft)] hover:text-[var(--token-color-primary)]"
+                className="text-xs font-medium text-[var(--token-color-inkSoft)] hover:text-[var(--token-color-amber)]"
               >
                 Instructor Handbook
               </Link>
@@ -235,7 +235,7 @@ function CertificateCard({ certificate }: { certificate: Certificate }) {
 
   return (
     <article
-      className="flex flex-col overflow-hidden rounded-xl border bg-[var(--token-color-surface)] shadow-[var(--token-shadow-md)]"
+      className="flex flex-col overflow-hidden rounded-[var(--token-radius-lg)] border bg-[var(--token-color-surface)] shadow-[var(--token-shadow-md)]"
       style={{ borderColor: "var(--token-color-border)" }}
     >
       <div className="group relative h-48 w-full shrink-0 overflow-hidden bg-[var(--token-color-surfaceAlt)]">

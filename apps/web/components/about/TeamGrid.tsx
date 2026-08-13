@@ -19,11 +19,11 @@ export function TeamGrid({ heading, members }: TeamGridProps) {
       <div className="flex justify-center gap-6">
         {members.map((member) => (
           <div key={member.name} className="flex flex-1 flex-col items-center">
-            <span className="relative mb-4 block h-48 w-48 overflow-hidden rounded-full shadow-sm ring-4 ring-[var(--token-color-surfaceAlt)]">
+            <span className="relative mb-4 block h-48 w-48 overflow-hidden rounded-full shadow-[var(--token-shadow-sm)] ring-4 ring-[var(--token-color-surfaceAlt)]">
               <Image src={member.avatar} alt={member.name} fill sizes="192px" className="object-cover" />
             </span>
             <h3 className="text-xl font-semibold leading-7 text-[var(--token-color-ink)]">{member.name}</h3>
-            <p className="pt-1 text-sm font-semibold tracking-wide text-[var(--token-color-primary)]">
+            <p className="pt-1 text-sm font-semibold tracking-wide text-[var(--token-color-amber)]">
               {member.role}
             </p>
           </div>
