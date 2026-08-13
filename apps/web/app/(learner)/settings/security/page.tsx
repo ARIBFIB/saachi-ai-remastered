@@ -3,7 +3,7 @@
 import { useState, type FormEvent } from "react";
 import { ShieldCheck, Smartphone } from "lucide-react";
 import { useSession } from "@saachi/api-client";
-import { Button, EmptyState, Input, Switch } from "@saachi/ui";
+import { Button, EmptyState, Input } from "@saachi/ui";
 
 export default function SettingsSecurityPage() {
   const { data: session } = useSession();
@@ -59,7 +59,13 @@ export default function SettingsSecurityPage() {
               <p className="text-[13px] text-ink-soft">Add an extra layer of security to your account.</p>
             </div>
           </div>
-          <Switch checked={twoFactorEnabled} onChange={setTwoFactorEnabled} aria-label="Toggle two-factor authentication" />
+          <input
+            type="checkbox"
+            checked={twoFactorEnabled}
+            onChange={(e) => setTwoFactorEnabled(e.target.checked)}
+            aria-label="Toggle two-factor authentication"
+            className="h-4 w-4 accent-gold-dark"
+          />
         </div>
       </div>
 

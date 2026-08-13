@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { Download, ShieldAlert, Trash2 } from "lucide-react";
 import { useSession } from "@saachi/api-client";
-import { Button, EmptyState, Switch } from "@saachi/ui";
+import { Button, EmptyState } from "@saachi/ui";
 
 export default function SettingsPrivacyPage() {
   const { data: session } = useSession();
@@ -21,22 +21,26 @@ export default function SettingsPrivacyPage() {
       <div className="max-w-lg rounded-card border border-line bg-card p-6">
         <h2 className="mb-3 text-[15px] font-semibold text-ink">Cookie preferences</h2>
         <div className="flex flex-col gap-3">
-          <div className="flex items-center justify-between">
-            <p className="text-[13px] text-ink-soft">Analytics cookies</p>
-            <Switch
+          <label className="flex items-center justify-between">
+            <span className="text-[13px] text-ink-soft">Analytics cookies</span>
+            <input
+              type="checkbox"
               checked={cookiePrefs.analytics}
-              onChange={(v) => setCookiePrefs((p) => ({ ...p, analytics: v }))}
+              onChange={(e) => setCookiePrefs((p) => ({ ...p, analytics: e.target.checked }))}
               aria-label="Toggle analytics cookies"
+              className="h-4 w-4 accent-gold-dark"
             />
-          </div>
-          <div className="flex items-center justify-between">
-            <p className="text-[13px] text-ink-soft">Marketing cookies</p>
-            <Switch
+          </label>
+          <label className="flex items-center justify-between">
+            <span className="text-[13px] text-ink-soft">Marketing cookies</span>
+            <input
+              type="checkbox"
               checked={cookiePrefs.marketing}
-              onChange={(v) => setCookiePrefs((p) => ({ ...p, marketing: v }))}
+              onChange={(e) => setCookiePrefs((p) => ({ ...p, marketing: e.target.checked }))}
               aria-label="Toggle marketing cookies"
+              className="h-4 w-4 accent-gold-dark"
             />
-          </div>
+          </label>
         </div>
       </div>
 
