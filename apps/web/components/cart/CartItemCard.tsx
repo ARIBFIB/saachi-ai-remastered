@@ -22,7 +22,7 @@ export function CartItemCard({ item, onRemove, onSaveForLater }: CartItemCardPro
   return (
     <div
       className="flex w-full gap-6 rounded-[var(--token-radius-lg)] border-2 bg-[var(--token-color-surface)] p-6 shadow-[var(--token-shadow-sm)]"
-      style={{ borderColor: "var(--token-color-border)" }}
+      style={{ borderColor: "var(--token-color-inkDeep)", borderWidth: "2px", borderStyle: "solid" }}
     >
       <div className="relative h-24 w-40 shrink-0 overflow-hidden rounded-[var(--token-radius-md)] bg-[var(--token-color-surfaceAlt)]">
         <Image
@@ -84,7 +84,7 @@ export function CartItemCard({ item, onRemove, onSaveForLater }: CartItemCardPro
 
         <div
           className="flex items-center gap-4 border-t pt-3"
-          style={{ borderColor: "var(--token-color-border)" }}
+          style={{ borderColor: "var(--token-color-inkDeep)", borderWidth: "2px", borderStyle: "solid" }}
         >
           <button
             type="button"

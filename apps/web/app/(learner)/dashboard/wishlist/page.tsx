@@ -234,7 +234,7 @@ function WishlistCourseCard({
   onMoveToCart: (id: string) => void;
 }) {
   return (
-    <article className="flex w-full flex-col overflow-hidden rounded-[var(--token-radius-lg)] border border-[var(--token-color-border)]/30 bg-[var(--token-color-surface)] shadow-[var(--token-shadow-md)]">
+    <article className="flex w-full flex-col overflow-hidden rounded-[var(--token-radius-lg)] border border-[var(--token-color-inkDeep)] bg-[var(--token-color-surface)] shadow-[var(--token-shadow-md)]">
       <div className="relative h-48 w-full shrink-0 bg-[var(--token-color-surfaceAlt)]">
         <Image
           src={item.image}
@@ -293,7 +293,7 @@ function WishlistCourseCard({
 
         <div
           className="mt-auto flex items-center justify-between border-t pt-4"
-          style={{ borderColor: "var(--token-color-border)" }}
+          style={{ borderColor: "var(--token-color-inkDeep)", borderWidth: "2px", borderStyle: "solid" }}
         >
           <span className="text-2xl font-semibold" style={{ color: "var(--token-color-amber)" }}>
             ${item.price.toFixed(2)}
@@ -327,7 +327,7 @@ function EmptyWishlist() {
   return (
     <div
       className="flex flex-col items-center gap-2 rounded-[var(--token-radius-lg)] border bg-[var(--token-color-surface)] py-20 text-center"
-      style={{ borderColor: "var(--token-color-border)" }}
+      style={{ borderColor: "var(--token-color-inkDeep)", borderWidth: "2px", borderStyle: "solid" }}
     >
       <p className="text-lg font-semibold" style={{ color: "var(--token-color-ink)" }}>
         Your wishlist is empty

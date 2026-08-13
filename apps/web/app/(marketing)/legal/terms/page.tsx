@@ -11,8 +11,8 @@ export default function TermsOfServicePage() {
       <main className="mx-auto flex w-full max-w-[1280px] items-start gap-10 px-6 py-10">
         <LegalSidebar />
 
-        <article className="flex flex-1 flex-col gap-10 rounded-[var(--token-radius-lg)] border-2 border-[var(--token-color-border)]/30 bg-[var(--token-color-surface)] p-10 shadow-[var(--token-shadow-sm)]">
-          <header className="flex flex-col gap-1 border-b border-[var(--token-color-border)]/30 pb-6">
+        <article className="flex flex-1 flex-col gap-10 rounded-[var(--token-radius-lg)] border-2 border-[var(--token-color-inkDeep)] bg-[var(--token-color-surface)] p-10 shadow-[var(--token-shadow-sm)]">
+          <header className="flex flex-col gap-1 border-b border-[var(--token-color-inkDeep)] pb-6">
             <h1 className="text-3xl font-bold text-[var(--token-color-ink)]">Terms of Service</h1>
             <p className="text-base text-[var(--token-color-inkSoft)]">Last Updated: October 24, 2023</p>
           </header>
@@ -69,7 +69,7 @@ export default function TermsOfServicePage() {
             />
           </div>
 
-          <footer className="flex flex-col items-center gap-4 border-t border-[var(--token-color-border)]/30 pt-6">
+          <footer className="flex flex-col items-center gap-4 border-t border-[var(--token-color-inkDeep)] pt-6">
             <p className="text-center text-base text-[var(--token-color-inkSoft)]">
               Questions about the Terms of Service? Please contact our legal team.
             </p>

@@ -56,7 +56,7 @@ export function FaqAccordion() {
               </button>
 
               {isOpen && (
-                <div className="border-t border-[var(--token-color-border)]/50 px-6 py-4 text-sm text-[var(--token-color-inkSoft)]">
+                <div className="border-t border-[var(--token-color-inkDeep)] px-6 py-4 text-sm text-[var(--token-color-inkSoft)]">
                   {faq.answer}
                 </div>
               )}

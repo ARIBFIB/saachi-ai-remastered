@@ -38,7 +38,7 @@ export function BillingInformationCard({
   return (
     <section
       className="flex w-full flex-col gap-4 rounded-[var(--token-radius-lg)] border-2 bg-[var(--token-color-surface)] p-6 shadow-[var(--token-shadow-sm)]"
-      style={{ borderColor: "var(--token-color-border)" }}
+      style={{ borderColor: "var(--token-color-inkDeep)", borderWidth: "2px", borderStyle: "solid" }}
     >
       <div className="flex items-center gap-2">
         <UserRound size={16} color="var(--token-color-amber)" />
@@ -58,7 +58,7 @@ export function BillingInformationCard({
             onChange={(e) => update("fullName", e.target.value)}
             placeholder="Jane Doe"
             className="w-full rounded-[var(--token-radius-md)] border-2 bg-[var(--token-color-bg)] px-3 py-2.5 text-base text-[var(--token-color-ink)] placeholder:text-gray-500 focus:outline-none focus:border-[var(--token-color-amber)]"
-            style={{ borderColor: "var(--token-color-border)" }}
+            style={{ borderColor: "var(--token-color-inkDeep)", borderWidth: "2px", borderStyle: "solid" }}
           />
         </Field>
 
@@ -69,7 +69,7 @@ export function BillingInformationCard({
             onChange={(e) => update("email", e.target.value)}
             placeholder="jane@example.com"
             className="w-full rounded-[var(--token-radius-md)] border-2 bg-[var(--token-color-bg)] px-3 py-2.5 text-base text-[var(--token-color-ink)] placeholder:text-gray-500 focus:outline-none focus:border-[var(--token-color-amber)]"
-            style={{ borderColor: "var(--token-color-border)" }}
+            style={{ borderColor: "var(--token-color-inkDeep)", borderWidth: "2px", borderStyle: "solid" }}
           />
         </Field>
 
@@ -80,7 +80,7 @@ export function BillingInformationCard({
                 value={details.country}
                 onChange={(e) => update("country", e.target.value)}
                 className="w-full appearance-none rounded-[var(--token-radius-md)] border-2 bg-[var(--token-color-bg)] px-3 py-2.5 text-base text-[var(--token-color-ink)] focus:outline-none focus:border-[var(--token-color-amber)]"
-                style={{ borderColor: "var(--token-color-border)" }}
+                style={{ borderColor: "var(--token-color-inkDeep)", borderWidth: "2px", borderStyle: "solid" }}
               >
                 {countries.map((c) => (
                   <option key={c} value={c}>
@@ -102,7 +102,7 @@ export function BillingInformationCard({
               onChange={(e) => update("zip", e.target.value)}
               placeholder="10001"
               className="w-full rounded-[var(--token-radius-md)] border-2 bg-[var(--token-color-bg)] px-3 py-2.5 text-base text-[var(--token-color-ink)] placeholder:text-gray-500 focus:outline-none focus:border-[var(--token-color-amber)]"
-              style={{ borderColor: "var(--token-color-border)" }}
+              style={{ borderColor: "var(--token-color-inkDeep)", borderWidth: "2px", borderStyle: "solid" }}
             />
           </Field>
         </div>

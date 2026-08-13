@@ -173,7 +173,7 @@ export default function SecuritySettingsPage() {
                 {/* Change Password */}
                 <section
                   className="flex flex-col gap-3.5 rounded-[var(--token-radius-lg)] bg-[var(--token-color-surface)] p-6 shadow-[var(--token-shadow-sm)]"
-                  style={{ border: "1px solid color-mix(in srgb, var(--token-color-border) 30%, transparent)" }}
+                  style={{ border: "2px solid var(--token-color-inkDeep)" }}
                 >
                   <h2 className="text-2xl font-semibold leading-8" style={{ color: "var(--token-color-ink)" }}>
                     Change Password
@@ -235,7 +235,7 @@ export default function SecuritySettingsPage() {
                 {/* Two-Factor Authentication */}
                 <section
                   className="flex flex-col gap-4 rounded-[var(--token-radius-lg)] bg-[var(--token-color-surface)] p-6 shadow-[var(--token-shadow-sm)]"
-                  style={{ border: "1px solid color-mix(in srgb, var(--token-color-border) 30%, transparent)" }}
+                  style={{ border: "2px solid var(--token-color-inkDeep)" }}
                 >
                   <div className="flex items-center justify-between gap-4">
                     <div className="flex flex-col gap-1">
@@ -266,7 +266,7 @@ export default function SecuritySettingsPage() {
                     className="flex items-center justify-between gap-4 rounded-[var(--token-radius-md)] p-4"
                     style={{
                       backgroundColor: "var(--token-color-bg)",
-                      border: "1px solid color-mix(in srgb, var(--token-color-border) 50%, transparent)",
+                      border: "2px solid var(--token-color-inkDeep)",
                     }}
                   >
                     <div className="flex items-center gap-4">
@@ -295,7 +295,7 @@ export default function SecuritySettingsPage() {
                 {/* Active Sessions */}
                 <section
                   className="flex flex-col gap-6 rounded-[var(--token-radius-lg)] bg-[var(--token-color-surface)] p-6 shadow-[var(--token-shadow-sm)]"
-                  style={{ border: "1px solid color-mix(in srgb, var(--token-color-border) 30%, transparent)" }}
+                  style={{ border: "2px solid var(--token-color-inkDeep)" }}
                 >
                   <div className="flex items-center justify-between">
                     <h2 className="text-2xl font-semibold leading-8" style={{ color: "var(--token-color-ink)" }}>

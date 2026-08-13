@@ -203,7 +203,7 @@ export default function BillingSettingsPage() {
                   {/* Current Plan */}
                   <div
                     className="relative flex flex-col gap-6 overflow-hidden rounded-[var(--token-radius-lg)] bg-[var(--token-color-surface)] p-6 shadow-[var(--token-shadow-sm)]"
-                    style={{ border: "1px solid var(--token-color-border)" }}
+                    style={{ border: "2px solid var(--token-color-inkDeep)" }}
                   >
                     <div
                       className="pointer-events-none absolute -right-8 -top-16 h-32 w-32 rounded-bl-full"
@@ -240,7 +240,7 @@ export default function BillingSettingsPage() {
                         className="flex flex-1 flex-col gap-1 rounded-[var(--token-radius-md)] p-4"
                         style={{
                           backgroundColor: "var(--token-color-surfaceAlt)",
-                          border: "1px solid color-mix(in srgb, var(--token-color-border) 50%, transparent)",
+                          border: "2px solid var(--token-color-inkDeep)",
                         }}
                       >
                         <span
@@ -258,7 +258,7 @@ export default function BillingSettingsPage() {
                         className="flex flex-1 flex-col gap-1 rounded-[var(--token-radius-md)] p-4"
                         style={{
                           backgroundColor: "var(--token-color-surfaceAlt)",
-                          border: "1px solid color-mix(in srgb, var(--token-color-border) 50%, transparent)",
+                          border: "2px solid var(--token-color-inkDeep)",
                         }}
                       >
                         <span
@@ -296,7 +296,7 @@ export default function BillingSettingsPage() {
                   {/* Payment Methods */}
                   <div
                     className="flex flex-col gap-6 rounded-[var(--token-radius-lg)] bg-[var(--token-color-surface)] p-6 shadow-[var(--token-shadow-sm)]"
-                    style={{ border: "1px solid var(--token-color-border)" }}
+                    style={{ border: "2px solid var(--token-color-inkDeep)" }}
                   >
                     <div className="flex items-center justify-between">
                       <h2 className="text-2xl font-semibold leading-8" style={{ color: "var(--token-color-ink)" }}>
@@ -332,7 +332,7 @@ export default function BillingSettingsPage() {
                               className="flex h-8 w-12 items-center justify-center rounded-sm"
                               style={{
                                 backgroundColor: "var(--token-color-surfaceAlt)",
-                                border: "1px solid var(--token-color-border)",
+                                border: "2px solid var(--token-color-inkDeep)",
                               }}
                             >
                               <CreditCard size={18} color="var(--token-color-inkSoft)" />
@@ -387,7 +387,7 @@ export default function BillingSettingsPage() {
                   {/* Account Summary */}
                   <div
                     className="flex flex-col gap-4 rounded-[var(--token-radius-lg)] bg-[var(--token-color-surface)] p-6 shadow-[var(--token-shadow-sm)]"
-                    style={{ border: "1px solid var(--token-color-border)" }}
+                    style={{ border: "2px solid var(--token-color-inkDeep)" }}
                   >
                     <h3
                       className="text-sm font-semibold uppercase tracking-wide"
@@ -435,7 +435,7 @@ export default function BillingSettingsPage() {
                   {/* Recent Invoices */}
                   <div
                     className="flex flex-col gap-4 rounded-[var(--token-radius-lg)] bg-[var(--token-color-surface)] p-6 shadow-[var(--token-shadow-sm)]"
-                    style={{ border: "1px solid var(--token-color-border)" }}
+                    style={{ border: "2px solid var(--token-color-inkDeep)" }}
                   >
                     <div className="flex items-center justify-between">
                       <h3 className="text-2xl font-semibold leading-8" style={{ color: "var(--token-color-ink)" }}>

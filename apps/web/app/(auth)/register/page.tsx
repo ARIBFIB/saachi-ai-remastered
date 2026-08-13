@@ -185,7 +185,7 @@ export default function CreateAccountPage() {
           </Form>
 
           <Divider
-            style={{ borderColor: "var(--token-color-border)" }}
+            style={{ borderColor: "var(--token-color-inkDeep)", borderWidth: "2px", borderStyle: "solid" }}
             plain
           >
             <span style={{ color: "var(--token-color-inkSoft)", fontSize: "var(--token-font-size-xs)" }}>

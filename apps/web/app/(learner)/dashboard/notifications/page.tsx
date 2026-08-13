@@ -503,7 +503,7 @@ function EmptyColumn({ label }: { label: string }) {
   return (
     <div
       className="flex flex-col items-center gap-1 rounded-[var(--token-radius-lg)] border border-dashed p-8 text-center"
-      style={{ borderColor: "var(--token-color-border)" }}
+      style={{ borderColor: "var(--token-color-inkDeep)", borderWidth: "2px", borderStyle: "solid" }}
     >
       <p style={{ color: "var(--token-color-inkSoft)", fontSize: "var(--token-font-size-sm)" }}>{label}</p>
     </div>

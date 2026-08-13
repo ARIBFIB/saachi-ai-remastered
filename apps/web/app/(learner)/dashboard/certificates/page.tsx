@@ -236,7 +236,7 @@ function CertificateCard({ certificate }: { certificate: Certificate }) {
   return (
     <article
       className="flex flex-col overflow-hidden rounded-[var(--token-radius-lg)] border bg-[var(--token-color-surface)] shadow-[var(--token-shadow-md)]"
-      style={{ borderColor: "var(--token-color-border)" }}
+      style={{ borderColor: "var(--token-color-inkDeep)", borderWidth: "2px", borderStyle: "solid" }}
     >
       <div className="group relative h-48 w-full shrink-0 overflow-hidden bg-[var(--token-color-surfaceAlt)]">
         <Image
@@ -285,7 +285,7 @@ function CertificateCard({ certificate }: { certificate: Certificate }) {
 
         <div
           className="mt-2 flex gap-2 border-t pt-4"
-          style={{ borderColor: "var(--token-color-border)" }}
+          style={{ borderColor: "var(--token-color-inkDeep)", borderWidth: "2px", borderStyle: "solid" }}
         >
           <Button type="primary" icon={<Download size={14} />} block>
             PDF

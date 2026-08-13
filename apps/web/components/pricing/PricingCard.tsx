@@ -26,7 +26,7 @@ export function PricingCard({
       className={`relative flex w-96 flex-col justify-between rounded-[var(--token-radius-lg)] border-2 bg-[var(--token-color-surface)]/90 p-6 backdrop-blur-[6px] ${
         highlighted
           ? "border-[var(--token-color-amber)]/30 shadow-[var(--token-shadow-sm)]"
-          : "border-[var(--token-color-border)]/60"
+          : "border-[var(--token-color-inkDeep)]"
       }`}
     >
       {badge && (

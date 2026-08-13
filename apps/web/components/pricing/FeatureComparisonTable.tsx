@@ -33,7 +33,7 @@ export function FeatureComparisonTable() {
           <div
             key={row.feature}
             className={`grid grid-cols-[1.5fr_1fr_1fr_1fr] ${
-              i < rows.length - 1 ? "border-b border-[var(--token-color-border)]/40" : ""
+              i < rows.length - 1 ? "border-b border-[var(--token-color-inkDeep)]" : ""
             }`}
           >
             <div className="p-4 text-base text-[var(--token-color-inkSoft)]">{row.feature}</div>

@@ -95,7 +95,7 @@ function EmptyCart() {
   return (
     <div
       className="flex flex-col items-center gap-2 rounded-[var(--token-radius-lg)] border-2 bg-[var(--token-color-surface)] py-20 text-center"
-      style={{ borderColor: "var(--token-color-border)" }}
+      style={{ borderColor: "var(--token-color-inkDeep)", borderWidth: "2px", borderStyle: "solid" }}
     >
       <p className="text-lg font-semibold" style={{ color: "var(--token-color-ink)" }}>
         Your cart is empty

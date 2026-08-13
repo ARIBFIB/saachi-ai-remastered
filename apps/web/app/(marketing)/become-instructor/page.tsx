@@ -20,7 +20,7 @@ export default function BecomeInstructorPage() {
         {/* Left: copy card */}
         <div
           className="flex flex-1 flex-col justify-center gap-6 rounded-[var(--token-radius-lg)] bg-[var(--token-color-surface)] px-10 py-24 shadow-[var(--token-shadow-sm)]"
-          style={{ border: "1px solid color-mix(in srgb, var(--token-color-border) 30%, transparent)" }}
+          style={{ border: "2px solid var(--token-color-inkDeep)" }}
         >
           <h1
             className="max-w-[732px] text-5xl font-bold leading-[52.8px]"

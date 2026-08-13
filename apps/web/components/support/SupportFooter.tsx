@@ -10,7 +10,7 @@ const links = [
 
 export function SupportFooter() {
   return (
-    <footer className="w-full border-t border-[var(--token-color-border)]/20 bg-zinc-900 px-6 py-10">
+    <footer className="w-full border-t border-[var(--token-color-inkDeep)] bg-zinc-900 px-6 py-10">
       <div className="mx-auto flex max-w-[1280px] flex-col justify-between gap-6 sm:flex-row sm:items-start">
         <div className="flex flex-col gap-1">
           <span className="text-base font-bold text-[var(--token-color-amber)]">Saachi AI</span>

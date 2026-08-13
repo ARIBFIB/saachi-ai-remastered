@@ -196,7 +196,7 @@ export default function MentorshipSessionsPage() {
 
               <div
                 className="overflow-hidden rounded-[var(--token-radius-lg)] border bg-[var(--token-color-surface)] shadow-[var(--token-shadow-md)]"
-                style={{ borderColor: "var(--token-color-border)" }}
+                style={{ borderColor: "var(--token-color-inkDeep)", borderWidth: "2px", borderStyle: "solid" }}
               >
                 {pastSessions.map((session, idx) => (
                   <div

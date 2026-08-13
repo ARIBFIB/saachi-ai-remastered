@@ -19,7 +19,7 @@ export function InstructorBio({
   avatar,
 }: InstructorBioProps) {
   return (
-    <section className="flex w-full gap-6 rounded-[var(--token-radius-lg)] border-2 border-slate-300/30 bg-slate-50 p-6 shadow-[var(--token-shadow-sm)]">
+    <section className="flex w-full gap-6 rounded-[var(--token-radius-lg)] border-2 border-[var(--token-color-inkDeep)] bg-slate-50 p-6 shadow-[var(--token-shadow-sm)]">
       <span className="relative block h-32 w-32 shrink-0 overflow-hidden rounded-full">
         <Image src={avatar} alt={name} fill sizes="128px" className="object-cover" />
       </span>

@@ -47,7 +47,7 @@ export function MentorshipBookingClient({ instructorSlug }: { instructorSlug: st
 
       <div
         className="flex flex-col gap-6 rounded-[var(--token-radius-lg)] border p-6"
-        style={{ borderColor: "var(--token-color-border)", backgroundColor: "var(--token-color-surface)" }}
+        style={{ borderColor: "var(--token-color-inkDeep)", borderWidth: "2px", borderStyle: "solid", backgroundColor: "var(--token-color-surface)" }}
       >
         <div className="flex flex-col gap-3">
           <h2 className="flex items-center gap-2 text-sm font-semibold" style={{ color: "var(--token-color-ink)" }}>
@@ -97,7 +97,7 @@ export function MentorshipBookingClient({ instructorSlug }: { instructorSlug: st
           </div>
         </div>
 
-        <div className="flex items-center justify-between border-t pt-4" style={{ borderColor: "var(--token-color-border)" }}>
+        <div className="flex items-center justify-between border-t pt-4" style={{ borderColor: "var(--token-color-inkDeep)", borderWidth: "2px", borderStyle: "solid" }}>
           <span className="text-sm" style={{ color: "var(--token-color-inkSoft)" }}>
             {selectedTime ? `${selectedDay} at ${selectedTime}` : "Pick a day and time to continue"}
           </span>

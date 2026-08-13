@@ -25,7 +25,7 @@ export function InstructorCourseCard({
   badge,
 }: InstructorCourseCardProps) {
   return (
-    <article className="flex w-96 flex-col overflow-hidden rounded-[var(--token-radius-lg)] border-2 border-[var(--token-color-border)]/30 bg-[var(--token-color-surface)] shadow-[var(--token-shadow-sm)]">
+    <article className="flex w-96 flex-col overflow-hidden rounded-[var(--token-radius-lg)] border-2 border-[var(--token-color-inkDeep)] bg-[var(--token-color-surface)] shadow-[var(--token-shadow-sm)]">
       <div className="relative h-48 w-full bg-[var(--token-color-surfaceAlt)]">
         <Image src={image} alt={title} fill sizes="384px" className="object-cover" />
         {badge && (

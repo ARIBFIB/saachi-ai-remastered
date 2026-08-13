@@ -99,7 +99,7 @@ export default function LearnerDashboardPage() {
     <div className="flex min-h-screen bg-[var(--token-color-bg)]">
       {/* Sidebar */}
       <aside className="fixed inset-y-0 left-0 hidden w-72 flex-col border-r border-[var(--token-color-border)] bg-[var(--token-color-surfaceAlt)] lg:flex">
-        <div className="flex items-center gap-4 border-b border-[var(--token-color-border)]/30 p-6">
+        <div className="flex items-center gap-4 border-b border-[var(--token-color-inkDeep)] p-6">
           <span className="relative block h-10 w-10 shrink-0 overflow-hidden rounded-full ring-1 ring-[var(--token-color-border)]/50">
             <Image src="https://i.pravatar.cc/80?img=47" alt="Learner avatar" fill sizes="40px" className="object-cover" />
           </span>
@@ -134,7 +134,7 @@ export default function LearnerDashboardPage() {
           })}
         </nav>
 
-        <div className="border-t border-[var(--token-color-border)]/30 p-4">
+        <div className="border-t border-[var(--token-color-inkDeep)] p-4">
           <Link
             href="/support"
             className="flex items-center gap-4 rounded-[var(--token-radius-md)] px-4 py-3 text-sm font-semibold tracking-wide text-[var(--token-color-inkSoft)] hover:bg-[var(--token-color-surface)]"
@@ -183,7 +183,7 @@ export default function LearnerDashboardPage() {
           <div className="grid grid-cols-1 gap-6 xl:grid-cols-12">
             {/* Continue learning (spans 8) */}
             <div className="flex overflow-hidden rounded-[var(--token-radius-lg)] border bg-[var(--token-color-surface)] shadow-[var(--token-shadow-md)] xl:col-span-8"
-              style={{ borderColor: "var(--token-color-border)" }}
+              style={{ borderColor: "var(--token-color-inkDeep)", borderWidth: "2px", borderStyle: "solid" }}
             >
               <div className="relative hidden w-60 shrink-0 bg-[var(--token-color-surfaceAlt)] sm:block">
                 <Image src={continueLearning.image} alt={continueLearning.title} fill sizes="240px" className="object-cover" />
@@ -233,7 +233,7 @@ export default function LearnerDashboardPage() {
 
             {/* Mentorship (spans 4) */}
             <div className="relative flex flex-col justify-between overflow-hidden rounded-[var(--token-radius-lg)] border bg-[var(--token-color-surface)] p-6 shadow-[var(--token-shadow-md)] xl:col-span-4"
-              style={{ borderColor: "var(--token-color-border)" }}
+              style={{ borderColor: "var(--token-color-inkDeep)", borderWidth: "2px", borderStyle: "solid" }}
             >
               <div className="pointer-events-none absolute -right-8 -top-8 h-32 w-32 rounded-bl-full bg-[var(--token-color-amberTint)]/30" />
 
@@ -251,7 +251,7 @@ export default function LearnerDashboardPage() {
                 </Text>
 
                 <div className="flex items-start gap-4 rounded-[var(--token-radius-md)] border bg-[var(--token-color-bg)] p-4"
-                  style={{ borderColor: "var(--token-color-border)" }}
+                  style={{ borderColor: "var(--token-color-inkDeep)", borderWidth: "2px", borderStyle: "solid" }}
                 >
                   <span className="relative block h-12 w-12 shrink-0 overflow-hidden rounded-full">
                     <Image src={upcomingSession.mentorAvatar} alt={upcomingSession.mentorName} fill sizes="48px" className="object-cover" />
@@ -281,7 +281,7 @@ export default function LearnerDashboardPage() {
               <div
                 key={label}
                 className="flex items-center gap-6 rounded-[var(--token-radius-lg)] border bg-[var(--token-color-surface)] p-4 shadow-[var(--token-shadow-md)]"
-                style={{ borderColor: "var(--token-color-border)" }}
+                style={{ borderColor: "var(--token-color-inkDeep)", borderWidth: "2px", borderStyle: "solid" }}
               >
                 <span
                   className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full"
@@ -331,7 +331,7 @@ export default function LearnerDashboardPage() {
 function RecommendedCard({ course }: { course: RecommendedCourse }) {
   return (
     <article className="flex w-72 shrink-0 flex-col overflow-hidden rounded-[var(--token-radius-lg)] border bg-[var(--token-color-surface)] shadow-[var(--token-shadow-md)]"
-      style={{ borderColor: "var(--token-color-border)" }}
+      style={{ borderColor: "var(--token-color-inkDeep)", borderWidth: "2px", borderStyle: "solid" }}
     >
       <div className="relative h-36 w-full bg-[var(--token-color-surfaceAlt)]">
         <Image src={course.image} alt={course.title} fill sizes="288px" className="object-cover" />
@@ -354,7 +354,7 @@ function RecommendedCard({ course }: { course: RecommendedCourse }) {
           </span>
         </div>
 
-        <div className="flex items-center justify-between border-t pt-4" style={{ borderColor: "var(--token-color-border)" }}>
+        <div className="flex items-center justify-between border-t pt-4" style={{ borderColor: "var(--token-color-inkDeep)", borderWidth: "2px", borderStyle: "solid" }}>
           <span className="font-bold tracking-wide" style={{ color: "var(--token-color-ink)", fontSize: "var(--token-font-size-sm)" }}>
             {course.level}
           </span>

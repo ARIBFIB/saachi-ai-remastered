@@ -17,7 +17,7 @@ export function InstructorProfileCard({
   tags,
 }: InstructorProfileCardProps) {
   return (
-    <div className="flex flex-1 items-start gap-6 rounded-[var(--token-radius-lg)] border-2 border-[var(--token-color-border)]/30 bg-[var(--token-color-surface)] p-6 shadow-[var(--token-shadow-sm)]">
+    <div className="flex flex-1 items-start gap-6 rounded-[var(--token-radius-lg)] border-2 border-[var(--token-color-inkDeep)] bg-[var(--token-color-surface)] p-6 shadow-[var(--token-shadow-sm)]">
       <span className="relative block h-32 w-32 shrink-0 overflow-hidden rounded-full ring-4 ring-[var(--token-color-surfaceAlt)]">
         <Image src={avatar} alt={name} fill sizes="128px" className="object-cover" />
       </span>

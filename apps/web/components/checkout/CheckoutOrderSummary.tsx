@@ -25,7 +25,7 @@ export function CheckoutOrderSummary({
   return (
     <div
       className="flex flex-col gap-1.5 rounded-[var(--token-radius-lg)] border-2 bg-[var(--token-color-surface)] p-6 shadow-[var(--token-shadow-sm)]"
-      style={{ borderColor: "var(--token-color-border)" }}
+      style={{ borderColor: "var(--token-color-inkDeep)", borderWidth: "2px", borderStyle: "solid" }}
     >
       <h2
         className="text-2xl font-semibold"

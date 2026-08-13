@@ -63,11 +63,11 @@ export default function OrderConfirmationPage() {
         {/* Order summary */}
         <div
           className="mt-10 flex w-full flex-col gap-3.5 rounded-[var(--token-radius-md)] bg-[var(--token-color-surfaceAlt)] p-6"
-          style={{ border: "1px solid var(--token-color-border)" }}
+          style={{ border: "2px solid var(--token-color-inkDeep)" }}
         >
           <div
             className="flex items-center justify-between border-b pb-4"
-            style={{ borderColor: "var(--token-color-border)" }}
+            style={{ borderColor: "var(--token-color-inkDeep)", borderWidth: "2px", borderStyle: "solid" }}
           >
             <span
               className="text-sm font-semibold tracking-wide"
@@ -130,7 +130,7 @@ export default function OrderConfirmationPage() {
 
           <div
             className="flex items-center justify-between border-t pt-4"
-            style={{ borderColor: "var(--token-color-border)" }}
+            style={{ borderColor: "var(--token-color-inkDeep)", borderWidth: "2px", borderStyle: "solid" }}
           >
             <span
               className="text-2xl font-semibold"
@@ -162,7 +162,7 @@ export default function OrderConfirmationPage() {
             href="/invoice"
             className="flex h-11 w-44 items-center justify-center gap-2 rounded-[var(--token-radius-md)] border-2 text-sm font-semibold tracking-wide"
             style={{
-              borderColor: "var(--token-color-border)",
+              borderColor: "var(--token-color-inkDeep)", borderWidth: "2px", borderStyle: "solid",
               color: "var(--token-color-inkSoft)",
               backgroundColor: "var(--token-color-surface)",
             }}

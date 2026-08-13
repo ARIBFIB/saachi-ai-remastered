@@ -30,7 +30,7 @@ export function PaymentMethodCard({
   return (
     <section
       className="relative flex w-full flex-col gap-4 overflow-hidden rounded-[var(--token-radius-lg)] border-2 bg-[var(--token-color-surface)] p-6 shadow-[var(--token-shadow-sm)]"
-      style={{ borderColor: "var(--token-color-border)" }}
+      style={{ borderColor: "var(--token-color-inkDeep)", borderWidth: "2px", borderStyle: "solid" }}
     >
       <div className="flex items-center gap-2">
         <CreditCardIcon size={18} color="var(--token-color-amber)" />
@@ -78,7 +78,7 @@ export function PaymentMethodCard({
                     onClick={(e) => e.stopPropagation()}
                     placeholder="Card Number"
                     className="h-10 w-full rounded-[var(--token-radius-md)] border-2 bg-[var(--token-color-bg)] px-3 text-base text-[var(--token-color-ink)] placeholder:text-gray-500 focus:outline-none focus:border-[var(--token-color-amber)]"
-                    style={{ borderColor: "var(--token-color-border)" }}
+                    style={{ borderColor: "var(--token-color-inkDeep)", borderWidth: "2px", borderStyle: "solid" }}
                   />
                   <div className="grid grid-cols-2 gap-3">
                     <input
@@ -88,7 +88,7 @@ export function PaymentMethodCard({
                       onClick={(e) => e.stopPropagation()}
                       placeholder="MM/YY"
                       className="h-10 w-full rounded-[var(--token-radius-md)] border-2 bg-[var(--token-color-bg)] px-3 text-base text-[var(--token-color-ink)] placeholder:text-gray-500 focus:outline-none focus:border-[var(--token-color-amber)]"
-                      style={{ borderColor: "var(--token-color-border)" }}
+                      style={{ borderColor: "var(--token-color-inkDeep)", borderWidth: "2px", borderStyle: "solid" }}
                     />
                     <input
                       type="text"
@@ -97,7 +97,7 @@ export function PaymentMethodCard({
                       onClick={(e) => e.stopPropagation()}
                       placeholder="CVC"
                       className="h-10 w-full rounded-[var(--token-radius-md)] border-2 bg-[var(--token-color-bg)] px-3 text-base text-[var(--token-color-ink)] placeholder:text-gray-500 focus:outline-none focus:border-[var(--token-color-amber)]"
-                      style={{ borderColor: "var(--token-color-border)" }}
+                      style={{ borderColor: "var(--token-color-inkDeep)", borderWidth: "2px", borderStyle: "solid" }}
                     />
                   </div>
                 </div>

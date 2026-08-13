@@ -17,7 +17,7 @@ function ModuleRow({ module }: { module: Module }) {
   const [open, setOpen] = useState(false);
 
   return (
-    <div className="overflow-hidden rounded-[var(--token-radius-lg)] border-2 border-slate-300/30 bg-slate-50 shadow-[var(--token-shadow-sm)]">
+    <div className="overflow-hidden rounded-[var(--token-radius-lg)] border-2 border-[var(--token-color-inkDeep)] bg-slate-50 shadow-[var(--token-shadow-sm)]">
       <button
         type="button"
         onClick={() => setOpen((o) => !o)}
@@ -37,7 +37,7 @@ function ModuleRow({ module }: { module: Module }) {
       </button>
 
       {open && (
-        <div className="border-t border-slate-300/30 p-4 text-sm text-gray-700">
+        <div className="border-t border-[var(--token-color-inkDeep)] p-4 text-sm text-gray-700">
           Lesson content coming soon.
         </div>
       )}

@@ -219,7 +219,7 @@ function CourseCard({ course }: { course: EnrolledCourse }) {
 
   return (
     <article className="flex flex-col overflow-hidden rounded-[var(--token-radius-lg)] border bg-[var(--token-color-surface)] shadow-[var(--token-shadow-md)]"
-      style={{ borderColor: "var(--token-color-border)" }}
+      style={{ borderColor: "var(--token-color-inkDeep)", borderWidth: "2px", borderStyle: "solid" }}
     >
       <div className="relative h-40 w-full shrink-0 bg-[var(--token-color-surfaceAlt)]">
         <Image

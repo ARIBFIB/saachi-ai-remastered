@@ -9,7 +9,7 @@ export function OfficeMapCard({ image, mapUrl = "#" }: OfficeMapCardProps) {
   return (
     <a
       href={mapUrl}
-      className="relative block h-48 overflow-hidden rounded-[var(--token-radius-lg)] border-2 border-[var(--token-color-border)]/30 bg-[var(--token-color-surface)] shadow-[var(--token-shadow-sm)]"
+      className="relative block h-48 overflow-hidden rounded-[var(--token-radius-lg)] border-2 border-[var(--token-color-inkDeep)] bg-[var(--token-color-surface)] shadow-[var(--token-shadow-sm)]"
     >
       <img
         src={image ?? "https://placehold.co/393x190"}

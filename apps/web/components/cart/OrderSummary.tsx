@@ -30,9 +30,9 @@ export function OrderSummary({ subtotal, taxRate = 0.08 }: OrderSummaryProps) {
   return (
     <div
       className="flex flex-col gap-1.5 rounded-[var(--token-radius-lg)] border-2 bg-[var(--token-color-surface)] p-6 shadow-[var(--token-shadow-sm)]"
-      style={{ borderColor: "var(--token-color-border)" }}
+      style={{ borderColor: "var(--token-color-inkDeep)", borderWidth: "2px", borderStyle: "solid" }}
     >
-      <div className="border-b pb-2" style={{ borderColor: "var(--token-color-border)" }}>
+      <div className="border-b pb-2" style={{ borderColor: "var(--token-color-inkDeep)", borderWidth: "2px", borderStyle: "solid" }}>
         <h2 className="text-2xl font-semibold" style={{ color: "var(--token-color-ink)" }}>
           Order Summary
         </h2>
@@ -47,7 +47,7 @@ export function OrderSummary({ subtotal, taxRate = 0.08 }: OrderSummaryProps) {
 
       <div
         className="flex items-center justify-between border-b pb-4"
-        style={{ borderColor: "var(--token-color-border)" }}
+        style={{ borderColor: "var(--token-color-inkDeep)", borderWidth: "2px", borderStyle: "solid" }}
       >
         <span style={{ color: "var(--token-color-inkSoft)" }}>Estimated Tax</span>
         <span className="font-semibold" style={{ color: "var(--token-color-ink)" }}>

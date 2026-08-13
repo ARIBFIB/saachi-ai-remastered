@@ -172,7 +172,7 @@ export default function PrivacySettingsPage() {
                 {/* Community Visibility */}
                 <section
                   className="relative flex flex-col gap-6 overflow-hidden rounded-[var(--token-radius-lg)] bg-[var(--token-color-surface)] px-10 pb-10 pt-14 shadow-[var(--token-shadow-md)]"
-                  style={{ border: "1px solid var(--token-color-border)" }}
+                  style={{ border: "2px solid var(--token-color-inkDeep)" }}
                 >
                   <div
                     className="pointer-events-none absolute -right-8 -top-16 h-64 w-64 rounded-full blur-[32px]"
@@ -230,7 +230,7 @@ export default function PrivacySettingsPage() {
                   {/* Export Data */}
                   <div
                     className="flex flex-col gap-4 rounded-[var(--token-radius-lg)] bg-[var(--token-color-surface)] p-6 shadow-[var(--token-shadow-md)]"
-                    style={{ border: "1px solid var(--token-color-border)" }}
+                    style={{ border: "2px solid var(--token-color-inkDeep)" }}
                   >
                     <span
                       className="flex h-10 w-10 items-center justify-center rounded-[var(--token-radius-md)]"
@@ -261,7 +261,7 @@ export default function PrivacySettingsPage() {
                   {/* Danger Zone */}
                   <div
                     className="relative flex flex-col gap-4 overflow-hidden rounded-[var(--token-radius-lg)] bg-[var(--token-color-surface)] p-6 shadow-[var(--token-shadow-md)]"
-                    style={{ border: "1px solid color-mix(in srgb, var(--token-color-error) 20%, transparent)" }}
+                    style={{ border: "2px solid var(--token-color-error)" }}
                   >
                     <div
                       className="pointer-events-none absolute -right-2 -top-2 h-32 w-32 rounded-bl-full"
@@ -290,7 +290,7 @@ export default function PrivacySettingsPage() {
                       className="relative rounded-[var(--token-radius-md)] px-6 py-2 text-sm font-semibold tracking-wide"
                       style={{
                         backgroundColor: "var(--token-color-surfaceAlt)",
-                        border: "1px solid color-mix(in srgb, var(--token-color-error) 30%, transparent)",
+                        border: "2px solid var(--token-color-error)",
                         color: "var(--token-color-error)",
                       }}
                     >

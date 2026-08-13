@@ -76,7 +76,7 @@ export function CommunityQAClient({ courseSlug }: { courseSlug: string }) {
 
       <div
         className="flex flex-col gap-3 rounded-[var(--token-radius-lg)] border p-5"
-        style={{ borderColor: "var(--token-color-border)", backgroundColor: "var(--token-color-surface)" }}
+        style={{ borderColor: "var(--token-color-inkDeep)", borderWidth: "2px", borderStyle: "solid", backgroundColor: "var(--token-color-surface)" }}
       >
         <Input.TextArea
           rows={3}

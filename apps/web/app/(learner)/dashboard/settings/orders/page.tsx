@@ -337,7 +337,7 @@ export default function OrderHistoryPage() {
             {/* Orders table card */}
             <div
               className="overflow-hidden rounded-[var(--token-radius-lg)] border bg-[var(--token-color-surface)] shadow-[var(--token-shadow-md)]"
-              style={{ borderColor: "var(--token-color-border)" }}
+              style={{ borderColor: "var(--token-color-inkDeep)", borderWidth: "2px", borderStyle: "solid" }}
             >
               <Table<OrderRecord>
                 columns={columns}
@@ -349,7 +349,7 @@ export default function OrderHistoryPage() {
               {/* Custom pagination footer */}
               <div
                 className="flex items-center justify-between border-t bg-[var(--token-color-surface)] p-4"
-                style={{ borderColor: "var(--token-color-border)" }}
+                style={{ borderColor: "var(--token-color-inkDeep)", borderWidth: "2px", borderStyle: "solid" }}
               >
                 <span className="text-xs font-medium" style={{ color: "var(--token-color-inkSoft)" }}>
                   Showing {rangeStart} to {rangeEnd} of {TOTAL_ENTRIES} entries
@@ -381,7 +381,7 @@ export default function OrderHistoryPage() {
             {/* Support banner */}
             <div
               className="flex items-center justify-between rounded-[var(--token-radius-lg)] border p-6"
-              style={{ backgroundColor: "var(--token-color-surfaceAlt)", borderColor: "var(--token-color-border)" }}
+              style={{ backgroundColor: "var(--token-color-surfaceAlt)", borderColor: "var(--token-color-inkDeep)", borderWidth: "2px", borderStyle: "solid" }}
             >
               <div className="flex items-center gap-4">
                 <span
