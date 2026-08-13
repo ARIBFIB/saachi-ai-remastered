@@ -21,50 +21,36 @@
  * To re-theme the ENTIRE public site, change ONLY the values in this
  * block -- every component listed above automatically follows, since
  * none of them hardcode colors; they all reference these CSS vars.
- *
- * Design system reference: Blue Neo-Brutalist SaaS
- *   - Thick black (--ink) borders on every surface, never soft/blurred
- *     shadows -- only hard offset shadows (see shadow.hard below).
- *   - Blue leads (~40-50% of colored surfaces) but is never alone --
- *     teal / orange / purple / green always show up somewhere.
- *   - Flat color blocks only. No gradients, no glassmorphism.
  * ============================================================================
  */
 
 export const tokens = {
   color: {
     // Brand / primary (legacy -- still used by learner/instructor dashboards,
-    // Ant Design form controls, and the auth pages). Left as the original
-    // indigo so the logged-in product experience is untouched by the public
-    // site's Neo-Brutalist re-theme.
+    // Ant Design form controls, and the auth pages).
     primary: "#3525CD",
     primaryHover: "#2A1DA3",
     primaryTint: "#E0E7FF",
     primaryDark: "#1E1B4B",
     decorativeCyan: "#A5F3FC",
 
-    // Secondary accent
     success: "#005338",
     successTint: "#D1FAE5",
     completedBadgeBg: "#D1FAE5",
 
-    // Neutrals
     ink: "#18181B",
     inkSoft: "#3F3F46",
     textMuted: "#64748B",
 
-    // Surfaces
     bg: "#F8FAFC",
     surface: "#FFFFFF",
     surfaceAlt: "#F4F4F5",
     playerBg: "#0F172A",
     completedGreen: "#4EDEA3",
 
-    // Borders
     border: "#CBD5E1",
     borderStrong: "#94A3B8",
 
-    // Status
     error: "#DC2626",
     notificationDot: "#BA1A1A",
     errorTint: "#FEE2E2",
@@ -73,40 +59,18 @@ export const tokens = {
 
     // ------------------------------------------------------------------
     // "Blueprint" token group -- PUBLIC WEBSITE ONLY.
-    // Repainted here to the Blue Neo-Brutalist SaaS palette. Change these
-    // values and the whole marketing site re-themes.
     // ------------------------------------------------------------------
-
-    // Default section background across the public site.
     paper: "#E3ECFB",
-
-    // Primary heading / ink color -- also used for every card/mockup
-    // border, since this system uses solid black borders everywhere.
     inkDeep: "#12141C",
-
-    // Muted body copy color.
     inkDeepSoft: "#4A4A55",
-
-    // PRIMARY accent -- "S" logo mark, hero CTA button, category icons,
-    // star ratings, price highlights. This is --accent-blue: a warmer,
-    // more saturated cobalt, NOT default Tailwind blue-500.
     amber: "#3E6BF0",
     amberDark: "#1F3FAE",
     amberTint: "#D9E4FB",
-
-    // Secondary blue-family accent -- integrations/partners, "New"
-    // badges, WhySaachi feature borders.
     teal: "#33C7C0",
     tealTint: "#DDEEEA",
-
-    // Card / mockup-frame / divider border color. Always solid ink black.
     blueprintLine: "#12141C",
     blueprintLineSoft: "rgba(18,20,28,0.12)",
 
-    // ------------------------------------------------------------------
-    // Extra Neo-Brutalist palette for new sections (pricing tiers, stat
-    // banners, AI/insight cards, dark contrast section).
-    // ------------------------------------------------------------------
     accentOrange: "#F5A25C",
     accentOrangeTint: "#FCEACB",
     accentPurple: "#A594F9",

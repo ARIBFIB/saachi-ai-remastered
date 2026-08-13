@@ -1,6 +1,6 @@
 ﻿================================================================================
 MODULE CODE EXPORT: Web
-Generated: 2026-08-13 04:33:03
+Generated: 2026-08-13 04:51:07
 Total Files: 100
 ================================================================================
 
@@ -4873,8 +4873,8 @@ export default function BecomeInstructorPage() {
       <main className="mx-auto flex w-full max-w-[1280px] flex-1 flex-col gap-6 px-6 py-24 md:flex-row">
         {/* Left: copy card */}
         <div
-          className="flex flex-1 flex-col justify-center gap-6 rounded-xl bg-[var(--token-color-surface)] px-10 py-24 shadow-[var(--token-shadow-md)]"
-          style={{ border: "1px solid color-mix(in srgb, var(--token-color-border) 30%, transparent)" }}
+          className="flex flex-1 flex-col justify-center gap-6 rounded-xl bg-[var(--token-color-surface)] px-10 py-24 shadow-[var(--token-shadow-[var(--token-shadow-sm)])]"
+          style={{ border-2: "1px solid color-mix(in srgb, var(--token-color-border) 30%, transparent)" }}
         >
           <h1
             className="max-w-[732px] text-5xl font-bold leading-[52.8px]"
@@ -4904,7 +4904,7 @@ export default function BecomeInstructorPage() {
         </div>
 
         {/* Right: spotlight image */}
-        <div className="relative min-h-72 flex-1 overflow-hidden rounded-xl shadow-[var(--token-shadow-md)]">
+        <div className="relative min-h-72 flex-1 overflow-hidden rounded-xl shadow-[var(--token-shadow-[var(--token-shadow-sm)])]">
           <Image
             src={instructorSpotlight.image}
             alt="Instructor spotlight"
@@ -5040,7 +5040,7 @@ export default function CartPage() {
 function EmptyCart() {
   return (
     <div
-      className="flex flex-col items-center gap-2 rounded-xl border bg-[var(--token-color-surface)] py-20 text-center"
+      className="flex flex-col items-center gap-2 rounded-xl border-2 bg-[var(--token-color-surface)] py-20 text-center"
       style={{ borderColor: "var(--token-color-border)" }}
     >
       <p className="text-lg font-semibold" style={{ color: "var(--token-color-ink)" }}>
@@ -5227,7 +5227,7 @@ export default function TermsOfServicePage() {
       <main className="mx-auto flex w-full max-w-[1280px] items-start gap-10 px-6 py-10">
         <LegalSidebar />
 
-        <article className="flex flex-1 flex-col gap-10 rounded-xl border border-[var(--token-color-border)]/30 bg-[var(--token-color-surface)] p-10 shadow-[0px_4px_20px_0px_rgba(15,23,42,0.05)]">
+        <article className="flex flex-1 flex-col gap-10 rounded-xl border-2 border-[var(--token-color-border)]/30 bg-[var(--token-color-surface)] p-10 shadow-[var(--token-shadow-[var(--token-shadow-sm)])]">
           <header className="flex flex-col gap-1 border-b border-[var(--token-color-border)]/30 pb-6">
             <h1 className="text-3xl font-bold text-[var(--token-color-ink)]">Terms of Service</h1>
             <p className="text-base text-[var(--token-color-inkSoft)]">Last Updated: October 24, 2023</p>
@@ -5291,7 +5291,7 @@ export default function TermsOfServicePage() {
             </p>
             <a
               href="/contact"
-              className="rounded-lg border border-[var(--token-color-border)] bg-[var(--token-color-bg)] px-4 py-2 text-sm font-semibold tracking-wide text-[var(--token-color-inkSoft)] hover:bg-[var(--token-color-surfaceAlt)]"
+              className="rounded-lg border-2 border-[var(--token-color-border)] bg-[var(--token-color-bg)] px-4 py-2 text-sm font-semibold tracking-wide text-[var(--token-color-inkSoft)] hover:bg-[var(--token-color-surfaceAlt)]"
             >
               Contact Legal Support
             </a>
@@ -5347,7 +5347,7 @@ export default function OrderConfirmationPage() {
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-[var(--token-color-bg)] px-6 py-24">
-      <div className="flex w-full max-w-[672px] flex-col items-center rounded-xl bg-[var(--token-color-surface)] p-10 shadow-[var(--token-shadow-lg)]">
+      <div className="flex w-full max-w-[672px] flex-col items-center rounded-xl bg-[var(--token-color-surface)] p-10 shadow-[var(--token-shadow-[var(--token-shadow-[var(--token-shadow-sm)])])]">
         <div className="flex h-24 w-24 items-center justify-center rounded-full bg-[var(--token-color-success)]/10">
           <CheckCircle2
             size={40}
@@ -5373,7 +5373,7 @@ export default function OrderConfirmationPage() {
         {/* Order summary */}
         <div
           className="mt-10 flex w-full flex-col gap-3.5 rounded-lg bg-[var(--token-color-surfaceAlt)] p-6"
-          style={{ border: "1px solid var(--token-color-border)" }}
+          style={{ border-2: "1px solid var(--token-color-border)" }}
         >
           <div
             className="flex items-center justify-between border-b pb-4"
@@ -5470,7 +5470,7 @@ export default function OrderConfirmationPage() {
 
           <Link
             href="/invoice"
-            className="flex h-11 w-44 items-center justify-center gap-2 rounded-lg border text-sm font-semibold tracking-wide"
+            className="flex h-11 w-44 items-center justify-center gap-2 rounded-lg border-2 text-sm font-semibold tracking-wide"
             style={{
               borderColor: "var(--token-color-border)",
               color: "var(--token-color-inkSoft)",
@@ -5795,7 +5795,7 @@ export default function NotFound() {
             <button
               type="button"
               onClick={() => router.back()}
-              className="flex items-center gap-2 rounded-lg border border-[var(--token-color-border)] bg-[var(--token-color-surface)] px-6 py-2.5 text-sm font-semibold tracking-wide text-[var(--token-color-ink)] shadow-[0px_1px_2px_0px_rgba(0,0,0,0.05)] hover:bg-[var(--token-color-surfaceAlt)]"
+              className="flex items-center gap-2 rounded-lg border-2 border-[var(--token-color-border)] bg-[var(--token-color-surface)] px-6 py-2.5 text-sm font-semibold tracking-wide text-[var(--token-color-ink)] shadow-[var(--token-shadow-sm)] hover:bg-[var(--token-color-surfaceAlt)]"
             >
               <ArrowLeft className="h-4 w-4" />
               Go Back
@@ -5804,14 +5804,14 @@ export default function NotFound() {
         </div>
 
         <div className="flex flex-1 justify-center">
-          <div className="relative max-w-96 flex-1 overflow-hidden rounded-[32px] border border-white/20 bg-[var(--token-color-surface)]/70 shadow-[0px_10px_40px_0px_rgba(15,23,42,0.08)] backdrop-blur-[5px]">
+          <div className="relative max-w-96 flex-1 overflow-hidden rounded-[32px] border-2 border-white/20 bg-[var(--token-color-surface)]/70 shadow-[0px_10px_40px_0px_rgba(15,23,42,0.08)] backdrop-blur-[5px]">
             <img
               src="https://placehold.co/378x378/F8FAFC/CBD5E1?text=404"
               alt="Lost robot illustration"
               className="h-full w-full object-cover"
             />
 
-            <div className="absolute -left-4 top-[289px] flex items-center gap-2 rounded-lg border border-[var(--token-color-border)] bg-[var(--token-color-surface)] p-2 shadow-lg">
+            <div className="absolute -left-4 top-[289px] flex items-center gap-2 rounded-lg border-2 border-[var(--token-color-border)] bg-[var(--token-color-surface)] p-2 shadow-[var(--token-shadow-[var(--token-shadow-sm)])]">
               <span className="flex h-8 w-8 items-center justify-center rounded-full bg-[var(--token-color-error)]/10">
                 <SearchX className="h-3.5 w-3.5 text-[var(--token-color-error)]" />
               </span>
@@ -5941,7 +5941,7 @@ interface CartItemCardProps {
 export function CartItemCard({ item, onRemove, onSaveForLater }: CartItemCardProps) {
   return (
     <div
-      className="flex w-full gap-6 rounded-xl border bg-[var(--token-color-surface)] p-6 shadow-[var(--token-shadow-md)]"
+      className="flex w-full gap-6 rounded-xl border-2 bg-[var(--token-color-surface)] p-6 shadow-[var(--token-shadow-[var(--token-shadow-sm)])]"
       style={{ borderColor: "var(--token-color-border)" }}
     >
       <div className="relative h-24 w-40 shrink-0 overflow-hidden rounded-lg bg-[var(--token-color-surfaceAlt)]">
@@ -6066,7 +6066,7 @@ export function OrderSummary({ subtotal, taxRate = 0.08 }: OrderSummaryProps) {
 
   return (
     <div
-      className="flex flex-col gap-1.5 rounded-xl border bg-[var(--token-color-surface)] p-6 shadow-[var(--token-shadow-md)]"
+      className="flex flex-col gap-1.5 rounded-xl border-2 bg-[var(--token-color-surface)] p-6 shadow-[var(--token-shadow-[var(--token-shadow-sm)])]"
       style={{ borderColor: "var(--token-color-border)" }}
     >
       <div className="border-b pb-2" style={{ borderColor: "var(--token-color-border)" }}>
@@ -6158,15 +6158,15 @@ interface Module {
 }
 
 const modules: Module[] = [
-  { title: "Module 1: Introduction to Large Language Models", meta: "3 lessons â€¢ 45 mins" },
-  { title: "Module 2: Anatomy of a Perfect Prompt", meta: "5 lessons â€¢ 1hr 20 mins" },
+  { title: "Module 1: Introduction to Large Language Models", meta: "3 lessons • 45 mins" },
+  { title: "Module 2: Anatomy of a Perfect Prompt", meta: "5 lessons • 1hr 20 mins" },
 ];
 
 function ModuleRow({ module }: { module: Module }) {
   const [open, setOpen] = useState(false);
 
   return (
-    <div className="overflow-hidden rounded-xl border border-slate-300/30 bg-slate-50 shadow-[0px_1px_2px_0px_rgba(0,0,0,0.05)]">
+    <div className="overflow-hidden rounded-xl border-2 border-slate-300/30 bg-slate-50 shadow-[var(--token-shadow-sm)]">
       <button
         type="button"
         onClick={() => setOpen((o) => !o)}
@@ -6267,7 +6267,7 @@ export function CourseHero({
               <span className="text-base font-bold text-emerald-900">{rating}</span>
               <span className="pl-1 text-base text-gray-700">({ratingsCount} ratings)</span>
             </div>
-            <span className="text-gray-700">â€¢</span>
+            <span className="text-gray-700">•</span>
             <span className="text-base text-gray-700">{studentsCount} Students Enrolled</span>
           </div>
 
@@ -6284,7 +6284,7 @@ export function CourseHero({
         <div className="w-full lg:w-96">
           <button
             type="button"
-            className="group relative block aspect-video w-full overflow-hidden rounded-xl shadow-lg"
+            className="group relative block aspect-video w-full overflow-hidden rounded-xl shadow-[var(--token-shadow-[var(--token-shadow-sm)])]"
           >
             <Image
               src={previewImage}
@@ -6295,7 +6295,7 @@ export function CourseHero({
             />
             <span className="absolute inset-0 bg-zinc-900/20 transition group-hover:bg-zinc-900/30" />
             <span className="absolute inset-0 flex items-center justify-center">
-              <span className="flex h-[46px] w-[46px] items-center justify-center rounded-full bg-white shadow-lg">
+              <span className="flex h-[46px] w-[46px] items-center justify-center rounded-full bg-white shadow-[var(--token-shadow-[var(--token-shadow-sm)])]">
                 <Play className="ml-0.5 h-5 w-5 text-zinc-900" fill="currentColor" />
               </span>
             </span>
@@ -6374,7 +6374,7 @@ export function InstructorBio({
   avatar,
 }: InstructorBioProps) {
   return (
-    <section className="flex w-full gap-6 rounded-xl border border-slate-300/30 bg-slate-50 p-6 shadow-[0px_1px_2px_0px_rgba(0,0,0,0.05)]">
+    <section className="flex w-full gap-6 rounded-xl border-2 border-slate-300/30 bg-slate-50 p-6 shadow-[var(--token-shadow-sm)]">
       <span className="relative block h-32 w-32 shrink-0 overflow-hidden rounded-full">
         <Image src={avatar} alt={name} fill sizes="128px" className="object-cover" />
       </span>
@@ -6420,7 +6420,7 @@ const icons = [PlayCircle, FileText, Award];
 
 export function PurchaseCard({ price, includes }: PurchaseCardProps) {
   return (
-    <div className="sticky top-24 flex w-full flex-col gap-6 rounded-xl border border-slate-300/20 bg-slate-50 px-6 py-6 shadow-[0px_10px_32px_0px_rgba(15,23,42,0.12)]">
+    <div className="sticky top-24 flex w-full flex-col gap-6 rounded-xl border-2 border-slate-300/20 bg-slate-50 px-6 py-6 shadow-[var(--token-shadow-[var(--token-shadow-[var(--token-shadow-sm)])])]">
       <div className="flex flex-col items-center gap-1">
         <span className="text-5xl font-bold leading-[52.8px] text-zinc-900">{price}</span>
         <span className="text-xs font-medium text-gray-700">
@@ -6437,7 +6437,7 @@ export function PurchaseCard({ price, includes }: PurchaseCardProps) {
         </button>
         <button
           type="button"
-          className="w-full rounded-lg border border-gray-500 bg-white py-3 text-sm font-bold tracking-wide text-zinc-900 hover:bg-gray-50"
+          className="w-full rounded-lg border-2 border-gray-500 bg-white py-3 text-sm font-bold tracking-wide text-zinc-900 hover:bg-gray-50"
         >
           Add to Cart
         </button>
@@ -6477,7 +6477,7 @@ const learningPoints = [
 
 export function WhatYoullLearn() {
   return (
-    <section className="w-full rounded-xl border border-slate-300/30 bg-slate-50 p-6 shadow-[0px_1px_2px_0px_rgba(0,0,0,0.05)]">
+    <section className="w-full rounded-xl border-2 border-slate-300/30 bg-slate-50 p-6 shadow-[var(--token-shadow-sm)]">
       <h2 className="mb-6 text-2xl font-semibold text-zinc-900">
         What you&apos;ll learn
       </h2>
@@ -6598,7 +6598,7 @@ export function InstructorCourseCard({
   badge,
 }: InstructorCourseCardProps) {
   return (
-    <article className="flex w-96 flex-col overflow-hidden rounded-xl border border-[var(--token-color-border)]/30 bg-[var(--token-color-surface)] shadow-[0px_4px_20px_0px_rgba(15,23,42,0.05)]">
+    <article className="flex w-96 flex-col overflow-hidden rounded-xl border-2 border-[var(--token-color-border)]/30 bg-[var(--token-color-surface)] shadow-[var(--token-shadow-[var(--token-shadow-sm)])]">
       <div className="relative h-48 w-full bg-[var(--token-color-surfaceAlt)]">
         <Image src={image} alt={title} fill sizes="384px" className="object-cover" />
         {badge && (
@@ -6640,7 +6640,7 @@ export function InstructorCourseCard({
 
         <button
           type="button"
-          className="w-full rounded-lg border border-[var(--token-color-border)] bg-[var(--token-color-surfaceAlt)] py-2 text-sm font-semibold tracking-wide text-[var(--token-color-inkSoft)] hover:bg-[var(--token-color-border)]/20"
+          className="w-full rounded-lg border-2 border-[var(--token-color-border)] bg-[var(--token-color-surfaceAlt)] py-2 text-sm font-semibold tracking-wide text-[var(--token-color-inkSoft)] hover:bg-[var(--token-color-border)]/20"
         >
           View Course
         </button>
@@ -6672,7 +6672,7 @@ export function InstructorProfileCard({
   tags,
 }: InstructorProfileCardProps) {
   return (
-    <div className="flex flex-1 items-start gap-6 rounded-xl border border-[var(--token-color-border)]/30 bg-[var(--token-color-surface)] p-6 shadow-[0px_4px_20px_0px_rgba(15,23,42,0.05)]">
+    <div className="flex flex-1 items-start gap-6 rounded-xl border-2 border-[var(--token-color-border)]/30 bg-[var(--token-color-surface)] p-6 shadow-[var(--token-shadow-[var(--token-shadow-sm)])]">
       <span className="relative block h-32 w-32 shrink-0 overflow-hidden rounded-full ring-4 ring-[var(--token-color-surfaceAlt)]">
         <Image src={avatar} alt={name} fill sizes="128px" className="object-cover" />
       </span>
@@ -6744,7 +6744,7 @@ export function InstructorStatsGrid({
         />
       </div>
 
-      <div className="flex flex-col items-center gap-2 rounded-xl border border-[var(--token-color-border)]/30 bg-[var(--token-color-surface)] px-4 py-8 shadow-[0px_4px_20px_0px_rgba(15,23,42,0.05)]">
+      <div className="flex flex-col items-center gap-2 rounded-xl border-2 border-[var(--token-color-border)]/30 bg-[var(--token-color-surface)] px-4 py-8 shadow-[var(--token-shadow-[var(--token-shadow-sm)])]">
         <div className="flex items-center gap-2">
           <Star className="h-[19px] w-5 text-[var(--token-color-warning)]" fill="currentColor" strokeWidth={0} />
           <span className="text-2xl font-semibold leading-8 text-[var(--token-color-ink)]">{rating}</span>
@@ -6767,7 +6767,7 @@ function StatCard({
   label: string;
 }) {
   return (
-    <div className="flex flex-1 flex-col items-center justify-center gap-2 rounded-xl border border-[var(--token-color-border)]/30 bg-[var(--token-color-surface)] py-8 shadow-[0px_4px_20px_0px_rgba(15,23,42,0.05)]">
+    <div className="flex flex-1 flex-col items-center justify-center gap-2 rounded-xl border-2 border-[var(--token-color-border)]/30 bg-[var(--token-color-surface)] py-8 shadow-[var(--token-shadow-[var(--token-shadow-sm)])]">
       {icon}
       <span className="text-2xl font-semibold leading-8 text-[var(--token-color-ink)]">{value}</span>
       <span className="text-xs font-medium uppercase tracking-wide text-[var(--token-color-inkSoft)]">{label}</span>
@@ -6815,7 +6815,7 @@ export function LegalSection({ heading, paragraphs, eyebrow, listItems, callout 
       )}
 
       {callout && (
-        <div className="flex flex-col gap-1 rounded-lg border border-[var(--token-color-border)]/20 bg-[var(--token-color-surfaceAlt)] px-4 py-4">
+        <div className="flex flex-col gap-1 rounded-lg border-2 border-[var(--token-color-border)]/20 bg-[var(--token-color-surfaceAlt)] px-4 py-4">
           <h4 className="flex items-center gap-1.5 text-sm font-semibold tracking-wide text-[var(--token-color-ink)]">
             <Info className="h-3 w-3 text-[var(--token-color-primary)]" />
             {callout.title}
@@ -6855,7 +6855,7 @@ export function LegalSidebar() {
   const pathname = usePathname();
 
   return (
-    <aside className="w-72 shrink-0 self-start rounded-xl border border-[var(--token-color-border)]/30 bg-[var(--token-color-surface)] px-4 pb-4 pt-3.5 shadow-[0px_4px_20px_0px_rgba(15,23,42,0.05)]">
+    <aside className="w-72 shrink-0 self-start rounded-xl border-2 border-[var(--token-color-border)]/30 bg-[var(--token-color-surface)] px-4 pb-4 pt-3.5 shadow-[var(--token-shadow-[var(--token-shadow-sm)])]">
       <h3 className="px-2 pb-4 text-xs font-medium uppercase tracking-wide text-[var(--token-color-inkSoft)]">
         Legal Policies
       </h3>
@@ -6979,7 +6979,7 @@ export function CategoryGrid() {
             <Link
               key={label}
               href={href}
-              className="group flex flex-col items-start gap-6 border p-6 transition-colors"
+              className="group flex flex-col items-start gap-6 border-2 p-6 transition-colors"
               style={{ borderColor: "var(--token-color-blueprintLine)" }}
             >
               <span
@@ -7082,7 +7082,7 @@ export function CourseCard({
 }: CourseCardProps) {
   return (
     <article
-      className="group flex flex-1 flex-col overflow-hidden border transition-colors"
+      className="group flex flex-1 flex-col overflow-hidden border-2 transition-colors"
       style={{ borderColor: "var(--token-color-blueprintLine)", backgroundColor: "var(--token-color-surface)" }}
     >
       <div className="relative h-40 w-full overflow-hidden" style={{ backgroundColor: "var(--token-color-blueprintLineSoft)" }}>
@@ -7262,7 +7262,7 @@ export function Header() {
           </Link>
 
           <div
-            className="flex items-center gap-2 rounded-sm border px-3 py-1.5"
+            className="flex items-center gap-2 rounded-sm border-2 px-3 py-1.5"
             style={{ borderColor: "var(--token-color-blueprintLine)", backgroundColor: "var(--token-color-surface)" }}
           >
             <Search size={14} color="var(--token-color-inkDeepSoft)" />
@@ -7330,9 +7330,9 @@ import Link from "next/link";
 import { BlueprintMark, SpecLabel } from "./BlueprintMark";
 
 const buildLog = [
-  "Certificate issued Ã¢â‚¬â€ Prompt Engineering Masterclass",
-  "Course published Ã¢â‚¬â€ WhatsApp AI Auto-Responder",
-  "Skill verified Ã¢â‚¬â€ n8n Workflow Automation",
+  "Certificate issued â€” Prompt Engineering Masterclass",
+  "Course published â€” WhatsApp AI Auto-Responder",
+  "Skill verified â€” n8n Workflow Automation",
 ];
 
 export function HeroSection() {
@@ -7359,7 +7359,7 @@ export function HeroSection() {
             className="max-w-[460px] text-lg leading-7"
             style={{ fontFamily: "var(--token-font-bodyFamily)", color: "var(--token-color-inkDeepSoft)" }}
           >
-            Practical, outcome-verified AI courses Ã¢â‚¬â€ automations, chatbots, AI-assisted apps Ã¢â‚¬â€
+            Practical, outcome-verified AI courses â€” automations, chatbots, AI-assisted apps â€”
             taught by people who ship them. No filler, just the skill and the proof you learned it.
           </p>
 
@@ -7373,7 +7373,7 @@ export function HeroSection() {
             </Link>
             <Link
               href="/become-instructor"
-              className="border px-8 py-3.5 text-sm font-semibold tracking-wide"
+              className="border-2 px-8 py-3.5 text-sm font-semibold tracking-wide"
               style={{ borderColor: "var(--token-color-inkDeep)", color: "var(--token-color-inkDeep)" }}
             >
               Teach a Skill
@@ -7396,7 +7396,7 @@ export function HeroSection() {
 
         {/* Right: "spec card" -- a labeled artifact instead of a stock photo */}
         <div
-          className="relative border p-8"
+          className="relative border-2 p-8"
           style={{ borderColor: "var(--token-color-blueprintLine)", backgroundColor: "var(--token-color-surface)" }}
         >
           <BlueprintMark className="absolute -left-2.5 -top-2.5" />
@@ -7487,7 +7487,7 @@ export function Newsletter() {
   return (
     <div className="mx-auto w-full max-w-[1280px] px-6 pb-16">
       <div
-        className="flex flex-col items-center justify-between gap-6 border p-10 md:flex-row"
+        className="flex flex-col items-center justify-between gap-6 border-2 p-10 md:flex-row"
         style={{ borderColor: "var(--token-color-blueprintLine)", backgroundColor: "var(--token-color-inkDeep)" }}
       >
         <div className="flex max-w-96 flex-col gap-2">
@@ -7509,7 +7509,7 @@ export function Newsletter() {
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             placeholder="you@example.com"
-            className="h-11 flex-1 border px-4 text-sm focus:outline-none"
+            className="h-11 flex-1 border-2 px-4 text-sm focus:outline-none"
             style={{ borderColor: "var(--token-color-blueprintLine)", backgroundColor: "var(--token-color-paper)", color: "var(--token-color-inkDeep)" }}
           />
           <button
@@ -7732,7 +7732,7 @@ export function CategoryChips({ chips, defaultActive, onChange }: CategoryChipsP
             key={chip}
             type="button"
             onClick={() => handleSelect(chip)}
-            className={`rounded-full border px-4 py-2 text-sm font-semibold tracking-wide transition ${
+            className={`rounded-full border-2 px-4 py-2 text-sm font-semibold tracking-wide transition ${
               isActive
                 ? "border-[var(--token-color-primary)]/20 bg-[var(--token-color-primary)]/10 text-[var(--token-color-primary)]"
                 : "border-[var(--token-color-border)] bg-[var(--token-color-surfaceAlt)] text-[var(--token-color-inkSoft)]"
@@ -7773,7 +7773,7 @@ export function CategoryCourseCard({
   image,
 }: CategoryCourseCardProps) {
   return (
-    <article className="flex flex-1 flex-col overflow-hidden rounded-xl border border-[var(--token-color-border)]/30 bg-[var(--token-color-surface)] shadow-[0px_4px_20px_0px_rgba(15,23,42,0.05)]">
+    <article className="flex flex-1 flex-col overflow-hidden rounded-xl border-2 border-[var(--token-color-border)]/30 bg-[var(--token-color-surface)] shadow-[var(--token-shadow-[var(--token-shadow-sm)])]">
       <div className="relative h-40 w-full shrink-0 overflow-hidden bg-[var(--token-color-surfaceAlt)]">
         <Image
           src={image}
@@ -7839,7 +7839,7 @@ function Checkbox({
       <button
         type="button"
         onClick={onChange}
-        className="flex h-4 w-4 items-center justify-center border transition"
+        className="flex h-4 w-4 items-center justify-center border-2 transition"
         style={{
           borderColor: checked ? "var(--token-color-amberDark)" : "var(--token-color-blueprintLine)",
           backgroundColor: checked ? "var(--token-color-amber)" : "var(--token-color-surface)",
@@ -7861,7 +7861,7 @@ export function FilterSidebar() {
   }
 
   return (
-    <aside className="w-56 border p-6" style={{ borderColor: "var(--token-color-blueprintLine)", backgroundColor: "var(--token-color-surface)" }}>
+    <aside className="w-56 border-2 p-6" style={{ borderColor: "var(--token-color-blueprintLine)", backgroundColor: "var(--token-color-surface)" }}>
       <div className="flex flex-col gap-4">
         <h3
           className="text-xs font-semibold uppercase tracking-[0.1em]"
@@ -7946,7 +7946,7 @@ export function MarketplaceCourseCard({
   image,
 }: MarketplaceCourseCardProps) {
   return (
-    <article className="group flex flex-1 flex-col overflow-hidden border" style={{ borderColor: "var(--token-color-blueprintLine)", backgroundColor: "var(--token-color-surface)" }}>
+    <article className="group flex flex-1 flex-col overflow-hidden border-2" style={{ borderColor: "var(--token-color-blueprintLine)", backgroundColor: "var(--token-color-surface)" }}>
       <div className="relative h-40 w-full overflow-hidden" style={{ backgroundColor: "var(--token-color-blueprintLineSoft)" }}>
         <Image src={image} alt={title} fill sizes="(max-width: 768px) 100vw, 400px" className="object-cover transition-transform duration-300 group-hover:scale-[1.03]" />
         {badge && (
@@ -8022,7 +8022,7 @@ export function Pagination({ totalPages = 12 }: { totalPages?: number }) {
       <button
         aria-label="Previous page"
         onClick={() => setPage((p) => Math.max(1, p - 1))}
-        className="flex h-10 w-8 items-center justify-center border"
+        className="flex h-10 w-8 items-center justify-center border-2"
         style={{ borderColor: lineColor, color: inkSoft }}
       >
         <ChevronLeft className="h-3 w-3" />
@@ -8036,7 +8036,7 @@ export function Pagination({ totalPages = 12 }: { totalPages?: number }) {
           style={
             page === p
               ? { backgroundColor: "var(--token-color-inkDeep)", color: "var(--token-color-paper)" }
-              : { border: `1px solid ${lineColor}`, color: inkSoft }
+              : { border-2: `1px solid ${lineColor}`, color: inkSoft }
           }
         >
           {p}
@@ -8051,7 +8051,7 @@ export function Pagination({ totalPages = 12 }: { totalPages?: number }) {
         style={
           page === totalPages
             ? { backgroundColor: "var(--token-color-inkDeep)", color: "var(--token-color-paper)" }
-            : { border: `1px solid ${lineColor}`, color: inkSoft }
+            : { border-2: `1px solid ${lineColor}`, color: inkSoft }
         }
       >
         {totalPages}
@@ -8060,7 +8060,7 @@ export function Pagination({ totalPages = 12 }: { totalPages?: number }) {
       <button
         aria-label="Next page"
         onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
-        className="flex h-10 w-8 items-center justify-center border"
+        className="flex h-10 w-8 items-center justify-center border-2"
         style={{ borderColor: lineColor, color: inkSoft }}
       >
         <ChevronRight className="h-3 w-3" />
@@ -8088,7 +8088,7 @@ export function SortDropdown() {
     <div className="relative">
       <button
         onClick={() => setOpen((o) => !o)}
-        className="flex items-center gap-8 border px-3 py-2 text-sm"
+        className="flex items-center gap-8 border-2 px-3 py-2 text-sm"
         style={{ borderColor: "var(--token-color-blueprintLine)", backgroundColor: "var(--token-color-surface)", color: "var(--token-color-inkDeep)" }}
       >
         {value}
@@ -8097,7 +8097,7 @@ export function SortDropdown() {
 
       {open && (
         <ul
-          className="absolute right-0 top-full z-10 mt-1 w-48 border shadow-[0px_4px_20px_0px_rgba(15,23,42,0.08)]"
+          className="absolute right-0 top-full z-10 mt-1 w-48 border-2 shadow-[0px_4px_20px_0px_rgba(15,23,42,0.08)]"
           style={{ borderColor: "var(--token-color-blueprintLine)", backgroundColor: "var(--token-color-surface)" }}
         >
           {options.map((opt) => (
@@ -8214,7 +8214,7 @@ export function FaqAccordion() {
           return (
             <div
               key={faq.question}
-              className="overflow-hidden rounded-lg border border-[var(--token-color-border)] bg-[var(--token-color-surface)]"
+              className="overflow-hidden rounded-lg border-2 border-[var(--token-color-border)] bg-[var(--token-color-surface)]"
             >
               <button
                 type="button"
@@ -8266,7 +8266,7 @@ const rows: ComparisonRow[] = [
 
 export function FeatureComparisonTable() {
   return (
-    <section className="w-full overflow-hidden rounded-xl border border-[var(--token-color-border)] bg-[var(--token-color-surface)] p-6 shadow-[0px_1px_2px_0px_rgba(0,0,0,0.05)]">
+    <section className="w-full overflow-hidden rounded-xl border-2 border-[var(--token-color-border)] bg-[var(--token-color-surface)] p-6 shadow-[var(--token-shadow-sm)]">
       <h2 className="pb-6 text-center text-3xl font-bold leading-10 text-[var(--token-color-ink)]">
         Compare Features
       </h2>
@@ -8328,7 +8328,7 @@ export function PricingCard({
 }: PricingCardProps) {
   return (
     <div
-      className={`relative flex w-96 flex-col justify-between rounded-xl border bg-[var(--token-color-surface)]/90 p-6 backdrop-blur-[6px] ${
+      className={`relative flex w-96 flex-col justify-between rounded-xl border-2 bg-[var(--token-color-surface)]/90 p-6 backdrop-blur-[6px] ${
         highlighted
           ? "border-[var(--token-color-primary)]/30 shadow-[0px_0px_40px_0px_rgba(79,70,229,0.15)]"
           : "border-[var(--token-color-border)]/60"
@@ -8369,8 +8369,8 @@ export function PricingCard({
         type="button"
         className={`w-full rounded-lg py-3 text-sm font-semibold tracking-wide transition ${
           highlighted
-            ? "bg-[var(--token-color-primary)] text-white shadow-md hover:bg-[var(--token-color-primaryHover)]"
-            : "border border-[var(--token-color-textMuted)] text-[var(--token-color-ink)] hover:bg-[var(--token-color-surfaceAlt)]"
+            ? "bg-[var(--token-color-primary)] text-white shadow-[var(--token-shadow-sm)] hover:bg-[var(--token-color-primaryHover)]"
+            : "border-2 border-[var(--token-color-textMuted)] text-[var(--token-color-ink)] hover:bg-[var(--token-color-surfaceAlt)]"
         }`}
       >
         {ctaLabel}
@@ -8410,7 +8410,7 @@ export function FeaturedResultCard({
   image,
 }: FeaturedResultCardProps) {
   return (
-    <article className="flex h-96 overflow-hidden rounded-xl border border-[var(--token-color-border)] bg-[var(--token-color-surface)] shadow-[0px_4px_20px_0px_rgba(15,23,42,0.05)]">
+    <article className="flex h-96 overflow-hidden rounded-xl border-2 border-[var(--token-color-border)] bg-[var(--token-color-surface)] shadow-[var(--token-shadow-[var(--token-shadow-sm)])]">
       <div className="relative w-80 shrink-0">
         <Image src={image} alt={title} fill sizes="320px" className="object-cover" />
         {badge && (
@@ -8474,7 +8474,7 @@ export function InstructorResultCard({
   profileUrl = "#",
 }: InstructorResultCardProps) {
   return (
-    <div className="flex flex-col items-center justify-between rounded-xl border border-[var(--token-color-border)] bg-[var(--token-color-surface)] p-6 shadow-[0px_4px_20px_0px_rgba(15,23,42,0.05)]">
+    <div className="flex flex-col items-center justify-between rounded-xl border-2 border-[var(--token-color-border)] bg-[var(--token-color-surface)] p-6 shadow-[var(--token-shadow-[var(--token-shadow-sm)])]">
       <span className="relative mb-4 block h-24 w-24 overflow-hidden rounded-full border-4 border-[var(--token-color-surfaceAlt)]">
         <Image src={avatar} alt={name} fill sizes="96px" className="object-cover" />
       </span>
@@ -8494,7 +8494,7 @@ export function InstructorResultCard({
 
       <a
         href={profileUrl}
-        className="w-full border border-[var(--token-color-primary)] py-2 text-center text-sm font-semibold tracking-wide text-[var(--token-color-primary)] hover:bg-[var(--token-color-primaryTint)]"
+        className="w-full border-2 border-[var(--token-color-primary)] py-2 text-center text-sm font-semibold tracking-wide text-[var(--token-color-primary)] hover:bg-[var(--token-color-primaryTint)]"
       >
         View Profile
       </a>
@@ -8569,7 +8569,7 @@ export function ResultsPagination({ totalPages = 12 }: ResultsPaginationProps) {
         type="button"
         aria-label="Previous page"
         onClick={() => setPage((p) => Math.max(1, p - 1))}
-        className="flex h-10 w-8 items-center justify-center border border-[var(--token-color-border)] text-[var(--token-color-inkSoft)] hover:bg-[var(--token-color-surfaceAlt)]"
+        className="flex h-10 w-8 items-center justify-center border-2 border-[var(--token-color-border)] text-[var(--token-color-inkSoft)] hover:bg-[var(--token-color-surfaceAlt)]"
       >
         <ChevronLeft className="h-3 w-3" />
       </button>
@@ -8582,7 +8582,7 @@ export function ResultsPagination({ totalPages = 12 }: ResultsPaginationProps) {
           className={`flex h-10 w-10 items-center justify-center text-sm font-semibold tracking-wide ${
             page === p
               ? "bg-[var(--token-color-primary)] text-white"
-              : "border border-[var(--token-color-border)] text-[var(--token-color-inkSoft)] hover:bg-[var(--token-color-surfaceAlt)]"
+              : "border-2 border-[var(--token-color-border)] text-[var(--token-color-inkSoft)] hover:bg-[var(--token-color-surfaceAlt)]"
           }`}
         >
           {p}
@@ -8597,7 +8597,7 @@ export function ResultsPagination({ totalPages = 12 }: ResultsPaginationProps) {
         className={`flex h-10 w-10 items-center justify-center text-sm font-semibold tracking-wide ${
           page === totalPages
             ? "bg-[var(--token-color-primary)] text-white"
-            : "border border-[var(--token-color-border)] text-[var(--token-color-inkSoft)] hover:bg-[var(--token-color-surfaceAlt)]"
+            : "border-2 border-[var(--token-color-border)] text-[var(--token-color-inkSoft)] hover:bg-[var(--token-color-surfaceAlt)]"
         }`}
       >
         {totalPages}
@@ -8607,7 +8607,7 @@ export function ResultsPagination({ totalPages = 12 }: ResultsPaginationProps) {
         type="button"
         aria-label="Next page"
         onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
-        className="flex h-10 w-8 items-center justify-center border border-[var(--token-color-border)] text-[var(--token-color-inkSoft)] hover:bg-[var(--token-color-surfaceAlt)]"
+        className="flex h-10 w-8 items-center justify-center border-2 border-[var(--token-color-border)] text-[var(--token-color-inkSoft)] hover:bg-[var(--token-color-surfaceAlt)]"
       >
         <ChevronRight className="h-3 w-3" />
       </button>
@@ -8632,7 +8632,7 @@ export interface StandardResultCardProps {
 
 export function StandardResultCard({ title, description, meta, price, image }: StandardResultCardProps) {
   return (
-    <article className="overflow-hidden rounded-xl border border-[var(--token-color-border)] bg-[var(--token-color-surface)] shadow-[0px_4px_20px_0px_rgba(15,23,42,0.05)]">
+    <article className="overflow-hidden rounded-xl border-2 border-[var(--token-color-border)] bg-[var(--token-color-surface)] shadow-[var(--token-shadow-[var(--token-shadow-sm)])]">
       <div className="relative h-40 w-full bg-zinc-200">
         {image ? (
           <Image src={image} alt={title} fill sizes="400px" className="object-cover" />
@@ -8724,7 +8724,7 @@ export function ContactForm() {
   }
 
   return (
-    <div className="flex flex-1 flex-col rounded-xl border border-[var(--token-color-border)]/30 bg-[var(--token-color-surface)] p-10 shadow-[0px_4px_20px_0px_rgba(15,23,42,0.05)]">
+    <div className="flex flex-1 flex-col rounded-xl border-2 border-[var(--token-color-border)]/30 bg-[var(--token-color-surface)] p-10 shadow-[var(--token-shadow-[var(--token-shadow-sm)])]">
       <div className="flex flex-col gap-1 pb-6">
         <h2 className="flex items-center gap-2 text-2xl font-semibold text-[var(--token-color-ink)]">
           <Mail className="h-5 w-4 text-[var(--token-color-primary)]" />
@@ -8746,7 +8746,7 @@ export function ContactForm() {
               type="text"
               required
               placeholder="Jane Doe"
-              className="border border-[var(--token-color-border)] bg-[var(--token-color-surface)] px-4 py-2.5 text-base text-[var(--token-color-ink)] placeholder:text-[var(--token-color-inkSoft)]/50 focus:outline-none"
+              className="border-2 border-[var(--token-color-border)] bg-[var(--token-color-surface)] px-4 py-2.5 text-base text-[var(--token-color-ink)] placeholder:text-[var(--token-color-inkSoft)]/50 focus:outline-none"
             />
           </div>
 
@@ -8759,7 +8759,7 @@ export function ContactForm() {
               type="email"
               required
               placeholder="jane@example.com"
-              className="border border-[var(--token-color-border)] bg-[var(--token-color-surface)] px-4 py-2.5 text-base text-[var(--token-color-ink)] placeholder:text-[var(--token-color-inkSoft)]/50 focus:outline-none"
+              className="border-2 border-[var(--token-color-border)] bg-[var(--token-color-surface)] px-4 py-2.5 text-base text-[var(--token-color-ink)] placeholder:text-[var(--token-color-inkSoft)]/50 focus:outline-none"
             />
           </div>
         </div>
@@ -8772,7 +8772,7 @@ export function ContactForm() {
             id="subject"
             value={subject}
             onChange={(e) => setSubject(e.target.value)}
-            className="border border-[var(--token-color-border)] bg-[var(--token-color-surface)] px-4 py-2 text-base text-[var(--token-color-ink)] focus:outline-none"
+            className="border-2 border-[var(--token-color-border)] bg-[var(--token-color-surface)] px-4 py-2 text-base text-[var(--token-color-ink)] focus:outline-none"
           >
             {subjects.map((s) => (
               <option key={s} value={s}>
@@ -8791,7 +8791,7 @@ export function ContactForm() {
             required
             rows={6}
             placeholder="How can we help you today?"
-            className="resize-none border border-[var(--token-color-border)] bg-[var(--token-color-surface)] px-4 py-2 text-base text-[var(--token-color-ink)] placeholder:text-[var(--token-color-inkSoft)]/50 focus:outline-none"
+            className="resize-none border-2 border-[var(--token-color-border)] bg-[var(--token-color-surface)] px-4 py-2 text-base text-[var(--token-color-ink)] placeholder:text-[var(--token-color-inkSoft)]/50 focus:outline-none"
           />
         </div>
 
@@ -8817,7 +8817,7 @@ import { Headset, Phone, Building2 } from "lucide-react";
 
 export function DirectContactCard() {
   return (
-    <div className="flex flex-col gap-4 rounded-xl border border-[var(--token-color-border)]/30 bg-[var(--token-color-surface)] p-6 shadow-[0px_4px_20px_0px_rgba(15,23,42,0.05)]">
+    <div className="flex flex-col gap-4 rounded-xl border-2 border-[var(--token-color-border)]/30 bg-[var(--token-color-surface)] p-6 shadow-[var(--token-shadow-[var(--token-shadow-sm)])]">
       <h3 className="text-2xl font-semibold text-[var(--token-color-ink)]">Direct Contact</h3>
 
       <div className="flex flex-col gap-6">
@@ -8883,7 +8883,7 @@ export function OfficeMapCard({ image, mapUrl = "#" }: OfficeMapCardProps) {
   return (
     <a
       href={mapUrl}
-      className="relative block h-48 overflow-hidden rounded-xl border border-[var(--token-color-border)]/30 bg-[var(--token-color-surface)] shadow-[0px_4px_20px_0px_rgba(15,23,42,0.05)]"
+      className="relative block h-48 overflow-hidden rounded-xl border-2 border-[var(--token-color-border)]/30 bg-[var(--token-color-surface)] shadow-[var(--token-shadow-[var(--token-shadow-sm)])]"
     >
       <img
         src={image ?? "https://placehold.co/393x190"}
@@ -8946,7 +8946,7 @@ import { Search, ShoppingCart, Bell } from "lucide-react";
 
 export function SupportHeader() {
   return (
-    <header className="sticky top-0 z-50 w-full bg-zinc-900 shadow-[0px_1px_2px_0px_rgba(0,0,0,0.05)]">
+    <header className="sticky top-0 z-50 w-full bg-zinc-900 shadow-[var(--token-shadow-sm)]">
       <div className="mx-auto flex h-16 max-w-[1280px] items-center justify-between px-6">
         <div className="flex flex-1 items-center gap-6">
           <Link href="/" className="text-2xl font-black text-violet-300">
@@ -8958,7 +8958,7 @@ export function SupportHeader() {
             <input
               type="text"
               placeholder="Search courses, skills, instructors..."
-              className="w-full rounded-none border border-[var(--token-color-border)] bg-[var(--token-color-surface)] py-2.5 pl-10 pr-2 text-base text-[var(--token-color-ink)] placeholder:text-gray-500 focus:outline-none"
+              className="w-full rounded-none border-2 border-[var(--token-color-border)] bg-[var(--token-color-surface)] py-2.5 pl-10 pr-2 text-base text-[var(--token-color-ink)] placeholder:text-gray-500 focus:outline-none"
             />
           </div>
         </div>
@@ -8986,7 +8986,7 @@ export function SupportHeader() {
             Sign In
           </Link>
           <Link href="/settings/profile">
-            <span className="block h-8 w-8 overflow-hidden rounded-full border border-[var(--token-color-border)] bg-zinc-200" />
+            <span className="block h-8 w-8 overflow-hidden rounded-full border-2 border-[var(--token-color-border)] bg-zinc-200" />
           </Link>
         </div>
       </div>
@@ -9151,57 +9151,77 @@ FILE: apps\web\lib\design-system\tokens.ts
  * After editing colors here, run:
  *   pnpm --filter web run tokens:sync
  * (or it runs automatically via the "predev"/"prebuild" npm script)
+ *
+ * ----------------------------------------------------------------------------
+ * PUBLIC WEBSITE THEME: "Blue Neo-Brutalist SaaS"
+ * ----------------------------------------------------------------------------
+ * The public marketing site (Header, HeroSection, CourseCard,
+ * MarketplaceCourseCard, CategoryGrid, WhySaachi, Footer/CompactFooter,
+ * FilterSidebar, Pagination, SortDropdown, Pricing, Cart, Search, Legal
+ * pages, etc.) reads the "Blueprint"-prefixed tokens below
+ * (paper / inkDeep / inkDeepSoft / amber* / teal* / blueprintLine*).
+ *
+ * To re-theme the ENTIRE public site, change ONLY the values in this
+ * block -- every component listed above automatically follows, since
+ * none of them hardcode colors; they all reference these CSS vars.
  * ============================================================================
  */
 
 export const tokens = {
   color: {
-    // Brand / primary (legacy Ã¢â‚¬â€ still used by learner/instructor dashboards)
+    // Brand / primary (legacy -- still used by learner/instructor dashboards,
+    // Ant Design form controls, and the auth pages).
     primary: "#3525CD",
     primaryHover: "#2A1DA3",
     primaryTint: "#E0E7FF",
     primaryDark: "#1E1B4B",
     decorativeCyan: "#A5F3FC",
 
-    // Secondary accent
     success: "#005338",
     successTint: "#D1FAE5",
     completedBadgeBg: "#D1FAE5",
 
-    // Neutrals
     ink: "#18181B",
     inkSoft: "#3F3F46",
     textMuted: "#64748B",
 
-    // Surfaces
     bg: "#F8FAFC",
     surface: "#FFFFFF",
     surfaceAlt: "#F4F4F5",
     playerBg: "#0F172A",
     completedGreen: "#4EDEA3",
 
-    // Borders
     border: "#CBD5E1",
     borderStrong: "#94A3B8",
 
-    // Status
     error: "#DC2626",
     notificationDot: "#BA1A1A",
     errorTint: "#FEE2E2",
     warning: "#D97706",
     warningTint: "#FEF3C7",
 
-    // ---- NEW: "Blueprint" system Ã¢â‚¬â€ Public Website redesign only ----
-    paper: "#EEF1EC",
-    inkDeep: "#12182B",
-    inkDeepSoft: "#454C63",
-    amber: "#F2A93B",
-    amberDark: "#D6890F",
-    amberTint: "#FCEACB",
-    teal: "#0E6E62",
+    // ------------------------------------------------------------------
+    // "Blueprint" token group -- PUBLIC WEBSITE ONLY.
+    // ------------------------------------------------------------------
+    paper: "#E3ECFB",
+    inkDeep: "#12141C",
+    inkDeepSoft: "#4A4A55",
+    amber: "#3E6BF0",
+    amberDark: "#1F3FAE",
+    amberTint: "#D9E4FB",
+    teal: "#33C7C0",
     tealTint: "#DDEEEA",
-    blueprintLine: "#B9C2C7",
-    blueprintLineSoft: "#D8DEDB"
+    blueprintLine: "#12141C",
+    blueprintLineSoft: "rgba(18,20,28,0.12)",
+
+    accentOrange: "#F5A25C",
+    accentOrangeTint: "#FCEACB",
+    accentPurple: "#A594F9",
+    accentPurpleTint: "#EDE9FE",
+    accentGreen: "#6FCB6B",
+    accentGreenTint: "#E3F6E1",
+    bgDark: "#0F1420",
+    bgCream: "#FBF9F5"
   },
 
   font: {
@@ -9230,16 +9250,16 @@ export const tokens = {
 
   radius: {
     sm: "4px",
-    md: "8px",
-    lg: "12px",
-    xl: "16px",
+    md: "14px",
+    lg: "20px",
+    xl: "20px",
     full: "9999px"
   },
 
   shadow: {
-    sm: "0px 1px 2px 0px rgba(0,0,0,0.05)",
-    md: "0px 4px 20px 0px rgba(15,23,42,0.05)",
-    lg: "0px 10px 32px 0px rgba(15,23,42,0.12)"
+    sm: "2px 2px 0 var(--token-color-blueprintLine)",
+    md: "4px 4px 0 var(--token-color-blueprintLine)",
+    lg: "4px 4px 0 var(--token-color-blueprintLine)"
   },
 
   spacing: {

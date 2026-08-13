@@ -1,4 +1,4 @@
-// ============================================================================
+﻿// ============================================================================
 // generate-css-vars.mjs
 // Syncs lib/design-system/tokens.ts -> app/globals.css (Tailwind @theme block)
 // Runs automatically before dev/build via npm scripts. Do not edit the
