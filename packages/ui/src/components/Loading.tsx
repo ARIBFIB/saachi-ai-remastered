@@ -1,6 +1,7 @@
 "use client";
 
 import Lottie from "lottie-react";
+import { useEffect, useState } from "react";
 import { cn } from "../cn";
 
 export type LoadingProps = {
@@ -11,6 +12,23 @@ export type LoadingProps = {
 };
 
 export function Loading({ size = 120, label, fullScreen = false, className }: LoadingProps) {
+  const [animationData, setAnimationData] = useState<object | null>(null);
+
+  useEffect(() => {
+    let cancelled = false;
+    fetch("/animations/loading.json")
+      .then((res) => res.json())
+      .then((data) => {
+        if (!cancelled) setAnimationData(data);
+      })
+      .catch(() => {
+        // Silently ignore â€” falls back to just showing the label below.
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
   return (
     <div
       className={cn(
@@ -21,12 +39,14 @@ export function Loading({ size = 120, label, fullScreen = false, className }: Lo
       role="status"
       aria-live="polite"
     >
-      <Lottie
-        path="/animations/loading.json"
-        loop
-        autoplay
-        style={{ width: size, height: size }}
-      />
+      {animationData ? (
+        <Lottie animationData={animationData} loop autoplay style={{ width: size, height: size }} />
+      ) : (
+        <div
+          className="animate-pulse rounded-full border-2 border-line-strong border-t-gold"
+          style={{ width: size / 2, height: size / 2 }}
+        />
+      )}
       {label && <p className="text-[13px] text-ink-soft">{label}</p>}
       <span className="sr-only">Loading</span>
     </div>

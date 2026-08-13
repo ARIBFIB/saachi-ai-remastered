@@ -9,6 +9,7 @@ type ButtonSize = "sm" | "md" | "lg";
 type ButtonProps = ButtonHTMLAttributes<HTMLButtonElement> & {
   variant?: ButtonVariant;
   size?: ButtonSize;
+  loading?: boolean;
 };
 
 const SIZE_CLASSES: Record<ButtonSize, string> = {
@@ -45,25 +46,38 @@ const VARIANT_STYLE: Record<ButtonVariant, { bg: string; hoverBg: string; text: 
 };
 
 export const Button = forwardRef<HTMLButtonElement, ButtonProps>(function Button(
-  { variant = "primary", size = "md", className = "", type = "button", style, disabled, onMouseDown, onMouseUp, ...props },
+  {
+    variant = "primary",
+    size = "md",
+    className = "",
+    type = "button",
+    style,
+    disabled,
+    loading = false,
+    children,
+    onMouseDown,
+    onMouseUp,
+    ...props
+  },
   ref
 ) {
   const [hover, setHover] = useState(false);
   const [pressed, setPressed] = useState(false);
 
   const v = VARIANT_STYLE[variant];
+  const isDisabled = disabled || loading;
 
   const dynamicStyle: CSSProperties = {
-    backgroundColor: disabled ? v.bg : hover ? v.hoverBg : v.bg,
+    backgroundColor: isDisabled ? v.bg : hover ? v.hoverBg : v.bg,
     color: v.text,
     borderColor: v.border,
     borderWidth: 1,
     borderStyle: "solid",
-    opacity: disabled ? 0.45 : variant === "danger" && hover ? 0.9 : 1,
-    transform: !disabled && hover ? (pressed ? "translateY(0) scale(0.97)" : "translateY(-1px)") : "translateY(0)",
-    boxShadow: !disabled && hover ? "0 4px 10px rgba(0,0,0,0.18)" : "none",
+    opacity: isDisabled ? 0.6 : variant === "danger" && hover ? 0.9 : 1,
+    transform: !isDisabled && hover ? (pressed ? "translateY(0) scale(0.97)" : "translateY(-1px)") : "translateY(0)",
+    boxShadow: !isDisabled && hover ? "0 4px 10px rgba(0,0,0,0.18)" : "none",
     transition: "background-color 150ms ease-out, transform 120ms ease-out, box-shadow 150ms ease-out, opacity 150ms ease-out",
-    cursor: disabled ? "not-allowed" : "pointer",
+    cursor: isDisabled ? "not-allowed" : "pointer",
     ...style
   };
 
@@ -80,7 +94,8 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(function Button
     <button
       ref={ref}
       type={type}
-      disabled={disabled}
+      disabled={isDisabled}
+      aria-busy={loading}
       className={classes}
       style={dynamicStyle}
       onMouseEnter={() => setHover(true)}
@@ -97,6 +112,8 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(function Button
         onMouseUp?.(e);
       }}
       {...props}
-    />
+    >
+      {loading ? "Working..." : children}
+    </button>
   );
 });

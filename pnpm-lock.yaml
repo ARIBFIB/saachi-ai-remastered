@@ -242,6 +242,9 @@ importers:
       '@saachi/store':
         specifier: workspace:*
         version: link:../store
+      '@tanstack/react-query':
+        specifier: ^5.56.0
+        version: 5.101.4(react@18.3.1)
       '@tanstack/react-table':
         specifier: ^8.20.0
         version: 8.21.3(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
@@ -264,6 +267,9 @@ importers:
       '@types/react':
         specifier: ^18.3.0
         version: 18.3.31
+      next:
+        specifier: ^15.5.0
+        version: 15.5.22(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       typescript:
         specifier: ^5.5.0
         version: 5.9.3
