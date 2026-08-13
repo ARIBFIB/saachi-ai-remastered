@@ -28,12 +28,12 @@ const STATUS_OPTIONS = [
   { label: "Archived", value: "archived" }
 ];
 
-const STATUS_BADGE: Record<CourseStatus, "gold" | "success" | "error" | "neutral"> = {
-  draft: "neutral",
+// NOTE: only using Badge variants confirmed to exist ("gold" | "success" | "error").
+// Draft/archived fall back to no variant prop (component default styling).
+const STATUS_VARIANT: Partial<Record<CourseStatus, "gold" | "success" | "error">> = {
   pending_review: "gold",
   published: "success",
-  rejected: "error",
-  archived: "neutral"
+  rejected: "error"
 };
 
 const STATUS_LABEL: Record<CourseStatus, string> = {
@@ -88,7 +88,11 @@ export default function InstructorMyCoursesPage() {
                 <tr key={c.id} className="border-b border-line last:border-0">
                   <td className="px-4 py-3.5 font-medium text-ink">{c.title}</td>
                   <td className="px-4 py-3.5">
-                    <Badge variant={STATUS_BADGE[c.status]}>{STATUS_LABEL[c.status]}</Badge>
+                    {STATUS_VARIANT[c.status] ? (
+                      <Badge variant={STATUS_VARIANT[c.status]}>{STATUS_LABEL[c.status]}</Badge>
+                    ) : (
+                      <Badge>{STATUS_LABEL[c.status]}</Badge>
+                    )}
                   </td>
                   <td className="px-4 py-3.5 text-ink-soft">{c.enrollments}</td>
                   <td className="px-4 py-3.5 font-mono text-ink">
