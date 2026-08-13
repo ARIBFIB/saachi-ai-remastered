@@ -1,55 +1,77 @@
 "use client";
 
 import { useParams } from "next/navigation";
-import { Award, CheckCircle2, Download } from "lucide-react";
-import { useEnrollmentStore } from "@saachi/store";
-import { Button, EmptyState } from "@saachi/ui";
+import Link from "next/link";
+import { Award, Download, ShieldCheck, CalendarDays } from "lucide-react";
+import { useCertificateDetail } from "@saachi/api-client";
+import { Button, Loading, EmptyState } from "@saachi/ui";
 
-export default function CertificateVerificationPage() {
+export default function CertificateDetailPage() {
   const params = useParams<{ id: string }>();
-  const enrollments = useEnrollmentStore((s) => s.enrollments);
-  const certificate = enrollments.find(
-    (e) => e.courseId === params.id && e.progressPercent === 100
-  );
+  const { data: certificate, isLoading } = useCertificateDetail(params.id);
+
+  if (isLoading) {
+    return (
+      <div className="mx-auto max-w-3xl px-4 py-16 md:px-0">
+        <Loading label="Loading certificate..." />
+      </div>
+    );
+  }
 
   if (!certificate) {
     return (
-      <div className="mx-auto max-w-lg py-16">
+      <div className="mx-auto max-w-3xl px-4 py-16 md:px-0">
         <EmptyState
           title="Certificate not found"
-          description="This certificate ID doesn't match a completed course, or has been revoked."
+          description="This certificate ID is invalid or the certificate has been revoked."
+          action={
+            <Link href="/">
+              <Button>Back to homepage</Button>
+            </Link>
+          }
         />
       </div>
     );
   }
 
-  const verificationId = `SAI-CERT-${certificate.courseId.slice(0, 8).toUpperCase()}`;
-
   return (
-    <div className="mx-auto max-w-2xl py-10">
-      <div className="rounded-card border border-gold-dark/30 bg-gold-tint p-8 text-center">
-        <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-card text-gold-dark">
+    <div className="mx-auto max-w-3xl px-4 py-16 md:px-0">
+      <div className="mb-8 flex items-center gap-2 text-[13px] font-medium text-teal">
+        <ShieldCheck size={16} />
+        Verified certificate
+      </div>
+
+      <div className="rounded-card border-2 border-gold-dark/40 bg-card p-10 text-center">
+        <div className="mx-auto mb-5 flex h-16 w-16 items-center justify-center rounded-full bg-gold-tint text-gold-dark">
           <Award size={30} />
         </div>
-        <p className="text-[13px] font-semibold uppercase tracking-[0.08em] text-gold-dark">
-          Certificate of Completion
-        </p>
-        <h1 className="mt-3 font-display text-[26px] font-bold text-ink">{certificate.title}</h1>
-        <p className="mt-2 text-[14px] text-ink-soft">Instructed by {certificate.instructorName}</p>
 
-        <div className="mx-auto mt-6 flex max-w-xs items-center justify-center gap-2 rounded-control bg-card px-4 py-2 text-[13px] text-ink-soft">
-          <CheckCircle2 size={15} className="text-teal" />
-          Verified - ID {verificationId}
+        <p className="mb-1 text-[13px] uppercase tracking-[0.08em] text-ink-soft">Certificate of Completion</p>
+        <h1 className="mb-6 font-display text-[26px] font-bold text-ink">{certificate.courseTitle}</h1>
+
+        <p className="mb-1 text-[13px] text-ink-soft">This certifies that</p>
+        <p className="mb-6 font-display text-[22px] font-semibold text-ink">{certificate.learnerName}</p>
+
+        <p className="mb-8 text-[14px] text-ink-soft">
+          has successfully completed the course instructed by{" "}
+          <span className="font-semibold text-ink">{certificate.instructorName}</span>
+        </p>
+
+        <div className="mb-8 flex flex-wrap items-center justify-center gap-6 text-[13px] text-ink-soft">
+          <span className="flex items-center gap-1.5">
+            <CalendarDays size={14} /> Issued {new Intl.DateTimeFormat("en-US", { dateStyle: "long" }).format(new Date(certificate.issuedAt))}
+          </span>
+          <span className="font-mono text-[12px]">ID: {certificate.verificationId}</span>
         </div>
 
-        <Button className="mt-6">
-          <Download size={14} className="mr-1.5" />
+        <Button size="lg">
+          <Download size={15} className="mr-1.5" />
           Download PDF
         </Button>
       </div>
 
-      <p className="mt-6 text-center text-[12px] text-ink-soft/70">
-        This certificate can be verified by anyone with this link. No login required.
+      <p className="mt-6 text-center text-[12.5px] text-ink-soft">
+        Anyone with this link can verify the authenticity of this certificate via its unique verification ID.
       </p>
     </div>
   );
