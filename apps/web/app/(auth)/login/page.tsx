@@ -1,265 +1,62 @@
 "use client";
 
-import { useState } from "react";
-import Link from "next/link";
+import { useState, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
-import { GraduationCap, UserSquare2, Check, AlertCircle } from "lucide-react";
-import { useLogin, useRegister } from "@saachi/api-client";
-
-type Mode = "signin" | "register";
-type Role = "learner" | "instructor";
+import Link from "next/link";
+import { Button, Input, SocialLoginButtons } from "@saachi/ui";
+import { useLogin } from "@saachi/api-client";
 
 export default function LoginPage() {
   const router = useRouter();
-  const [mode, setMode] = useState<Mode>("signin");
-  const [role, setRole] = useState<Role>("learner");
-
-  const [fullName, setFullName] = useState("");
+  const login = useLogin();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-  const login = useLogin();
-  const register = useRegister();
-
-  const isSubmitting = login.isPending || register.isPending;
-  const errorMessage = login.isError
-    ? "Could not sign in. Please try again."
-    : register.isError
-      ? "Could not create your account. Please try again."
-      : null;
-
-  async function handleSubmit(e: React.FormEvent) {
+  function handleSubmit(e: FormEvent) {
     e.preventDefault();
-
-    if (mode === "signin") {
-      await login.mutateAsync({ email, password });
-    } else {
-      await register.mutateAsync({
-        fullName: fullName || email.split("@")[0] || "New User",
-        email,
-        password,
-        confirmPassword: password,
-        role
-      });
-    }
-
-    router.push("/dashboard");
+    login.mutate(
+      { email, password },
+      { onSuccess: () => router.push("/dashboard") }
+    );
   }
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-slate-50 p-6">
-      <div className="flex w-full max-w-[1200px] overflow-hidden rounded-[var(--token-radius-lg)] bg-slate-50 shadow-[var(--token-shadow-sm)]">
-        <div className="flex-1 bg-white p-10">
-          <div className="mb-8 flex flex-col gap-2">
-            <Link href="/" className="text-3xl font-bold leading-10 text-[var(--token-color-amber)]">
-              Saachi AI
-            </Link>
-            <p className="text-base text-slate-600">
-              {mode === "signin"
-                ? "Sign in to continue your learning journey."
-                : "Create an account to start learning or teaching."}
-            </p>
-          </div>
+    <div className="mx-auto flex max-w-md flex-col px-4 py-16 md:px-0">
+      <h1 className="mb-1 font-display text-[26px] font-bold text-ink">Log in</h1>
+      <p className="mb-8 text-[14px] text-ink-soft">Welcome back to Saachi AI.</p>
 
-          <div className="mb-6 flex rounded-[var(--token-radius-md)] bg-gray-100 p-1">
-            <button
-              type="button"
-              onClick={() => setMode("signin")}
-              className={`flex-1 rounded-sm py-2 text-sm font-semibold tracking-wide transition ${
-                mode === "signin"
-                  ? "bg-[var(--token-color-amber)] text-white shadow-[var(--token-shadow-sm)]"
-                  : "text-slate-600"
-              }`}
-            >
-              Sign In
-            </button>
-            <button
-              type="button"
-              onClick={() => setMode("register")}
-              className={`flex-1 rounded-sm py-2 text-sm font-semibold tracking-wide transition ${
-                mode === "register"
-                  ? "bg-[var(--token-color-amber)] text-white shadow-[var(--token-shadow-sm)]"
-                  : "text-slate-600"
-              }`}
-            >
-              Create Account
-            </button>
-          </div>
+      <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+        <Input
+          label="Email"
+          type="email"
+          required
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          placeholder="you@example.com"
+        />
+        <Input
+          label="Password"
+          type="password"
+          required
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          placeholder="At least 8 characters"
+        />
+        <Button type="submit" size="lg" loading={login.isPending}>
+          Log in
+        </Button>
+      </form>
 
-          <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-            {mode === "register" && (
-              <div className="flex flex-col gap-1">
-                <label htmlFor="fullName" className="text-sm font-semibold tracking-wide text-gray-700">
-                  Full Name
-                </label>
-                <input
-                  id="fullName"
-                  type="text"
-                  required
-                  value={fullName}
-                  onChange={(e) => setFullName(e.target.value)}
-                  placeholder="Jane Doe"
-                  className="rounded-[var(--token-radius-md)] border border-slate-300 bg-slate-50 px-4 py-2.5 text-base text-zinc-900 placeholder:text-gray-500 focus:border-[var(--token-color-amber)] focus:outline-none"
-                />
-              </div>
-            )}
-
-            <div className="flex flex-col gap-1">
-              <label htmlFor="email" className="text-sm font-semibold tracking-wide text-gray-700">
-                Email Address
-              </label>
-              <input
-                id="email"
-                type="email"
-                required
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="name@company.com"
-                className="rounded-[var(--token-radius-md)] border border-slate-300 bg-slate-50 px-4 py-2.5 text-base text-zinc-900 placeholder:text-gray-500 focus:border-[var(--token-color-amber)] focus:outline-none"
-              />
-            </div>
-
-            <div className="flex flex-col gap-1">
-              <div className="flex items-center justify-between">
-                <label htmlFor="password" className="text-sm font-semibold tracking-wide text-gray-700">
-                  Password
-                </label>
-                {mode === "signin" && (
-                  <Link href="/forgot-password" className="text-xs font-medium text-[var(--token-color-amber)]">
-                    Forgot?
-                  </Link>
-                )}
-              </div>
-              <input
-                id="password"
-                type="password"
-                required
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                placeholder="Enter your password"
-                className="rounded-[var(--token-radius-md)] border border-slate-300 bg-slate-50 px-4 py-2.5 text-base text-zinc-900 placeholder:text-gray-500 focus:border-[var(--token-color-amber)] focus:outline-none"
-              />
-            </div>
-
-            {errorMessage && (
-              <div className="flex items-center gap-2 rounded-[var(--token-radius-md)] bg-red-50 px-3 py-2 text-sm text-red-600">
-                <AlertCircle className="h-4 w-4 shrink-0" />
-                {errorMessage}
-              </div>
-            )}
-
-            <button
-              type="submit"
-              disabled={isSubmitting}
-              className="rounded-[var(--token-radius-md)] bg-[var(--token-color-amber)] py-4 text-sm font-semibold tracking-wide text-white shadow-[var(--token-shadow-sm)] hover:bg-[var(--token-color-amberDark)] disabled:cursor-not-allowed disabled:opacity-60"
-            >
-              {isSubmitting
-                ? "Please wait..."
-                : mode === "signin"
-                  ? "Sign In"
-                  : "Create Account"}
-            </button>
-          </form>
-
-          <div className="relative my-6 flex items-center justify-center">
-            <span className="absolute inset-x-0 top-1/2 h-px -translate-y-1/2 border-t border-slate-300" />
-            <span className="relative bg-white px-2 text-xs font-medium text-slate-600">
-              Or continue with
-            </span>
-          </div>
-
-          <div className="flex gap-4">
-            <button
-              type="button"
-              className="flex-1 rounded-[var(--token-radius-md)] border border-slate-300 py-2 text-sm font-semibold text-zinc-900 hover:bg-gray-50"
-            >
-              Google
-            </button>
-            <button
-              type="button"
-              className="flex-1 rounded-[var(--token-radius-md)] border border-slate-300 py-2 text-sm font-semibold text-zinc-900 hover:bg-gray-50"
-            >
-              LinkedIn
-            </button>
-          </div>
-        </div>
-
-        <div className="relative hidden flex-1 flex-col justify-center overflow-hidden bg-gray-100 px-10 py-28 md:flex">
-          <div className="pointer-events-none absolute left-0 top-0 h-full w-full bg-[radial-gradient(circle_at_100%_0%,rgba(53,37,205,0.2),transparent_50%)]" />
-
-          <div className="relative flex flex-col gap-4">
-            <h2 className="text-2xl font-semibold text-zinc-900">Join the ecosystem</h2>
-            <p className="text-base text-slate-600">
-              Select your path to get started with specialized tools and
-              tailored experiences.
-            </p>
-
-            <div className="flex flex-col gap-4 pt-6">
-              <RoleCard
-                icon={<GraduationCap className="h-6 w-6 text-[var(--token-color-amber)]" />}
-                title="I am a Learner"
-                description="Access courses, track progress, and build your skill portfolio."
-                selected={role === "learner"}
-                onSelect={() => setRole("learner")}
-              />
-              <RoleCard
-                icon={<UserSquare2 className="h-6 w-6 text-[#565E74]" />}
-                title="I am an Instructor"
-                description="Create courses, manage analytics, and grow your audience."
-                selected={role === "instructor"}
-                onSelect={() => setRole("instructor")}
-              />
-            </div>
-          </div>
-        </div>
+      <div className="mt-6">
+        <SocialLoginButtons />
       </div>
+
+      <p className="mt-8 text-center text-[14px] text-ink-soft">
+        Don&apos;t have an account?{" "}
+        <Link href="/register" className="font-semibold text-gold-dark hover:underline">
+          Sign up
+        </Link>
+      </p>
     </div>
-  );
-}
-
-function RoleCard({
-  icon,
-  title,
-  description,
-  selected,
-  onSelect,
-}: {
-  icon: React.ReactNode;
-  title: string;
-  description: string;
-  selected: boolean;
-  onSelect: () => void;
-}) {
-  return (
-    <button
-      type="button"
-      onClick={onSelect}
-      className={`flex items-start gap-4 rounded-[var(--token-radius-lg)] border-2 bg-white p-4 text-left transition ${
-        selected ? "border-[var(--token-color-amber)]" : "border-transparent"
-      }`}
-    >
-      <span
-        className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-[var(--token-radius-md)] ${
-          selected ? "bg-[var(--token-color-amber)]/10" : "bg-gray-200"
-        }`}
-      >
-        {icon}
-      </span>
-
-      <span className="flex-1">
-        <span className="block text-sm font-semibold tracking-wide text-zinc-900">
-          {title}
-        </span>
-        <span className="block text-sm text-slate-600">{description}</span>
-      </span>
-
-      <span
-        className={`mt-1 flex h-5 w-5 shrink-0 items-center justify-center rounded-full border-2 ${
-          selected ? "border-[var(--token-color-amber)]" : "border-[#C7C4D8]"
-        }`}
-      >
-        {selected && <span className="h-2.5 w-2.5 rounded-full bg-[var(--token-color-amber)]" />}
-      </span>
-    </button>
   );
 }

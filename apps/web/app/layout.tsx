@@ -1,22 +1,24 @@
 import type { Metadata } from "next";
 import type { ReactNode } from "react";
-import { AntdProvider } from "@/lib/design-system";
-import { QueryProvider } from "@/lib/query-provider";
 import "./globals.css";
+import { Providers } from "./providers";
+import { SiteHeader } from "./_components/SiteHeader";
+import { SiteFooter } from "./_components/SiteFooter";
 
 export const metadata: Metadata = {
-  title: "Saachi AI — Master AI, Master the Future",
-  description:
-    "The world's leading AI-skills marketplace. Practical, expert-led artificial intelligence courses.",
+  title: "Saachi AI â€” Learn practical AI skills",
+  description: "A skills exchange for the AI era. Learn practical AI application skills and sell what you know."
 };
 
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="en">
-      <body>
-        <QueryProvider>
-        <AntdProvider>{children}</AntdProvider>
-      </QueryProvider>
+      <body className="min-h-screen bg-paper text-ink antialiased">
+        <Providers>
+          <SiteHeader />
+          <main>{children}</main>
+          <SiteFooter />
+        </Providers>
       </body>
     </html>
   );

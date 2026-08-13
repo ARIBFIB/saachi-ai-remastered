@@ -1,123 +1,195 @@
-import { notFound } from "next/navigation";
-import { Header } from "@/components/marketing/Header";
-import { DetailFooter } from "@/components/course-detail/DetailFooter";
-import { CourseHero } from "@/components/course-detail/CourseHero";
-import { WhatYoullLearn } from "@/components/course-detail/WhatYoullLearn";
-import { CourseCurriculum } from "@/components/course-detail/CourseCurriculum";
-import { InstructorBio } from "@/components/course-detail/InstructorBio";
-import { PurchaseCard } from "@/components/course-detail/PurchaseCard";
+"use client";
 
-// TODO: replace with useCourseDetail(slug) hook from @saachi/api-client
-interface CourseDetailData {
-  slug: string;
-  category: string;
-  levelBadge: string;
-  title: string;
-  description: string;
-  rating: number;
-  ratingsCount: string;
-  studentsCount: string;
-  instructorName: string;
-  instructorAvatar: string;
-  instructorTitle: string;
-  instructorBio: string;
-  previewImage: string;
-  price: string;
-  includes: string[];
-}
+import { useParams } from "next/navigation";
+import { Star, PlayCircle, FileText, HelpCircle, Paperclip } from "lucide-react";
+import { useCourseDetail } from "@saachi/api-client";
+import { useCartStore, useWishlistStore } from "@saachi/store";
+import { Accordion, Badge, Button, CourseCard, Loading, ReviewCard } from "@saachi/ui";
 
-const DUMMY_COURSES: Record<string, CourseDetailData> = {
-  "prompt-engineering-masterclass": {
-    slug: "prompt-engineering-masterclass",
-    category: "Prompt Engineering",
-    levelBadge: "Intermediate",
-    title: "Prompt Engineering Masterclass",
-    description:
-      "Master the art of crafting precise instructions for large language models -- from zero-shot prompting to advanced chain-of-thought reasoning.",
-    rating: 4.8,
-    ratingsCount: "3.2k",
-    studentsCount: "18,400",
-    instructorName: "Dr. Sarah Chen",
-    instructorAvatar: "https://i.pravatar.cc/128?img=32",
-    instructorTitle: "Lead AI Architect",
-    instructorBio:
-      "Sarah has spent the last 6 years building production LLM systems and has taught prompt engineering to over 20,000 students worldwide.",
-    previewImage:
-      "https://images.unsplash.com/photo-1677442136019-21780ecad995?auto=format&fit=crop&w=800&q=80",
-    price: "$89.99",
-    includes: ["8 hours on-demand video", "Downloadable resources", "Certificate of completion"],
-  },
-  "whatsapp-ai-auto-responder": {
-    slug: "whatsapp-ai-auto-responder",
-    category: "AI Automation",
-    levelBadge: "Intermediate",
-    title: "WhatsApp AI Auto-Responder for Small Business",
-    description:
-      "Build a working AI-powered WhatsApp auto-responder from scratch using n8n and an LLM API -- ship a real automation, not just a demo.",
-    rating: 4.9,
-    ratingsCount: "940",
-    studentsCount: "6,100",
-    instructorName: "Marcus Johnson",
-    instructorAvatar: "https://i.pravatar.cc/128?img=13",
-    instructorTitle: "Automation Engineer",
-    instructorBio:
-      "Marcus builds automation systems for small businesses across South Asia and has shipped over 40 production WhatsApp bots.",
-    previewImage:
-      "https://images.unsplash.com/photo-1531482615713-2afd69097998?auto=format&fit=crop&w=800&q=80",
-    price: "Rs 4,999",
-    includes: ["6h 40m on-demand video", "Starter n8n workflow file", "Certificate of completion"],
-  },
-};
+const LESSON_ICON = {
+  video: PlayCircle,
+  text: FileText,
+  quiz: HelpCircle,
+  resource: Paperclip
+} as const;
 
-interface CoursePageProps {
-  params: Promise<{ slug: string }>;
-}
+export default function CourseDetailPage() {
+  const params = useParams<{ slug: string }>();
+  const { data: course, isLoading } = useCourseDetail(params.slug);
+  const addToCart = useCartStore((s) => s.addItem);
+  const isInCart = useCartStore((s) => s.isInCart);
+  const toggleWishlist = useWishlistStore((s) => s.toggle);
+  const isWishlisted = useWishlistStore((s) => s.isWishlisted);
 
-export default async function CourseDetailPage({ params }: CoursePageProps) {
-  const { slug } = await params;
-  const course = DUMMY_COURSES[slug];
-
-  if (!course) {
-    notFound();
+  if (isLoading || !course) {
+    return <Loading fullScreen label="Loading course..." />;
   }
 
+  const inCart = isInCart(course.id);
+  const wishlisted = isWishlisted(course.id);
+
   return (
-    <div className="flex min-h-screen flex-col bg-white">
-      <Header />
+    <div className="mx-auto max-w-7xl px-4 py-10 md:px-8">
+      <div className="grid grid-cols-1 gap-10 lg:grid-cols-[1fr_360px]">
+        <div>
+          {/* Hero */}
+          <Badge variant="gold">{course.status === "published" ? "Published course" : course.status}</Badge>
+          <h1 className="mt-3 font-display text-[30px] font-bold leading-tight text-ink">{course.title}</h1>
+          {course.subtitle && <p className="mt-2 text-[16px] text-ink-soft">{course.subtitle}</p>}
 
-      <CourseHero
-        category={course.category}
-        levelBadge={course.levelBadge}
-        title={course.title}
-        description={course.description}
-        rating={course.rating}
-        ratingsCount={course.ratingsCount}
-        studentsCount={course.studentsCount}
-        instructorName={course.instructorName}
-        instructorAvatar={course.instructorAvatar}
-        previewImage={course.previewImage}
-      />
+          <div className="mt-4 flex flex-wrap items-center gap-4 text-[14px] text-ink-soft">
+            <span className="flex items-center gap-1.5">
+              <Star size={15} className="fill-gold text-gold" />
+              <span className="font-semibold text-ink">{course.rating.toFixed(1)}</span>
+              <span>({course.ratingCount.toLocaleString()} ratings)</span>
+            </span>
+            <span>By {course.instructor.fullName}</span>
+          </div>
 
-      <main className="mx-auto flex w-full max-w-[1280px] flex-col gap-10 px-6 py-12 lg:flex-row lg:items-start">
-        <div className="flex flex-1 flex-col gap-10">
-          <WhatYoullLearn />
-          <CourseCurriculum />
-          <InstructorBio
-            name={course.instructorName}
-            title={course.instructorTitle}
-            rating={course.rating}
-            studentsCount={course.studentsCount}
-            bio={course.instructorBio}
-            avatar={course.instructorAvatar}
-          />
+          {course.thumbnailUrl && (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img
+              src={course.thumbnailUrl}
+              alt={course.title}
+              className="mt-6 aspect-video w-full rounded-card object-cover"
+            />
+          )}
+
+          {course.description && (
+            <section className="mt-10">
+              <h2 className="mb-3 font-display text-[20px] font-semibold text-ink">About this course</h2>
+              <p className="leading-relaxed text-ink-soft">{course.description}</p>
+            </section>
+          )}
+
+          {course.curriculum && course.curriculum.length > 0 && (
+            <section className="mt-10">
+              <h2 className="mb-3 font-display text-[20px] font-semibold text-ink">Curriculum</h2>
+              <Accordion
+                items={course.curriculum.map((mod) => ({
+                  id: mod.id,
+                  title: mod.title,
+                  meta: <span className="text-[12px] text-ink-soft">{mod.lessons.length} lessons</span>,
+                  content: (
+                    <ul className="flex flex-col gap-2">
+                      {mod.lessons.map((lesson) => {
+                        const Icon = LESSON_ICON[lesson.type];
+                        return (
+                          <li key={lesson.id} className="flex items-center gap-2 text-[14px] text-ink">
+                            <Icon size={15} className="text-ink-soft" />
+                            {lesson.title}
+                            {lesson.isPreview && (
+                              <span className="ml-1 text-[12px] font-semibold text-gold-dark">Preview</span>
+                            )}
+                          </li>
+                        );
+                      })}
+                    </ul>
+                  )
+                }))}
+              />
+            </section>
+          )}
+
+          {course.instructorBio && (
+            <section className="mt-10">
+              <h2 className="mb-3 font-display text-[20px] font-semibold text-ink">About the instructor</h2>
+              <div className="rounded-card border border-line bg-card p-5">
+                <h3 className="font-semibold text-ink">{course.instructor.fullName}</h3>
+                <p className="mt-2 text-[14px] text-ink-soft">{course.instructorBio}</p>
+                <p className="mt-2 text-[13px] text-ink-soft/70">
+                  {course.instructorCourseCount ?? 0} courses - {(course.instructorStudentCount ?? 0).toLocaleString()} students
+                </p>
+              </div>
+            </section>
+          )}
+
+          {course.reviews && course.reviews.length > 0 && (
+            <section className="mt-10">
+              <h2 className="mb-3 font-display text-[20px] font-semibold text-ink">Reviews</h2>
+              <div className="flex flex-col gap-4">
+                {course.reviews.map((review) => (
+                  <ReviewCard key={review.id} {...review} />
+                ))}
+              </div>
+            </section>
+          )}
+
+          {course.faq && course.faq.length > 0 && (
+            <section className="mt-10">
+              <h2 className="mb-3 font-display text-[20px] font-semibold text-ink">FAQ</h2>
+              <Accordion
+                items={course.faq.map((item) => ({ id: item.id, title: item.question, content: item.answer }))}
+              />
+            </section>
+          )}
+
+          {course.relatedCourses && course.relatedCourses.length > 0 && (
+            <section className="mt-10">
+              <h2 className="mb-4 font-display text-[20px] font-semibold text-ink">Related courses</h2>
+              <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
+                {course.relatedCourses.map((related) => (
+                  <CourseCard
+                    key={related.id}
+                    slug={related.slug}
+                    title={related.title}
+                    thumbnailUrl={related.thumbnailUrl}
+                    instructorName={related.instructor.fullName}
+                    price={related.price}
+                    currency={related.currency}
+                    rating={related.rating}
+                    ratingCount={related.ratingCount}
+                  />
+                ))}
+              </div>
+            </section>
+          )}
         </div>
 
-        <div className="w-full lg:w-80 lg:shrink-0">
-          <PurchaseCard price={course.price} includes={course.includes} />
-        </div>
-      </main>
-
-      <DetailFooter />
+        {/* Sticky purchase card */}
+        <aside className="h-fit rounded-card border border-line bg-card p-6 lg:sticky lg:top-24">
+          <div className="font-mono text-[28px] font-bold text-ink">
+            {new Intl.NumberFormat("en-US", { style: "currency", currency: course.currency }).format(course.price)}
+          </div>
+          <Button
+            className="mt-5 w-full"
+            size="lg"
+            onClick={() =>
+              addToCart({
+                courseId: course.id,
+                slug: course.slug,
+                title: course.title,
+                thumbnailUrl: course.thumbnailUrl,
+                instructorName: course.instructor.fullName,
+                price: course.price,
+                currency: course.currency
+              })
+            }
+          >
+            {inCart ? "Added to cart" : "Add to cart"}
+          </Button>
+          <Button
+            className="mt-3 w-full"
+            size="lg"
+            variant="secondary"
+            onClick={() =>
+              toggleWishlist({
+                courseId: course.id,
+                slug: course.slug,
+                title: course.title,
+                thumbnailUrl: course.thumbnailUrl,
+                instructorName: course.instructor.fullName,
+                price: course.price,
+                currency: course.currency,
+                rating: course.rating,
+                ratingCount: course.ratingCount
+              })
+            }
+          >
+            {wishlisted ? "Remove from wishlist" : "Add to wishlist"}
+          </Button>
+        </aside>
+      </div>
     </div>
   );
 }
