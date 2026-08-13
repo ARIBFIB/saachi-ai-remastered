@@ -5,7 +5,7 @@ import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import { Save, ListTree, DollarSign, Eye } from "lucide-react";
 import { Button, Input, Select, Textarea, Badge } from "@saachi/ui";
-import { CATEGORIES } from "../../../../../lib/categories";
+import { CATEGORIES } from "../../../../../../lib/categories";
 
 const LEVEL_OPTIONS = [
   { label: "Beginner", value: "beginner" },
