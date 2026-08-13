@@ -29,7 +29,7 @@ export function Pagination({ totalPages = 12 }: { totalPages?: number }) {
           style={
             page === p
               ? { backgroundColor: "var(--token-color-inkDeep)", color: "var(--token-color-paper)" }
-              : { border-2: `1px solid ${lineColor}`, color: inkSoft }
+              : { borderWidth: "1px", borderStyle: "solid", borderColor: lineColor, color: inkSoft }
           }
         >
           {p}
@@ -44,7 +44,7 @@ export function Pagination({ totalPages = 12 }: { totalPages?: number }) {
         style={
           page === totalPages
             ? { backgroundColor: "var(--token-color-inkDeep)", color: "var(--token-color-paper)" }
-            : { border-2: `1px solid ${lineColor}`, color: inkSoft }
+            : { borderWidth: "1px", borderStyle: "solid", borderColor: lineColor, color: inkSoft }
         }
       >
         {totalPages}

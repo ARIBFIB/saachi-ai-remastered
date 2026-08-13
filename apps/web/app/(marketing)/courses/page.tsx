@@ -1,4 +1,4 @@
-import { Header } from "@/components/marketing/Header";
+﻿import { Header } from "@/components/marketing/Header";
 import { CompactFooter } from "@/components/marketing/CompactFooter";
 import { FilterSidebar } from "@/components/marketplace/FilterSidebar";
 import { SortDropdown } from "@/components/marketplace/SortDropdown";
@@ -57,7 +57,7 @@ export default function CourseMarketplacePage() {
 
         <div className="flex flex-1 flex-col gap-6">
           <div className="flex flex-col gap-3 pb-2">
-            <SpecLabel index="â€”" label="Marketplace" />
+            <SpecLabel index="--" label="Marketplace" />
             <div className="flex items-center justify-between">
               <div className="flex items-baseline gap-3">
                 <h1

@@ -1,4 +1,4 @@
-interface CategoryBannerProps {
+﻿interface CategoryBannerProps {
   title: string;
   description: string;
   image?: string;
