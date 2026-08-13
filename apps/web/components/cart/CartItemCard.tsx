@@ -1,4 +1,4 @@
-﻿import Image from "next/image";
+import Image from "next/image";
 import { Trash2, Bookmark, Star } from "lucide-react";
 
 export interface CartItem {
@@ -21,7 +21,7 @@ interface CartItemCardProps {
 export function CartItemCard({ item, onRemove, onSaveForLater }: CartItemCardProps) {
   return (
     <div
-      className="flex w-full gap-6 rounded-xl border-2 bg-[var(--token-color-surface)] p-6 shadow-[var(--token-shadow-[var(--token-shadow-sm)])]"
+      className="flex w-full gap-6 rounded-xl border-2 bg-[var(--token-color-surface)] p-6 shadow-[var(--token-shadow-sm)]"
       style={{ borderColor: "var(--token-color-border)" }}
     >
       <div className="relative h-24 w-40 shrink-0 overflow-hidden rounded-lg bg-[var(--token-color-surfaceAlt)]">

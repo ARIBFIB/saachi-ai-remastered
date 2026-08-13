@@ -1,6 +1,6 @@
 ﻿================================================================================
 MODULE CODE EXPORT: Web
-Generated: 2026-08-13 04:51:07
+Generated: 2026-08-13 05:26:10
 Total Files: 100
 ================================================================================
 
@@ -163,7 +163,6 @@ export default function LoginPage() {
   return (
     <div className="flex min-h-screen items-center justify-center bg-slate-50 p-6">
       <div className="flex w-full max-w-[1200px] overflow-hidden rounded-xl bg-slate-50 shadow-[0px_4px_20px_0px_rgba(15,23,42,0.05)]">
-        {/* Left: Core auth */}
         <div className="flex-1 bg-white p-10">
           <div className="mb-8 flex flex-col gap-2">
             <Link href="/" className="text-3xl font-bold leading-10 text-[#3525CD]">
@@ -176,7 +175,6 @@ export default function LoginPage() {
             </p>
           </div>
 
-          {/* Toggle */}
           <div className="mb-6 flex rounded-lg bg-gray-100 p-1">
             <button
               type="button"
@@ -202,7 +200,6 @@ export default function LoginPage() {
             </button>
           </div>
 
-          {/* Form */}
           <form onSubmit={handleSubmit} className="flex flex-col gap-4">
             {mode === "register" && (
               <div className="flex flex-col gap-1">
@@ -301,7 +298,6 @@ export default function LoginPage() {
           </div>
         </div>
 
-        {/* Right: role selection (register only visual context, always shown per design) */}
         <div className="relative hidden flex-1 flex-col justify-center overflow-hidden bg-gray-100 px-10 py-28 md:flex">
           <div className="pointer-events-none absolute left-0 top-0 h-full w-full bg-[radial-gradient(circle_at_100%_0%,rgba(53,37,205,0.2),transparent_50%)]" />
 
@@ -656,7 +652,6 @@ function GithubIcon() {
     </svg>
   );
 }
-
 
 
 ================================================================================
@@ -5170,7 +5165,7 @@ export default function CourseMarketplacePage() {
 
         <div className="flex flex-1 flex-col gap-6">
           <div className="flex flex-col gap-3 pb-2">
-            <SpecLabel index="Ã¢â‚¬â€" label="Marketplace" />
+            <SpecLabel index="--" label="Marketplace" />
             <div className="flex items-center justify-between">
               <div className="flex items-baseline gap-3">
                 <h1
@@ -5706,7 +5701,6 @@ export default function HomePage() {
     </div>
   );
 }
-
 
 
 ================================================================================
@@ -7330,9 +7324,9 @@ import Link from "next/link";
 import { BlueprintMark, SpecLabel } from "./BlueprintMark";
 
 const buildLog = [
-  "Certificate issued â€” Prompt Engineering Masterclass",
-  "Course published â€” WhatsApp AI Auto-Responder",
-  "Skill verified â€” n8n Workflow Automation",
+  "Certificate issued -- Prompt Engineering Masterclass",
+  "Course published -- WhatsApp AI Auto-Responder",
+  "Skill verified -- n8n Workflow Automation",
 ];
 
 export function HeroSection() {
@@ -7359,7 +7353,7 @@ export function HeroSection() {
             className="max-w-[460px] text-lg leading-7"
             style={{ fontFamily: "var(--token-font-bodyFamily)", color: "var(--token-color-inkDeepSoft)" }}
           >
-            Practical, outcome-verified AI courses â€” automations, chatbots, AI-assisted apps â€”
+            Practical, outcome-verified AI courses -- automations, chatbots, AI-assisted apps --
             taught by people who ship them. No filler, just the skill and the proof you learned it.
           </p>
 
@@ -7615,7 +7609,7 @@ const reasons = [
     icon: GraduationCap,
     title: "Taught by people who ship",
     description:
-      "Instructors are practitioners with real, demonstrable work Ã¢â‚¬â€ not narrators reading slides.",
+      "Instructors are practitioners with real, demonstrable work -- not narrators reading slides.",
   },
   {
     icon: Wrench,
@@ -7773,7 +7767,7 @@ export function CategoryCourseCard({
   image,
 }: CategoryCourseCardProps) {
   return (
-    <article className="flex flex-1 flex-col overflow-hidden rounded-xl border-2 border-[var(--token-color-border)]/30 bg-[var(--token-color-surface)] shadow-[var(--token-shadow-[var(--token-shadow-sm)])]">
+    <article className="flex flex-1 flex-col overflow-hidden rounded-xl border-2 border-[var(--token-color-border)]/30 bg-[var(--token-color-surface)] shadow-[var(--token-shadow-sm)]">
       <div className="relative h-40 w-full shrink-0 overflow-hidden bg-[var(--token-color-surfaceAlt)]">
         <Image
           src={image}
@@ -8036,7 +8030,7 @@ export function Pagination({ totalPages = 12 }: { totalPages?: number }) {
           style={
             page === p
               ? { backgroundColor: "var(--token-color-inkDeep)", color: "var(--token-color-paper)" }
-              : { border-2: `1px solid ${lineColor}`, color: inkSoft }
+              : { borderWidth: "1px", borderStyle: "solid", borderColor: lineColor, color: inkSoft }
           }
         >
           {p}
@@ -8051,7 +8045,7 @@ export function Pagination({ totalPages = 12 }: { totalPages?: number }) {
         style={
           page === totalPages
             ? { backgroundColor: "var(--token-color-inkDeep)", color: "var(--token-color-paper)" }
-            : { border-2: `1px solid ${lineColor}`, color: inkSoft }
+            : { borderWidth: "1px", borderStyle: "solid", borderColor: lineColor, color: inkSoft }
         }
       >
         {totalPages}

@@ -1,4 +1,4 @@
-﻿import { PlayCircle, FileText, Award } from "lucide-react";
+import { PlayCircle, FileText, Award } from "lucide-react";
 
 interface PurchaseCardProps {
   price: string;
@@ -9,7 +9,7 @@ const icons = [PlayCircle, FileText, Award];
 
 export function PurchaseCard({ price, includes }: PurchaseCardProps) {
   return (
-    <div className="sticky top-24 flex w-full flex-col gap-6 rounded-xl border-2 border-slate-300/20 bg-slate-50 px-6 py-6 shadow-[var(--token-shadow-[var(--token-shadow-[var(--token-shadow-sm)])])]">
+    <div className="sticky top-24 flex w-full flex-col gap-6 rounded-xl border-2 border-slate-300/20 bg-slate-50 px-6 py-6 shadow-[var(--token-shadow-sm)]">
       <div className="flex flex-col items-center gap-1">
         <span className="text-5xl font-bold leading-[52.8px] text-zinc-900">{price}</span>
         <span className="text-xs font-medium text-gray-700">

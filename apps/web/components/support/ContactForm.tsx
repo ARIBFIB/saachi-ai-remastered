@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { useState } from "react";
 import { Mail, Send } from "lucide-react";
@@ -15,7 +15,7 @@ export function ContactForm() {
   }
 
   return (
-    <div className="flex flex-1 flex-col rounded-xl border-2 border-[var(--token-color-border)]/30 bg-[var(--token-color-surface)] p-10 shadow-[var(--token-shadow-[var(--token-shadow-sm)])]">
+    <div className="flex flex-1 flex-col rounded-xl border-2 border-[var(--token-color-border)]/30 bg-[var(--token-color-surface)] p-10 shadow-[var(--token-shadow-sm)]">
       <div className="flex flex-col gap-1 pb-6">
         <h2 className="flex items-center gap-2 text-2xl font-semibold text-[var(--token-color-ink)]">
           <Mail className="h-5 w-4 text-[var(--token-color-primary)]" />

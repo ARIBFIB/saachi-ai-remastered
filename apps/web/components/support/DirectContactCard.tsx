@@ -1,8 +1,8 @@
-﻿import { Headset, Phone, Building2 } from "lucide-react";
+import { Headset, Phone, Building2 } from "lucide-react";
 
 export function DirectContactCard() {
   return (
-    <div className="flex flex-col gap-4 rounded-xl border-2 border-[var(--token-color-border)]/30 bg-[var(--token-color-surface)] p-6 shadow-[var(--token-shadow-[var(--token-shadow-sm)])]">
+    <div className="flex flex-col gap-4 rounded-xl border-2 border-[var(--token-color-border)]/30 bg-[var(--token-color-surface)] p-6 shadow-[var(--token-shadow-sm)]">
       <h3 className="text-2xl font-semibold text-[var(--token-color-ink)]">Direct Contact</h3>
 
       <div className="flex flex-col gap-6">

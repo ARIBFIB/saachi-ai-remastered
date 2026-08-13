@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -22,7 +22,7 @@ export function LegalSidebar() {
   const pathname = usePathname();
 
   return (
-    <aside className="w-72 shrink-0 self-start rounded-xl border-2 border-[var(--token-color-border)]/30 bg-[var(--token-color-surface)] px-4 pb-4 pt-3.5 shadow-[var(--token-shadow-[var(--token-shadow-sm)])]">
+    <aside className="w-72 shrink-0 self-start rounded-xl border-2 border-[var(--token-color-border)]/30 bg-[var(--token-color-surface)] px-4 pb-4 pt-3.5 shadow-[var(--token-shadow-sm)]">
       <h3 className="px-2 pb-4 text-xs font-medium uppercase tracking-wide text-[var(--token-color-inkSoft)]">
         Legal Policies
       </h3>

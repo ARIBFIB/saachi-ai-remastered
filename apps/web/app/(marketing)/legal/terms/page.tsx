@@ -1,4 +1,4 @@
-﻿import { Header } from "@/components/marketing/Header";
+import { Header } from "@/components/marketing/Header";
 import { CompactFooter } from "@/components/marketing/CompactFooter";
 import { LegalSidebar } from "@/components/legal/LegalSidebar";
 import { LegalSection } from "@/components/legal/LegalSection";
@@ -11,7 +11,7 @@ export default function TermsOfServicePage() {
       <main className="mx-auto flex w-full max-w-[1280px] items-start gap-10 px-6 py-10">
         <LegalSidebar />
 
-        <article className="flex flex-1 flex-col gap-10 rounded-xl border-2 border-[var(--token-color-border)]/30 bg-[var(--token-color-surface)] p-10 shadow-[var(--token-shadow-[var(--token-shadow-sm)])]">
+        <article className="flex flex-1 flex-col gap-10 rounded-xl border-2 border-[var(--token-color-border)]/30 bg-[var(--token-color-surface)] p-10 shadow-[var(--token-shadow-sm)]">
           <header className="flex flex-col gap-1 border-b border-[var(--token-color-border)]/30 pb-6">
             <h1 className="text-3xl font-bold text-[var(--token-color-ink)]">Terms of Service</h1>
             <p className="text-base text-[var(--token-color-inkSoft)]">Last Updated: October 24, 2023</p>

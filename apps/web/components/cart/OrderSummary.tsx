@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { useState } from "react";
 import { Button, Input } from "antd";
@@ -29,7 +29,7 @@ export function OrderSummary({ subtotal, taxRate = 0.08 }: OrderSummaryProps) {
 
   return (
     <div
-      className="flex flex-col gap-1.5 rounded-xl border-2 bg-[var(--token-color-surface)] p-6 shadow-[var(--token-shadow-[var(--token-shadow-sm)])]"
+      className="flex flex-col gap-1.5 rounded-xl border-2 bg-[var(--token-color-surface)] p-6 shadow-[var(--token-shadow-sm)]"
       style={{ borderColor: "var(--token-color-border)" }}
     >
       <div className="border-b pb-2" style={{ borderColor: "var(--token-color-border)" }}>

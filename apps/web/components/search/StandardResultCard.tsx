@@ -1,4 +1,4 @@
-﻿import Image from "next/image";
+import Image from "next/image";
 import { ImageOff } from "lucide-react";
 
 export interface StandardResultCardProps {
@@ -11,7 +11,7 @@ export interface StandardResultCardProps {
 
 export function StandardResultCard({ title, description, meta, price, image }: StandardResultCardProps) {
   return (
-    <article className="overflow-hidden rounded-xl border-2 border-[var(--token-color-border)] bg-[var(--token-color-surface)] shadow-[var(--token-shadow-[var(--token-shadow-sm)])]">
+    <article className="overflow-hidden rounded-xl border-2 border-[var(--token-color-border)] bg-[var(--token-color-surface)] shadow-[var(--token-shadow-sm)]">
       <div className="relative h-40 w-full bg-zinc-200">
         {image ? (
           <Image src={image} alt={title} fill sizes="400px" className="object-cover" />

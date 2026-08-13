@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -61,7 +61,7 @@ export default function NotFound() {
               className="h-full w-full object-cover"
             />
 
-            <div className="absolute -left-4 top-[289px] flex items-center gap-2 rounded-lg border-2 border-[var(--token-color-border)] bg-[var(--token-color-surface)] p-2 shadow-[var(--token-shadow-[var(--token-shadow-sm)])]">
+            <div className="absolute -left-4 top-[289px] flex items-center gap-2 rounded-lg border-2 border-[var(--token-color-border)] bg-[var(--token-color-surface)] p-2 shadow-[var(--token-shadow-sm)]">
               <span className="flex h-8 w-8 items-center justify-center rounded-full bg-[var(--token-color-error)]/10">
                 <SearchX className="h-3.5 w-3.5 text-[var(--token-color-error)]" />
               </span>

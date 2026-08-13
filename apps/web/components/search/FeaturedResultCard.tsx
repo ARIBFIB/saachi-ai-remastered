@@ -1,4 +1,4 @@
-﻿import Image from "next/image";
+import Image from "next/image";
 import { GraduationCap, Star } from "lucide-react";
 
 export interface FeaturedResultCardProps {
@@ -25,7 +25,7 @@ export function FeaturedResultCard({
   image,
 }: FeaturedResultCardProps) {
   return (
-    <article className="flex h-96 overflow-hidden rounded-xl border-2 border-[var(--token-color-border)] bg-[var(--token-color-surface)] shadow-[var(--token-shadow-[var(--token-shadow-sm)])]">
+    <article className="flex h-96 overflow-hidden rounded-xl border-2 border-[var(--token-color-border)] bg-[var(--token-color-surface)] shadow-[var(--token-shadow-sm)]">
       <div className="relative w-80 shrink-0">
         <Image src={image} alt={title} fill sizes="320px" className="object-cover" />
         {badge && (

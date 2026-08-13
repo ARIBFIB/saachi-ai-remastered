@@ -1,4 +1,4 @@
-﻿import { GraduationCap, Users, Star } from "lucide-react";
+import { GraduationCap, Users, Star } from "lucide-react";
 
 interface InstructorStatsGridProps {
   coursesCount: number;
@@ -28,7 +28,7 @@ export function InstructorStatsGrid({
         />
       </div>
 
-      <div className="flex flex-col items-center gap-2 rounded-xl border-2 border-[var(--token-color-border)]/30 bg-[var(--token-color-surface)] px-4 py-8 shadow-[var(--token-shadow-[var(--token-shadow-sm)])]">
+      <div className="flex flex-col items-center gap-2 rounded-xl border-2 border-[var(--token-color-border)]/30 bg-[var(--token-color-surface)] px-4 py-8 shadow-[var(--token-shadow-sm)]">
         <div className="flex items-center gap-2">
           <Star className="h-[19px] w-5 text-[var(--token-color-warning)]" fill="currentColor" strokeWidth={0} />
           <span className="text-2xl font-semibold leading-8 text-[var(--token-color-ink)]">{rating}</span>
@@ -51,7 +51,7 @@ function StatCard({
   label: string;
 }) {
   return (
-    <div className="flex flex-1 flex-col items-center justify-center gap-2 rounded-xl border-2 border-[var(--token-color-border)]/30 bg-[var(--token-color-surface)] py-8 shadow-[var(--token-shadow-[var(--token-shadow-sm)])]">
+    <div className="flex flex-1 flex-col items-center justify-center gap-2 rounded-xl border-2 border-[var(--token-color-border)]/30 bg-[var(--token-color-surface)] py-8 shadow-[var(--token-shadow-sm)]">
       {icon}
       <span className="text-2xl font-semibold leading-8 text-[var(--token-color-ink)]">{value}</span>
       <span className="text-xs font-medium uppercase tracking-wide text-[var(--token-color-inkSoft)]">{label}</span>

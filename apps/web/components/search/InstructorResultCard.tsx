@@ -1,4 +1,4 @@
-﻿import Image from "next/image";
+import Image from "next/image";
 
 export interface InstructorResultCardProps {
   name: string;
@@ -18,7 +18,7 @@ export function InstructorResultCard({
   profileUrl = "#",
 }: InstructorResultCardProps) {
   return (
-    <div className="flex flex-col items-center justify-between rounded-xl border-2 border-[var(--token-color-border)] bg-[var(--token-color-surface)] p-6 shadow-[var(--token-shadow-[var(--token-shadow-sm)])]">
+    <div className="flex flex-col items-center justify-between rounded-xl border-2 border-[var(--token-color-border)] bg-[var(--token-color-surface)] p-6 shadow-[var(--token-shadow-sm)]">
       <span className="relative mb-4 block h-24 w-24 overflow-hidden rounded-full border-4 border-[var(--token-color-surfaceAlt)]">
         <Image src={avatar} alt={name} fill sizes="96px" className="object-cover" />
       </span>
