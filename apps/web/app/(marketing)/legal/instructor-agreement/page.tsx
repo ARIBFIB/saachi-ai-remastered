@@ -18,8 +18,8 @@
 
         <h2 className="mt-4 font-display text-[18px] font-semibold text-ink">2. Content standards</h2>
         <p>
-          Courses must be original work or properly licensed. Plagiarism, unverifiable "get rich
-          quick" claims, and use of copyrighted third-party material without rights are strictly
+          Courses must be original work or properly licensed. Plagiarism, unverifiable &quot;get rich
+          quick&quot; claims, and use of copyrighted third-party material without rights are strictly
           prohibited and grounds for content removal or account suspension.
         </p>
 
