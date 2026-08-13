@@ -1,6 +1,6 @@
 ﻿================================================================================
 MODULE CODE EXPORT: Packages
-Generated: 2026-08-13 12:07:03
+Generated: 2026-08-13 12:35:22
 Total Files: 77
 ================================================================================
 
@@ -3951,6 +3951,7 @@ FILE: packages\ui\src\components\Loading.tsx
 "use client";
 
 import Lottie from "lottie-react";
+import { useEffect, useState } from "react";
 import { cn } from "../cn";
 
 export type LoadingProps = {
@@ -3961,6 +3962,23 @@ export type LoadingProps = {
 };
 
 export function Loading({ size = 120, label, fullScreen = false, className }: LoadingProps) {
+  const [animationData, setAnimationData] = useState<object | null>(null);
+
+  useEffect(() => {
+    let cancelled = false;
+    fetch("/animations/loading.json")
+      .then((res) => res.json())
+      .then((data) => {
+        if (!cancelled) setAnimationData(data);
+      })
+      .catch(() => {
+        // Silently ignore Ã¢â‚¬â€ falls back to just showing the label below.
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
   return (
     <div
       className={cn(
@@ -3971,12 +3989,14 @@ export function Loading({ size = 120, label, fullScreen = false, className }: Lo
       role="status"
       aria-live="polite"
     >
-      <Lottie
-        path="/animations/loading.json"
-        loop
-        autoplay
-        style={{ width: size, height: size }}
-      />
+      {animationData ? (
+        <Lottie animationData={animationData} loop autoplay style={{ width: size, height: size }} />
+      ) : (
+        <div
+          className="animate-pulse rounded-full border-2 border-line-strong border-t-gold"
+          style={{ width: size / 2, height: size / 2 }}
+        />
+      )}
       {label && <p className="text-[13px] text-ink-soft">{label}</p>}
       <span className="sr-only">Loading</span>
     </div>
@@ -4471,6 +4491,7 @@ type ButtonSize = "sm" | "md" | "lg";
 type ButtonProps = ButtonHTMLAttributes<HTMLButtonElement> & {
   variant?: ButtonVariant;
   size?: ButtonSize;
+  loading?: boolean;
 };
 
 const SIZE_CLASSES: Record<ButtonSize, string> = {
@@ -4507,25 +4528,38 @@ const VARIANT_STYLE: Record<ButtonVariant, { bg: string; hoverBg: string; text: 
 };
 
 export const Button = forwardRef<HTMLButtonElement, ButtonProps>(function Button(
-  { variant = "primary", size = "md", className = "", type = "button", style, disabled, onMouseDown, onMouseUp, ...props },
+  {
+    variant = "primary",
+    size = "md",
+    className = "",
+    type = "button",
+    style,
+    disabled,
+    loading = false,
+    children,
+    onMouseDown,
+    onMouseUp,
+    ...props
+  },
   ref
 ) {
   const [hover, setHover] = useState(false);
   const [pressed, setPressed] = useState(false);
 
   const v = VARIANT_STYLE[variant];
+  const isDisabled = disabled || loading;
 
   const dynamicStyle: CSSProperties = {
-    backgroundColor: disabled ? v.bg : hover ? v.hoverBg : v.bg,
+    backgroundColor: isDisabled ? v.bg : hover ? v.hoverBg : v.bg,
     color: v.text,
     borderColor: v.border,
     borderWidth: 1,
     borderStyle: "solid",
-    opacity: disabled ? 0.45 : variant === "danger" && hover ? 0.9 : 1,
-    transform: !disabled && hover ? (pressed ? "translateY(0) scale(0.97)" : "translateY(-1px)") : "translateY(0)",
-    boxShadow: !disabled && hover ? "0 4px 10px rgba(0,0,0,0.18)" : "none",
+    opacity: isDisabled ? 0.6 : variant === "danger" && hover ? 0.9 : 1,
+    transform: !isDisabled && hover ? (pressed ? "translateY(0) scale(0.97)" : "translateY(-1px)") : "translateY(0)",
+    boxShadow: !isDisabled && hover ? "0 4px 10px rgba(0,0,0,0.18)" : "none",
     transition: "background-color 150ms ease-out, transform 120ms ease-out, box-shadow 150ms ease-out, opacity 150ms ease-out",
-    cursor: disabled ? "not-allowed" : "pointer",
+    cursor: isDisabled ? "not-allowed" : "pointer",
     ...style
   };
 
@@ -4542,7 +4576,8 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(function Button
     <button
       ref={ref}
       type={type}
-      disabled={disabled}
+      disabled={isDisabled}
+      aria-busy={loading}
       className={classes}
       style={dynamicStyle}
       onMouseEnter={() => setHover(true)}
@@ -4559,7 +4594,9 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(function Button
         onMouseUp?.(e);
       }}
       {...props}
-    />
+    >
+      {loading ? "Working..." : children}
+    </button>
   );
 });
 
@@ -4634,7 +4671,7 @@ export function HelpTooltip({ text, className = "" }: HelpTooltipProps) {
 FILE: packages\ui\src\index.ts
 ================================================================================
 export * from "./cn";
-export * from "./components/Button";
+// export * from "./components/Button"; // removed: duplicate Button export, canonical Button now comes from ./Button
 export * from "./components/Card";
 export * from "./components/Badge";
 export * from "./components/Input";
@@ -4871,20 +4908,22 @@ FILE: packages\ui\package.json
   "dependencies": {
     "clsx": "^2.1.0",
     "@tanstack/react-table": "^8.20.0",
+    "@tanstack/react-query": "^5.56.0",
     "tailwind-merge": "^2.5.0",
     "lucide-react": "^0.445.0",
     "lottie-react": "^2.4.0",
     "@saachi/store": "workspace:*"
   },
   "peerDependencies": {
-    "react": "^18.3.0"
+    "react": "^18.3.0",
+    "next": "^15.0.0"
   },
   "devDependencies": {
     "typescript": "^5.5.0",
-    "@types/react": "^18.3.0"
+    "@types/react": "^18.3.0",
+    "next": "^15.5.0"
   }
 }
-
 
 
 ================================================================================
