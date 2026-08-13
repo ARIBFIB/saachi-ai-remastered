@@ -1,91 +1,101 @@
 "use client";
 
 import Link from "next/link";
-import Image from "next/image";
 import { Button } from "antd";
-import { ArrowLeft, Download, Share2, BadgeCheck } from "lucide-react";
-import type { CertificateDetail } from "./page";
+import { Award, Download, Share2, CheckCircle2, ArrowLeft } from "lucide-react";
 
-interface CertificateDetailClientProps {
-  certificate: CertificateDetail;
+// TODO: replace with useCertificate(certificateId) hook from @saachi/api-client
+interface CertificateRecord {
+  id: string;
+  title: string;
+  learnerName: string;
+  issuedDate: string;
+  verificationId: string;
+  category: string;
 }
 
-export function CertificateDetailClient({ certificate }: CertificateDetailClientProps) {
+function getDummyCertificate(certificateId: string): CertificateRecord {
+  return {
+    id: certificateId,
+    title: "Advanced Machine Learning Architectures",
+    learnerName: "Alex Morgan",
+    issuedDate: "Oct 12, 2024",
+    verificationId: `SAI-CERT-${certificateId.toUpperCase()}`,
+    category: "AI & Data",
+  };
+}
+
+export function CertificateDetailClient({ certificateId }: { certificateId: string }) {
+  const certificate = getDummyCertificate(certificateId);
+
   function handleDownload() {
-    // TODO: wire to useCertificates().download(certificate.id) from @saachi/api-client
+    // TODO: wire to useCertificate(certificateId).downloadPdf() from @saachi/api-client
     console.log("download certificate", certificate.id);
   }
 
   function handleShare() {
-    // TODO: wire to share sheet / copy public credential link
+    // TODO: wire to share sheet / copy verification link
     console.log("share certificate", certificate.id);
   }
 
   return (
-    <div className="flex min-h-screen flex-col bg-[var(--token-color-bg)] px-6 py-10">
-      <div className="mx-auto flex w-full max-w-[900px] flex-col gap-6">
+    <div className="flex min-h-screen flex-col items-center bg-[var(--token-color-bg)] px-6 py-16">
+      <div className="flex w-full max-w-[720px] flex-col gap-6">
         <Link
           href="/dashboard/certificates"
-          className="flex w-fit items-center gap-2 text-sm font-semibold text-[var(--token-color-inkSoft)] hover:text-[var(--token-color-primary)]"
+          className="flex items-center gap-1 text-sm font-semibold"
+          style={{ color: "var(--token-color-inkSoft)" }}
         >
           <ArrowLeft size={14} />
           Back to Certificates
         </Link>
 
-        <div className="overflow-hidden rounded-2xl border bg-[var(--token-color-surface)] shadow-[var(--token-shadow-lg)]" style={{ borderColor: "var(--token-color-border)" }}>
-          <div className="relative h-72 w-full bg-[var(--token-color-surfaceAlt)]">
-            <Image src={certificate.image} alt={certificate.title} fill sizes="900px" className="object-cover" />
+        <div
+          className="flex flex-col items-center gap-6 rounded-2xl border-2 bg-[var(--token-color-surface)] p-12 text-center shadow-[var(--token-shadow-md)]"
+          style={{ borderColor: "var(--token-color-primary)" }}
+        >
+          <span
+            className="flex h-16 w-16 items-center justify-center rounded-full"
+            style={{ backgroundColor: "var(--token-color-primaryTint)" }}
+          >
+            <Award size={28} color="var(--token-color-primary)" />
+          </span>
+
+          <div className="flex flex-col gap-1">
+            <span
+              className="text-xs font-semibold uppercase tracking-wide"
+              style={{ color: "var(--token-color-inkSoft)" }}
+            >
+              Certificate of Completion
+            </span>
+            <h1 className="text-3xl font-bold" style={{ color: "var(--token-color-ink)" }}>
+              {certificate.title}
+            </h1>
           </div>
 
-          <div className="flex flex-col gap-6 p-8">
-            <div className="flex items-start justify-between gap-4">
-              <div className="flex flex-col gap-1">
-                <span className="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wide" style={{ color: "var(--token-color-primary)" }}>
-                  <BadgeCheck size={14} />
-                  {certificate.category}
-                </span>
-                <h1 className="text-3xl font-bold" style={{ color: "var(--token-color-ink)" }}>
-                  {certificate.title}
-                </h1>
-              </div>
-            </div>
+          <p style={{ color: "var(--token-color-inkSoft)" }}>
+            Awarded to <span className="font-semibold">{certificate.learnerName}</span> on{" "}
+            {certificate.issuedDate}
+          </p>
 
-            <div className="grid grid-cols-1 gap-4 rounded-lg p-4 sm:grid-cols-3" style={{ backgroundColor: "var(--token-color-surfaceAlt)" }}>
-              <DetailField label="Recipient" value={certificate.recipientName} />
-              <DetailField label="Instructor" value={certificate.instructorName} />
-              <DetailField label="Issued" value={certificate.issuedDate} />
-            </div>
+          <div
+            className="flex items-center gap-2 rounded-full px-4 py-2 text-xs font-semibold"
+            style={{ backgroundColor: "var(--token-color-successTint)", color: "var(--token-color-success)" }}
+          >
+            <CheckCircle2 size={14} />
+            Verified &middot; ID: {certificate.verificationId}
+          </div>
 
-            <div className="flex items-center justify-between border-t pt-4" style={{ borderColor: "var(--token-color-border)" }}>
-              <span className="text-xs font-medium" style={{ color: "var(--token-color-inkSoft)" }}>
-                Credential ID: {certificate.credentialId}
-              </span>
-
-              <div className="flex gap-2">
-                <Button icon={<Share2 size={14} />} onClick={handleShare}>
-                  Share
-                </Button>
-                <Button type="primary" icon={<Download size={14} />} onClick={handleDownload}>
-                  Download PDF
-                </Button>
-              </div>
-            </div>
+          <div className="flex gap-4 pt-4">
+            <Button type="primary" icon={<Download size={14} />} onClick={handleDownload}>
+              Download PDF
+            </Button>
+            <Button icon={<Share2 size={14} />} onClick={handleShare}>
+              Share
+            </Button>
           </div>
         </div>
       </div>
-    </div>
-  );
-}
-
-function DetailField({ label, value }: { label: string; value: string }) {
-  return (
-    <div className="flex flex-col gap-0.5">
-      <span className="text-xs font-medium uppercase tracking-wide" style={{ color: "var(--token-color-inkSoft)" }}>
-        {label}
-      </span>
-      <span className="text-sm font-semibold" style={{ color: "var(--token-color-ink)" }}>
-        {value}
-      </span>
     </div>
   );
 }

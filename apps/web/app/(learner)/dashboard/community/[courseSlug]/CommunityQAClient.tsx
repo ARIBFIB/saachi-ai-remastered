@@ -1,121 +1,155 @@
 "use client";
 
 import { useState } from "react";
-import Link from "next/link";
 import Image from "next/image";
 import { Button, Input } from "antd";
-import { ArrowLeft, MessageCircle, ThumbsUp, Send } from "lucide-react";
-import type { CommunityCourse, QAThread } from "./page";
+import { ThumbsUp, MessageSquare, BadgeCheck } from "lucide-react";
 
-interface CommunityQAClientProps {
-  community: CommunityCourse;
+// TODO: replace with useCommunityThreads(courseSlug) hook from @saachi/api-client
+interface ThreadPost {
+  id: string;
+  author: string;
+  avatar: string;
+  timestamp: string;
+  content: string;
+  upvotes: number;
+  isInstructor?: boolean;
 }
 
-export function CommunityQAClient({ community }: CommunityQAClientProps) {
-  const [threads, setThreads] = useState<QAThread[]>(community.threads);
-  const [newQuestion, setNewQuestion] = useState("");
+const initialThreads: ThreadPost[] = [
+  {
+    id: "t1",
+    author: "Dr. Sarah Chen",
+    avatar: "https://i.pravatar.cc/64?img=32",
+    timestamp: "2 days ago",
+    content:
+      "Welcome to the Q&A for this course! Ask anything about the lessons and I'll do my best to answer within 24 hours.",
+    upvotes: 24,
+    isInstructor: true,
+  },
+  {
+    id: "t2",
+    author: "Jordan Lee",
+    avatar: "https://i.pravatar.cc/64?img=15",
+    timestamp: "1 day ago",
+    content: "In lesson 3, why does the temperature parameter change the output so drastically?",
+    upvotes: 8,
+  },
+];
 
-  function handlePostQuestion() {
-    if (!newQuestion.trim()) return;
-    // TODO: wire to useCourseCommunity().postQuestion(courseSlug, text) from @saachi/api-client
-    const thread: QAThread = {
-      id: `local-${Date.now()}`,
-      authorName: "You",
-      authorAvatar: "https://i.pravatar.cc/64?img=47",
-      question: newQuestion.trim(),
-      timestamp: "Just now",
-      replyCount: 0,
-      upvotes: 0,
-    };
-    setThreads((prev) => [thread, ...prev]);
-    setNewQuestion("");
+export function CommunityQAClient({ courseSlug }: { courseSlug: string }) {
+  const [threads, setThreads] = useState<ThreadPost[]>(initialThreads);
+  const [draft, setDraft] = useState("");
+
+  function handlePost() {
+    if (!draft.trim()) return;
+    // TODO: wire to useCommunityThreads(courseSlug).postQuestion() from @saachi/api-client
+    setThreads((prev) => [
+      {
+        id: `local-${Date.now()}`,
+        author: "You",
+        avatar: "https://i.pravatar.cc/64?img=47",
+        timestamp: "Just now",
+        content: draft,
+        upvotes: 0,
+      },
+      ...prev,
+    ]);
+    setDraft("");
   }
 
-  function handleUpvote(threadId: string) {
-    setThreads((prev) =>
-      prev.map((t) => (t.id === threadId ? { ...t, upvotes: t.upvotes + 1 } : t))
-    );
+  function handleUpvote(id: string) {
+    setThreads((prev) => prev.map((t) => (t.id === id ? { ...t, upvotes: t.upvotes + 1 } : t)));
   }
 
   return (
-    <div className="flex min-h-screen flex-col bg-[var(--token-color-bg)] px-6 py-10 lg:px-12">
-      <div className="mx-auto flex w-full max-w-[800px] flex-col gap-8">
-        <div className="flex flex-col gap-1">
-          <Link
-            href="/dashboard/my-courses"
-            className="flex w-fit items-center gap-2 text-sm font-semibold text-[var(--token-color-inkSoft)] hover:text-[var(--token-color-primary)]"
+    <div className="mx-auto flex w-full max-w-[860px] flex-col gap-8 px-6 py-12">
+      <div className="flex flex-col gap-1">
+        <h1 className="text-3xl font-bold" style={{ color: "var(--token-color-ink)" }}>
+          Course Discussion
+        </h1>
+        <p style={{ color: "var(--token-color-inkSoft)" }}>
+          Ask questions and get help from the instructor and other learners in{" "}
+          <span className="font-semibold">{courseSlug.replace(/-/g, " ")}</span>.
+        </p>
+      </div>
+
+      <div
+        className="flex flex-col gap-3 rounded-xl border p-5"
+        style={{ borderColor: "var(--token-color-border)", backgroundColor: "var(--token-color-surface)" }}
+      >
+        <Input.TextArea
+          rows={3}
+          value={draft}
+          onChange={(e) => setDraft(e.target.value)}
+          placeholder="Ask a question about this course..."
+        />
+        <div className="flex justify-end">
+          <Button type="primary" onClick={handlePost}>
+            Post Question
+          </Button>
+        </div>
+      </div>
+
+      <div className="flex flex-col gap-4">
+        {threads.map((post) => (
+          <article
+            key={post.id}
+            className="flex gap-4 rounded-xl border p-5"
+            style={{
+              borderColor: post.isInstructor ? "var(--token-color-primary)" : "var(--token-color-border)",
+              backgroundColor: "var(--token-color-surface)",
+            }}
           >
-            <ArrowLeft size={14} />
-            Back to My Courses
-          </Link>
-          <h1 className="pt-2 text-3xl font-bold" style={{ color: "var(--token-color-ink)" }}>
-            Community Q&amp;A
-          </h1>
-          <p style={{ color: "var(--token-color-inkSoft)" }}>{community.title}</p>
-        </div>
+            <span className="relative block h-10 w-10 shrink-0 overflow-hidden rounded-full">
+              <Image src={post.avatar} alt={post.author} fill sizes="40px" className="object-cover" />
+            </span>
 
-        <div className="flex flex-col gap-3 rounded-xl border bg-[var(--token-color-surface)] p-4 shadow-[var(--token-shadow-sm)]" style={{ borderColor: "var(--token-color-border)" }}>
-          <Input.TextArea
-            rows={3}
-            value={newQuestion}
-            onChange={(e) => setNewQuestion(e.target.value)}
-            placeholder="Ask a question about this course..."
-          />
-          <div className="flex justify-end">
-            <Button type="primary" icon={<Send size={14} />} onClick={handlePostQuestion}>
-              Post Question
-            </Button>
-          </div>
-        </div>
-
-        <div className="flex flex-col gap-4">
-          {threads.map((thread) => (
-            <div
-              key={thread.id}
-              className="flex gap-4 rounded-xl border bg-[var(--token-color-surface)] p-6 shadow-[var(--token-shadow-sm)]"
-              style={{ borderColor: "var(--token-color-border)" }}
-            >
-              <span className="relative block h-10 w-10 shrink-0 overflow-hidden rounded-full">
-                <Image src={thread.authorAvatar} alt={thread.authorName} fill sizes="40px" className="object-cover" />
-              </span>
-
-              <div className="flex flex-1 flex-col gap-2">
-                <div className="flex items-center gap-2">
-                  <span className="text-sm font-semibold" style={{ color: "var(--token-color-ink)" }}>
-                    {thread.authorName}
-                  </span>
-                  <span className="text-xs" style={{ color: "var(--token-color-inkSoft)" }}>
-                    {thread.timestamp}
-                  </span>
-                </div>
-
-                <p style={{ color: "var(--token-color-ink)" }}>{thread.question}</p>
-
-                <div className="flex items-center gap-4 pt-1">
-                  <button
-                    type="button"
-                    onClick={() => handleUpvote(thread.id)}
-                    className="flex items-center gap-1 text-xs font-semibold"
-                    style={{ color: "var(--token-color-inkSoft)" }}
+            <div className="flex flex-1 flex-col gap-1.5">
+              <div className="flex items-center gap-2">
+                <span className="text-sm font-semibold" style={{ color: "var(--token-color-ink)" }}>
+                  {post.author}
+                </span>
+                {post.isInstructor && (
+                  <span
+                    className="flex items-center gap-1 rounded-full px-2 py-0.5 text-[10px] font-bold uppercase"
+                    style={{ backgroundColor: "var(--token-color-primaryTint)", color: "var(--token-color-primary)" }}
                   >
-                    <ThumbsUp size={13} />
-                    {thread.upvotes}
-                  </button>
-                  <span className="flex items-center gap-1 text-xs font-semibold" style={{ color: "var(--token-color-inkSoft)" }}>
-                    <MessageCircle size={13} />
-                    {thread.replyCount} replies
+                    <BadgeCheck size={10} />
+                    Instructor
                   </span>
-                </div>
+                )}
+                <span className="text-xs" style={{ color: "var(--token-color-inkSoft)" }}>
+                  &bull; {post.timestamp}
+                </span>
+              </div>
+
+              <p className="text-sm leading-6" style={{ color: "var(--token-color-inkSoft)" }}>
+                {post.content}
+              </p>
+
+              <div className="flex items-center gap-4 pt-1">
+                <button
+                  type="button"
+                  onClick={() => handleUpvote(post.id)}
+                  className="flex items-center gap-1 text-xs font-medium"
+                  style={{ color: "var(--token-color-inkSoft)" }}
+                >
+                  <ThumbsUp size={13} />
+                  {post.upvotes}
+                </button>
+                <button
+                  type="button"
+                  className="flex items-center gap-1 text-xs font-medium"
+                  style={{ color: "var(--token-color-inkSoft)" }}
+                >
+                  <MessageSquare size={13} />
+                  Reply
+                </button>
               </div>
             </div>
-          ))}
-
-          {threads.length === 0 && (
-            <p className="py-10 text-center" style={{ color: "var(--token-color-inkSoft)" }}>
-              No questions yet -- be the first to ask.
-            </p>
-          )}
-        </div>
+          </article>
+        ))}
       </div>
     </div>
   );

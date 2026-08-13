@@ -2,137 +2,131 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { CheckCircle2, Circle, PlayCircle, ArrowLeft, ChevronLeft, ChevronRight } from "lucide-react";
-import type { PlayerCourse, PlayerLesson } from "./page";
+import { Button } from "antd";
+import { PlayCircle, CheckCircle2, Circle, ArrowLeft, ChevronRight } from "lucide-react";
 
-interface CoursePlayerClientProps {
-  course: PlayerCourse;
+// TODO: replace with useCourseCurriculum(courseSlug) + useLessonProgress() hooks
+// from @saachi/api-client
+interface Lesson {
+  id: string;
+  title: string;
+  durationLabel: string;
+  completed: boolean;
 }
 
-export function CoursePlayerClient({ course }: CoursePlayerClientProps) {
-  const allLessons = course.modules.flatMap((m) => m.lessons);
-  const [activeLessonId, setActiveLessonId] = useState<string>(
-    allLessons.find((l) => !l.completed)?.id ?? allLessons[0]?.id ?? ""
-  );
-  const [lessons, setLessons] = useState<PlayerLesson[]>(allLessons);
+interface Module {
+  id: string;
+  title: string;
+  lessons: Lesson[];
+}
 
-  const activeIndex = lessons.findIndex((l) => l.id === activeLessonId);
-  const activeLesson = lessons[activeIndex];
+const modules: Module[] = [
+  {
+    id: "m1",
+    title: "Module 1: Introduction to Large Language Models",
+    lessons: [
+      { id: "l1", title: "What is a Large Language Model?", durationLabel: "8:12", completed: true },
+      { id: "l2", title: "Tokens, context windows, and limits", durationLabel: "11:40", completed: true },
+      { id: "l3", title: "Setting up your first API call", durationLabel: "14:05", completed: false },
+    ],
+  },
+  {
+    id: "m2",
+    title: "Module 2: Anatomy of a Perfect Prompt",
+    lessons: [
+      { id: "l4", title: "Zero-shot vs few-shot prompting", durationLabel: "10:22", completed: false },
+      { id: "l5", title: "Chain-of-thought reasoning", durationLabel: "16:48", completed: false },
+    ],
+  },
+];
 
-  function handleSelectLesson(id: string) {
-    setActiveLessonId(id);
-  }
+export function CoursePlayerClient({ courseSlug }: { courseSlug: string }) {
+  const allLessons = modules.flatMap((m) => m.lessons);
+  const [activeLessonId, setActiveLessonId] = useState(allLessons[0]?.id ?? "");
+  const activeLesson = allLessons.find((l) => l.id === activeLessonId) ?? allLessons[0];
 
   function handleMarkComplete() {
-    // TODO: wire to useLessonProgress().markComplete(lessonId) from @saachi/api-client
-    setLessons((prev) => prev.map((l) => (l.id === activeLessonId ? { ...l, completed: true } : l)));
+    // TODO: wire to useLessonProgress(courseSlug, activeLessonId).markComplete()
+    // from @saachi/api-client
+    console.log("mark complete", { courseSlug, lessonId: activeLessonId });
   }
-
-  function goToLesson(offset: number) {
-    const nextIndex = activeIndex + offset;
-    if (nextIndex >= 0 && nextIndex < lessons.length) {
-      setActiveLessonId(lessons[nextIndex].id);
-    }
-  }
-
-  const completedCount = lessons.filter((l) => l.completed).length;
-  const progressPercent = lessons.length > 0 ? Math.round((completedCount / lessons.length) * 100) : 0;
 
   return (
-    <div className="flex min-h-screen bg-[var(--token-color-playerBg)]">
-      {/* Sidebar: curriculum */}
-      <aside className="fixed inset-y-0 left-0 hidden w-80 flex-col overflow-y-auto border-r border-white/10 bg-[var(--token-color-ink)] lg:flex">
-        <div className="flex flex-col gap-1 border-b border-white/10 p-6">
-          <Link href={`/courses/${course.slug}`} className="flex items-center gap-2 text-sm font-semibold text-white/70 hover:text-white">
+    <div className="flex min-h-screen" style={{ backgroundColor: "var(--token-color-playerBg)" }}>
+      {/* Video + lesson content */}
+      <div className="flex flex-1 flex-col">
+        <div className="flex items-center gap-3 px-6 py-4">
+          <Link href="/dashboard/my-courses" className="flex items-center gap-1 text-sm text-white/70 hover:text-white">
             <ArrowLeft size={14} />
-            Back to Course
+            Back to My Courses
           </Link>
-          <h1 className="pt-2 text-lg font-semibold text-white">{course.title}</h1>
-          <span className="text-xs font-medium text-white/50">{progressPercent}% complete</span>
         </div>
 
-        <nav className="flex flex-col gap-2 p-4">
-          {course.modules.map((module) => (
-            <div key={module.id} className="flex flex-col gap-1">
-              <h3 className="px-2 pb-1 text-xs font-semibold uppercase tracking-wide text-white/40">
+        <div className="relative mx-6 flex aspect-video items-center justify-center rounded-xl bg-black/60">
+          <PlayCircle size={64} className="text-white/80" />
+        </div>
+
+        <div className="flex flex-col gap-3 px-6 py-6">
+          <h1 className="text-xl font-semibold text-white">{activeLesson?.title}</h1>
+          <p className="text-sm text-white/60">
+            Course: {courseSlug.replace(/-/g, " ")}
+          </p>
+
+          <div className="pt-2">
+            <Button type="primary" icon={<CheckCircle2 size={14} />} onClick={handleMarkComplete}>
+              Mark Lesson Complete
+            </Button>
+          </div>
+        </div>
+      </div>
+
+      {/* Lesson sidebar */}
+      <aside className="hidden w-80 shrink-0 flex-col overflow-y-auto border-l border-white/10 bg-black/20 lg:flex">
+        <div className="border-b border-white/10 px-5 py-4">
+          <h2 className="text-sm font-semibold text-white">Course Content</h2>
+        </div>
+
+        <nav className="flex flex-col">
+          {modules.map((module) => (
+            <div key={module.id} className="border-b border-white/10">
+              <div className="px-5 py-3 text-xs font-semibold uppercase tracking-wide text-white/50">
                 {module.title}
-              </h3>
-              {module.lessons.map((lessonMeta) => {
-                const lesson = lessons.find((l) => l.id === lessonMeta.id) ?? lessonMeta;
-                const isActive = lesson.id === activeLessonId;
-                return (
-                  <button
-                    key={lesson.id}
-                    type="button"
-                    onClick={() => handleSelectLesson(lesson.id)}
-                    className={`flex items-center gap-3 rounded-lg px-3 py-2.5 text-left text-sm transition ${
-                      isActive ? "bg-white/10 text-white" : "text-white/70 hover:bg-white/5"
-                    }`}
-                  >
-                    {lesson.completed ? (
-                      <CheckCircle2 size={16} className="shrink-0 text-[var(--token-color-completedGreen)]" />
-                    ) : (
-                      <Circle size={16} className="shrink-0 text-white/30" />
-                    )}
-                    <span className="flex-1 truncate font-medium">{lesson.title}</span>
-                    <span className="shrink-0 text-xs text-white/40">{lesson.durationLabel}</span>
-                  </button>
-                );
-              })}
+              </div>
+              <div className="flex flex-col">
+                {module.lessons.map((lesson) => {
+                  const isActive = lesson.id === activeLessonId;
+                  return (
+                    <button
+                      key={lesson.id}
+                      type="button"
+                      onClick={() => setActiveLessonId(lesson.id)}
+                      className="flex items-center justify-between gap-2 px-5 py-3 text-left transition"
+                      style={{
+                        backgroundColor: isActive ? "rgba(255,255,255,0.08)" : "transparent",
+                      }}
+                    >
+                      <span className="flex items-center gap-2">
+                        {lesson.completed ? (
+                          <CheckCircle2 size={14} className="shrink-0 text-emerald-400" />
+                        ) : (
+                          <Circle size={14} className="shrink-0 text-white/40" />
+                        )}
+                        <span className={`text-sm ${isActive ? "font-semibold text-white" : "text-white/70"}`}>
+                          {lesson.title}
+                        </span>
+                      </span>
+                      <span className="flex items-center gap-1 text-xs text-white/40">
+                        {lesson.durationLabel}
+                        {isActive && <ChevronRight size={12} />}
+                      </span>
+                    </button>
+                  );
+                })}
+              </div>
             </div>
           ))}
         </nav>
       </aside>
-
-      {/* Main player */}
-      <div className="flex w-full flex-col lg:pl-80">
-        <div className="flex aspect-video w-full items-center justify-center bg-black">
-          <PlayCircle size={64} className="text-white/30" />
-        </div>
-
-        <div className="flex flex-1 flex-col gap-6 px-8 py-8">
-          <div className="flex items-start justify-between gap-6">
-            <div className="flex flex-col gap-1">
-              <h2 className="text-2xl font-semibold text-white">
-                {activeLesson?.title ?? "Select a lesson"}
-              </h2>
-              <span className="text-sm text-white/50">{activeLesson?.durationLabel}</span>
-            </div>
-
-            <button
-              type="button"
-              onClick={handleMarkComplete}
-              disabled={!activeLesson || activeLesson.completed}
-              className="flex shrink-0 items-center gap-2 rounded-lg bg-[var(--token-color-primary)] px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-[var(--token-color-primaryHover)] disabled:cursor-not-allowed disabled:opacity-50"
-            >
-              <CheckCircle2 size={16} />
-              {activeLesson?.completed ? "Completed" : "Mark as Complete"}
-            </button>
-          </div>
-
-          <div className="flex items-center justify-between border-t border-white/10 pt-6">
-            <button
-              type="button"
-              onClick={() => goToLesson(-1)}
-              disabled={activeIndex <= 0}
-              className="flex items-center gap-2 rounded-lg border border-white/10 px-4 py-2 text-sm font-semibold text-white/70 transition hover:bg-white/5 disabled:cursor-not-allowed disabled:opacity-40"
-            >
-              <ChevronLeft size={14} />
-              Previous
-            </button>
-
-            <button
-              type="button"
-              onClick={() => goToLesson(1)}
-              disabled={activeIndex >= lessons.length - 1}
-              className="flex items-center gap-2 rounded-lg border border-white/10 px-4 py-2 text-sm font-semibold text-white/70 transition hover:bg-white/5 disabled:cursor-not-allowed disabled:opacity-40"
-            >
-              Next
-              <ChevronRight size={14} />
-            </button>
-          </div>
-        </div>
-      </div>
     </div>
   );
 }
