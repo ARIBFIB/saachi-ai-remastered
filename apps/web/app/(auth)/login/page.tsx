@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useState } from "react";
 import Link from "next/link";
@@ -49,7 +49,6 @@ export default function LoginPage() {
   return (
     <div className="flex min-h-screen items-center justify-center bg-slate-50 p-6">
       <div className="flex w-full max-w-[1200px] overflow-hidden rounded-xl bg-slate-50 shadow-[0px_4px_20px_0px_rgba(15,23,42,0.05)]">
-        {/* Left: Core auth */}
         <div className="flex-1 bg-white p-10">
           <div className="mb-8 flex flex-col gap-2">
             <Link href="/" className="text-3xl font-bold leading-10 text-[#3525CD]">
@@ -62,7 +61,6 @@ export default function LoginPage() {
             </p>
           </div>
 
-          {/* Toggle */}
           <div className="mb-6 flex rounded-lg bg-gray-100 p-1">
             <button
               type="button"
@@ -88,7 +86,6 @@ export default function LoginPage() {
             </button>
           </div>
 
-          {/* Form */}
           <form onSubmit={handleSubmit} className="flex flex-col gap-4">
             {mode === "register" && (
               <div className="flex flex-col gap-1">
@@ -187,7 +184,6 @@ export default function LoginPage() {
           </div>
         </div>
 
-        {/* Right: role selection (register only visual context, always shown per design) */}
         <div className="relative hidden flex-1 flex-col justify-center overflow-hidden bg-gray-100 px-10 py-28 md:flex">
           <div className="pointer-events-none absolute left-0 top-0 h-full w-full bg-[radial-gradient(circle_at_100%_0%,rgba(53,37,205,0.2),transparent_50%)]" />
 

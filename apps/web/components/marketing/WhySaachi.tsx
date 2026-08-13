@@ -1,4 +1,4 @@
-import { GraduationCap, Wrench, BadgeCheck } from "lucide-react";
+﻿import { GraduationCap, Wrench, BadgeCheck } from "lucide-react";
 import { SpecLabel } from "./BlueprintMark";
 
 const reasons = [
@@ -6,7 +6,7 @@ const reasons = [
     icon: GraduationCap,
     title: "Taught by people who ship",
     description:
-      "Instructors are practitioners with real, demonstrable work â€” not narrators reading slides.",
+      "Instructors are practitioners with real, demonstrable work -- not narrators reading slides.",
   },
   {
     icon: Wrench,

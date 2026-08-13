@@ -1,4 +1,4 @@
-import Link from "next/link";
+﻿import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { CourseCard, type CourseCardProps } from "./CourseCard";
 import { SpecLabel } from "./BlueprintMark";

@@ -1,4 +1,4 @@
-// Signature element for the "Blueprint" design system: a small dimension-line
+﻿// Signature element for the "Blueprint" design system: a small dimension-line
 // crosshair mark, like a corner registration mark on a spec sheet. Used
 // sparingly on hero cards and section dividers -- not decoration, it signals
 // "this is measured / specified," matching Saachi's outcome-based identity.

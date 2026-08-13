@@ -2,9 +2,9 @@
 import { BlueprintMark, SpecLabel } from "./BlueprintMark";
 
 const buildLog = [
-  "Certificate issued â€” Prompt Engineering Masterclass",
-  "Course published â€” WhatsApp AI Auto-Responder",
-  "Skill verified â€” n8n Workflow Automation",
+  "Certificate issued -- Prompt Engineering Masterclass",
+  "Course published -- WhatsApp AI Auto-Responder",
+  "Skill verified -- n8n Workflow Automation",
 ];
 
 export function HeroSection() {
@@ -31,7 +31,7 @@ export function HeroSection() {
             className="max-w-[460px] text-lg leading-7"
             style={{ fontFamily: "var(--token-font-bodyFamily)", color: "var(--token-color-inkDeepSoft)" }}
           >
-            Practical, outcome-verified AI courses â€” automations, chatbots, AI-assisted apps â€”
+            Practical, outcome-verified AI courses -- automations, chatbots, AI-assisted apps --
             taught by people who ship them. No filler, just the skill and the proof you learned it.
           </p>
 
