@@ -1,7 +1,7 @@
 "use client";
 
 import { Video, CalendarDays } from "lucide-react";
-import { Button, EmptyState, StatusPill } from "@saachi/ui";
+import { Button, EmptyState } from "@saachi/ui";
 
 type Session = {
   id: string;
@@ -40,7 +40,9 @@ export default function MyMentorshipSessionsPage() {
                   with {s.instructorName} - {s.when}
                 </p>
               </div>
-              <StatusPill status="active">Upcoming</StatusPill>
+              <span className="shrink-0 rounded-full bg-gold-tint px-2.5 py-1 text-[11px] font-semibold text-gold-dark">
+                Upcoming
+              </span>
               <Button size="sm">
                 <Video size={14} className="mr-1.5" />
                 Join call
@@ -66,7 +68,9 @@ export default function MyMentorshipSessionsPage() {
                   with {s.instructorName} - {s.when}
                 </p>
               </div>
-              <StatusPill status="neutral">Completed</StatusPill>
+              <span className="shrink-0 rounded-full bg-paper-dim px-2.5 py-1 text-[11px] font-semibold text-ink-soft">
+                Completed
+              </span>
             </div>
           ))}
         </div>
