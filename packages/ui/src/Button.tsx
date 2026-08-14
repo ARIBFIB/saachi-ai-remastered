@@ -1,9 +1,8 @@
-"use client";
-
+﻿"use client";
 import { forwardRef, useState } from "react";
 import type { ButtonHTMLAttributes, CSSProperties } from "react";
 
-type ButtonVariant = "primary" | "secondary" | "ghost" | "danger";
+type ButtonVariant = "primary" | "secondary" | "ghost" | "danger" | "brand";
 type ButtonSize = "sm" | "md" | "lg";
 
 type ButtonProps = ButtonHTMLAttributes<HTMLButtonElement> & {
@@ -18,7 +17,17 @@ const SIZE_CLASSES: Record<ButtonSize, string> = {
   lg: "h-11 px-5 text-[14px]"
 };
 
-const VARIANT_STYLE: Record<ButtonVariant, { bg: string; hoverBg: string; text: string; border: string }> = {
+type VariantStyle = {
+  bg?: string;
+  hoverBg?: string;
+  bgImage?: string;
+  hoverBgImage?: string;
+  text: string;
+  border: string;
+  glow?: string;
+};
+
+const VARIANT_STYLE: Record<ButtonVariant, VariantStyle> = {
   primary: {
     bg: "var(--color-ink)",
     hoverBg: "var(--color-ink-soft)",
@@ -42,6 +51,13 @@ const VARIANT_STYLE: Record<ButtonVariant, { bg: string; hoverBg: string; text: 
     hoverBg: "var(--color-error)",
     text: "var(--color-paper)",
     border: "var(--color-error)"
+  },
+  brand: {
+    bgImage: "var(--color-accent-gradient)",
+    hoverBgImage: "var(--color-accent-gradient)",
+    text: "#ffffff",
+    border: "transparent",
+    glow: "0 0 32px -6px rgba(124,58,237,0.55)"
   }
 };
 
@@ -67,16 +83,21 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(function Button
   const v = VARIANT_STYLE[variant];
   const isDisabled = disabled || loading;
 
+  const usesGradient = Boolean(v.bgImage);
+
   const dynamicStyle: CSSProperties = {
-    backgroundColor: isDisabled ? v.bg : hover ? v.hoverBg : v.bg,
+    backgroundColor: usesGradient ? undefined : isDisabled ? v.bg : hover ? v.hoverBg : v.bg,
+    backgroundImage: usesGradient ? (hover ? v.hoverBgImage ?? v.bgImage : v.bgImage) : undefined,
     color: v.text,
     borderColor: v.border,
     borderWidth: 1,
     borderStyle: "solid",
     opacity: isDisabled ? 0.6 : variant === "danger" && hover ? 0.9 : 1,
+    filter: !isDisabled && hover && usesGradient ? "brightness(1.08)" : "none",
     transform: !isDisabled && hover ? (pressed ? "translateY(0) scale(0.97)" : "translateY(-1px)") : "translateY(0)",
-    boxShadow: !isDisabled && hover ? "0 4px 10px rgba(0,0,0,0.18)" : "none",
-    transition: "background-color 150ms ease-out, transform 120ms ease-out, box-shadow 150ms ease-out, opacity 150ms ease-out",
+    boxShadow: !isDisabled && hover ? (v.glow ?? "0 4px 10px rgba(0,0,0,0.18)") : v.glow ? "0 0 24px -8px rgba(124,58,237,0.35)" : "none",
+    transition:
+      "background-color 150ms ease-out, filter 150ms ease-out, transform 120ms ease-out, box-shadow 150ms ease-out, opacity 150ms ease-out",
     cursor: isDisabled ? "not-allowed" : "pointer",
     ...style
   };

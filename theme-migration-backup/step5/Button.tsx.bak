@@ -1,0 +1,119 @@
+"use client";
+
+import { forwardRef, useState } from "react";
+import type { ButtonHTMLAttributes, CSSProperties } from "react";
+
+type ButtonVariant = "primary" | "secondary" | "ghost" | "danger";
+type ButtonSize = "sm" | "md" | "lg";
+
+type ButtonProps = ButtonHTMLAttributes<HTMLButtonElement> & {
+  variant?: ButtonVariant;
+  size?: ButtonSize;
+  loading?: boolean;
+};
+
+const SIZE_CLASSES: Record<ButtonSize, string> = {
+  sm: "h-8 px-3 text-[12.5px]",
+  md: "h-9 px-4 text-[13px]",
+  lg: "h-11 px-5 text-[14px]"
+};
+
+const VARIANT_STYLE: Record<ButtonVariant, { bg: string; hoverBg: string; text: string; border: string }> = {
+  primary: {
+    bg: "var(--color-ink)",
+    hoverBg: "var(--color-ink-soft)",
+    text: "var(--color-paper)",
+    border: "var(--color-ink)"
+  },
+  secondary: {
+    bg: "var(--color-card)",
+    hoverBg: "var(--color-paper-dim)",
+    text: "var(--color-ink)",
+    border: "var(--color-line-strong)"
+  },
+  ghost: {
+    bg: "transparent",
+    hoverBg: "var(--color-paper-dim)",
+    text: "var(--color-ink-soft)",
+    border: "transparent"
+  },
+  danger: {
+    bg: "var(--color-error)",
+    hoverBg: "var(--color-error)",
+    text: "var(--color-paper)",
+    border: "var(--color-error)"
+  }
+};
+
+export const Button = forwardRef<HTMLButtonElement, ButtonProps>(function Button(
+  {
+    variant = "primary",
+    size = "md",
+    className = "",
+    type = "button",
+    style,
+    disabled,
+    loading = false,
+    children,
+    onMouseDown,
+    onMouseUp,
+    ...props
+  },
+  ref
+) {
+  const [hover, setHover] = useState(false);
+  const [pressed, setPressed] = useState(false);
+
+  const v = VARIANT_STYLE[variant];
+  const isDisabled = disabled || loading;
+
+  const dynamicStyle: CSSProperties = {
+    backgroundColor: isDisabled ? v.bg : hover ? v.hoverBg : v.bg,
+    color: v.text,
+    borderColor: v.border,
+    borderWidth: 1,
+    borderStyle: "solid",
+    opacity: isDisabled ? 0.6 : variant === "danger" && hover ? 0.9 : 1,
+    transform: !isDisabled && hover ? (pressed ? "translateY(0) scale(0.97)" : "translateY(-1px)") : "translateY(0)",
+    boxShadow: !isDisabled && hover ? "0 4px 10px rgba(0,0,0,0.18)" : "none",
+    transition: "background-color 150ms ease-out, transform 120ms ease-out, box-shadow 150ms ease-out, opacity 150ms ease-out",
+    cursor: isDisabled ? "not-allowed" : "pointer",
+    ...style
+  };
+
+  const classes = [
+    "inline-flex items-center justify-center gap-1.5 rounded-control font-medium whitespace-nowrap outline-none",
+    "focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-ink",
+    SIZE_CLASSES[size],
+    className
+  ]
+    .filter(Boolean)
+    .join(" ");
+
+  return (
+    <button
+      ref={ref}
+      type={type}
+      disabled={isDisabled}
+      aria-busy={loading}
+      className={classes}
+      style={dynamicStyle}
+      onMouseEnter={() => setHover(true)}
+      onMouseLeave={() => {
+        setHover(false);
+        setPressed(false);
+      }}
+      onMouseDown={(e) => {
+        setPressed(true);
+        onMouseDown?.(e);
+      }}
+      onMouseUp={(e) => {
+        setPressed(false);
+        onMouseUp?.(e);
+      }}
+      {...props}
+    >
+      {loading ? "Working..." : children}
+    </button>
+  );
+});
