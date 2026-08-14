@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useState, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
@@ -25,7 +25,7 @@ export default function RegisterPage() {
     if (password !== confirmPassword) return;
     register.mutate(
       { fullName, email, password, confirmPassword, role: role as "learner" | "instructor" },
-      { onSuccess: () => router.push("/dashboard") }
+      { onSuccess: () => router.push(role === "instructor" ? "/instructor/dashboard" : "/dashboard") }
     );
   }
 
