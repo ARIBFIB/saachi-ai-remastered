@@ -6,7 +6,7 @@ import { SiteHeader } from "./_components/SiteHeader";
 import { SiteFooter } from "./_components/SiteFooter";
 
 export const metadata: Metadata = {
-  title: "Saachi AI â€” Learn practical AI skills",
+  title: "Saachi AI — Learn practical AI skills",
   description: "A skills exchange for the AI era. Learn practical AI application skills and sell what you know."
 };
 
