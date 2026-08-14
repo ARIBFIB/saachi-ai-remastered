@@ -5,11 +5,11 @@
 [data-theme="light"] {
   --color-ink: #1a1a1a;
   --color-ink-soft: #5c5c5c;
-  --color-paper: #fafaf8;
-  --color-paper-dim: #f0efec;
-  --color-card: #ffffff;
-  --color-line: #e6e4e0;
-  --color-line-strong: #d3d0ca;
+  --color-paper: #f6f4f9;
+  --color-paper-dim: #edeaf2;
+  --color-card: #f3f0f7;
+  --color-line: #e2dce9;
+  --color-line-strong: #cdc4d6;
 
   /* Brand accent -- single hue family used across light + dark.
      Change these three stops to re-theme the entire site. */

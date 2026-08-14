@@ -1,7 +1,7 @@
 ﻿import { forwardRef, type ButtonHTMLAttributes } from "react";
 import { cn } from "../cn";
 
-type ButtonVariant = "primary" | "secondary" | "ghost" | "danger";
+type ButtonVariant = "primary" | "secondary" | "ghost" | "danger" | "brand";
 type ButtonSize = "sm" | "md" | "lg";
 
 export type ButtonProps = ButtonHTMLAttributes<HTMLButtonElement> & {
