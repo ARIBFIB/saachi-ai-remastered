@@ -1,21 +1,25 @@
-﻿"use client";
+"use client";
 
 import Link from "next/link";
 import { useState } from "react";
-import { ShoppingCart, Heart, Menu, X, LogOut } from "lucide-react";
+import { ShoppingCart, Heart, Menu as MenuIcon, X, LogOut } from "lucide-react";
 import { Button, ThemeToggle } from "@saachi/ui";
 import { useCartStore, useWishlistStore } from "@saachi/store";
 import { useSession, useLogout } from "@saachi/api-client";
+import { Menu, MenuItem, HoveredLink } from "@/components/ui/navbar-menu";
+import { CATEGORIES } from "../../lib/categories";
 
-const NAV_LINKS = [
-  { href: "/courses", label: "Courses" },
+const MOBILE_NAV_LINKS = [
+  { href: "/courses", label: "All courses" },
   { href: "/categories/ai-automation", label: "Automation" },
   { href: "/categories/ai-marketing", label: "Marketing" },
+  { href: "/pricing", label: "Pricing" },
   { href: "/about", label: "About" }
 ];
 
 export function SiteHeader() {
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [active, setActive] = useState<string | null>(null);
   const cartCount = useCartStore((s) => s.items.length);
   const wishlistCount = useWishlistStore((s) => s.items.length);
   const { data: session } = useSession();
@@ -28,17 +32,38 @@ export function SiteHeader() {
           Saachi<span className="text-gold-dark">AI</span>
         </Link>
 
-        <nav className="hidden items-center gap-6 md:flex">
-          {NAV_LINKS.map((link) => (
-            <Link
-              key={link.href}
-              href={link.href}
-              className="text-[14px] font-medium text-ink-soft transition-colors hover:text-ink"
-            >
-              {link.label}
-            </Link>
-          ))}
-        </nav>
+        <div className="hidden md:block">
+          <Menu setActive={setActive}>
+            <MenuItem setActive={setActive} active={active} item="Courses">
+              <div className="grid grid-cols-2 gap-x-10 gap-y-2 p-1 text-sm">
+                {CATEGORIES.map((cat) => (
+                  <HoveredLink key={cat.id} href={`/categories/${cat.slug}`}>
+                    {cat.name}
+                  </HoveredLink>
+                ))}
+                <HoveredLink href="/courses" className="font-semibold text-gold-dark">
+                  Browse all courses &rarr;
+                </HoveredLink>
+              </div>
+            </MenuItem>
+
+            <MenuItem setActive={setActive} active={active} item="For Instructors">
+              <div className="flex flex-col gap-3 text-sm">
+                <HoveredLink href="/register">Become an instructor</HoveredLink>
+                <HoveredLink href="/mentorship">Offer mentorship</HoveredLink>
+                <HoveredLink href="/legal/instructor-agreement">Instructor agreement</HoveredLink>
+              </div>
+            </MenuItem>
+
+            <MenuItem setActive={setActive} active={active} item="Company">
+              <div className="flex flex-col gap-3 text-sm">
+                <HoveredLink href="/about">About us</HoveredLink>
+                <HoveredLink href="/pricing">Pricing</HoveredLink>
+                <HoveredLink href="/contact">Contact</HoveredLink>
+              </div>
+            </MenuItem>
+          </Menu>
+        </div>
 
         <div className="flex items-center gap-2">
           <ThemeToggle />
@@ -72,12 +97,7 @@ export function SiteHeader() {
           {session ? (
             <div className="hidden items-center gap-2 md:flex">
               <span className="text-[13px] text-ink-soft">{session.fullName}</span>
-              <Button
-                size="sm"
-                variant="ghost"
-                onClick={() => logout.mutate()}
-                aria-label="Log out"
-              >
+              <Button size="sm" variant="ghost" onClick={() => logout.mutate()} aria-label="Log out">
                 <LogOut size={14} />
               </Button>
             </div>
@@ -100,7 +120,7 @@ export function SiteHeader() {
             onClick={() => setMobileOpen((v) => !v)}
             aria-label="Toggle menu"
           >
-            {mobileOpen ? <X size={20} /> : <Menu size={20} />}
+            {mobileOpen ? <X size={20} /> : <MenuIcon size={20} />}
           </button>
         </div>
       </div>
@@ -108,7 +128,7 @@ export function SiteHeader() {
       {mobileOpen && (
         <div className="border-t border-line bg-card px-4 py-4 md:hidden">
           <nav className="flex flex-col gap-3">
-            {NAV_LINKS.map((link) => (
+            {MOBILE_NAV_LINKS.map((link) => (
               <Link
                 key={link.href}
                 href={link.href}
