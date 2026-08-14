@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import Link from "next/link";
 import { useState } from "react";
@@ -89,7 +89,7 @@ export function SiteHeader() {
                 </Button>
               </Link>
               <Link href="/register">
-                <Button size="sm">Sign up</Button>
+                <Button size="sm" variant="brand">Sign up</Button>
               </Link>
             </div>
           )}
@@ -131,7 +131,7 @@ export function SiteHeader() {
                     </Button>
                   </Link>
                   <Link href="/register" className="flex-1">
-                    <Button size="sm" className="w-full">
+                    <Button size="sm" variant="brand" className="w-full">
                       Sign up
                     </Button>
                   </Link>

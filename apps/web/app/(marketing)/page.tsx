@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import Link from "next/link";
 import { useCourseList } from "@saachi/api-client";
@@ -13,16 +13,18 @@ export default function HomePage() {
       {/* Hero */}
       <section className="mx-auto max-w-7xl px-4 pb-14 pt-16 md:px-8 md:pt-24">
         <div className="max-w-2xl">
-          <h1 className="font-display text-[38px] font-bold leading-[1.1] text-ink md:text-[52px]">
-            Learn practical AI skills. Sell what you know.
+          <h1 className="font-display text-[38px] font-bold leading-[1.05] text-ink md:text-[64px]">
+            Learn AI Skills.
+            <br />
+            <span className="text-gradient-brand">Build Real Projects.</span>
           </h1>
           <p className="mt-5 text-[16px] leading-relaxed text-ink-soft md:text-[18px]">
-            Not another watch-time platform. Saachi AI is a skills exchange for the AI era �
+            Not another watch-time platform. Saachi AI is a skills exchange for the AI era ï¿½
             structured, practical, and paid.
           </p>
           <div className="mt-8 flex flex-wrap gap-3">
             <Link href="/courses">
-              <Button size="lg">Browse courses</Button>
+              <Button size="lg" variant="brand">Browse courses</Button>
             </Link>
             <Link href="/register">
               <Button size="lg" variant="secondary">
