@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useState, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
@@ -16,7 +16,10 @@ export default function LoginPage() {
     e.preventDefault();
     login.mutate(
       { email, password },
-      { onSuccess: () => router.push("/dashboard") }
+      {
+        onSuccess: (session) =>
+          router.push(session.role === "instructor" ? "/instructor/dashboard" : "/dashboard")
+      }
     );
   }
 
