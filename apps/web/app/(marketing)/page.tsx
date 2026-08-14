@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import Link from "next/link";
 import { useCourseList } from "@saachi/api-client";
@@ -14,12 +14,21 @@ import {
   TrendingUp,
   PlayCircle,
   Quote,
-  BadgeCheck
+  BadgeCheck,
+  ShieldCheck as VerifiedIcon
 } from "lucide-react";
 import { CATEGORIES } from "../../lib/categories";
 import { Reveal } from "./_components/Reveal";
 import { LandingSearch } from "./_components/LandingSearch";
 import { FaqAccordion } from "./_components/FaqAccordion";
+import { TrendingCarousel } from "./_components/TrendingCarousel";
+import { SpotlightPanels } from "./_components/SpotlightPanels";
+import { ActivityTicker } from "./_components/ActivityTicker";
+import { LogoCloud } from "./_components/LogoCloud";
+import { BlogPreview } from "./_components/BlogPreview";
+import { PricingTeaser } from "./_components/PricingTeaser";
+import { NewsletterCard } from "./_components/NewsletterCard";
+import { EXTRA_TESTIMONIALS } from "./_components/landing-fake-data";
 import { CoverflowCarousel } from "@/components/ui/coverflow-carousel";
 import { ImageStreamHero } from "@/components/ui/image-stream-hero";
 import HowItWorks from "@/components/ui/how-it-works";
@@ -31,7 +40,11 @@ const STATS = [
   { label: "Avg. rating", value: "4.8 / 5", icon: Star }
 ];
 
-const TRUST_BADGES = ["Featured on ProductHunt", "AI Weekly Pick", "TechCrunch Mentioned", "500+ 5-star reviews", "SSL Secured Checkout", "7-Day Refunds"];
+const TRUST_BADGES = [
+  "Featured on ProductHunt", "AI Weekly Pick", "TechCrunch Mentioned",
+  "500+ 5-star reviews", "SSL Secured Checkout", "7-Day Refunds",
+  "42,000+ learners", "1,280+ live courses"
+];
 
 const INSTRUCTORS = [
   { name: "Ayesha Khan", role: "Automation & n8n", students: "6.2k", avatar: "https://i.pravatar.cc/96?img=47" },
@@ -44,33 +57,26 @@ const INSTRUCTORS = [
 
 const TESTIMONIALS = [
   {
-    name: "Fatima R.",
-    role: "Freelance automation consultant",
-    avatar: "https://i.pravatar.cc/64?img=5",
-    rating: 5,
+    name: "Fatima R.", role: "Freelance automation consultant", avatar: "https://i.pravatar.cc/64?img=5",
+    rating: 5, verified: true,
     quote: "I landed 3 client projects within a month of finishing the n8n automation course. The invoice-parsing workflow alone paid for the course ten times over."
   },
   {
-    name: "Ali Raza",
-    role: "Support team lead",
-    avatar: "https://i.pravatar.cc/64?img=22",
-    rating: 5,
+    name: "Ali Raza", role: "Support team lead", avatar: "https://i.pravatar.cc/64?img=22",
+    rating: 5, verified: true,
     quote: "Our WhatsApp response time dropped by 70% after building the chatbot from the course. Practical, no fluff, straight to the point."
   },
   {
-    name: "Hina Malik",
-    role: "Marketing manager",
-    avatar: "https://i.pravatar.cc/64?img=25",
-    rating: 4,
+    name: "Hina Malik", role: "Marketing manager", avatar: "https://i.pravatar.cc/64?img=25",
+    rating: 4, verified: false,
     quote: "Best structured AI marketing content I have found anywhere. Wish there were a couple more advanced modules, but genuinely worth it."
   },
   {
-    name: "Omar Sheikh",
-    role: "Indie developer",
-    avatar: "https://i.pravatar.cc/64?img=15",
-    rating: 5,
+    name: "Omar Sheikh", role: "Indie developer", avatar: "https://i.pravatar.cc/64?img=15",
+    rating: 5, verified: true,
     quote: "Went from zero to shipping my own AI agent product in six weeks. The instructor actually answers Q&A -- that made all the difference."
-  }
+  },
+  ...EXTRA_TESTIMONIALS
 ];
 
 const HOW_IT_WORKS = [
@@ -118,6 +124,10 @@ export default function HomePage() {
           <div className="mt-10">
             <LandingSearch />
           </div>
+
+          <div className="mt-6">
+            <ActivityTicker />
+          </div>
         </div>
       </section>
 
@@ -151,6 +161,13 @@ export default function HomePage() {
         </Reveal>
       </section>
 
+      {/* Logo cloud */}
+      <section className="mx-auto max-w-7xl px-4 pb-16 md:px-8">
+        <Reveal>
+          <LogoCloud />
+        </Reveal>
+      </section>
+
       {/* Category grid */}
       <section className="mx-auto max-w-7xl px-4 pb-16 md:px-8">
         <Reveal>
@@ -171,6 +188,24 @@ export default function HomePage() {
             </Reveal>
           ))}
         </div>
+      </section>
+
+      {/* Trending carousel */}
+      <section className="mx-auto max-w-7xl px-4 pb-16 md:px-8">
+        <Reveal>
+          <TrendingCarousel />
+        </Reveal>
+      </section>
+
+      {/* Spotlight panels (Border Beam) */}
+      <section className="mx-auto max-w-7xl px-4 pb-16 md:px-8">
+        <Reveal>
+          <h2 className="mb-2 font-display text-[22px] font-semibold text-ink">Ways to level up</h2>
+          <p className="mb-8 text-[14px] text-ink-soft">Pick the path that fits how you learn best.</p>
+        </Reveal>
+        <Reveal delay={80}>
+          <SpotlightPanels />
+        </Reveal>
       </section>
 
       {/* How it works */}
@@ -211,6 +246,17 @@ export default function HomePage() {
         )}
       </section>
 
+      {/* Pricing teaser */}
+      <section className="mx-auto max-w-7xl px-4 pb-16 md:px-8">
+        <Reveal>
+          <h2 className="mb-2 font-display text-[22px] font-semibold text-ink">Simple, transparent pricing</h2>
+          <p className="mb-8 text-[14px] text-ink-soft">Buy individual courses, or go unlimited with Pro.</p>
+        </Reveal>
+        <Reveal delay={80}>
+          <PricingTeaser />
+        </Reveal>
+      </section>
+
       {/* Popular instructors -- coverflow */}
       <section className="mx-auto max-w-7xl px-4 pb-16 md:px-8">
         <Reveal>
@@ -241,14 +287,17 @@ export default function HomePage() {
         </Reveal>
         <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
           {TESTIMONIALS.map((t, i) => (
-            <Reveal key={t.name} delay={i * 80}>
+            <Reveal key={t.name} delay={i * 70}>
               <div className="relative h-full rounded-card border border-line bg-card p-6">
                 <Quote size={28} className="absolute right-5 top-5 text-line-strong" />
                 <div className="mb-3 flex items-center gap-3">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img src={t.avatar} alt={t.name} className="h-11 w-11 rounded-full object-cover" />
                   <div>
-                    <p className="text-[13.5px] font-semibold text-ink">{t.name}</p>
+                    <p className="flex items-center gap-1 text-[13.5px] font-semibold text-ink">
+                      {t.name}
+                      {t.verified && <VerifiedIcon size={12} className="text-teal" />}
+                    </p>
                     <p className="text-[12px] text-ink-soft">{t.role}</p>
                   </div>
                 </div>
@@ -291,6 +340,22 @@ export default function HomePage() {
           </ImageStreamHero>
         </Reveal>
       </section>
+
+      {/* Blog / resources */}
+      <section className="mx-auto max-w-7xl px-4 pb-16 md:px-8">
+        <Reveal>
+          <div className="mb-5 flex items-center justify-between">
+            <h2 className="font-display text-[22px] font-semibold text-ink">From the blog</h2>
+            <Link href="/about" className="text-[14px] font-medium text-accent-violet hover:underline">
+              View all
+            </Link>
+          </div>
+        </Reveal>
+        <Reveal delay={80}>
+          <BlogPreview />
+        </Reveal>
+      </section>
+
       {/* FAQ */}
       <section className="mx-auto max-w-4xl px-4 pb-16 md:px-8">
         <Reveal>
@@ -299,6 +364,13 @@ export default function HomePage() {
         </Reveal>
         <Reveal delay={100}>
           <FaqAccordion />
+        </Reveal>
+      </section>
+
+      {/* Newsletter */}
+      <section className="mx-auto max-w-7xl px-4 pb-16 md:px-8">
+        <Reveal>
+          <NewsletterCard />
         </Reveal>
       </section>
 
