@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import Link from "next/link";
 import { DollarSign, Users, Star, MessageCircle } from "lucide-react";
@@ -25,7 +25,7 @@ export default function InstructorDashboardPage() {
       <div className="mb-10 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <KpiCard label="Lifetime earnings" value="$0.00" icon={DollarSign} />
         <KpiCard label="Total students" value="0" icon={Users} />
-        <KpiCard label="Average rating" value="â€”" icon={Star} />
+        <KpiCard label="Average rating" value="—" icon={Star} />
         <KpiCard label="Pending Q&A" value="0" icon={MessageCircle} />
       </div>
 
@@ -47,10 +47,10 @@ export default function InstructorDashboardPage() {
             <div key={r.id} className="rounded-card border border-line bg-card p-4">
               <div className="mb-1 flex items-center justify-between">
                 <p className="text-[14px] font-semibold text-ink">{r.course}</p>
-                <span className="text-[12px] text-ink-soft">{"â˜…".repeat(r.rating)}</span>
+                <span className="text-[12px] text-ink-soft">{"★".repeat(r.rating)}</span>
               </div>
               <p className="text-[13px] text-ink-soft">
-                {r.author} â€” {r.comment}
+                {r.author} — {r.comment}
               </p>
             </div>
           ))}

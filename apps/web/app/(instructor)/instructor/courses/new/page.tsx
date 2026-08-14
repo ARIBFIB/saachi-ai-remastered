@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
@@ -205,11 +205,11 @@ export default function CourseWizardPage() {
           <div className="flex flex-col gap-4 text-[14px]">
             <div>
               <p className="text-[12px] font-semibold uppercase tracking-[0.05em] text-ink-soft/60">Title</p>
-              <p className="text-ink">{title || "â€”"}</p>
+              <p className="text-ink">{title || "—"}</p>
             </div>
             <div>
               <p className="text-[12px] font-semibold uppercase tracking-[0.05em] text-ink-soft/60">Category</p>
-              <p className="text-ink">{CATEGORIES.find((c) => c.id === category)?.name ?? "â€”"}</p>
+              <p className="text-ink">{CATEGORIES.find((c) => c.id === category)?.name ?? "—"}</p>
             </div>
             <div>
               <p className="text-[12px] font-semibold uppercase tracking-[0.05em] text-ink-soft/60">Modules</p>
@@ -217,7 +217,7 @@ export default function CourseWizardPage() {
             </div>
             <div>
               <p className="text-[12px] font-semibold uppercase tracking-[0.05em] text-ink-soft/60">Price</p>
-              <p className="text-ink">{price ? `${price} ${currency}` : "â€”"}</p>
+              <p className="text-ink">{price ? `${price} ${currency}` : "—"}</p>
             </div>
           </div>
         )}

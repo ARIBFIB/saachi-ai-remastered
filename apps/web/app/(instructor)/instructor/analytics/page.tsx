@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { TrendingUp, Users, CheckCircle2, Globe } from "lucide-react";
 import { KpiCard, EmptyState } from "@saachi/ui";
@@ -11,9 +11,9 @@ export default function InstructorAnalyticsPage() {
 
       <div className="mb-10 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <KpiCard label="Total enrollments" value="0" icon={Users} />
-        <KpiCard label="Completion rate" value="â€”" icon={CheckCircle2} />
+        <KpiCard label="Completion rate" value="—" icon={CheckCircle2} />
         <KpiCard label="Revenue (30d)" value="$0.00" icon={TrendingUp} />
-        <KpiCard label="Top traffic source" value="â€”" icon={Globe} />
+        <KpiCard label="Top traffic source" value="—" icon={Globe} />
       </div>
 
       <EmptyState

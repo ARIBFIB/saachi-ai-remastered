@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { useState } from "react";
 import { CalendarDays, Plus, Trash2 } from "lucide-react";
@@ -91,7 +91,7 @@ export default function InstructorMentorshipSettingsPage() {
               <ul className="mb-4 flex flex-col gap-2">
                 {slots.map((s) => (
                   <li key={s.id} className="flex items-center justify-between rounded-control bg-paper-dim px-3 py-2 text-[13px] text-ink">
-                    {s.day} â€” {s.time}
+                    {s.day} — {s.time}
                     <button type="button" onClick={() => removeSlot(s.id)} aria-label="Remove slot" className="text-ink-soft hover:text-error">
                       <Trash2 size={14} />
                     </button>

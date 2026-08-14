@@ -17,7 +17,7 @@ export default function HomePage() {
             Learn practical AI skills. Sell what you know.
           </h1>
           <p className="mt-5 text-[16px] leading-relaxed text-ink-soft md:text-[18px]">
-            Not another watch-time platform. Saachi AI is a skills exchange for the AI era â€”
+            Not another watch-time platform. Saachi AI is a skills exchange for the AI era �
             structured, practical, and paid.
           </p>
           <div className="mt-8 flex flex-wrap gap-3">
