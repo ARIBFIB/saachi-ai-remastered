@@ -1,0 +1,101 @@
+﻿@import "tailwindcss";
+@config "../tailwind.config.js";
+
+:root,
+[data-theme="light"] {
+  --color-ink: #1a1a1a;
+  --color-ink-soft: #5c5c5c;
+  --color-paper: #f6f4f9;
+  --color-paper-dim: #edeaf2;
+  --color-card: #f3f0f7;
+  --color-line: #e2dce9;
+  --color-line-strong: #cdc4d6;
+
+  /* Brand accent -- single hue family used across light + dark.
+     Change these three stops to re-theme the entire site. */
+  --color-accent-violet: #7c3aed;
+  --color-accent-magenta: #c026d3;
+  --color-accent-pink: #ec4899;
+  --color-accent-gradient: linear-gradient(
+    90deg,
+    var(--color-accent-violet) 0%,
+    var(--color-accent-magenta) 50%,
+    var(--color-accent-pink) 100%
+  );
+
+  /* Legacy aliases kept for any component still referencing "gold" --
+     now point at the accent so nothing breaks during migration. */
+  --color-gold: var(--color-accent-violet);
+  --color-gold-dark: #6d28d9;
+  --color-gold-tint: #f3ecfd;
+
+  --color-teal: var(--color-accent-magenta);
+  --color-teal-light: #fbe8fb;
+
+  --color-success: #2f7d4f;
+  --color-success-tint: #e4f4e8;
+  --color-warning: #b8933c;
+  --color-warning-tint: #faf1dc;
+  --color-error: #c0392b;
+  --color-error-tint: #fbe9e7;
+  --color-info: #2f6f9e;
+  --color-info-tint: #e6f1f8;
+
+  --font-display: "Inter", system-ui, sans-serif;
+  --font-sans: "Inter", system-ui, sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, monospace;
+}
+
+[data-theme="dark"] {
+  --color-ink: #f5f4f7;
+  --color-ink-soft: #a6a3af;
+  --color-paper: #08070b;
+  --color-paper-dim: #16151a;
+  --color-card: #111015;
+  --color-line: #242229;
+  --color-line-strong: #33313a;
+
+  --color-accent-violet: #7c3aed;
+  --color-accent-magenta: #c026d3;
+  --color-accent-pink: #ec4899;
+  --color-accent-gradient: linear-gradient(
+    90deg,
+    var(--color-accent-violet) 0%,
+    var(--color-accent-magenta) 50%,
+    var(--color-accent-pink) 100%
+  );
+
+  --color-gold: var(--color-accent-violet);
+  --color-gold-dark: #a855f7;
+  --color-gold-tint: #241a33;
+
+  --color-teal: var(--color-accent-pink);
+  --color-teal-light: #2f1a26;
+
+  --color-success: #34d399;
+  --color-success-tint: #10241a;
+  --color-warning: #fbbf24;
+  --color-warning-tint: #2a2110;
+  --color-error: #f87171;
+  --color-error-tint: #2a1613;
+  --color-info: #5fa3d9;
+  --color-info-tint: #131f30;
+}
+
+body {
+  background-color: var(--color-paper);
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+}
+
+* {
+  border-color: var(--color-line);
+}
+
+/* Utility for gradient text (hero headlines, per design-system skill) */
+.text-gradient-brand {
+  background: var(--color-accent-gradient);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}

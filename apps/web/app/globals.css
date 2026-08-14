@@ -5,11 +5,11 @@
 [data-theme="light"] {
   --color-ink: #1a1a1a;
   --color-ink-soft: #5c5c5c;
-  --color-paper: #f6f4f9;
-  --color-paper-dim: #edeaf2;
-  --color-card: #f3f0f7;
-  --color-line: #e2dce9;
-  --color-line-strong: #cdc4d6;
+  --color-paper: #E9E1F5;
+  --color-paper-dim: #DFD3EE;
+  --color-card: #F0E8FA;
+  --color-line: #CDBBE3;
+  --color-line-strong: #B49FD1;
 
   /* Brand accent -- single hue family used across light + dark.
      Change these three stops to re-theme the entire site. */
@@ -49,11 +49,11 @@
 [data-theme="dark"] {
   --color-ink: #f5f4f7;
   --color-ink-soft: #a6a3af;
-  --color-paper: #08070b;
-  --color-paper-dim: #16151a;
-  --color-card: #111015;
-  --color-line: #242229;
-  --color-line-strong: #33313a;
+  --color-paper: #1B1029;
+  --color-paper-dim: #241736;
+  --color-card: #2A1B3F;
+  --color-line: #3D2B58;
+  --color-line-strong: #4E3873;
 
   --color-accent-violet: #7c3aed;
   --color-accent-magenta: #c026d3;

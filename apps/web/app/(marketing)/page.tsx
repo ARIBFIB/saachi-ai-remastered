@@ -19,8 +19,7 @@ export default function HomePage() {
             <span className="text-gradient-brand">Build Real Projects.</span>
           </h1>
           <p className="mt-5 text-[16px] leading-relaxed text-ink-soft md:text-[18px]">
-            Not another watch-time platform. Saachi AI is a skills exchange for the AI era ï¿½
-            structured, practical, and paid.
+            Not another watch-time platform. Saachi AI is a skills exchange for the AI era - structured, practical, and paid.
           </p>
           <div className="mt-8 flex flex-wrap gap-3">
             <Link href="/courses">
