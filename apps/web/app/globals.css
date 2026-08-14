@@ -1,4 +1,4 @@
-@import "tailwindcss";
+﻿@import "tailwindcss";
 @config "../tailwind.config.js";
 
 :root,
@@ -11,12 +11,26 @@
   --color-line: #e6e4e0;
   --color-line-strong: #d3d0ca;
 
-  --color-gold: #e8c468;
-  --color-gold-dark: #b8933c;
-  --color-gold-tint: #faf1dc;
+  /* Brand accent -- single hue family used across light + dark.
+     Change these three stops to re-theme the entire site. */
+  --color-accent-violet: #7c3aed;
+  --color-accent-magenta: #c026d3;
+  --color-accent-pink: #ec4899;
+  --color-accent-gradient: linear-gradient(
+    90deg,
+    var(--color-accent-violet) 0%,
+    var(--color-accent-magenta) 50%,
+    var(--color-accent-pink) 100%
+  );
 
-  --color-teal: #2f7d6e;
-  --color-teal-light: #e3f2ee;
+  /* Legacy aliases kept for any component still referencing "gold" --
+     now point at the accent so nothing breaks during migration. */
+  --color-gold: var(--color-accent-violet);
+  --color-gold-dark: #6d28d9;
+  --color-gold-tint: #f3ecfd;
+
+  --color-teal: var(--color-accent-magenta);
+  --color-teal-light: #fbe8fb;
 
   --color-success: #2f7d4f;
   --color-success-tint: #e4f4e8;
@@ -33,29 +47,39 @@
 }
 
 [data-theme="dark"] {
-  --color-ink: #f2f2f0;
-  --color-ink-soft: #b3b0aa;
-  --color-paper: #16151a;
-  --color-paper-dim: #201f24;
-  --color-card: #1c1b20;
-  --color-line: #2c2b30;
-  --color-line-strong: #3a3940;
+  --color-ink: #f5f4f7;
+  --color-ink-soft: #a6a3af;
+  --color-paper: #08070b;
+  --color-paper-dim: #16151a;
+  --color-card: #111015;
+  --color-line: #242229;
+  --color-line-strong: #33313a;
 
-  --color-gold: #e8c468;
-  --color-gold-dark: #d9ac47;
-  --color-gold-tint: #34301f;
+  --color-accent-violet: #7c3aed;
+  --color-accent-magenta: #c026d3;
+  --color-accent-pink: #ec4899;
+  --color-accent-gradient: linear-gradient(
+    90deg,
+    var(--color-accent-violet) 0%,
+    var(--color-accent-magenta) 50%,
+    var(--color-accent-pink) 100%
+  );
 
-  --color-teal: #4fb39c;
-  --color-teal-light: #1c2f2b;
+  --color-gold: var(--color-accent-violet);
+  --color-gold-dark: #a855f7;
+  --color-gold-tint: #241a33;
 
-  --color-success: #4fb374;
-  --color-success-tint: #1c2f22;
-  --color-warning: #d9ac47;
-  --color-warning-tint: #34301f;
-  --color-error: #e0685a;
-  --color-error-tint: #35201e;
+  --color-teal: var(--color-accent-pink);
+  --color-teal-light: #2f1a26;
+
+  --color-success: #34d399;
+  --color-success-tint: #10241a;
+  --color-warning: #fbbf24;
+  --color-warning-tint: #2a2110;
+  --color-error: #f87171;
+  --color-error-tint: #2a1613;
   --color-info: #5fa3d9;
-  --color-info-tint: #1c2733;
+  --color-info-tint: #131f30;
 }
 
 body {
@@ -66,4 +90,12 @@ body {
 
 * {
   border-color: var(--color-line);
+}
+
+/* Utility for gradient text (hero headlines, per design-system skill) */
+.text-gradient-brand {
+  background: var(--color-accent-gradient);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
 }

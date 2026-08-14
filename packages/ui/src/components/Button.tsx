@@ -14,7 +14,7 @@ const variantStyles: Record<ButtonVariant, string> = {
   primary: "bg-gold text-ink hover:bg-gold-dark",
   secondary: "border border-line-strong bg-card text-ink hover:border-ink",
   ghost: "bg-transparent text-ink-soft hover:bg-paper-dim",
-  danger: "bg-error text-white hover:bg-[#a53931]"
+  danger: "bg-error text-white hover:brightness-90"
 };
 
 const sizeStyles: Record<ButtonSize, string> = {

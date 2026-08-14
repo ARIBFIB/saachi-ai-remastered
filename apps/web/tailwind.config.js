@@ -1,4 +1,4 @@
-/** @type {import("tailwindcss").Config} */
+﻿/** @type {import("tailwindcss").Config} */
 module.exports = {
   content: [
     "./app/**/*.{ts,tsx}",
@@ -17,6 +17,11 @@ module.exports = {
         card: "var(--color-card)",
         line: "var(--color-line)",
         "line-strong": "var(--color-line-strong)",
+
+        "accent-violet": "var(--color-accent-violet)",
+        "accent-magenta": "var(--color-accent-magenta)",
+        "accent-pink": "var(--color-accent-pink)",
+
         gold: "var(--color-gold)",
         "gold-dark": "var(--color-gold-dark)",
         "gold-tint": "var(--color-gold-tint)",
@@ -30,6 +35,9 @@ module.exports = {
         "error-tint": "var(--color-error-tint)",
         info: "var(--color-info)",
         "info-tint": "var(--color-info-tint)"
+      },
+      backgroundImage: {
+        "gradient-brand": "var(--color-accent-gradient)"
       },
       borderRadius: {
         card: "14px",
