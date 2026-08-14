@@ -20,6 +20,9 @@ import { CATEGORIES } from "../../lib/categories";
 import { Reveal } from "./_components/Reveal";
 import { LandingSearch } from "./_components/LandingSearch";
 import { FaqAccordion } from "./_components/FaqAccordion";
+import { CoverflowCarousel } from "@/components/ui/coverflow-carousel";
+import { ImageStreamHero } from "@/components/ui/image-stream-hero";
+import HowItWorks from "@/components/ui/how-it-works";
 
 const STATS = [
   { label: "Active students", value: "42,000+", icon: Users },
@@ -171,28 +174,9 @@ export default function HomePage() {
       </section>
 
       {/* How it works */}
-      <section className="mx-auto max-w-7xl px-4 pb-16 md:px-8">
-        <Reveal>
-          <h2 className="mb-2 font-display text-[22px] font-semibold text-ink">How Saachi AI works</h2>
-          <p className="mb-8 text-[14px] text-ink-soft">Three steps from curious to capable.</p>
-        </Reveal>
-        <div className="grid grid-cols-1 gap-5 md:grid-cols-3">
-          {HOW_IT_WORKS.map((step, i) => (
-            <Reveal key={step.title} delay={i * 100}>
-              <div className="h-full rounded-card border border-line bg-card p-6">
-                <div
-                  className="mb-4 flex h-11 w-11 items-center justify-center rounded-full text-white"
-                  style={{ backgroundImage: "var(--color-accent-gradient)" }}
-                >
-                  <step.icon size={20} />
-                </div>
-                <h3 className="mb-1.5 text-[16px] font-semibold text-ink">{step.title}</h3>
-                <p className="text-[13.5px] leading-relaxed text-ink-soft">{step.desc}</p>
-              </div>
-            </Reveal>
-          ))}
-        </div>
-      </section>
+      <Reveal>
+        <HowItWorks />
+      </Reveal>
 
       {/* Featured courses */}
       <section className="mx-auto max-w-7xl px-4 pb-16 md:px-8">
@@ -227,32 +211,26 @@ export default function HomePage() {
         )}
       </section>
 
-      {/* Popular instructors */}
+      {/* Popular instructors -- coverflow */}
       <section className="mx-auto max-w-7xl px-4 pb-16 md:px-8">
         <Reveal>
           <h2 className="mb-2 font-display text-[22px] font-semibold text-ink">Learn from top instructors</h2>
-          <p className="mb-8 text-[14px] text-ink-soft">Verified practitioners, not just presenters.</p>
+          <p className="mb-8 text-[14px] text-ink-soft">Verified practitioners, not just presenters. Drag to browse.</p>
         </Reveal>
-        <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-6">
-          {INSTRUCTORS.map((inst, i) => (
-            <Reveal key={inst.name} delay={i * 50}>
-              <div className="flex flex-col items-center rounded-card border border-line bg-card p-4 text-center transition-transform hover:-translate-y-1">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
-                  src={inst.avatar}
-                  alt={inst.name}
-                  className="mb-3 h-16 w-16 rounded-full border-2 border-line object-cover"
-                />
-                <p className="truncate text-[13px] font-semibold text-ink">{inst.name}</p>
-                <p className="truncate text-[11.5px] text-ink-soft">{inst.role}</p>
-                <span className="mt-2 flex items-center gap-1 text-[11px] font-medium text-accent-violet">
-                  <Users size={11} />
-                  {inst.students} students
-                </span>
-              </div>
-            </Reveal>
-          ))}
-        </div>
+        <Reveal delay={100}>
+          <CoverflowCarousel
+            showCaption
+            showNavigation
+            label="Top instructors"
+            slides={INSTRUCTORS.map((inst) => ({
+              src: inst.avatar,
+              alt: inst.name,
+              title: inst.name,
+              subtitle: inst.role,
+              meta: [{ label: "Students", value: inst.students }]
+            }))}
+          />
+        </Reveal>
       </section>
 
       {/* Testimonials */}
@@ -286,6 +264,33 @@ export default function HomePage() {
         </div>
       </section>
 
+      {/* Course spotlight stream */}
+      <section className="mx-auto max-w-7xl px-4 pb-16 md:px-8">
+        <Reveal>
+          <ImageStreamHero
+            className="h-[420px] w-full rounded-card border border-line bg-paper-dim"
+            images={[
+              { src: "https://images.unsplash.com/photo-1555949963-aa79dcee981c?w=480&h=480&fit=crop&q=70&auto=format", alt: "AI automation workspace" },
+              { src: "https://images.unsplash.com/photo-1531482615713-2afd69097998?w=480&h=480&fit=crop&q=70&auto=format", alt: "Developer working with AI tools" },
+              { src: "https://images.unsplash.com/photo-1526378722484-bd91ca387e72?w=480&h=480&fit=crop&q=70&auto=format", alt: "Analytics dashboard" },
+              { src: "https://images.unsplash.com/photo-1504384308090-c894fdcc538d?w=480&h=480&fit=crop&q=70&auto=format", alt: "Team collaborating" },
+              { src: "https://images.unsplash.com/photo-1550439062-609e1531270e?w=480&h=480&fit=crop&q=70&auto=format", alt: "Whiteboard planning session" },
+              { src: "https://images.unsplash.com/photo-1519389950473-47ba0277781c?w=480&h=480&fit=crop&q=70&auto=format", alt: "Remote work setup" }
+            ]}
+          >
+            <div className="relative z-10 flex h-full flex-col items-center justify-between py-10 text-center">
+              <div className="px-6">
+                <h2 className="text-balance font-display text-[28px] font-bold text-ink md:text-[36px]">
+                  Every course, built around real work.
+                </h2>
+              </div>
+              <p className="max-w-md text-balance px-6 text-[13.5px] text-ink-soft">
+                Screenshots, templates, and workflows straight from working AI practitioners -- not stock slides.
+              </p>
+            </div>
+          </ImageStreamHero>
+        </Reveal>
+      </section>
       {/* FAQ */}
       <section className="mx-auto max-w-4xl px-4 pb-16 md:px-8">
         <Reveal>
