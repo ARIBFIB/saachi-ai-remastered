@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { useState } from "react";
 import { MessageCircle } from "lucide-react";
@@ -13,7 +13,13 @@ type Student = {
 };
 
 // NOTE: demo-only dummy data. Replace with useInstructorStudents() once confirmed.
-const STUDENTS: Student[] = [];
+const STUDENTS: Student[] = [
+  { id: "stu_1", name: "Hina Malik", courseTitle: "Automate Everything with n8n & AI", progressPercent: 100, lastActive: "2 days ago" },
+  { id: "stu_2", name: "Omar Sheikh", courseTitle: "Automate Everything with n8n & AI", progressPercent: 65, lastActive: "Today" },
+  { id: "stu_3", name: "Sara Iqbal", courseTitle: "AI Chatbots for WhatsApp Support", progressPercent: 40, lastActive: "5 days ago" },
+  { id: "stu_4", name: "Noor Fatima", courseTitle: "Automate Everything with n8n & AI", progressPercent: 100, lastActive: "1 week ago" },
+  { id: "stu_5", name: "Ali Raza", courseTitle: "AI Chatbots for WhatsApp Support", progressPercent: 20, lastActive: "Yesterday" }
+];
 
 export default function InstructorStudentsPage() {
   const [search, setSearch] = useState("");

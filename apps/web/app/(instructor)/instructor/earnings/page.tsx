@@ -1,8 +1,14 @@
-﻿"use client";
+"use client";
 
 import Link from "next/link";
 import { Wallet, TrendingUp, Clock } from "lucide-react";
-import { Button, KpiCard, EmptyState } from "@saachi/ui";
+import { Button, KpiCard, Card } from "@saachi/ui";
+
+// NOTE: demo-only dummy data. Replace with useInstructorEarnings() once
+// packages/api-client's earnings hooks are confirmed.
+const EARNINGS_BY_COURSE = [
+  { id: "crs_i1", title: "Automate Everything with n8n & AI", enrollments: 654, earnings: 8420 }
+];
 
 export default function InstructorEarningsPage() {
   return (
@@ -18,16 +24,25 @@ export default function InstructorEarningsPage() {
       </div>
 
       <div className="mb-10 grid grid-cols-1 gap-4 sm:grid-cols-3">
-        <KpiCard label="Available balance" value="$0.00" icon={Wallet} />
-        <KpiCard label="Lifetime earnings" value="$0.00" icon={TrendingUp} />
-        <KpiCard label="Pending clearance" value="$0.00" icon={Clock} />
+        <KpiCard label="Available balance" value="$1,240.00" icon={Wallet} />
+        <KpiCard label="Lifetime earnings" value="$8,420.00" icon={TrendingUp} />
+        <KpiCard label="Pending clearance" value="$340.00" icon={Clock} />
       </div>
 
       <h2 className="mb-4 font-display text-[20px] font-semibold text-ink">Earnings by course</h2>
-      <EmptyState
-        title="No earnings yet"
-        description="Once learners start purchasing your courses, a per-course earnings breakdown will appear here."
-      />
+      <div className="flex flex-col gap-3">
+        {EARNINGS_BY_COURSE.map((c) => (
+          <Card key={c.id} className="flex items-center justify-between gap-4 p-5">
+            <div>
+              <p className="text-[15px] font-semibold text-ink">{c.title}</p>
+              <p className="mt-1 text-[13px] text-ink-soft">{c.enrollments} enrollments</p>
+            </div>
+            <span className="font-mono text-[16px] font-semibold text-ink">
+              {new Intl.NumberFormat("en-US", { style: "currency", currency: "USD" }).format(c.earnings)}
+            </span>
+          </Card>
+        ))}
+      </div>
     </div>
   );
 }

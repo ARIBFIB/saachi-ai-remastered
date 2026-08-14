@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { useState } from "react";
 import { Rocket, Check } from "lucide-react";
@@ -18,7 +18,16 @@ const PACKAGES: {
 ];
 
 // NOTE: demo-only dummy data. Replace with useInstructorCourses() once confirmed.
-const COURSE_OPTIONS = [{ label: "Select a course...", value: "" }];
+const COURSE_OPTIONS = [
+  { label: "Select a course...", value: "" },
+  { label: "Automate Everything with n8n & AI", value: "crs_i1" },
+  { label: "AI Chatbots for WhatsApp Support", value: "crs_i2" }
+];
+
+// NOTE: demo-only dummy data. Replace with useInstructorPromotions() once confirmed.
+const ACTIVE_PROMOTIONS: { id: string; courseTitle: string; tier: PackageTier; expiresIn: string }[] = [
+  { id: "promo_1", courseTitle: "Automate Everything with n8n & AI", tier: "silver", expiresIn: "4 days" }
+];
 
 export default function InstructorPromotionsPage() {
   const [selectedCourse, setSelectedCourse] = useState("");
@@ -47,11 +56,6 @@ export default function InstructorPromotionsPage() {
           value={selectedCourse}
           onChange={(e) => setSelectedCourse(e.target.value)}
         />
-        {COURSE_OPTIONS.length === 1 && (
-          <p className="mt-2 text-[12px] text-ink-soft">
-            You don&apos;t have any published courses to promote yet.
-          </p>
-        )}
       </div>
 
       <div className="grid grid-cols-1 gap-5 md:grid-cols-3">
@@ -92,7 +96,21 @@ export default function InstructorPromotionsPage() {
       </div>
 
       <h2 className="mb-4 mt-12 font-display text-[20px] font-semibold text-ink">Active promotions</h2>
-      <EmptyState title="No active promotions" description="Purchased boost packages will appear here." />
+      {ACTIVE_PROMOTIONS.length === 0 ? (
+        <EmptyState title="No active promotions" description="Purchased boost packages will appear here." />
+      ) : (
+        <div className="flex flex-col gap-3">
+          {ACTIVE_PROMOTIONS.map((p) => (
+            <div key={p.id} className="flex items-center justify-between gap-4 rounded-card border border-line bg-card p-4">
+              <div>
+                <p className="text-[14px] font-semibold text-ink">{p.courseTitle}</p>
+                <p className="mt-1 text-[13px] text-ink-soft">Expires in {p.expiresIn}</p>
+              </div>
+              <Badge variant={p.tier === "gold" ? "gold" : undefined}>{p.tier} boost</Badge>
+            </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 }

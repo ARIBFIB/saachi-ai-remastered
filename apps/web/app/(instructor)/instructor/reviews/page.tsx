@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { useState } from "react";
 import { Star } from "lucide-react";
@@ -14,7 +14,30 @@ type Review = {
 };
 
 // NOTE: demo-only dummy data. Replace with useInstructorReviews() once confirmed.
-const REVIEWS: Review[] = [];
+const REVIEWS: Review[] = [
+  {
+    id: "rev_i1",
+    courseTitle: "Automate Everything with n8n & AI",
+    author: "Bilal S.",
+    rating: 5,
+    comment: "Very practical, loved it. The invoice parsing workflow alone was worth the price."
+  },
+  {
+    id: "rev_i2",
+    courseTitle: "Automate Everything with n8n & AI",
+    author: "Fatima R.",
+    rating: 4,
+    comment: "Good pacing, clear examples. Wish there was a bit more on error handling.",
+    reply: "Thanks Fatima! Adding an error-handling lesson is on my list for the next update."
+  },
+  {
+    id: "rev_i3",
+    courseTitle: "AI Chatbots for WhatsApp Support",
+    author: "Omar Sheikh",
+    rating: 5,
+    comment: "Best WhatsApp bot course I've taken - clear, practical, and well structured."
+  }
+];
 
 export default function InstructorReviewsPage() {
   const [replies, setReplies] = useState<Record<string, string>>({});

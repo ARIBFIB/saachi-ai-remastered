@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import Link from "next/link";
 import { useState } from "react";
@@ -17,7 +17,12 @@ type InstructorCourse = {
 
 // NOTE: demo-only dummy data. Replace with useInstructorCourses() once
 // packages/api-client's instructor-course hooks are confirmed.
-const COURSES: InstructorCourse[] = [];
+const COURSES: InstructorCourse[] = [
+  { id: "crs_i1", title: "Automate Everything with n8n & AI", status: "published", enrollments: 654, price: 39, currency: "USD" },
+  { id: "crs_i2", title: "AI Chatbots for WhatsApp Support", status: "pending_review", enrollments: 0, price: 59, currency: "USD" },
+  { id: "crs_i3", title: "Prompt Engineering for Client Work", status: "draft", enrollments: 0, price: 29, currency: "USD" },
+  { id: "crs_i4", title: "Cold Outreach with Claude", status: "rejected", enrollments: 0, price: 35, currency: "USD" }
+];
 
 const STATUS_OPTIONS = [
   { label: "All", value: "all" },

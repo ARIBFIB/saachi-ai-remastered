@@ -1,6 +1,6 @@
 ﻿================================================================================
 PROJECT CODE EXPORT
-Generated: 2026-08-14 05:45:33
+Generated: 2026-08-14 06:19:12
 Total Files: 198
 ================================================================================
 
@@ -9009,7 +9009,7 @@ export default function HomePage() {
             Learn practical AI skills. Sell what you know.
           </h1>
           <p className="mt-5 text-[16px] leading-relaxed text-ink-soft md:text-[18px]">
-            Not another watch-time platform. Saachi AI is a skills exchange for the AI era Ã¢â‚¬â€
+            Not another watch-time platform. Saachi AI is a skills exchange for the AI era ï¿½
             structured, practical, and paid.
           </p>
           <div className="mt-8 flex flex-wrap gap-3">
@@ -9479,7 +9479,7 @@ FILE: apps\web\lib\design-system\generate-css-vars.mjs
 // Stub: static tokens already live in app/globals.css + tailwind.config.js.
 // This file exists only so `npm run tokens:sync` (wired into package.json's
 // dev/build scripts) has something to execute. Safe no-op.
-console.log("[tokens:sync] using static tokens in globals.css Ã¢â‚¬â€ nothing to generate.");
+console.log("[tokens:sync] using static tokens in globals.css ï¿½ nothing to generate.");
 
 
 ================================================================================

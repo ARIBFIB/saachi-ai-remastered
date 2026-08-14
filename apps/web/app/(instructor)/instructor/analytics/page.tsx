@@ -10,15 +10,15 @@ export default function InstructorAnalyticsPage() {
       <p className="mb-8 text-[14px] text-ink-soft">Enrollment, completion, and revenue trends across your courses.</p>
 
       <div className="mb-10 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        <KpiCard label="Total enrollments" value="0" icon={Users} />
-        <KpiCard label="Completion rate" value="—" icon={CheckCircle2} />
-        <KpiCard label="Revenue (30d)" value="$0.00" icon={TrendingUp} />
-        <KpiCard label="Top traffic source" value="—" icon={Globe} />
+        <KpiCard label="Total enrollments" value="654" icon={Users} />
+        <KpiCard label="Completion rate" value="58%" icon={CheckCircle2} />
+        <KpiCard label="Revenue (30d)" value="$1,240.00" icon={TrendingUp} />
+        <KpiCard label="Top traffic source" value="Search" icon={Globe} />
       </div>
 
       <EmptyState
-        title="Not enough data yet"
-        description="Charts for enrollment trends, completion rate, revenue, and student engagement will appear here once your courses start getting enrollments."
+        title="Detailed charts coming soon"
+        description="Enrollment trends, completion rate over time, revenue history, and student engagement heatmaps will render here once the analytics chart module is wired up."
       />
     </div>
   );

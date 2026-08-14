@@ -8,8 +8,9 @@ import { Button, KpiCard, EmptyState } from "@saachi/ui";
 // NOTE: demo-only dummy data. Replace with real analytics/enrollment hooks
 // once packages/api-client hooks/useInstructorAnalytics.ts is confirmed.
 const RECENT_REVIEWS = [
-  { id: "r1", course: "n8n Automation Bootcamp", author: "Bilal S.", rating: 5, comment: "Very practical, loved it." },
-  { id: "r2", course: "AI Chatbots for WhatsApp", author: "Fatima R.", rating: 4, comment: "Good pacing, clear examples." }
+  { id: "r1", course: "Automate Everything with n8n & AI", author: "Bilal S.", rating: 5, comment: "Very practical, loved it." },
+  { id: "r2", course: "AI Chatbots for WhatsApp Support", author: "Fatima R.", rating: 4, comment: "Good pacing, clear examples." },
+  { id: "r3", course: "Automate Everything with n8n & AI", author: "Omar Sheikh", rating: 5, comment: "Best automation course I've taken." }
 ];
 
 export default function InstructorDashboardPage() {
@@ -23,10 +24,10 @@ export default function InstructorDashboardPage() {
       <p className="mb-8 text-[14px] text-ink-soft">Here is how your courses are performing.</p>
 
       <div className="mb-10 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        <KpiCard label="Lifetime earnings" value="$0.00" icon={DollarSign} />
-        <KpiCard label="Total students" value="0" icon={Users} />
-        <KpiCard label="Average rating" value="—" icon={Star} />
-        <KpiCard label="Pending Q&A" value="0" icon={MessageCircle} />
+        <KpiCard label="Lifetime earnings" value="$8,420.00" icon={DollarSign} />
+        <KpiCard label="Total students" value="654" icon={Users} />
+        <KpiCard label="Average rating" value="4.7" icon={Star} />
+        <KpiCard label="Pending Q&A" value="3" icon={MessageCircle} />
       </div>
 
       <div className="mb-10 flex flex-wrap gap-3">
@@ -47,10 +48,10 @@ export default function InstructorDashboardPage() {
             <div key={r.id} className="rounded-card border border-line bg-card p-4">
               <div className="mb-1 flex items-center justify-between">
                 <p className="text-[14px] font-semibold text-ink">{r.course}</p>
-                <span className="text-[12px] text-ink-soft">{"★".repeat(r.rating)}</span>
+                <span className="text-[12px] text-ink-soft">{"\u2605".repeat(r.rating)}</span>
               </div>
               <p className="text-[13px] text-ink-soft">
-                {r.author} — {r.comment}
+                {r.author} - {r.comment}
               </p>
             </div>
           ))}
