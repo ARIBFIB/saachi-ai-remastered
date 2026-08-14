@@ -1,6 +1,6 @@
 ﻿================================================================================
 MODULE CODE EXPORT: Packages
-Generated: 2026-08-14 04:25:55
+Generated: 2026-08-14 18:30:22
 Total Files: 78
 ================================================================================
 
@@ -1202,11 +1202,11 @@ import { useQuery } from "@tanstack/react-query";
 
 // ---- Types (self-contained; align with real API types once backend lands) ----
 
-export type CourseModuleLesson = { id: string; title: string };
-export type CourseModule = { id: string; title: string; lessons: CourseModuleLesson[] };
-export type CourseReview = { id: string; authorName: string; rating: number; comment: string };
+export type CourseModuleLessonStub = { id: string; title: string };
+export type CourseModuleStub = { id: string; title: string; lessons: CourseModuleLessonStub[] };
+export type CourseReviewStub = { id: string; authorName: string; rating: number; comment: string };
 
-export type CourseDetail = {
+export type CourseDetailStub = {
   id: string;
   slug: string;
   title: string;
@@ -1221,8 +1221,8 @@ export type CourseDetail = {
   currency: string;
   thumbnailUrl?: string;
   instructor: { slug: string; fullName: string; bio?: string };
-  modules?: CourseModule[];
-  reviews?: CourseReview[];
+  modules?: CourseModuleStub[];
+  reviews?: CourseReviewStub[];
 };
 
 export type InstructorProfile = {
@@ -1244,7 +1244,7 @@ export type InstructorProfile = {
     rating?: number;
     ratingCount?: number;
   }[];
-  reviews?: CourseReview[];
+  reviews?: CourseReviewStub[];
 };
 
 export type CertificateDetail = {
@@ -1258,7 +1258,7 @@ export type CertificateDetail = {
 
 // ---- Dummy data (demo-only, no backend wired up yet) ----
 
-function buildDummyCourse(slug: string): CourseDetail {
+function buildDummyCourse(slug: string): CourseDetailStub {
   return {
     id: `course_${slug}`,
     slug,

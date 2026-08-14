@@ -1,7 +1,7 @@
 ﻿================================================================================
 PROJECT CODE EXPORT
-Generated: 2026-08-14 06:19:12
-Total Files: 198
+Generated: 2026-08-14 17:34:05
+Total Files: 200
 ================================================================================
 
 
@@ -6210,19 +6210,20 @@ export default function InstructorAnalyticsPage() {
       <p className="mb-8 text-[14px] text-ink-soft">Enrollment, completion, and revenue trends across your courses.</p>
 
       <div className="mb-10 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        <KpiCard label="Total enrollments" value="0" icon={Users} />
-        <KpiCard label="Completion rate" value="â€”" icon={CheckCircle2} />
-        <KpiCard label="Revenue (30d)" value="$0.00" icon={TrendingUp} />
-        <KpiCard label="Top traffic source" value="â€”" icon={Globe} />
+        <KpiCard label="Total enrollments" value="654" icon={Users} />
+        <KpiCard label="Completion rate" value="58%" icon={CheckCircle2} />
+        <KpiCard label="Revenue (30d)" value="$1,240.00" icon={TrendingUp} />
+        <KpiCard label="Top traffic source" value="Search" icon={Globe} />
       </div>
 
       <EmptyState
-        title="Not enough data yet"
-        description="Charts for enrollment trends, completion rate, revenue, and student engagement will appear here once your courses start getting enrollments."
+        title="Detailed charts coming soon"
+        description="Enrollment trends, completion rate over time, revenue history, and student engagement heatmaps will render here once the analytics chart module is wired up."
       />
     </div>
   );
 }
+
 
 
 ================================================================================
@@ -6534,7 +6535,12 @@ type InstructorCourse = {
 
 // NOTE: demo-only dummy data. Replace with useInstructorCourses() once
 // packages/api-client's instructor-course hooks are confirmed.
-const COURSES: InstructorCourse[] = [];
+const COURSES: InstructorCourse[] = [
+  { id: "crs_i1", title: "Automate Everything with n8n & AI", status: "published", enrollments: 654, price: 39, currency: "USD" },
+  { id: "crs_i2", title: "AI Chatbots for WhatsApp Support", status: "pending_review", enrollments: 0, price: 59, currency: "USD" },
+  { id: "crs_i3", title: "Prompt Engineering for Client Work", status: "draft", enrollments: 0, price: 29, currency: "USD" },
+  { id: "crs_i4", title: "Cold Outreach with Claude", status: "rejected", enrollments: 0, price: 35, currency: "USD" }
+];
 
 const STATUS_OPTIONS = [
   { label: "All", value: "all" },
@@ -6631,6 +6637,7 @@ export default function InstructorMyCoursesPage() {
 }
 
 
+
 ================================================================================
 FILE: apps\web\app\(instructor)\instructor\dashboard\page.tsx
 ================================================================================
@@ -6644,8 +6651,9 @@ import { Button, KpiCard, EmptyState } from "@saachi/ui";
 // NOTE: demo-only dummy data. Replace with real analytics/enrollment hooks
 // once packages/api-client hooks/useInstructorAnalytics.ts is confirmed.
 const RECENT_REVIEWS = [
-  { id: "r1", course: "n8n Automation Bootcamp", author: "Bilal S.", rating: 5, comment: "Very practical, loved it." },
-  { id: "r2", course: "AI Chatbots for WhatsApp", author: "Fatima R.", rating: 4, comment: "Good pacing, clear examples." }
+  { id: "r1", course: "Automate Everything with n8n & AI", author: "Bilal S.", rating: 5, comment: "Very practical, loved it." },
+  { id: "r2", course: "AI Chatbots for WhatsApp Support", author: "Fatima R.", rating: 4, comment: "Good pacing, clear examples." },
+  { id: "r3", course: "Automate Everything with n8n & AI", author: "Omar Sheikh", rating: 5, comment: "Best automation course I've taken." }
 ];
 
 export default function InstructorDashboardPage() {
@@ -6659,10 +6667,10 @@ export default function InstructorDashboardPage() {
       <p className="mb-8 text-[14px] text-ink-soft">Here is how your courses are performing.</p>
 
       <div className="mb-10 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        <KpiCard label="Lifetime earnings" value="$0.00" icon={DollarSign} />
-        <KpiCard label="Total students" value="0" icon={Users} />
-        <KpiCard label="Average rating" value="â€”" icon={Star} />
-        <KpiCard label="Pending Q&A" value="0" icon={MessageCircle} />
+        <KpiCard label="Lifetime earnings" value="$8,420.00" icon={DollarSign} />
+        <KpiCard label="Total students" value="654" icon={Users} />
+        <KpiCard label="Average rating" value="4.7" icon={Star} />
+        <KpiCard label="Pending Q&A" value="3" icon={MessageCircle} />
       </div>
 
       <div className="mb-10 flex flex-wrap gap-3">
@@ -6683,10 +6691,10 @@ export default function InstructorDashboardPage() {
             <div key={r.id} className="rounded-card border border-line bg-card p-4">
               <div className="mb-1 flex items-center justify-between">
                 <p className="text-[14px] font-semibold text-ink">{r.course}</p>
-                <span className="text-[12px] text-ink-soft">{"â˜…".repeat(r.rating)}</span>
+                <span className="text-[12px] text-ink-soft">{"\u2605".repeat(r.rating)}</span>
               </div>
               <p className="text-[13px] text-ink-soft">
-                {r.author} â€” {r.comment}
+                {r.author} - {r.comment}
               </p>
             </div>
           ))}
@@ -6697,6 +6705,7 @@ export default function InstructorDashboardPage() {
 }
 
 
+
 ================================================================================
 FILE: apps\web\app\(instructor)\instructor\earnings\page.tsx
 ================================================================================
@@ -6704,7 +6713,13 @@ FILE: apps\web\app\(instructor)\instructor\earnings\page.tsx
 
 import Link from "next/link";
 import { Wallet, TrendingUp, Clock } from "lucide-react";
-import { Button, KpiCard, EmptyState } from "@saachi/ui";
+import { Button, KpiCard, Card } from "@saachi/ui";
+
+// NOTE: demo-only dummy data. Replace with useInstructorEarnings() once
+// packages/api-client's earnings hooks are confirmed.
+const EARNINGS_BY_COURSE = [
+  { id: "crs_i1", title: "Automate Everything with n8n & AI", enrollments: 654, earnings: 8420 }
+];
 
 export default function InstructorEarningsPage() {
   return (
@@ -6720,19 +6735,29 @@ export default function InstructorEarningsPage() {
       </div>
 
       <div className="mb-10 grid grid-cols-1 gap-4 sm:grid-cols-3">
-        <KpiCard label="Available balance" value="$0.00" icon={Wallet} />
-        <KpiCard label="Lifetime earnings" value="$0.00" icon={TrendingUp} />
-        <KpiCard label="Pending clearance" value="$0.00" icon={Clock} />
+        <KpiCard label="Available balance" value="$1,240.00" icon={Wallet} />
+        <KpiCard label="Lifetime earnings" value="$8,420.00" icon={TrendingUp} />
+        <KpiCard label="Pending clearance" value="$340.00" icon={Clock} />
       </div>
 
       <h2 className="mb-4 font-display text-[20px] font-semibold text-ink">Earnings by course</h2>
-      <EmptyState
-        title="No earnings yet"
-        description="Once learners start purchasing your courses, a per-course earnings breakdown will appear here."
-      />
+      <div className="flex flex-col gap-3">
+        {EARNINGS_BY_COURSE.map((c) => (
+          <Card key={c.id} className="flex items-center justify-between gap-4 p-5">
+            <div>
+              <p className="text-[15px] font-semibold text-ink">{c.title}</p>
+              <p className="mt-1 text-[13px] text-ink-soft">{c.enrollments} enrollments</p>
+            </div>
+            <span className="font-mono text-[16px] font-semibold text-ink">
+              {new Intl.NumberFormat("en-US", { style: "currency", currency: "USD" }).format(c.earnings)}
+            </span>
+          </Card>
+        ))}
+      </div>
     </div>
   );
 }
+
 
 
 ================================================================================
@@ -6883,7 +6908,16 @@ const PACKAGES: {
 ];
 
 // NOTE: demo-only dummy data. Replace with useInstructorCourses() once confirmed.
-const COURSE_OPTIONS = [{ label: "Select a course...", value: "" }];
+const COURSE_OPTIONS = [
+  { label: "Select a course...", value: "" },
+  { label: "Automate Everything with n8n & AI", value: "crs_i1" },
+  { label: "AI Chatbots for WhatsApp Support", value: "crs_i2" }
+];
+
+// NOTE: demo-only dummy data. Replace with useInstructorPromotions() once confirmed.
+const ACTIVE_PROMOTIONS: { id: string; courseTitle: string; tier: PackageTier; expiresIn: string }[] = [
+  { id: "promo_1", courseTitle: "Automate Everything with n8n & AI", tier: "silver", expiresIn: "4 days" }
+];
 
 export default function InstructorPromotionsPage() {
   const [selectedCourse, setSelectedCourse] = useState("");
@@ -6912,11 +6946,6 @@ export default function InstructorPromotionsPage() {
           value={selectedCourse}
           onChange={(e) => setSelectedCourse(e.target.value)}
         />
-        {COURSE_OPTIONS.length === 1 && (
-          <p className="mt-2 text-[12px] text-ink-soft">
-            You don&apos;t have any published courses to promote yet.
-          </p>
-        )}
       </div>
 
       <div className="grid grid-cols-1 gap-5 md:grid-cols-3">
@@ -6957,10 +6986,25 @@ export default function InstructorPromotionsPage() {
       </div>
 
       <h2 className="mb-4 mt-12 font-display text-[20px] font-semibold text-ink">Active promotions</h2>
-      <EmptyState title="No active promotions" description="Purchased boost packages will appear here." />
+      {ACTIVE_PROMOTIONS.length === 0 ? (
+        <EmptyState title="No active promotions" description="Purchased boost packages will appear here." />
+      ) : (
+        <div className="flex flex-col gap-3">
+          {ACTIVE_PROMOTIONS.map((p) => (
+            <div key={p.id} className="flex items-center justify-between gap-4 rounded-card border border-line bg-card p-4">
+              <div>
+                <p className="text-[14px] font-semibold text-ink">{p.courseTitle}</p>
+                <p className="mt-1 text-[13px] text-ink-soft">Expires in {p.expiresIn}</p>
+              </div>
+              <Badge variant={p.tier === "gold" ? "gold" : undefined}>{p.tier} boost</Badge>
+            </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 }
+
 
 
 ================================================================================
@@ -6982,7 +7026,30 @@ type Review = {
 };
 
 // NOTE: demo-only dummy data. Replace with useInstructorReviews() once confirmed.
-const REVIEWS: Review[] = [];
+const REVIEWS: Review[] = [
+  {
+    id: "rev_i1",
+    courseTitle: "Automate Everything with n8n & AI",
+    author: "Bilal S.",
+    rating: 5,
+    comment: "Very practical, loved it. The invoice parsing workflow alone was worth the price."
+  },
+  {
+    id: "rev_i2",
+    courseTitle: "Automate Everything with n8n & AI",
+    author: "Fatima R.",
+    rating: 4,
+    comment: "Good pacing, clear examples. Wish there was a bit more on error handling.",
+    reply: "Thanks Fatima! Adding an error-handling lesson is on my list for the next update."
+  },
+  {
+    id: "rev_i3",
+    courseTitle: "AI Chatbots for WhatsApp Support",
+    author: "Omar Sheikh",
+    rating: 5,
+    comment: "Best WhatsApp bot course I've taken - clear, practical, and well structured."
+  }
+];
 
 export default function InstructorReviewsPage() {
   const [replies, setReplies] = useState<Record<string, string>>({});
@@ -7044,6 +7111,7 @@ export default function InstructorReviewsPage() {
     </div>
   );
 }
+
 
 
 ================================================================================
@@ -7145,7 +7213,13 @@ type Student = {
 };
 
 // NOTE: demo-only dummy data. Replace with useInstructorStudents() once confirmed.
-const STUDENTS: Student[] = [];
+const STUDENTS: Student[] = [
+  { id: "stu_1", name: "Hina Malik", courseTitle: "Automate Everything with n8n & AI", progressPercent: 100, lastActive: "2 days ago" },
+  { id: "stu_2", name: "Omar Sheikh", courseTitle: "Automate Everything with n8n & AI", progressPercent: 65, lastActive: "Today" },
+  { id: "stu_3", name: "Sara Iqbal", courseTitle: "AI Chatbots for WhatsApp Support", progressPercent: 40, lastActive: "5 days ago" },
+  { id: "stu_4", name: "Noor Fatima", courseTitle: "Automate Everything with n8n & AI", progressPercent: 100, lastActive: "1 week ago" },
+  { id: "stu_5", name: "Ali Raza", courseTitle: "AI Chatbots for WhatsApp Support", progressPercent: 20, lastActive: "Yesterday" }
+];
 
 export default function InstructorStudentsPage() {
   const [search, setSearch] = useState("");
@@ -7213,6 +7287,7 @@ export default function InstructorStudentsPage() {
     </div>
   );
 }
+
 
 
 ================================================================================
@@ -7319,6 +7394,280 @@ export default function InstructorVerificationPage() {
     </div>
   );
 }
+
+
+================================================================================
+FILE: apps\web\app\(instructor)\_components\InstructorShell.tsx
+================================================================================
+"use client";
+
+import Link from "next/link";
+import { usePathname, useRouter } from "next/navigation";
+import { useEffect, useRef, useState, type ReactNode } from "react";
+import { Menu, X, LogOut, ChevronLeft, ChevronRight, Bell, ChevronDown, Settings, User } from "lucide-react";
+import { ThemeToggle } from "@saachi/ui";
+import { useSession, useLogout } from "@saachi/api-client";
+import { INSTRUCTOR_NAV } from "../../../lib/instructor-nav-config";
+
+function cx(...parts: Array<string | false | undefined>) {
+  return parts.filter(Boolean).join(" ");
+}
+
+type NotificationItem = { id: string; label: string; href: string };
+
+// NOTE: demo-only dummy data. Replace with useInstructorNotifications() once confirmed.
+const NOTIFICATIONS: NotificationItem[] = [
+  { id: "n1", label: 'New review on "Automate Everything with n8n & AI"', href: "/instructor/reviews" },
+  { id: "n2", label: "2 new students enrolled this week", href: "/instructor/students" },
+  { id: "n3", label: "Your Silver Boost promotion expires in 4 days", href: "/instructor/promotions" }
+];
+
+export function InstructorShell({ children }: { children: ReactNode }) {
+  const pathname = usePathname();
+  const router = useRouter();
+  const { data: session } = useSession();
+  const logout = useLogout();
+
+  const [mobileOpen, setMobileOpen] = useState(false);
+  const [collapsed, setCollapsed] = useState(false);
+  const [notifOpen, setNotifOpen] = useState(false);
+  const [userMenuOpen, setUserMenuOpen] = useState(false);
+
+  const notifRef = useRef<HTMLDivElement>(null);
+  const userMenuRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    function handleClickOutside(e: MouseEvent) {
+      if (notifRef.current && !notifRef.current.contains(e.target as Node)) setNotifOpen(false);
+      if (userMenuRef.current && !userMenuRef.current.contains(e.target as Node)) setUserMenuOpen(false);
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  function handleLogout() {
+    logout.mutate(undefined, { onSuccess: () => router.push("/login") });
+  }
+
+  const sidebarContent = (
+    <div className="flex h-full flex-col pt-[65px]">
+      <nav className="flex flex-1 flex-col gap-5 overflow-y-auto px-3 pb-4 pt-4">
+        {INSTRUCTOR_NAV.map((section) => (
+          <div key={section.title}>
+            {!collapsed && (
+              <div className="mb-1.5 px-2.5 text-[10px] font-semibold uppercase tracking-[0.08em] text-ink-soft/60">
+                {section.title}
+              </div>
+            )}
+            <div className="flex flex-col gap-0.5">
+              {section.items.map((item) => {
+                const active = pathname === item.href || Boolean(pathname?.startsWith(`${item.href}/`));
+                return (
+                  <Link
+                    key={item.href}
+                    href={item.href}
+                    onClick={() => setMobileOpen(false)}
+                    title={collapsed ? item.label : undefined}
+                    className={cx(
+                      "flex items-center gap-3 rounded-control px-2.5 py-2 text-[13px] font-medium transition-colors duration-150 ease-out",
+                      collapsed && "justify-center",
+                      active ? "bg-gold text-ink" : "text-ink-soft hover:bg-paper-dim hover:text-ink"
+                    )}
+                  >
+                    <item.icon size={16} strokeWidth={1.75} className="shrink-0" />
+                    {!collapsed && <span className="truncate">{item.label}</span>}
+                  </Link>
+                );
+              })}
+            </div>
+          </div>
+        ))}
+      </nav>
+
+      <div className="border-t border-line px-3 py-3">
+        <button
+          type="button"
+          onClick={() => setCollapsed((v) => !v)}
+          className={cx(
+            "mb-1 hidden w-full items-center gap-3 rounded-control px-2.5 py-2 text-[13px] font-medium text-ink-soft transition-colors duration-150 ease-out hover:bg-paper-dim hover:text-ink md:flex",
+            collapsed && "justify-center"
+          )}
+        >
+          {collapsed ? <ChevronRight size={16} strokeWidth={1.75} /> : <ChevronLeft size={16} strokeWidth={1.75} />}
+          {!collapsed && "Collapse"}
+        </button>
+        <button
+          type="button"
+          onClick={handleLogout}
+          className={cx(
+            "flex w-full items-center gap-3 rounded-control px-2.5 py-2 text-[13px] font-medium text-ink-soft transition-colors duration-150 ease-out hover:bg-paper-dim hover:text-error",
+            collapsed && "justify-center"
+          )}
+        >
+          <LogOut size={16} strokeWidth={1.75} />
+          {!collapsed && "Log out"}
+        </button>
+      </div>
+    </div>
+  );
+
+  return (
+    <div className="min-h-screen bg-paper">
+      <div
+        className={cx(
+          "hidden shrink-0 border-r border-line bg-card transition-[width] duration-200 ease-out md:fixed md:inset-y-0 md:flex",
+          collapsed ? "w-[76px]" : "w-[248px]"
+        )}
+      >
+        {sidebarContent}
+      </div>
+
+      <div className="sticky top-0 z-40 flex items-center justify-between gap-3 border-b border-line bg-card/95 px-4 py-3 backdrop-blur-sm md:px-6">
+        <div className="flex min-w-0 items-center gap-3">
+          <button
+            type="button"
+            onClick={() => setMobileOpen(true)}
+            aria-label="Open menu"
+            className="flex h-9 w-9 shrink-0 items-center justify-center rounded-control text-ink md:hidden"
+          >
+            <Menu size={18} strokeWidth={1.75} />
+          </button>
+
+          <Link href="/instructor/dashboard" className="hidden shrink-0 items-center gap-2 sm:flex">
+            <span className="font-display text-[16px] font-bold text-ink">
+              Saachi<span className="text-gold-dark">AI</span>
+            </span>
+            <span className="rounded-full bg-paper-dim px-2 py-0.5 text-[10px] font-semibold uppercase tracking-[0.06em] text-ink-soft">
+              Instructor
+            </span>
+          </Link>
+        </div>
+
+        <div className="flex items-center gap-2 sm:gap-3">
+          <div className="relative" ref={notifRef}>
+            <button
+              type="button"
+              onClick={() => setNotifOpen((v) => !v)}
+              aria-label="Notifications"
+              className="relative flex h-9 w-9 items-center justify-center rounded-control text-ink-soft transition-colors duration-150 ease-out hover:bg-paper-dim hover:text-ink"
+            >
+              <Bell size={17} strokeWidth={1.75} />
+              {NOTIFICATIONS.length > 0 && (
+                <span className="absolute right-1.5 top-1.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-gold-dark px-1 text-[9px] font-semibold text-white">
+                  {NOTIFICATIONS.length}
+                </span>
+              )}
+            </button>
+
+            {notifOpen && (
+              <div className="absolute right-0 top-[calc(100%+8px)] w-[300px] overflow-hidden rounded-card border border-line bg-card shadow-lg">
+                <div className="border-b border-line px-4 py-3">
+                  <p className="text-[13px] font-semibold text-ink">Notifications</p>
+                </div>
+                <div className="flex flex-col">
+                  {NOTIFICATIONS.map((n) => (
+                    <Link
+                      key={n.id}
+                      href={n.href}
+                      onClick={() => setNotifOpen(false)}
+                      className="flex items-start gap-2.5 border-b border-line px-4 py-3 text-[12.5px] text-ink transition-colors duration-100 ease-out last:border-0 hover:bg-paper-dim"
+                    >
+                      <span className="mt-1 h-1.5 w-1.5 shrink-0 rounded-full bg-gold-dark" />
+                      <span>{n.label}</span>
+                    </Link>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+
+          <ThemeToggle />
+
+          <div className="relative" ref={userMenuRef}>
+            <button
+              type="button"
+              onClick={() => setUserMenuOpen((v) => !v)}
+              className="flex min-w-0 items-center gap-2 rounded-control px-1.5 py-1 transition-colors duration-150 ease-out hover:bg-paper-dim"
+            >
+              <div className="flex h-8 w-8 shrink-0 items-center justify-center overflow-hidden rounded-full border border-line bg-gold-tint text-[12px] font-semibold text-gold-dark">
+                {session?.avatarUrl ? (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img src={session.avatarUrl} alt={session.fullName} className="h-full w-full object-cover" />
+                ) : (
+                  (session?.fullName ?? "I").charAt(0)
+                )}
+              </div>
+              <div className="hidden min-w-0 text-left sm:block">
+                <div className="truncate text-[12.5px] font-semibold leading-tight text-ink">
+                  {session?.fullName ?? "Instructor"}
+                </div>
+                <div className="truncate text-[11px] leading-tight text-ink-soft">Instructor</div>
+              </div>
+              <ChevronDown size={13} strokeWidth={1.75} className="hidden shrink-0 text-ink-soft sm:block" />
+            </button>
+
+            {userMenuOpen && (
+              <div className="absolute right-0 top-[calc(100%+8px)] w-[220px] overflow-hidden rounded-card border border-line bg-card shadow-lg">
+                <div className="border-b border-line px-4 py-3">
+                  <p className="truncate text-[13px] font-semibold text-ink">{session?.fullName ?? "Instructor"}</p>
+                  <p className="truncate text-[12px] text-ink-soft">{session?.email}</p>
+                </div>
+                <div className="flex flex-col p-1.5">
+                  <Link
+                    href="/instructor/settings"
+                    onClick={() => setUserMenuOpen(false)}
+                    className="flex items-center gap-2.5 rounded-control px-3 py-2 text-[13px] text-ink transition-colors duration-100 ease-out hover:bg-paper-dim"
+                  >
+                    <Settings size={14} strokeWidth={1.75} /> Settings
+                  </Link>
+                  <Link
+                    href="/dashboard"
+                    onClick={() => setUserMenuOpen(false)}
+                    className="flex items-center gap-2.5 rounded-control px-3 py-2 text-[13px] text-ink transition-colors duration-100 ease-out hover:bg-paper-dim"
+                  >
+                    <User size={14} strokeWidth={1.75} /> Switch to learner view
+                  </Link>
+                  <button
+                    type="button"
+                    onClick={handleLogout}
+                    className="flex items-center gap-2.5 rounded-control px-3 py-2 text-left text-[13px] text-error transition-colors duration-100 ease-out hover:bg-error-tint"
+                  >
+                    <LogOut size={14} strokeWidth={1.75} /> Log out
+                  </button>
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+
+      {mobileOpen && (
+        <div className="fixed inset-0 z-50 flex md:hidden">
+          <div
+            className="absolute inset-0 bg-ink/40 transition-opacity duration-200 ease-out"
+            onClick={() => setMobileOpen(false)}
+          />
+          <div className="relative flex h-full w-[280px] flex-col bg-card transition-transform duration-200 ease-out">
+            <button
+              type="button"
+              onClick={() => setMobileOpen(false)}
+              aria-label="Close menu"
+              className="absolute right-3 top-3 flex h-9 w-9 items-center justify-center rounded-control text-ink"
+            >
+              <X size={18} strokeWidth={1.75} />
+            </button>
+            {sidebarContent}
+          </div>
+        </div>
+      )}
+
+      <div className={cx("transition-[padding] duration-200 ease-out", collapsed ? "md:pl-[76px]" : "md:pl-[248px]")}>
+        <main className="mx-auto max-w-[1200px] px-4 py-8 md:px-8 md:py-10">{children}</main>
+      </div>
+    </div>
+  );
+}
+
 
 
 ================================================================================
@@ -9505,6 +9854,80 @@ export const CATEGORIES: CategoryDef[] = [
 export function getCategoryBySlug(slug: string): CategoryDef | undefined {
   return CATEGORIES.find((c) => c.slug === slug);
 }
+
+
+================================================================================
+FILE: apps\web\lib\instructor-nav-config.ts
+================================================================================
+import type { LucideIcon } from "lucide-react";
+import {
+  LayoutDashboard,
+  BookOpen,
+  PlusCircle,
+  Star,
+  Users,
+  Rocket,
+  BarChart3,
+  Wallet,
+  CalendarClock,
+  Settings,
+  ShieldCheck
+} from "lucide-react";
+
+export type InstructorNavItem = {
+  label: string;
+  href: string;
+  icon: LucideIcon;
+};
+
+export type InstructorNavSection = {
+  title: string;
+  items: InstructorNavItem[];
+};
+
+export const INSTRUCTOR_NAV: InstructorNavSection[] = [
+  {
+    title: "Overview",
+    items: [{ label: "Dashboard", href: "/instructor/dashboard", icon: LayoutDashboard }]
+  },
+  {
+    title: "Courses",
+    items: [
+      { label: "My Courses", href: "/instructor/courses", icon: BookOpen },
+      { label: "Create Course", href: "/instructor/courses/new", icon: PlusCircle }
+    ]
+  },
+  {
+    title: "Engagement",
+    items: [
+      { label: "Reviews", href: "/instructor/reviews", icon: Star },
+      { label: "Students", href: "/instructor/students", icon: Users }
+    ]
+  },
+  {
+    title: "Growth",
+    items: [
+      { label: "Promotions", href: "/instructor/promotions", icon: Rocket },
+      { label: "Analytics", href: "/instructor/analytics", icon: BarChart3 }
+    ]
+  },
+  {
+    title: "Finance",
+    items: [{ label: "Earnings", href: "/instructor/earnings", icon: Wallet }]
+  },
+  {
+    title: "Mentorship",
+    items: [{ label: "Mentorship Settings", href: "/instructor/mentorship", icon: CalendarClock }]
+  },
+  {
+    title: "Account",
+    items: [
+      { label: "Settings", href: "/instructor/settings", icon: Settings },
+      { label: "Verification", href: "/instructor/verification", icon: ShieldCheck }
+    ]
+  }
+];
+
 
 
 ================================================================================
