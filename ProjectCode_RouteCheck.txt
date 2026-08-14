@@ -1,0 +1,98 @@
+﻿================================================================================
+ROUTE / NAVIGATION CHECK REPORT
+Generated: 2026-08-14 05:19:12
+================================================================================
+
+Real routes found (from page.tsx files): 57
+Internal hrefs/Links scanned: 49
+
+================================================================================
+POTENTIALLY BROKEN LINKS (href doesn't match any known route): 8
+================================================================================
+
+HREF: /instructor/courses/$
+  found in: apps\web\app\(instructor)\instructor\courses\[id]\pricing\page.tsx
+
+HREF: /instructor/courses/$
+  found in: apps\web\app\(instructor)\instructor\courses\page.tsx
+
+HREF: /instructor/courses/$
+  found in: apps\web\app\(instructor)\instructor\courses\[id]\preview\page.tsx
+
+HREF: /instructor/courses/$
+  found in: apps\web\app\(instructor)\instructor\courses\[id]\curriculum\page.tsx
+
+HREF: /instructor/courses/$
+  found in: apps\web\app\(instructor)\instructor\courses\[id]\edit\page.tsx
+
+HREF: /learn/$
+  found in: apps\web\app\(learner)\my-courses\page.tsx
+
+HREF: /learn/$
+  found in: apps\web\app\(learner)\learn\[courseId]\[lessonId]\page.tsx
+
+HREF: /learn/$
+  found in: apps\web\app\(learner)\dashboard\page.tsx
+
+
+================================================================================
+ALL REAL ROUTES DISCOVERED (from page.tsx files)
+================================================================================
+
+  /   <-  (marketing)
+  /403   <-  403
+  /about   <-  (marketing)/about
+  /become-instructor   <-  (learner)/become-instructor
+  /cart   <-  (learner)/cart
+  /categories/__PARAM__   <-  (marketing)/categories/[slug]
+  /certificates   <-  (learner)/certificates
+  /certificates/__PARAM__   <-  (learner)/certificates/[id]
+  /checkout   <-  (learner)/checkout
+  /community/__PARAM__   <-  (learner)/community/[courseId]
+  /contact   <-  (marketing)/contact
+  /courses   <-  (marketing)/courses
+  /courses/__PARAM__   <-  (marketing)/courses/[slug]
+  /dashboard   <-  (learner)/dashboard
+  /forgot-password   <-  (auth)/forgot-password
+  /instructor/analytics   <-  (instructor)/instructor/analytics
+  /instructor/courses   <-  (instructor)/instructor/courses
+  /instructor/courses/__PARAM__/curriculum   <-  (instructor)/instructor/courses/[id]/curriculum
+  /instructor/courses/__PARAM__/edit   <-  (instructor)/instructor/courses/[id]/edit
+  /instructor/courses/__PARAM__/lessons/__PARAM__/quiz   <-  (instructor)/instructor/courses/[id]/lessons/[lessonId]/quiz
+  /instructor/courses/__PARAM__/lessons/__PARAM__/text   <-  (instructor)/instructor/courses/[id]/lessons/[lessonId]/text
+  /instructor/courses/__PARAM__/lessons/__PARAM__/video   <-  (instructor)/instructor/courses/[id]/lessons/[lessonId]/video
+  /instructor/courses/__PARAM__/preview   <-  (instructor)/instructor/courses/[id]/preview
+  /instructor/courses/__PARAM__/pricing   <-  (instructor)/instructor/courses/[id]/pricing
+  /instructor/courses/new   <-  (instructor)/instructor/courses/new
+  /instructor/dashboard   <-  (instructor)/instructor/dashboard
+  /instructor/earnings   <-  (instructor)/instructor/earnings
+  /instructor/mentorship   <-  (instructor)/instructor/mentorship
+  /instructor/payouts   <-  (instructor)/instructor/payouts
+  /instructor/payouts/methods   <-  (instructor)/instructor/payouts/methods
+  /instructor/promotions   <-  (instructor)/instructor/promotions
+  /instructor/reviews   <-  (instructor)/instructor/reviews
+  /instructor/settings   <-  (instructor)/instructor/settings
+  /instructor/students   <-  (instructor)/instructor/students
+  /instructor/verification   <-  (instructor)/instructor/verification
+  /instructors/__PARAM__   <-  (marketing)/instructors/[slug]
+  /learn/__PARAM__/__PARAM__   <-  (learner)/learn/[courseId]/[lessonId]
+  /legal/instructor-agreement   <-  (marketing)/legal/instructor-agreement
+  /legal/privacy   <-  (marketing)/legal/privacy
+  /legal/refund-policy   <-  (marketing)/legal/refund-policy
+  /legal/terms   <-  (marketing)/legal/terms
+  /login   <-  (auth)/login
+  /mentorship   <-  (learner)/mentorship
+  /mentorship/sessions   <-  (learner)/mentorship/sessions
+  /my-courses   <-  (learner)/my-courses
+  /notifications   <-  (learner)/notifications
+  /orders   <-  (learner)/orders
+  /pricing   <-  (marketing)/pricing
+  /register   <-  (auth)/register
+  /reset-password   <-  (auth)/reset-password
+  /search   <-  (marketing)/search
+  /settings   <-  (learner)/settings
+  /settings/billing   <-  (learner)/settings/billing
+  /settings/privacy   <-  (learner)/settings/privacy
+  /settings/security   <-  (learner)/settings/security
+  /verify-email   <-  (auth)/verify-email
+  /wishlist   <-  (learner)/wishlist

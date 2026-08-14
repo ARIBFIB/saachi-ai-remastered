@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useState } from "react";
 import { useParams, useRouter } from "next/navigation";
@@ -13,7 +13,7 @@ export default function CourseDetailPage() {
   const router = useRouter();
   const { data: course, isLoading } = useCourseDetailDemo(params.slug);
   const addToCart = useCartStore((s) => s.addItem);
-  const addToWishlist = useWishlistStore((s) => s.add);
+  const addToWishlist = useWishlistStore((s) => s.toggle);
   const [openModuleId, setOpenModuleId] = useState<string | null>(null);
 
   if (isLoading) {
@@ -199,7 +199,9 @@ export default function CourseDetailPage() {
                   thumbnailUrl: course.thumbnailUrl,
                   instructorName: course.instructor.fullName,
                   price: course.price,
-                  currency: course.currency
+                  currency: course.currency,
+                  rating: course.rating ?? 0,
+                  ratingCount: course.ratingCount ?? 0
                 })
               }
             >

@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useParams } from "next/navigation";
 import Link from "next/link";
@@ -94,8 +94,8 @@ export default function InstructorPublicProfilePage() {
                 instructorName={instructor.fullName}
                 price={course.price}
                 currency={course.currency}
-                rating={course.rating}
-                ratingCount={course.ratingCount}
+                rating={course.rating ?? 0}
+                ratingCount={course.ratingCount ?? 0}
               />
             ))}
           </div>

@@ -1,4 +1,4 @@
-// Stub hooks - frontend-only placeholders so pages relying on these hooks
+﻿// Stub hooks - frontend-only placeholders so pages relying on these hooks
 // render without crashing before the real backend + typed API client exist.
 // Replace the dummy data below with real network calls once the NestJS
 // backend (Doc 3) and OpenAPI-generated client are ready.
@@ -7,11 +7,11 @@ import { useQuery } from "@tanstack/react-query";
 
 // ---- Types (self-contained; align with real API types once backend lands) ----
 
-export type CourseModuleLesson = { id: string; title: string };
-export type CourseModule = { id: string; title: string; lessons: CourseModuleLesson[] };
-export type CourseReview = { id: string; authorName: string; rating: number; comment: string };
+export type CourseModuleLessonStub = { id: string; title: string };
+export type CourseModuleStub = { id: string; title: string; lessons: CourseModuleLessonStub[] };
+export type CourseReviewStub = { id: string; authorName: string; rating: number; comment: string };
 
-export type CourseDetail = {
+export type CourseDetailStub = {
   id: string;
   slug: string;
   title: string;
@@ -26,8 +26,8 @@ export type CourseDetail = {
   currency: string;
   thumbnailUrl?: string;
   instructor: { slug: string; fullName: string; bio?: string };
-  modules?: CourseModule[];
-  reviews?: CourseReview[];
+  modules?: CourseModuleStub[];
+  reviews?: CourseReviewStub[];
 };
 
 export type InstructorProfile = {
@@ -49,7 +49,7 @@ export type InstructorProfile = {
     rating?: number;
     ratingCount?: number;
   }[];
-  reviews?: CourseReview[];
+  reviews?: CourseReviewStub[];
 };
 
 export type CertificateDetail = {
@@ -63,7 +63,7 @@ export type CertificateDetail = {
 
 // ---- Dummy data (demo-only, no backend wired up yet) ----
 
-function buildDummyCourse(slug: string): CourseDetail {
+function buildDummyCourse(slug: string): CourseDetailStub {
   return {
     id: `course_${slug}`,
     slug,
