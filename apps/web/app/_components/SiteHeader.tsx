@@ -33,6 +33,12 @@ export function SiteHeader() {
           Saachi<span className="text-gold-dark">AI</span>
         </Link>
 
+        <div className="ml-3 hidden items-center gap-1 rounded-full border border-line bg-paper-dim px-2.5 py-1 text-[11px] font-semibold text-ink-soft lg:flex">
+          <span className="text-gold-dark">4.8</span>
+          <span aria-hidden="true">&#9733;</span>
+          <span>Rated by learners</span>
+        </div>
+
         <div className="hidden md:block">
           <Menu setActive={setActive}>
             <MenuItem setActive={setActive} active={active} item="Courses">

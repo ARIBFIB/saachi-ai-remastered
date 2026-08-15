@@ -1,9 +1,11 @@
-"use client";
+﻿"use client";
 
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useCourseList } from "@saachi/api-client";
 import { Button, CourseCard, Loading } from "@saachi/ui";
 import {
+  ArrowRight,
   Sparkles,
   Users,
   BookOpen,
@@ -30,6 +32,7 @@ import { PricingTeaser } from "./_components/PricingTeaser";
 import { NewsletterCard } from "./_components/NewsletterCard";
 import { EXTRA_TESTIMONIALS } from "./_components/landing-fake-data";
 import { CoverflowCarousel } from "@/components/ui/coverflow-carousel";
+import { HeroMediaCollage } from "@/components/ui/hero-media-collage";
 import { ImageStreamHero } from "@/components/ui/image-stream-hero";
 import HowItWorks from "@/components/ui/how-it-works";
 import { LimitedTimeOfferPricing } from "@/components/ui/limited-time-offer-pricing";
@@ -88,6 +91,12 @@ const HOW_IT_WORKS = [
 
 export default function HomePage() {
   const { data: featured, isLoading } = useCourseList({ sort: "popular", page: 1 });
+  const [heroLoaded, setHeroLoaded] = useState(false);
+
+  useEffect(() => {
+    const t = setTimeout(() => setHeroLoaded(true), 700);
+    return () => clearTimeout(t);
+  }, []);
 
   return (
     <div className="overflow-hidden">
@@ -102,23 +111,45 @@ export default function HomePage() {
             <Zap size={13} />
             42,000+ learners already building with AI
           </div>
-          <h1 className="font-display text-[38px] font-bold leading-[1.05] text-ink md:text-[64px]">
-            Learn AI Skills.
-            <br />
-            <span className="text-gradient-brand">Build Real Projects.</span>
-          </h1>
-          <p className="mt-5 text-[16px] leading-relaxed text-ink-soft md:text-[18px]">
-            Not another watch-time platform. Saachi AI is a skills exchange for the AI era -
-            structured, practical, and paid.
-          </p>
+          {heroLoaded ? (
+            <>
+              <h1 className="font-display text-[38px] font-bold leading-[1.05] text-ink md:text-[64px]">
+                Learn AI Skills.
+                <br />
+                <span className="text-gradient-brand">Build Real Projects.</span>
+              </h1>
+              <p className="mt-5 text-[16px] leading-relaxed text-ink-soft md:text-[18px]">
+                Not another watch-time platform. Saachi AI is a skills exchange for the AI era -
+                structured, practical, and paid.
+              </p>
+            </>
+          ) : (
+            <div className="flex flex-col gap-3">
+              <div className="h-[38px] w-[92%] animate-pulse rounded-lg bg-paper-dim md:h-[64px]" />
+              <div className="h-[38px] w-[70%] animate-pulse rounded-lg bg-paper-dim md:h-[64px]" />
+              <div className="mt-3 h-4 w-full animate-pulse rounded bg-paper-dim" />
+              <div className="h-4 w-[85%] animate-pulse rounded bg-paper-dim" />
+            </div>
+          )}
           <div className="mt-8 flex flex-wrap gap-3">
-            <Link href="/courses">
-              <Button size="lg" variant="brand">Browse courses</Button>
+            <Link href="/courses" className="group">
+              <button
+                type="button"
+                className="inline-flex h-[52px] items-center gap-2 rounded-full px-7 text-[16px] font-semibold text-white shadow-[0_0_40px_-12px_rgba(124,58,237,0.5)] transition-all duration-200 ease-out hover:-translate-y-0.5 hover:shadow-[0_0_50px_-8px_rgba(124,58,237,0.65)] active:translate-y-0"
+                style={{ backgroundImage: "var(--color-accent-gradient)" }}
+              >
+                Browse courses
+                <ArrowRight size={16} className="transition-transform duration-200 ease-out group-hover:translate-x-1" />
+              </button>
             </Link>
-            <Link href="/register">
-              <Button size="lg" variant="secondary">
+            <Link href="/register" className="group">
+              <button
+                type="button"
+                className="inline-flex h-[52px] items-center gap-2 rounded-full border border-line-strong bg-card px-7 text-[16px] font-semibold text-ink transition-all duration-200 ease-out hover:-translate-y-0.5 hover:border-accent-violet/50 hover:bg-paper-dim active:translate-y-0"
+              >
                 Become an instructor
-              </Button>
+                <ArrowRight size={16} className="transition-transform duration-200 ease-out group-hover:translate-x-1" />
+              </button>
             </Link>
           </div>
 
@@ -130,6 +161,8 @@ export default function HomePage() {
             <ActivityTicker />
           </div>
         </div>
+
+        <HeroMediaCollage />
       </section>
 
       {/* Trust badges marquee */}
