@@ -14,14 +14,16 @@ import {
   ArrowUpRight
 } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { useCourseList } from "@saachi/api-client";
+import {
+  useCourseList,
+  useNewsList,
+  useBlogList,
+  useCommunityList,
+  useCertificateList
+} from "@saachi/api-client";
 import { CATEGORIES } from "../../lib/categories";
 
-type FilterOption = {
-  value: string;
-  label: string;
-  icon: typeof Search;
-};
+type FilterOption = { value: string; label: string; icon: typeof Search };
 
 const FILTERS: FilterOption[] = [
   { value: "all", label: "All", icon: Search },
@@ -35,20 +37,17 @@ const FILTERS: FilterOption[] = [
 function useHideOnScroll() {
   const [hidden, setHidden] = useState(false);
   const lastY = useRef(0);
-
   useEffect(() => {
     lastY.current = window.scrollY;
     function onScroll() {
       const y = window.scrollY;
       const goingDown = y > lastY.current;
-      const pastThreshold = y > 80;
-      setHidden(goingDown && pastThreshold);
+      setHidden(goingDown && y > 80);
       lastY.current = y;
     }
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
-
   return hidden;
 }
 
@@ -65,22 +64,35 @@ export function TopSearchBar() {
   const wrapperRef = useRef<HTMLDivElement>(null);
   const deptRef = useRef<HTMLDivElement>(null);
 
-  const { data } = useCourseList({
-    search: query.trim() || undefined,
-    category: department,
-    sort: "popular"
-  });
+  const courseQuery = useCourseList({ search: query.trim() || undefined, category: department, sort: "popular" });
+  const newsQuery = useNewsList({ search: query.trim() || undefined });
+  const blogQuery = useBlogList({ search: query.trim() || undefined });
+  const communityQuery = useCommunityList({ search: query.trim() || undefined });
+  const certQuery = useCertificateList({ search: query.trim() || undefined });
 
-  const results = useMemo(() => (data?.items ?? []).slice(0, 6), [data]);
+  const courseResults = useMemo(() => (courseQuery.data?.items ?? []).slice(0, 4), [courseQuery.data]);
+  const newsResults = useMemo(() => (newsQuery.data ?? []).slice(0, 3), [newsQuery.data]);
+  const blogResults = useMemo(() => (blogQuery.data ?? []).slice(0, 3), [blogQuery.data]);
+  const communityResults = useMemo(() => (communityQuery.data ?? []).slice(0, 3), [communityQuery.data]);
+  const certResults = useMemo(() => (certQuery.data ?? []).slice(0, 3), [certQuery.data]);
+
+  const showCourses = activeFilter === "all" || activeFilter === "courses";
+  const showNews = activeFilter === "all" || activeFilter === "news";
+  const showBlog = activeFilter === "all" || activeFilter === "blog";
+  const showCommunity = activeFilter === "all" || activeFilter === "community";
+  const showCerts = activeFilter === "all" || activeFilter === "certificates";
+
+  const totalResults =
+    (showCourses ? courseResults.length : 0) +
+    (showNews ? newsResults.length : 0) +
+    (showBlog ? blogResults.length : 0) +
+    (showCommunity ? communityResults.length : 0) +
+    (showCerts ? certResults.length : 0);
 
   useEffect(() => {
     function handleClickOutside(e: MouseEvent) {
-      if (wrapperRef.current && !wrapperRef.current.contains(e.target as Node)) {
-        setDropdownOpen(false);
-      }
-      if (deptRef.current && !deptRef.current.contains(e.target as Node)) {
-        setDeptOpen(false);
-      }
+      if (wrapperRef.current && !wrapperRef.current.contains(e.target as Node)) setDropdownOpen(false);
+      if (deptRef.current && !deptRef.current.contains(e.target as Node)) setDeptOpen(false);
     }
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
@@ -96,9 +108,7 @@ export function TopSearchBar() {
     setDropdownOpen(false);
   }
 
-  const departmentLabel = department
-    ? CATEGORIES.find((c) => c.id === department)?.name ?? "Department"
-    : "All departments";
+  const departmentLabel = department ? CATEGORIES.find((c) => c.id === department)?.name ?? "Department" : "All departments";
 
   return (
     <div
@@ -120,11 +130,11 @@ export function TopSearchBar() {
                   setDropdownOpen(true);
                 }}
                 onFocus={() => setDropdownOpen(true)}
+                onClick={() => setDropdownOpen(true)}
                 placeholder="Search courses, certificates, news..."
                 className="w-full bg-transparent text-[13.5px] text-ink placeholder:text-ink-soft/60 focus:outline-none"
               />
 
-              {/* Department filter toggle */}
               <div ref={deptRef} className="relative shrink-0">
                 <button
                   type="button"
@@ -139,14 +149,8 @@ export function TopSearchBar() {
                   <div className="absolute right-0 top-[calc(100%+8px)] z-40 w-56 overflow-hidden rounded-card border border-line bg-card shadow-lg">
                     <button
                       type="button"
-                      onClick={() => {
-                        setDepartment(undefined);
-                        setDeptOpen(false);
-                      }}
-                      className={cn(
-                        "flex w-full items-center px-4 py-2.5 text-left text-[13px] transition-colors hover:bg-paper-dim",
-                        !department ? "font-semibold text-accent-violet" : "text-ink"
-                      )}
+                      onClick={() => { setDepartment(undefined); setDeptOpen(false); }}
+                      className={cn("flex w-full items-center px-4 py-2.5 text-left text-[13px] transition-colors hover:bg-paper-dim", !department ? "font-semibold text-accent-violet" : "text-ink")}
                     >
                       All departments
                     </button>
@@ -154,14 +158,8 @@ export function TopSearchBar() {
                       <button
                         key={cat.id}
                         type="button"
-                        onClick={() => {
-                          setDepartment(cat.id);
-                          setDeptOpen(false);
-                        }}
-                        className={cn(
-                          "flex w-full items-center px-4 py-2.5 text-left text-[13px] transition-colors hover:bg-paper-dim",
-                          department === cat.id ? "font-semibold text-accent-violet" : "text-ink"
-                        )}
+                        onClick={() => { setDepartment(cat.id); setDeptOpen(false); }}
+                        className={cn("flex w-full items-center px-4 py-2.5 text-left text-[13px] transition-colors hover:bg-paper-dim", department === cat.id ? "font-semibold text-accent-violet" : "text-ink")}
                       >
                         {cat.name}
                       </button>
@@ -171,55 +169,100 @@ export function TopSearchBar() {
               </div>
             </div>
 
-            {/* Live results dropdown */}
-            {dropdownOpen && query.trim().length > 0 && (
+            {dropdownOpen && (
               <div className="absolute left-0 right-0 top-[calc(100%+8px)] z-40 overflow-hidden rounded-card border border-line bg-card shadow-xl">
-                {results.length === 0 ? (
-                  <div className="px-4 py-5 text-center text-[13px] text-ink-soft">
-                    No courses found for &quot;{query}&quot;.
+                {totalResults === 0 ? (
+                  <div className="px-4 py-6 text-center text-[13px] text-ink-soft">
+                    {query.trim() ? `No results found for "${query}".` : "Start typing to search across the whole platform."}
                   </div>
                 ) : (
-                  <ul className="flex max-h-80 flex-col divide-y divide-line overflow-y-auto">
-                    {results.map((course) => {
-                      const categoryName =
-                        CATEGORIES.find((c) => course.slug.includes(c.id))?.name ?? "Course";
-                      return (
-                        <li key={course.id}>
-                          <Link
-                            href={`/courses/${course.slug}`}
-                            onClick={() => setDropdownOpen(false)}
-                            className="flex items-center justify-between gap-3 px-4 py-3 transition-colors hover:bg-paper-dim"
-                          >
-                            <div className="min-w-0">
-                              <p className="truncate text-[13.5px] font-semibold text-ink">{course.title}</p>
-                              <p className="text-[11.5px] text-ink-soft">
-                                {categoryName} - {course.instructor.fullName}
-                              </p>
+                  <div className="max-h-96 overflow-y-auto">
+                    {showCourses && courseResults.length > 0 && (
+                      <div>
+                        <p className="px-4 pt-3 pb-1 text-[10.5px] font-semibold uppercase tracking-wide text-ink-soft/60">Courses</p>
+                        {courseResults.map((course) => (
+                          <Link key={course.id} href={`/courses/${course.slug}`} onClick={() => setDropdownOpen(false)} className="flex items-center justify-between gap-3 px-4 py-2.5 transition-colors hover:bg-paper-dim">
+                            <div className="flex min-w-0 items-center gap-2">
+                              <GraduationCap size={14} className="shrink-0 text-accent-violet" />
+                              <span className="truncate text-[13px] font-medium text-ink">{course.title}</span>
                             </div>
-                            <ArrowUpRight size={14} className="shrink-0 text-ink-soft" />
+                            <ArrowUpRight size={13} className="shrink-0 text-ink-soft" />
                           </Link>
-                        </li>
-                      );
-                    })}
-                  </ul>
+                        ))}
+                      </div>
+                    )}
+                    {showNews && newsResults.length > 0 && (
+                      <div>
+                        <p className="px-4 pt-3 pb-1 text-[10.5px] font-semibold uppercase tracking-wide text-ink-soft/60">News</p>
+                        {newsResults.map((article) => (
+                          <Link key={article.id} href={`/news/${article.slug}`} onClick={() => setDropdownOpen(false)} className="flex items-center justify-between gap-3 px-4 py-2.5 transition-colors hover:bg-paper-dim">
+                            <div className="flex min-w-0 items-center gap-2">
+                              <Newspaper size={14} className="shrink-0 text-accent-violet" />
+                              <span className="truncate text-[13px] font-medium text-ink">{article.title}</span>
+                            </div>
+                            <ArrowUpRight size={13} className="shrink-0 text-ink-soft" />
+                          </Link>
+                        ))}
+                      </div>
+                    )}
+                    {showBlog && blogResults.length > 0 && (
+                      <div>
+                        <p className="px-4 pt-3 pb-1 text-[10.5px] font-semibold uppercase tracking-wide text-ink-soft/60">Blog</p>
+                        {blogResults.map((post) => (
+                          <Link key={post.id} href={`/blog/${post.slug}`} onClick={() => setDropdownOpen(false)} className="flex items-center justify-between gap-3 px-4 py-2.5 transition-colors hover:bg-paper-dim">
+                            <div className="flex min-w-0 items-center gap-2">
+                              <BookOpen size={14} className="shrink-0 text-accent-violet" />
+                              <span className="truncate text-[13px] font-medium text-ink">{post.title}</span>
+                            </div>
+                            <ArrowUpRight size={13} className="shrink-0 text-ink-soft" />
+                          </Link>
+                        ))}
+                      </div>
+                    )}
+                    {showCommunity && communityResults.length > 0 && (
+                      <div>
+                        <p className="px-4 pt-3 pb-1 text-[10.5px] font-semibold uppercase tracking-wide text-ink-soft/60">Community</p>
+                        {communityResults.map((post) => (
+                          <Link key={post.id} href={`/community/${post.id}`} onClick={() => setDropdownOpen(false)} className="flex items-center justify-between gap-3 px-4 py-2.5 transition-colors hover:bg-paper-dim">
+                            <div className="flex min-w-0 items-center gap-2">
+                              <Users size={14} className="shrink-0 text-accent-violet" />
+                              <span className="truncate text-[13px] font-medium text-ink">{post.title}</span>
+                            </div>
+                            <ArrowUpRight size={13} className="shrink-0 text-ink-soft" />
+                          </Link>
+                        ))}
+                      </div>
+                    )}
+                    {showCerts && certResults.length > 0 && (
+                      <div>
+                        <p className="px-4 pt-3 pb-1 text-[10.5px] font-semibold uppercase tracking-wide text-ink-soft/60">Certificates</p>
+                        {certResults.map((cert) => (
+                          <Link key={cert.id} href={`/certificates/${cert.id}`} onClick={() => setDropdownOpen(false)} className="flex items-center justify-between gap-3 px-4 py-2.5 transition-colors hover:bg-paper-dim">
+                            <div className="flex min-w-0 items-center gap-2">
+                              <Award size={14} className="shrink-0 text-accent-violet" />
+                              <span className="truncate text-[13px] font-medium text-ink">{cert.courseTitle} - {cert.learnerName}</span>
+                            </div>
+                            <ArrowUpRight size={13} className="shrink-0 text-ink-soft" />
+                          </Link>
+                        ))}
+                      </div>
+                    )}
+                  </div>
                 )}
-                <Link
-                  href={`/search?q=${encodeURIComponent(query)}${department ? `&category=${department}` : ""}`}
-                  onClick={() => setDropdownOpen(false)}
-                  className="flex items-center justify-center gap-2 border-t border-line bg-paper-dim px-4 py-2.5 text-[12px] font-semibold text-accent-violet hover:underline"
-                >
-                  See all results for &quot;{query}&quot;
-                </Link>
+                {query.trim() && (
+                  <Link
+                    href={`/search?q=${encodeURIComponent(query)}${activeFilter !== "all" ? `&type=${activeFilter}` : ""}${department ? `&category=${department}` : ""}`}
+                    onClick={() => setDropdownOpen(false)}
+                    className="flex items-center justify-center gap-2 border-t border-line bg-paper-dim px-4 py-2.5 text-[12px] font-semibold text-accent-violet hover:underline"
+                  >
+                    See all results for &quot;{query}&quot;
+                  </Link>
+                )}
               </div>
             )}
           </div>
 
-          <button
-            type="submit"
-            className={cn(
-              "group/searchbtn relative hidden h-11 shrink-0 items-center gap-1.5 overflow-hidden rounded-full bg-zinc-900 px-5 sm:flex"
-            )}
-          >
+          <button type="submit" className="group/searchbtn relative hidden h-11 shrink-0 items-center gap-1.5 overflow-hidden rounded-full bg-zinc-900 px-5 sm:flex">
             <span className="absolute inset-0 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 opacity-50 blur transition-opacity duration-500 group-hover/searchbtn:opacity-90" />
             <span className="relative flex items-center gap-1.5 text-[13px] font-semibold text-white">
               <Search size={14} />
@@ -239,9 +282,7 @@ export function TopSearchBar() {
                 onClick={() => setActiveFilter(filter.value)}
                 className={cn(
                   "flex items-center gap-1.5 rounded-full border px-3.5 py-1.5 text-[12.5px] font-semibold transition-all duration-150",
-                  active
-                    ? "border-white bg-white text-ink shadow-sm"
-                    : "border-white/40 bg-white/10 text-white/90 hover:border-white/70 hover:bg-white/20"
+                  active ? "border-white bg-white text-ink shadow-sm" : "border-white/40 bg-white/10 text-white/90 hover:border-white/70 hover:bg-white/20"
                 )}
               >
                 <Icon size={13} />
