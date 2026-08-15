@@ -133,10 +133,6 @@ export default function HomePage() {
               <div className="h-4 w-[85%] animate-pulse rounded bg-paper-dim" />
             </div>
           )}
-          <div className="mt-8 mb-2 max-w-2xl">
-            <GalleryCursorTrail />
-          </div>
-
           <div className="mt-8 flex flex-wrap gap-3">
             <Link href="/courses" className="group">
               <button
@@ -166,6 +162,10 @@ export default function HomePage() {
           <div className="mt-6">
             <ActivityTicker />
           </div>
+        </div>
+
+        <div className="pointer-events-auto absolute right-0 top-1/2 z-10 hidden w-[380px] -translate-y-1/2 lg:block xl:right-4 xl:w-[420px]">
+          <GalleryCursorTrail orientation="vertical" />
         </div>
 
         <HeroCursorTrail />

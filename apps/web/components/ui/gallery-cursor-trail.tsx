@@ -19,20 +19,37 @@ export const GALLERY_IMAGES = [
  * Renders the gallery strip. On hovering any single image, the cursor
  * trail activates using THAT SAME IMAGE (repeated) so the trail is
  * always directly related to the image being hovered.
+ *
+ * `orientation="vertical"` renders a compact right-column-friendly
+ * layout (fewer, taller cards) instead of the full-width horizontal
+ * strip.
  */
-export function GalleryCursorTrail() {
+export function GalleryCursorTrail({
+  orientation = "horizontal"
+}: {
+  orientation?: "horizontal" | "vertical";
+}) {
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
 
+  const images = orientation === "vertical" ? GALLERY_IMAGES.slice(0, 4) : GALLERY_IMAGES;
+
   return (
-    <div className="relative flex h-[320px] w-full items-center gap-2">
-      {GALLERY_IMAGES.map((src, idx) => (
+    <div
+      className={cn(
+        "relative flex w-full",
+        orientation === "vertical"
+          ? "h-[440px] flex-col gap-2"
+          : "h-[320px] items-center gap-2"
+      )}
+    >
+      {images.map((src, idx) => (
         <div
           key={idx}
           onMouseEnter={() => setHoveredIndex(idx)}
           onMouseLeave={() => setHoveredIndex(null)}
           className={cn(
-            "group relative h-[320px] w-40 flex-grow overflow-hidden rounded-lg transition-all duration-500",
-            "hover:w-full"
+            "group relative flex-grow overflow-hidden rounded-lg transition-all duration-500",
+            orientation === "vertical" ? "w-full h-24 hover:h-full" : "h-[320px] w-40 hover:w-full"
           )}
         >
           {/* eslint-disable-next-line @next/next/no-img-element */}
