@@ -33,10 +33,10 @@ import { NewsletterCard } from "./_components/NewsletterCard";
 import { EXTRA_TESTIMONIALS } from "./_components/landing-fake-data";
 import { CoverflowCarousel } from "@/components/ui/coverflow-carousel";
 import { HeroMediaCollage } from "@/components/ui/hero-media-collage";
+import { HeroCursorTrail } from "@/components/ui/hero-cursor-trail";
 import { ImageStreamHero } from "@/components/ui/image-stream-hero";
 import HowItWorks from "@/components/ui/how-it-works";
 import { LimitedTimeOfferPricing } from "@/components/ui/limited-time-offer-pricing";
-import { CursorTrailBanner } from "@/components/ui/cursor-trail-banner";
 
 const STATS = [
   { label: "Active students", value: "42,000+", icon: Users },
@@ -101,9 +101,6 @@ export default function HomePage() {
 
   return (
     <div className="overflow-hidden">
-      {/* Cursor Trail Showcase */}
-      <CursorTrailBanner />
-
       {/* Hero */}
       <section className="relative mx-auto max-w-7xl px-4 pb-14 pt-16 md:px-8 md:pt-24">
         <div
@@ -166,7 +163,7 @@ export default function HomePage() {
           </div>
         </div>
 
-        <HeroMediaCollage />
+        <HeroCursorTrail />
       </section>
 
       {/* Trust badges marquee */}
