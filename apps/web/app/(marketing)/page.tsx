@@ -21,7 +21,6 @@ import {
 } from "lucide-react";
 import { CATEGORIES } from "../../lib/categories";
 import { Reveal } from "./_components/Reveal";
-import { LandingSearch } from "./_components/LandingSearch";
 import { FaqAccordion } from "./_components/FaqAccordion";
 import { TrendingCarousel } from "./_components/TrendingCarousel";
 import { SpotlightPanels } from "./_components/SpotlightPanels";
@@ -151,9 +150,7 @@ export default function HomePage() {
             </Link>
           </div>
 
-          <div className="mt-10">
-            <LandingSearch />
-          </div>
+
 
 
         </div>
