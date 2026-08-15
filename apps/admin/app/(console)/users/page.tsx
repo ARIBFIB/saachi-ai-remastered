@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
@@ -325,7 +325,7 @@ export default function AdminUsersPage() {
         )
       }
     ],
-    [rows, selectedIds, statusPopoverId]
+    [rows, selectedIds, statusPopoverId, buildActions, toggleSelectAll]
   );
 
   return (

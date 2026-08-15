@@ -1,5 +1,7 @@
 "use client";
 
+/* eslint-disable @next/next/no-img-element -- intentional: this file renders raw <img> for effects (cursor trails / animated corridors) where next/image isn't a fit. */
+
 import * as React from "react";
 import { cn } from "@/lib/utils";
 
@@ -102,7 +104,6 @@ export function ImageStreamHero({ images, cards = 9, speed = 18, axis = 55, path
                   }}
                 >
                   {img ? (
-                    {/* eslint-disable-next-line @next/next/no-img-element -- intentional: CSS-animated corridor images, next/image not suitable here */}
                     <img src={img.src} alt={img.alt ?? ""} loading="lazy" decoding="async" className="h-full w-full object-cover" draggable={false} />
                   ) : null}
                 </div>

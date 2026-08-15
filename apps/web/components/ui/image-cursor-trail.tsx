@@ -1,5 +1,7 @@
 "use client";
 
+/* eslint-disable @next/next/no-img-element -- intentional: this file renders raw <img> for effects (cursor trails / animated corridors) where next/image isn't a fit. */
+
 import React, { createRef, useEffect, useRef, type ReactNode } from "react";
 import { cn } from "@/lib/utils";
 
@@ -115,7 +117,6 @@ export function ImageCursorTrail({
       )}
     >
       {items.map((item, index) => (
-        {/* eslint-disable-next-line @next/next/no-img-element -- intentional: dynamic cursor-trail image, next/image not suitable here */}
         <img
           key={index}
           className={cn(

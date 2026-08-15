@@ -359,7 +359,7 @@ export default function AdminDashboardPage() {
   // ---- Role-aware filtering (single source of truth: lib/permissions.ts) ----
   const kpis = useMemo(
     () => (mounted ? allKpis.filter((k) => canAccessModule(KPI_MODULE_MAP[k.key], currentRole)) : allKpis),
-    [mounted, currentRole]
+    [mounted, currentRole, allKpis]
   );
 
   const quickActions = useMemo(

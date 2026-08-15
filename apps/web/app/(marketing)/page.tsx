@@ -35,6 +35,7 @@ import { ImageStreamHero } from "@/components/ui/image-stream-hero";
 import HowItWorks from "@/components/ui/how-it-works";
 import { LimitedTimeOfferPricing } from "@/components/ui/limited-time-offer-pricing";
 import { AnimatedTestimonials } from "@/components/ui/animated-testimonials";
+import { GlobalVisitorsPanel } from "@/components/ui/global-visitors-panel";
 
 const STATS = [
   { label: "Active students", value: "42,000+", icon: Users },
@@ -172,6 +173,17 @@ export default function HomePage() {
       <section className="mx-auto max-w-7xl px-4 pb-16 md:px-8">
         <Reveal>
           <LogoCloud />
+        </Reveal>
+      </section>
+
+      {/* Live global visitors */}
+      <section className="mx-auto max-w-7xl px-4 pb-16 md:px-8">
+        <Reveal>
+          <h2 className="mb-2 font-display text-[22px] font-semibold text-ink">Live on Saachi AI right now</h2>
+          <p className="mb-8 text-[14px] text-ink-soft">A real-time snapshot of learners around the world.</p>
+        </Reveal>
+        <Reveal delay={80}>
+          <GlobalVisitorsPanel />
         </Reveal>
       </section>
 
