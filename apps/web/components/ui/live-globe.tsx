@@ -93,7 +93,6 @@ export function GlobeLive({ markers = defaultMarkers, className = "", speed = 0.
         baseColor: [0.93, 0.9, 0.97],
         markerColor: [0.486, 0.227, 0.929],
         glowColor: [0.94, 0.91, 0.98],
-        markerElevation: 0.01,
         markers: markers.map((m) => ({ location: m.location, size: 0.05 })),
         arcs: [],
         arcColor: [0.486, 0.227, 0.929],
@@ -104,7 +103,7 @@ export function GlobeLive({ markers = defaultMarkers, className = "", speed = 0.
 
       function animate() {
         if (!isPausedRef.current) phi += speed;
-        globe!.update({
+        (globe as any)!.update({
           phi: phi + phiOffsetRef.current + dragOffset.current.phi,
           theta: 0.2 + thetaOffsetRef.current + dragOffset.current.theta
         });
