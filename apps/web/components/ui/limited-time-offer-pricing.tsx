@@ -38,15 +38,19 @@ function pad(n: number) {
 function CountdownUnit({ value, label }: { value: number; label: string }) {
   return (
     <div className="flex flex-col items-center">
-      <span className="font-mono text-[20px] font-bold leading-none text-ink md:text-[24px]">
-        {pad(value)}
-      </span>
-      <span className="mt-1 text-[10px] font-medium uppercase tracking-[0.08em] text-ink-soft">
-        {label}
-      </span>
+      <span className="font-mono text-[20px] font-bold leading-none text-ink md:text-[24px]">{pad(value)}</span>
+      <span className="mt-1 text-[10px] font-medium uppercase tracking-[0.08em] text-ink-soft">{label}</span>
     </div>
   );
 }
+
+const monthlyCtaClassName =
+  "inline-flex h-11 w-full items-center justify-center gap-2 rounded-full border border-line-strong bg-card text-[15px] font-semibold text-ink transition-colors duration-150 ease-out hover:bg-paper-dim";
+
+const yearlyCtaClassName =
+  "inline-flex h-11 w-full items-center justify-center gap-2 rounded-full text-[15px] font-semibold text-white transition-transform duration-150 ease-out hover:brightness-110";
+
+const yearlyCtaStyle = { backgroundImage: "var(--color-accent-gradient)" };
 
 export function LimitedTimeOfferPricing() {
   const targetRef = React.useRef<number>(Date.now() + OFFER_DURATION_MS);
@@ -79,8 +83,7 @@ export function LimitedTimeOfferPricing() {
             Lock In Early-Bird Pricing
           </h2>
           <p className="mt-5 text-center text-sm text-ink-soft md:text-base">
-            This discount disappears when the timer hits zero. Same courses, same certificates,
-            just less to pay while the offer lasts.
+            This discount disappears when the timer hits zero. Same courses, same certificates, just less to pay while the offer lasts.
           </p>
 
           {!timeLeft.expired ? (
@@ -137,17 +140,10 @@ export function LimitedTimeOfferPricing() {
                 <div className="mt-10 space-y-4">
                   <div className="flex items-end gap-0.5 text-xl text-ink-soft">
                     <span>$</span>
-                    <span className="-mb-0.5 font-display text-4xl font-extrabold tracking-tighter text-ink md:text-5xl">
-                      16
-                    </span>
+                    <span className="-mb-0.5 font-display text-4xl font-extrabold tracking-tighter text-ink md:text-5xl">16</span>
                     <span>/month</span>
                   </div>
-                  
-                    href="/register"
-                    className="inline-flex h-11 w-full items-center justify-center gap-2 rounded-full border border-line-strong bg-card text-[15px] font-semibold text-ink transition-colors duration-150 ease-out hover:bg-paper-dim"
-                  >
-                    Start Your Journey
-                  </a>
+                  <a href="/register" className={monthlyCtaClassName}>Start Your Journey</a>
                 </div>
               </div>
 
@@ -172,18 +168,10 @@ export function LimitedTimeOfferPricing() {
                 <div className="mt-10 space-y-4">
                   <div className="flex items-end text-xl text-ink-soft">
                     <span>$</span>
-                    <span className="-mb-0.5 font-display text-4xl font-extrabold tracking-tighter text-ink md:text-5xl">
-                      12.99
-                    </span>
+                    <span className="-mb-0.5 font-display text-4xl font-extrabold tracking-tighter text-ink md:text-5xl">12.99</span>
                     <span>/month</span>
                   </div>
-                  
-                    href="/register"
-                    className="inline-flex h-11 w-full items-center justify-center gap-2 rounded-full font-semibold text-[15px] text-white transition-transform duration-150 ease-out hover:brightness-110"
-                    style={{ backgroundImage: "var(--color-accent-gradient)" }}
-                  >
-                    Claim This Offer
-                  </a>
+                  <a href="/register" className={yearlyCtaClassName} style={yearlyCtaStyle}>Claim This Offer</a>
                 </div>
               </div>
             </div>
