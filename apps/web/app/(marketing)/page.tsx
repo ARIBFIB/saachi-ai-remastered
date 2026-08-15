@@ -113,10 +113,6 @@ export default function HomePage() {
             <Zap size={13} />
             42,000+ learners already building with AI
           </div>
-
-          <div className="mb-8 max-w-2xl">
-            <GalleryCursorTrail />
-          </div>
           {heroLoaded ? (
             <>
               <h1 className="font-display text-[38px] font-bold leading-[1.05] text-ink md:text-[64px]">
@@ -137,6 +133,10 @@ export default function HomePage() {
               <div className="h-4 w-[85%] animate-pulse rounded bg-paper-dim" />
             </div>
           )}
+          <div className="mt-8 mb-2 max-w-2xl">
+            <GalleryCursorTrail />
+          </div>
+
           <div className="mt-8 flex flex-wrap gap-3">
             <Link href="/courses" className="group">
               <button

@@ -19,15 +19,16 @@ const SHOWCASE_IMAGES = [
  * Covers the ENTIRE hero section (so the trail reacts to the mouse
  * anywhere in the hero, not just a small box), but fades out via a
  * mask-image gradient as it approaches the left text column so it
- * never overlaps the heading, paragraph, or CTA buttons.
+ * never overlaps the heading, paragraph, or CTA buttons. Shifted
+ * slightly further right (pl-12) so it sits clear of the text column.
  */
 export function HeroCursorTrail() {
   return (
     <div
-      className="pointer-events-none absolute inset-0 z-0 hidden lg:block"
+      className="pointer-events-none absolute inset-0 z-0 hidden pl-12 lg:block xl:pl-20"
       style={{
-        maskImage: "linear-gradient(to right, transparent 0%, transparent 38%, black 58%, black 100%)",
-        WebkitMaskImage: "linear-gradient(to right, transparent 0%, transparent 38%, black 58%, black 100%)"
+        maskImage: "linear-gradient(to right, transparent 0%, transparent 44%, black 62%, black 100%)",
+        WebkitMaskImage: "linear-gradient(to right, transparent 0%, transparent 44%, black 62%, black 100%)"
       }}
     >
       <ImageCursorTrail
