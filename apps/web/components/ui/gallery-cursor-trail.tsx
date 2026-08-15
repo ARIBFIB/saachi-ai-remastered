@@ -56,7 +56,7 @@ export function GalleryCursorTrail() {
 
   return (
     <div
-      className="relative flex h-[400px] w-full max-w-[420px] items-stretch gap-1.5"
+      className="relative flex h-[400px] w-full max-w-[620px] items-stretch gap-2"
       style={{
         maskImage: "linear-gradient(to left, black 70%, transparent 100%)",
         WebkitMaskImage: "linear-gradient(to left, black 70%, transparent 100%)"
@@ -71,7 +71,7 @@ export function GalleryCursorTrail() {
             onMouseLeave={() => setHoveredIndex(null)}
             className={cn(
               "group relative h-full flex-grow overflow-hidden rounded-lg transition-all duration-500 ease-out",
-              isHovered ? "w-[170px] flex-grow-[3]" : "w-14 flex-grow"
+              isHovered ? "w-[260px] flex-grow-[3]" : "w-20 flex-grow"
             )}
           >
             {/* eslint-disable-next-line @next/next/no-img-element */}
