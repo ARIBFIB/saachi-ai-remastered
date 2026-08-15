@@ -1,7 +1,7 @@
 ﻿================================================================================
 WEBSITE FRONTEND CODE EXPORT (apps/web + shared packages)
-Generated: 2026-08-16 00:33:13
-Total Files: 190
+Generated: 2026-08-16 00:54:12
+Total Files: 193
 ================================================================================
 
 
@@ -4788,10 +4788,7 @@ import {
   ShieldCheck,
   Zap,
   TrendingUp,
-  PlayCircle,
-  Quote,
-  BadgeCheck,
-  ShieldCheck as VerifiedIcon
+  PlayCircle
 } from "lucide-react";
 import { CATEGORIES } from "../../lib/categories";
 import { Reveal } from "./_components/Reveal";
@@ -4802,7 +4799,7 @@ import { LogoCloud } from "./_components/LogoCloud";
 import { BlogPreview } from "./_components/BlogPreview";
 import { PricingTeaser } from "./_components/PricingTeaser";
 import { NewsletterCard } from "./_components/NewsletterCard";
-import { EXTRA_TESTIMONIALS } from "./_components/landing-fake-data";
+
 import { CoverflowCarousel } from "@/components/ui/coverflow-carousel";
 import { HeroMediaCollage } from "@/components/ui/hero-media-collage";
 import { HeroCursorTrail } from "@/components/ui/hero-cursor-trail";
@@ -4810,6 +4807,7 @@ import { GalleryCursorTrail } from "@/components/ui/gallery-cursor-trail";
 import { ImageStreamHero } from "@/components/ui/image-stream-hero";
 import HowItWorks from "@/components/ui/how-it-works";
 import { LimitedTimeOfferPricing } from "@/components/ui/limited-time-offer-pricing";
+import { AnimatedTestimonials } from "@/components/ui/animated-testimonials";
 
 const STATS = [
   { label: "Active students", value: "42,000+", icon: Users },
@@ -4833,29 +4831,6 @@ const INSTRUCTORS = [
   { name: "Bilal S.", role: "Career & Freelancing", students: "1.9k", avatar: "https://i.pravatar.cc/96?img=8" }
 ];
 
-const TESTIMONIALS = [
-  {
-    name: "Fatima R.", role: "Freelance automation consultant", avatar: "https://i.pravatar.cc/64?img=5",
-    rating: 5, verified: true,
-    quote: "I landed 3 client projects within a month of finishing the n8n automation course. The invoice-parsing workflow alone paid for the course ten times over."
-  },
-  {
-    name: "Ali Raza", role: "Support team lead", avatar: "https://i.pravatar.cc/64?img=22",
-    rating: 5, verified: true,
-    quote: "Our WhatsApp response time dropped by 70% after building the chatbot from the course. Practical, no fluff, straight to the point."
-  },
-  {
-    name: "Hina Malik", role: "Marketing manager", avatar: "https://i.pravatar.cc/64?img=25",
-    rating: 4, verified: false,
-    quote: "Best structured AI marketing content I have found anywhere. Wish there were a couple more advanced modules, but genuinely worth it."
-  },
-  {
-    name: "Omar Sheikh", role: "Indie developer", avatar: "https://i.pravatar.cc/64?img=15",
-    rating: 5, verified: true,
-    quote: "Went from zero to shipping my own AI agent product in six weeks. The instructor actually answers Q&A -- that made all the difference."
-  },
-  ...EXTRA_TESTIMONIALS
-];
 
 const HOW_IT_WORKS = [
   { title: "Pick a skill", desc: "Browse 1,200+ practical AI courses across automation, marketing, design, and development.", icon: Sparkles },
@@ -5090,40 +5065,89 @@ export default function HomePage() {
           />
         </Reveal>
       </section>
-
-      {/* Testimonials */}
-      <section className="mx-auto max-w-7xl px-4 pb-16 md:px-8">
-        <Reveal>
-          <h2 className="mb-2 font-display text-[22px] font-semibold text-ink">What learners are saying</h2>
-          <p className="mb-8 text-[14px] text-ink-soft">4.8 average rating across 12,000+ reviews.</p>
-        </Reveal>
-        <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
-          {TESTIMONIALS.map((t, i) => (
-            <Reveal key={t.name} delay={i * 70}>
-              <div className="relative h-full rounded-card border border-line bg-card p-6">
-                <Quote size={28} className="absolute right-5 top-5 text-line-strong" />
-                <div className="mb-3 flex items-center gap-3">
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img src={t.avatar} alt={t.name} className="h-11 w-11 rounded-full object-cover" />
-                  <div>
-                    <p className="flex items-center gap-1 text-[13.5px] font-semibold text-ink">
-                      {t.name}
-                      {t.verified && <VerifiedIcon size={12} className="text-teal" />}
-                    </p>
-                    <p className="text-[12px] text-ink-soft">{t.role}</p>
-                  </div>
-                </div>
-                <div className="mb-2 flex items-center gap-0.5 text-accent-pink">
-                  {Array.from({ length: 5 }).map((_, idx) => (
-                    <Star key={idx} size={13} fill={idx < t.rating ? "currentColor" : "none"} />
-                  ))}
-                </div>
-                <p className="text-[13.5px] leading-relaxed text-ink-soft">&quot;{t.quote}&quot;</p>
-              </div>
-            </Reveal>
-          ))}
-        </div>
-      </section>
+      {/* Testimonials - AnimatedTestimonials */}
+      <AnimatedTestimonials
+        title="What learners are saying"
+        subtitle="4.8 average rating across 12,000+ reviews. Real results from real people."
+        badgeText="Verified reviews"
+        autoRotateInterval={6000}
+        testimonials={[
+          {
+            id: 1,
+            name: "Fatima R.",
+            role: "Freelance automation consultant",
+            company: "Independent",
+            content: "I landed 3 client projects within a month of finishing the n8n automation course. The invoice-parsing workflow alone paid for the course ten times over.",
+            rating: 5,
+            avatar: "https://i.pravatar.cc/150?img=5",
+          },
+          {
+            id: 2,
+            name: "Ali Raza",
+            role: "Support team lead",
+            company: "Local Retail Co.",
+            content: "Our WhatsApp response time dropped by 70% after building the chatbot from the course. Practical, no fluff, straight to the point.",
+            rating: 5,
+            avatar: "https://i.pravatar.cc/150?img=22",
+          },
+          {
+            id: 3,
+            name: "Hina Malik",
+            role: "Marketing manager",
+            company: "Agency Partner",
+            content: "Best structured AI marketing content I have found anywhere. Wish there were a couple more advanced modules, but genuinely worth it.",
+            rating: 4,
+            avatar: "https://i.pravatar.cc/150?img=25",
+          },
+          {
+            id: 4,
+            name: "Omar Sheikh",
+            role: "Indie developer",
+            company: "Self-employed",
+            content: "Went from zero to shipping my own AI agent product in six weeks. The instructor actually answers Q&A - that made all the difference.",
+            rating: 5,
+            avatar: "https://i.pravatar.cc/150?img=15",
+          },
+          {
+            id: 5,
+            name: "Zara Ahmed",
+            role: "Product designer",
+            company: "Independent",
+            content: "The design systems course completely changed how I hand off files to developers. Immediate ROI.",
+            rating: 5,
+            avatar: "https://i.pravatar.cc/150?img=48",
+          },
+          {
+            id: 6,
+            name: "Usman Tariq",
+            role: "Agency owner",
+            company: "Growth Agency",
+            content: "We onboarded our whole team through Saachi AI Business. Certificates and dashboards made tracking easy.",
+            rating: 5,
+            avatar: "https://i.pravatar.cc/150?img=13",
+          },
+          {
+            id: 7,
+            name: "Mahnoor Khalid",
+            role: "Content strategist",
+            company: "Freelance",
+            content: "Solid course library, wish there was more advanced copywriting content, but great value overall.",
+            rating: 4,
+            avatar: "https://i.pravatar.cc/150?img=45",
+          },
+          {
+            id: 8,
+            name: "Danish Iqbal",
+            role: "Automation freelancer",
+            company: "Freelance",
+            content: "Booked a mentorship call the same week I finished the course. Instructor feedback was gold.",
+            rating: 5,
+            avatar: "https://i.pravatar.cc/150?img=33",
+          },
+        ]}
+        trustedCompanies={["NovaWorks", "BrightStack", "Vertex Labs", "Cirrus Digital", "Ember Systems", "Northline Tech"]}
+        trustedCompaniesTitle="Learners from companies worldwide"
+      />
 
       {/* Course spotlight stream */}
       <section className="mx-auto max-w-7xl px-4 pb-16 md:px-8">
@@ -5995,6 +6019,216 @@ export function Providers({ children }: { children: ReactNode }) {
 
 
 ================================================================================
+FILE: apps\web\components\ui\animated-testimonials.tsx
+================================================================================
+"use client"
+
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import { Separator } from "@/components/ui/separator"
+import { Quote, Star } from "lucide-react"
+import { motion, useAnimation, useInView } from "framer-motion"
+import { useEffect, useRef, useState } from "react"
+
+export interface Testimonial {
+  id: number
+  name: string
+  role: string
+  company: string
+  content: string
+  rating: number
+  avatar: string
+}
+
+export interface AnimatedTestimonialsProps {
+  title?: string
+  subtitle?: string
+  badgeText?: string
+  testimonials?: Testimonial[]
+  autoRotateInterval?: number
+  trustedCompanies?: string[]
+  trustedCompaniesTitle?: string
+  className?: string
+}
+
+export function AnimatedTestimonials({
+  title = "Loved by the community",
+  subtitle = "Don't just take our word for it. See what learners have to say.",
+  badgeText = "Trusted by learners",
+  testimonials = [],
+  autoRotateInterval = 6000,
+  trustedCompanies = [],
+  trustedCompaniesTitle = "Trusted by learners from companies worldwide",
+  className,
+}: AnimatedTestimonialsProps) {
+  const [activeIndex, setActiveIndex] = useState(0)
+
+  const sectionRef = useRef(null)
+  const isInView = useInView(sectionRef, { once: true, amount: 0.2 })
+  const controls = useAnimation()
+
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: { staggerChildren: 0.1, delayChildren: 0.2 },
+    },
+  }
+
+  const itemVariants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: { duration: 0.5, ease: "easeOut" },
+    },
+  }
+
+  useEffect(() => {
+    if (isInView) controls.start("visible")
+  }, [isInView, controls])
+
+  useEffect(() => {
+    if (autoRotateInterval <= 0 || testimonials.length <= 1) return
+    const interval = setInterval(() => {
+      setActiveIndex((current) => (current + 1) % testimonials.length)
+    }, autoRotateInterval)
+    return () => clearInterval(interval)
+  }, [autoRotateInterval, testimonials.length])
+
+  if (testimonials.length === 0) return null
+
+  return (
+    <section
+      ref={sectionRef}
+      id="testimonials"
+      className={`py-24 overflow-hidden bg-paper-dim/40 ${className ?? ""}`}
+    >
+      <div className="mx-auto max-w-7xl px-4 md:px-8">
+        <motion.div
+          initial="hidden"
+          animate={controls}
+          variants={containerVariants}
+          className="grid grid-cols-1 gap-16 w-full md:grid-cols-2 lg:gap-24"
+        >
+          <motion.div variants={itemVariants} className="flex flex-col justify-center">
+            <div className="space-y-6">
+              {badgeText && (
+                <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[12px] font-semibold bg-gold-tint text-gold-dark border border-gold-dark/20">
+                  <Star className="h-3.5 w-3.5 fill-gold-dark" />
+                  {badgeText}
+                </div>
+              )}
+
+              <h2 className="font-display text-3xl font-bold tracking-tight text-ink sm:text-4xl md:text-5xl">
+                {title}
+              </h2>
+
+              <p className="max-w-[520px] text-[15px] leading-relaxed text-ink-soft md:text-[17px]">
+                {subtitle}
+              </p>
+
+              <div className="flex items-center gap-3 pt-4">
+                {testimonials.map((_, index) => (
+                  <button
+                    key={index}
+                    onClick={() => setActiveIndex(index)}
+                    className={`h-2.5 rounded-full transition-all duration-300 ${
+                      activeIndex === index
+                        ? "w-10 bg-accent-violet"
+                        : "w-2.5 bg-line-strong"
+                    }`}
+                    aria-label={`View testimonial ${index + 1}`}
+                  />
+                ))}
+              </div>
+            </div>
+          </motion.div>
+
+          <motion.div
+            variants={itemVariants}
+            className="relative h-full mr-10 min-h-[300px] md:min-h-[400px]"
+          >
+            {testimonials.map((testimonial, index) => (
+              <motion.div
+                key={testimonial.id}
+                className="absolute inset-0"
+                initial={{ opacity: 0, x: 100 }}
+                animate={{
+                  opacity: activeIndex === index ? 1 : 0,
+                  x: activeIndex === index ? 0 : 100,
+                  scale: activeIndex === index ? 1 : 0.9,
+                }}
+                transition={{ duration: 0.5, ease: "easeInOut" }}
+                style={{ zIndex: activeIndex === index ? 10 : 0 }}
+              >
+                <div className="rounded-card border border-line bg-card shadow-lg p-8 h-full flex flex-col">
+                  <div className="mb-6 flex gap-1">
+                    {Array(testimonial.rating)
+                      .fill(0)
+                      .map((_, i) => (
+                        <Star key={i} className="h-5 w-5 fill-gold-dark text-gold-dark" />
+                      ))}
+                  </div>
+
+                  <div className="relative mb-6 flex-1">
+                    <Quote className="absolute -top-2 -left-2 h-8 w-8 text-accent-violet/20 rotate-180" />
+                    <p className="relative z-10 text-[16px] font-medium leading-relaxed text-ink">
+                      &ldquo;{testimonial.content}&rdquo;
+                    </p>
+                  </div>
+
+                  <Separator className="my-4" />
+
+                  <div className="flex items-center gap-4">
+                    <Avatar className="h-12 w-12 border border-line">
+                      <AvatarImage src={testimonial.avatar} alt={testimonial.name} />
+                      <AvatarFallback>{testimonial.name.charAt(0)}</AvatarFallback>
+                    </Avatar>
+                    <div>
+                      <h3 className="text-[14px] font-semibold text-ink">{testimonial.name}</h3>
+                      <p className="text-[12.5px] text-ink-soft">
+                        {testimonial.role}, {testimonial.company}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </motion.div>
+            ))}
+
+            <div className="absolute -bottom-6 -left-6 h-24 w-24 rounded-xl bg-accent-violet/5 pointer-events-none" />
+            <div className="absolute -top-6 -right-6 h-24 w-24 rounded-xl bg-accent-pink/5 pointer-events-none" />
+          </motion.div>
+        </motion.div>
+
+        {trustedCompanies.length > 0 && (
+          <motion.div
+            variants={itemVariants}
+            initial="hidden"
+            animate={controls}
+            className="mt-24 text-center"
+          >
+            <h3 className="text-[12.5px] font-medium uppercase tracking-[0.08em] text-ink-soft/60 mb-8">
+              {trustedCompaniesTitle}
+            </h3>
+            <div className="flex flex-wrap justify-center gap-x-12 gap-y-6">
+              {trustedCompanies.map((company) => (
+                <div
+                  key={company}
+                  className="font-display text-[18px] font-bold text-ink-soft/40 hover:text-ink-soft transition-colors"
+                >
+                  {company}
+                </div>
+              ))}
+            </div>
+          </motion.div>
+        )}
+      </div>
+    </section>
+  )
+}
+
+
+================================================================================
 FILE: apps\web\components\ui\animated-theme-toggler.tsx
 ================================================================================
 "use client";
@@ -6223,6 +6457,61 @@ export function AuthVisualPanel({
     </div>
   );
 }
+
+
+================================================================================
+FILE: apps\web\components\ui\avatar.tsx
+================================================================================
+"use client"
+
+import * as React from "react"
+import * as AvatarPrimitive from "@radix-ui/react-avatar"
+import { cn } from "@/lib/utils"
+
+type AvatarRootProps = React.ComponentPropsWithoutRef<typeof AvatarPrimitive.Root>
+type AvatarImageProps = React.ComponentPropsWithoutRef<typeof AvatarPrimitive.Image>
+type AvatarFallbackProps = React.ComponentPropsWithoutRef<typeof AvatarPrimitive.Fallback>
+
+const Avatar = React.forwardRef<React.ElementRef<typeof AvatarPrimitive.Root>, AvatarRootProps>(
+  function Avatar({ className, ...props }, ref) {
+    return (
+      <AvatarPrimitive.Root
+        ref={ref}
+        className={cn("relative flex h-10 w-10 shrink-0 overflow-hidden rounded-full", className)}
+        {...props}
+      />
+    )
+  }
+)
+
+const AvatarImage = React.forwardRef<React.ElementRef<typeof AvatarPrimitive.Image>, AvatarImageProps>(
+  function AvatarImage({ className, ...props }, ref) {
+    return (
+      <AvatarPrimitive.Image
+        ref={ref}
+        className={cn("aspect-square h-full w-full", className)}
+        {...props}
+      />
+    )
+  }
+)
+
+const AvatarFallback = React.forwardRef<React.ElementRef<typeof AvatarPrimitive.Fallback>, AvatarFallbackProps>(
+  function AvatarFallback({ className, ...props }, ref) {
+    return (
+      <AvatarPrimitive.Fallback
+        ref={ref}
+        className={cn(
+          "flex h-full w-full items-center justify-center rounded-full bg-paper-dim text-ink-soft text-sm font-semibold",
+          className
+        )}
+        {...props}
+      />
+    )
+  }
+)
+
+export { Avatar, AvatarImage, AvatarFallback }
 
 
 ================================================================================
@@ -8334,6 +8623,38 @@ export function SearchCommand({ query, groups, onClose, className }: SearchComma
 
 
 ================================================================================
+FILE: apps\web\components\ui\separator.tsx
+================================================================================
+"use client"
+
+import * as React from "react"
+import * as SeparatorPrimitive from "@radix-ui/react-separator"
+import { cn } from "@/lib/utils"
+
+type SeparatorProps = React.ComponentPropsWithoutRef<typeof SeparatorPrimitive.Root>
+
+const Separator = React.forwardRef<React.ElementRef<typeof SeparatorPrimitive.Root>, SeparatorProps>(
+  function Separator({ className, orientation = "horizontal", decorative = true, ...props }, ref) {
+    return (
+      <SeparatorPrimitive.Root
+        ref={ref}
+        decorative={decorative}
+        orientation={orientation}
+        className={cn(
+          "shrink-0 bg-line",
+          orientation === "horizontal" ? "h-[1px] w-full" : "h-full w-[1px]",
+          className
+        )}
+        {...props}
+      />
+    )
+  }
+)
+
+export { Separator }
+
+
+================================================================================
 FILE: apps\web\lib\design-system\generate-css-vars.mjs
 ================================================================================
 // Stub: static tokens already live in app/globals.css + tailwind.config.js.
@@ -8562,7 +8883,10 @@ FILE: apps\web\package.json
         "@ant-design/nextjs-registry": "^1.0.0",
         "@hookform/resolvers": "^3.9.0",
         "@paper-design/shaders-react": "^0.0.35",
+        "@radix-ui/react-avatar": "^1.2.6",
+        "@radix-ui/react-separator": "^1.1.15",
         "@radix-ui/react-slot": "^1.3.3",
+        "@radix-ui/react-tabs": "^1.1.21",
         "@saachi/store": "workspace:*",
         "@tanstack/react-query": "^5.56.0",
         "@tanstack/react-table": "^8.20.0",
@@ -8571,6 +8895,7 @@ FILE: apps\web\package.json
         "antd": "^5.21.0",
         "class-variance-authority": "^0.7.1",
         "clsx": "^2.1.0",
+        "cmdk": "^1.1.1",
         "framer-motion": "^11.5.0",
         "lottie-react": "^2.4.0",
         "lucide-react": "^0.445.0",
