@@ -113,6 +113,10 @@ export default function HomePage() {
             <Zap size={13} />
             42,000+ learners already building with AI
           </div>
+
+          <div className="mb-8 max-w-2xl">
+            <GalleryCursorTrail />
+          </div>
           {heroLoaded ? (
             <>
               <h1 className="font-display text-[38px] font-bold leading-[1.05] text-ink md:text-[64px]">
@@ -161,10 +165,6 @@ export default function HomePage() {
 
           <div className="mt-6">
             <ActivityTicker />
-          </div>
-
-          <div className="mt-10 hidden lg:block">
-            <GalleryCursorTrail />
           </div>
         </div>
 
