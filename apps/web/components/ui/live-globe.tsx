@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useCallback, useState } from "react";
+import { useEffect, useRef, useCallback } from "react";
 import createGlobe from "cobe";
 
 export interface LiveMarker {
@@ -30,6 +30,7 @@ export function GlobeLive({ markers = defaultMarkers, className = "", speed = 0.
   const phiOffsetRef = useRef(0);
   const thetaOffsetRef = useRef(0);
   const isPausedRef = useRef(false);
+  const phiRef = useRef(0);
 
   const handlePointerDown = useCallback((e: React.PointerEvent) => {
     pointerInteracting.current = { x: e.clientX, y: e.clientY };
@@ -69,21 +70,21 @@ export function GlobeLive({ markers = defaultMarkers, className = "", speed = 0.
     if (!canvasRef.current) return;
     const canvas = canvasRef.current;
     let globe: ReturnType<typeof createGlobe> | null = null;
-    let animationId: number;
-    let phi = 0;
 
     function init() {
-      const width = canvas.offsetWidth;
-      if (width === 0 || globe) return;
+      const size = canvas.offsetWidth;
+      if (size === 0 || globe) return;
+
+      const dpr = Math.min(window.devicePixelRatio || 1, 2);
 
       // Render colors are WebGL RGB triples consumed directly by cobe's
       // renderer - not Tailwind utility classes - so they're literal values
       // here rather than CSS var references. Tuned to the brand accent
       // (accent-violet #7c3aed -> ~0.486, 0.227, 0.929).
       globe = createGlobe(canvas, {
-        devicePixelRatio: Math.min(window.devicePixelRatio || 1, 2),
-        width,
-        height: width,
+        devicePixelRatio: dpr,
+        width: size * dpr,
+        height: size * dpr,
         phi: 0,
         theta: 0.2,
         dark: 0,
@@ -94,22 +95,16 @@ export function GlobeLive({ markers = defaultMarkers, className = "", speed = 0.
         markerColor: [0.486, 0.227, 0.929],
         glowColor: [0.94, 0.91, 0.98],
         markers: markers.map((m) => ({ location: m.location, size: 0.05 })),
-        arcs: [],
-        arcColor: [0.486, 0.227, 0.929],
-        arcWidth: 0.5,
-        arcHeight: 0.25,
-        opacity: 0.85
+        opacity: 0.85,
+        onRender: (state) => {
+          if (!isPausedRef.current) phiRef.current += speed;
+          state.phi = phiRef.current + phiOffsetRef.current + dragOffset.current.phi;
+          state.theta = 0.2 + thetaOffsetRef.current + dragOffset.current.theta;
+          state.width = size * dpr;
+          state.height = size * dpr;
+        }
       });
 
-      function animate() {
-        if (!isPausedRef.current) phi += speed;
-        (globe as any)!.update({
-          phi: phi + phiOffsetRef.current + dragOffset.current.phi,
-          theta: 0.2 + thetaOffsetRef.current + dragOffset.current.theta
-        });
-        animationId = requestAnimationFrame(animate);
-      }
-      animate();
       setTimeout(() => canvas && (canvas.style.opacity = "1"));
     }
 
@@ -126,7 +121,6 @@ export function GlobeLive({ markers = defaultMarkers, className = "", speed = 0.
     }
 
     return () => {
-      if (animationId) cancelAnimationFrame(animationId);
       if (globe) globe.destroy();
     };
   }, [markers, speed]);
