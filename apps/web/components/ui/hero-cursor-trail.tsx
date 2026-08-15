@@ -2,7 +2,7 @@
 
 import { ImageCursorTrail } from "@/components/ui/image-cursor-trail";
 
-// Course/AI-relevant imagery for the hero-side trail effect.
+// Course/AI-relevant imagery for the hero cursor-trail effect.
 const SHOWCASE_IMAGES = [
   "https://images.unsplash.com/photo-1555949963-aa79dcee981c?w=480&h=600&fit=crop&q=70&auto=format",
   "https://images.unsplash.com/photo-1531482615713-2afd69097998?w=480&h=600&fit=crop&q=70&auto=format",
@@ -15,15 +15,27 @@ const SHOWCASE_IMAGES = [
   "https://images.unsplash.com/photo-1571171637578-41bc2dd41cd2?w=480&h=600&fit=crop&q=70&auto=format"
 ];
 
+/**
+ * Covers the ENTIRE hero section (so the trail reacts to the mouse
+ * anywhere in the hero, not just a small box), but fades out via a
+ * mask-image gradient as it approaches the left text column so it
+ * never overlaps the heading, paragraph, or CTA buttons.
+ */
 export function HeroCursorTrail() {
   return (
-    <div className="pointer-events-auto absolute right-0 top-0 hidden h-[420px] w-[360px] lg:block xl:right-4 xl:h-[480px] xl:w-[420px]">
+    <div
+      className="pointer-events-none absolute inset-0 z-0 hidden lg:block"
+      style={{
+        maskImage: "linear-gradient(to right, transparent 0%, transparent 38%, black 58%, black 100%)",
+        WebkitMaskImage: "linear-gradient(to right, transparent 0%, transparent 38%, black 58%, black 100%)"
+      }}
+    >
       <ImageCursorTrail
         items={SHOWCASE_IMAGES}
         maxNumberOfImages={5}
-        distance={22}
-        imgClass="w-24 h-28 xl:w-28 xl:h-32"
-        className="!h-full !w-full rounded-2xl border border-line/60 bg-card/40 backdrop-blur-sm"
+        distance={20}
+        imgClass="w-28 h-32 xl:w-32 xl:h-36"
+        className="!h-full !w-full !rounded-none"
       />
     </div>
   );

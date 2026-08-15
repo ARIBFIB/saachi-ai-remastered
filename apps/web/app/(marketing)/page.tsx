@@ -34,6 +34,7 @@ import { EXTRA_TESTIMONIALS } from "./_components/landing-fake-data";
 import { CoverflowCarousel } from "@/components/ui/coverflow-carousel";
 import { HeroMediaCollage } from "@/components/ui/hero-media-collage";
 import { HeroCursorTrail } from "@/components/ui/hero-cursor-trail";
+import { GalleryCursorTrail } from "@/components/ui/gallery-cursor-trail";
 import { ImageStreamHero } from "@/components/ui/image-stream-hero";
 import HowItWorks from "@/components/ui/how-it-works";
 import { LimitedTimeOfferPricing } from "@/components/ui/limited-time-offer-pricing";
@@ -160,6 +161,10 @@ export default function HomePage() {
 
           <div className="mt-6">
             <ActivityTicker />
+          </div>
+
+          <div className="mt-10 hidden lg:block">
+            <GalleryCursorTrail />
           </div>
         </div>
 
