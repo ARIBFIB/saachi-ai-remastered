@@ -14,7 +14,8 @@ import {
   ShieldCheck,
   Zap,
   TrendingUp,
-  PlayCircle
+  PlayCircle,
+  BadgeCheck
 } from "lucide-react";
 import { CATEGORIES } from "../../lib/categories";
 import { Reveal } from "./_components/Reveal";
