@@ -3,7 +3,7 @@
 import * as React from "react";
 import { PlusIcon, ShieldCheckIcon, TimerIcon } from "lucide-react";
 import { motion } from "framer-motion";
-import { Badge, Button } from "@saachi/ui";
+import { Badge } from "@saachi/ui";
 import { cn } from "@/lib/utils";
 import { BorderTrail } from "./border-trail";
 
@@ -142,9 +142,12 @@ export function LimitedTimeOfferPricing() {
                     </span>
                     <span>/month</span>
                   </div>
-                  <Button className="w-full" variant="secondary" asChild>
-                    <a href="/register">Start Your Journey</a>
-                  </Button>
+                  
+                    href="/register"
+                    className="inline-flex h-11 w-full items-center justify-center gap-2 rounded-full border border-line-strong bg-card text-[15px] font-semibold text-ink transition-colors duration-150 ease-out hover:bg-paper-dim"
+                  >
+                    Start Your Journey
+                  </a>
                 </div>
               </div>
 
@@ -174,9 +177,13 @@ export function LimitedTimeOfferPricing() {
                     </span>
                     <span>/month</span>
                   </div>
-                  <Button className="w-full" variant="brand" asChild>
-                    <a href="/register">Claim This Offer</a>
-                  </Button>
+                  
+                    href="/register"
+                    className="inline-flex h-11 w-full items-center justify-center gap-2 rounded-full font-semibold text-[15px] text-white transition-transform duration-150 ease-out hover:brightness-110"
+                    style={{ backgroundImage: "var(--color-accent-gradient)" }}
+                  >
+                    Claim This Offer
+                  </a>
                 </div>
               </div>
             </div>
