@@ -42,7 +42,11 @@ export default function NewsletterBlock() {
                   aria-label="Email address"
                   className="h-10 flex-1 rounded-control border border-line-strong bg-card px-3.5 text-[14px] text-ink outline-none transition-colors duration-150 ease-out placeholder:text-ink-soft/50 focus:border-gold"
                 />
-                <Button type="submit" variant="brand" className="shrink-0 rounded-full px-5">
+                <Button
+                  type="submit"
+                  className="shrink-0 rounded-full px-5 text-white shadow-[0_0_24px_-8px_rgba(124,58,237,0.55)] hover:brightness-110"
+                  style={{ backgroundImage: "var(--color-accent-gradient)", border: "none" }}
+                >
                   Subscribe
                   <RiArrowRightLine aria-hidden="true" className="ml-1.5" size={16} />
                 </Button>

@@ -30,3 +30,4 @@ export * from "./Switch";
 export * from "./Button";
 
 export { RowActionsMenu } from "./RowActionsMenu";
+export type { RowAction } from "./RowActionsMenu";
