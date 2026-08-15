@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
@@ -36,6 +36,7 @@ import { HeroMediaCollage } from "@/components/ui/hero-media-collage";
 import { ImageStreamHero } from "@/components/ui/image-stream-hero";
 import HowItWorks from "@/components/ui/how-it-works";
 import { LimitedTimeOfferPricing } from "@/components/ui/limited-time-offer-pricing";
+import { CursorTrailBanner } from "@/components/ui/cursor-trail-banner";
 
 const STATS = [
   { label: "Active students", value: "42,000+", icon: Users },
@@ -100,6 +101,9 @@ export default function HomePage() {
 
   return (
     <div className="overflow-hidden">
+      {/* Cursor Trail Showcase */}
+      <CursorTrailBanner />
+
       {/* Hero */}
       <section className="relative mx-auto max-w-7xl px-4 pb-14 pt-16 md:px-8 md:pt-24">
         <div
