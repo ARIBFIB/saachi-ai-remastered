@@ -1,7 +1,7 @@
 ﻿================================================================================
 MODULE CODE EXPORT: Web
-Generated: 2026-08-15 05:09:05
-Total Files: 93
+Generated: 2026-08-16 01:02:25
+Total Files: 114
 ================================================================================
 
 
@@ -1707,7 +1707,7 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useRef, useState, type ReactNode } from "react";
 import { Menu, X, LogOut, ChevronLeft, ChevronRight, Bell, ChevronDown, Settings, User } from "lucide-react";
-import { ThemeToggle } from "@saachi/ui";
+import { AnimatedThemeToggler } from "@/components/ui/animated-theme-toggler";
 import { useSession, useLogout } from "@saachi/api-client";
 import { INSTRUCTOR_NAV } from "../../../lib/instructor-nav-config";
 
@@ -1883,7 +1883,7 @@ export function InstructorShell({ children }: { children: ReactNode }) {
             )}
           </div>
 
-          <ThemeToggle />
+          <AnimatedThemeToggler />
 
           <div className="relative" ref={userMenuRef}>
             <button
@@ -3089,9 +3089,149 @@ export default function WishlistPage() {
 
 
 ================================================================================
+FILE: apps\web\app\(marketing)\blog\[slug]\page.tsx
+================================================================================
+!! ERROR reading file: A parameter cannot be found that matches parameter name 'Raw'.
+
+
+================================================================================
+FILE: apps\web\app\(marketing)\blog\page.tsx
+================================================================================
+"use client";
+
+import Link from "next/link";
+import { useState } from "react";
+import { BookOpen } from "lucide-react";
+import { useBlogList } from "@saachi/api-client";
+import { Input, Loading, EmptyState } from "@saachi/ui";
+
+export default function BlogListPage() {
+  const [search, setSearch] = useState("");
+  const { data, isLoading } = useBlogList({ search: search || undefined });
+
+  return (
+    <div className="mx-auto max-w-6xl px-4 py-14 md:px-8">
+      <div className="mb-8 flex items-center gap-2">
+        <BookOpen size={22} className="text-accent-violet" />
+        <h1 className="font-display text-[28px] font-bold text-ink">Blog</h1>
+      </div>
+      <Input
+        placeholder="Search blog posts..."
+        value={search}
+        onChange={(e) => setSearch(e.target.value)}
+        className="mb-8 max-w-sm"
+      />
+
+      {isLoading ? (
+        <Loading label="Loading posts..." />
+      ) : !data || data.length === 0 ? (
+        <EmptyState title="No posts found" description="Try a different search term." />
+      ) : (
+        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          {data.map((post) => (
+            <Link
+              key={post.id}
+              href={`/blog/${post.slug}`}
+              className="group overflow-hidden rounded-card border border-line bg-card transition-all hover:-translate-y-1 hover:shadow-lg"
+            >
+              <div className="aspect-video w-full overflow-hidden">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src={post.imageUrl} alt={post.title} className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105" />
+              </div>
+              <div className="p-5">
+                <div className="mb-2 flex items-center justify-between">
+                  <span className="rounded-full bg-gold-tint px-2.5 py-0.5 text-[10.5px] font-semibold text-gold-dark">{post.tag}</span>
+                  <span className="text-[11.5px] text-ink-soft">{post.readTime}</span>
+                </div>
+                <h3 className="line-clamp-2 text-[15px] font-semibold leading-snug text-ink">{post.title}</h3>
+                <p className="mt-2 line-clamp-2 text-[13px] text-ink-soft">{post.excerpt}</p>
+              </div>
+            </Link>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
+
+================================================================================
 FILE: apps\web\app\(marketing)\categories\[slug]\page.tsx
 ================================================================================
 !! ERROR reading file: A parameter cannot be found that matches parameter name 'Raw'.
+
+
+================================================================================
+FILE: apps\web\app\(marketing)\community\[id]\page.tsx
+================================================================================
+!! ERROR reading file: A parameter cannot be found that matches parameter name 'Raw'.
+
+
+================================================================================
+FILE: apps\web\app\(marketing)\community\page.tsx
+================================================================================
+"use client";
+
+import Link from "next/link";
+import { useState } from "react";
+import { Users, MessageCircle, ArrowBigUp } from "lucide-react";
+import { useCommunityList } from "@saachi/api-client";
+import { Input, Loading, EmptyState } from "@saachi/ui";
+
+export default function CommunityListPage() {
+  const [search, setSearch] = useState("");
+  const { data, isLoading } = useCommunityList({ search: search || undefined });
+
+  return (
+    <div className="mx-auto max-w-4xl px-4 py-14 md:px-8">
+      <div className="mb-8 flex items-center gap-2">
+        <Users size={22} className="text-accent-violet" />
+        <h1 className="font-display text-[28px] font-bold text-ink">Community</h1>
+      </div>
+      <Input
+        placeholder="Search discussions..."
+        value={search}
+        onChange={(e) => setSearch(e.target.value)}
+        className="mb-8 max-w-sm"
+      />
+
+      {isLoading ? (
+        <Loading label="Loading discussions..." />
+      ) : !data || data.length === 0 ? (
+        <EmptyState title="No discussions found" description="Try a different search term." />
+      ) : (
+        <div className="flex flex-col gap-3">
+          {data.map((post) => (
+            <Link
+              key={post.id}
+              href={`/community/${post.id}`}
+              className="flex items-start gap-4 rounded-card border border-line bg-card p-5 transition-colors hover:border-gold-dark/40"
+            >
+              <div className="flex shrink-0 flex-col items-center gap-1 text-ink-soft">
+                <ArrowBigUp size={18} />
+                <span className="text-[12px] font-semibold">{post.upvotes}</span>
+              </div>
+              <div className="min-w-0 flex-1">
+                <div className="mb-1 flex flex-wrap items-center gap-2">
+                  <span className="rounded-full bg-gold-tint px-2.5 py-0.5 text-[10.5px] font-semibold text-gold-dark">{post.category}</span>
+                  {post.courseTitle && <span className="text-[11.5px] text-ink-soft">{post.courseTitle}</span>}
+                </div>
+                <h3 className="text-[15px] font-semibold text-ink">{post.title}</h3>
+                <p className="mt-1 line-clamp-2 text-[13px] text-ink-soft">{post.body}</p>
+                <div className="mt-2 flex items-center gap-3 text-[12px] text-ink-soft">
+                  <span>{post.authorName}</span>
+                  <span className="flex items-center gap-1">
+                    <MessageCircle size={12} /> {post.replies.length}
+                  </span>
+                </div>
+              </div>
+            </Link>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
 
 
 ================================================================================
@@ -3466,6 +3606,73 @@ export default function TermsPage() {
 
 
 ================================================================================
+FILE: apps\web\app\(marketing)\news\[slug]\page.tsx
+================================================================================
+!! ERROR reading file: A parameter cannot be found that matches parameter name 'Raw'.
+
+
+================================================================================
+FILE: apps\web\app\(marketing)\news\page.tsx
+================================================================================
+"use client";
+
+import Link from "next/link";
+import { useState } from "react";
+import { Newspaper } from "lucide-react";
+import { useNewsList } from "@saachi/api-client";
+import { Input, Loading, EmptyState } from "@saachi/ui";
+
+export default function NewsListPage() {
+  const [search, setSearch] = useState("");
+  const { data, isLoading } = useNewsList({ search: search || undefined });
+
+  return (
+    <div className="mx-auto max-w-6xl px-4 py-14 md:px-8">
+      <div className="mb-8 flex items-center gap-2">
+        <Newspaper size={22} className="text-accent-violet" />
+        <h1 className="font-display text-[28px] font-bold text-ink">News</h1>
+      </div>
+      <Input
+        placeholder="Search news..."
+        value={search}
+        onChange={(e) => setSearch(e.target.value)}
+        className="mb-8 max-w-sm"
+      />
+
+      {isLoading ? (
+        <Loading label="Loading news..." />
+      ) : !data || data.length === 0 ? (
+        <EmptyState title="No articles found" description="Try a different search term." />
+      ) : (
+        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          {data.map((article) => (
+            <Link
+              key={article.id}
+              href={`/news/${article.slug}`}
+              className="group overflow-hidden rounded-card border border-line bg-card transition-all hover:-translate-y-1 hover:shadow-lg"
+            >
+              <div className="aspect-video w-full overflow-hidden">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src={article.imageUrl} alt={article.title} className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105" />
+              </div>
+              <div className="p-5">
+                <div className="mb-2 flex items-center justify-between">
+                  <span className="rounded-full bg-gold-tint px-2.5 py-0.5 text-[10.5px] font-semibold text-gold-dark">{article.category}</span>
+                  <span className="text-[11.5px] text-ink-soft">{article.readTime}</span>
+                </div>
+                <h3 className="line-clamp-2 text-[15px] font-semibold leading-snug text-ink">{article.title}</h3>
+                <p className="mt-2 line-clamp-2 text-[13px] text-ink-soft">{article.excerpt}</p>
+              </div>
+            </Link>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
+
+================================================================================
 FILE: apps\web\app\(marketing)\pricing\page.tsx
 ================================================================================
 import Link from "next/link";
@@ -3560,71 +3767,302 @@ FILE: apps\web\app\(marketing)\search\page.tsx
 
 import { Suspense, useState } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
-import { Search as SearchIcon } from "lucide-react";
-import { useCourseList } from "@saachi/api-client";
-import { CourseCard, EmptyState, Input, Loading } from "@saachi/ui";
+import Link from "next/link";
+import * as Tabs from "@radix-ui/react-tabs";
+import {
+  Search as SearchIcon,
+  GraduationCap,
+  Award,
+  Newspaper,
+  BookOpen,
+  Users,
+  Star
+} from "lucide-react";
+import {
+  useCourseList,
+  useNewsList,
+  useBlogList,
+  useCommunityList,
+  useCertificateList
+} from "@saachi/api-client";
+import { CourseCard, EmptyState, Loading } from "@saachi/ui";
+import { cn } from "@/lib/utils";
 
+const TABS = [
+  { value: "all",          label: "All",          icon: SearchIcon    },
+  { value: "courses",      label: "Courses",      icon: GraduationCap },
+  { value: "news",         label: "News",         icon: Newspaper     },
+  { value: "blog",         label: "Blog",         icon: BookOpen      },
+  { value: "community",    label: "Community",    icon: Users         },
+  { value: "certificates", label: "Certificates", icon: Award         }
+] as const;
+
+type TabValue = (typeof TABS)[number]["value"];
+
+/* Ã¢â€â‚¬Ã¢â€â‚¬ small reusable card Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬ */
+function ContentCard({
+  href,
+  title,
+  sub,
+  tag,
+  img
+}: {
+  href: string;
+  title: string;
+  sub?: string;
+  tag?: string;
+  img?: string;
+}) {
+  return (
+    <Link
+      href={href}
+      className="group flex gap-4 rounded-xl border border-line bg-card p-4 transition-all hover:-translate-y-0.5 hover:border-gold-dark/40 hover:shadow-md"
+    >
+      {img && (
+        // eslint-disable-next-line @next/next/no-img-element
+        <img
+          src={img}
+          alt={title}
+          className="h-16 w-24 shrink-0 rounded-lg object-cover"
+        />
+      )}
+      <div className="min-w-0 flex-1">
+        {tag && (
+          <span className="mb-1.5 inline-block rounded-full bg-gold-tint px-2 py-0.5 text-[10.5px] font-semibold text-gold-dark">
+            {tag}
+          </span>
+        )}
+        <h3 className="line-clamp-2 text-[14px] font-semibold leading-snug text-ink group-hover:text-accent-violet transition-colors">
+          {title}
+        </h3>
+        {sub && <p className="mt-1 line-clamp-1 text-[12.5px] text-ink-soft">{sub}</p>}
+      </div>
+    </Link>
+  );
+}
+
+/* Ã¢â€â‚¬Ã¢â€â‚¬ section heading Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬ */
+function SectionHeading({ icon: Icon, label }: { icon: typeof SearchIcon; label: string }) {
+  return (
+    <h2 className="mb-4 flex items-center gap-2 text-[15px] font-semibold text-ink">
+      <Icon size={16} className="text-accent-violet" />
+      {label}
+    </h2>
+  );
+}
+
+/* Ã¢â€â‚¬Ã¢â€â‚¬ main content Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬ */
 function SearchResults() {
-  const router = useRouter();
+  const router       = useRouter();
   const searchParams = useSearchParams();
-  const initialQuery = searchParams.get("q") ?? "";
-  const [query, setQuery] = useState(initialQuery);
+  const q0           = searchParams.get("q") ?? "";
+  const tab0         = (searchParams.get("type") ?? "all") as TabValue;
 
-  const { data, isLoading } = useCourseList({ search: initialQuery || undefined });
+  const [inputVal, setInputVal] = useState(q0);
+  const [tab, setTab]           = useState<TabValue>(tab0);
 
-  function handleSubmit(e: React.FormEvent) {
+  const courseQ = useCourseList({ search: q0 || undefined });
+  const newsQ   = useNewsList({ search: q0 || undefined });
+  const blogQ   = useBlogList({ search: q0 || undefined });
+  const commQ   = useCommunityList({ search: q0 || undefined });
+  const certQ   = useCertificateList({ search: q0 || undefined });
+
+  const loading = courseQ.isLoading || newsQ.isLoading || blogQ.isLoading || commQ.isLoading || certQ.isLoading;
+
+  const courses = courseQ.data?.items ?? [];
+  const news    = newsQ.data ?? [];
+  const blog    = blogQ.data ?? [];
+  const comm    = commQ.data ?? [];
+  const certs   = certQ.data ?? [];
+
+  const total   = courses.length + news.length + blog.length + comm.length + certs.length;
+
+  function handleSearch(e: React.FormEvent) {
     e.preventDefault();
-    router.push(`/search?q=${encodeURIComponent(query)}`);
+    const p = new URLSearchParams();
+    if (inputVal.trim()) p.set("q", inputVal.trim());
+    if (tab !== "all") p.set("type", tab);
+    router.push(`/search?${p.toString()}`);
   }
+
+  function changeTab(v: string) {
+    setTab(v as TabValue);
+    const p = new URLSearchParams();
+    if (q0) p.set("q", q0);
+    if (v !== "all") p.set("type", v);
+    router.push(`/search?${p.toString()}`, { scroll: false });
+  }
+
+  const show = (key: TabValue) => tab === "all" || tab === key;
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-10 md:px-8">
-      <h1 className="mb-6 font-display text-[26px] font-bold text-ink">Search</h1>
-
-      <form onSubmit={handleSubmit} className="mb-8 flex max-w-lg gap-2">
-        <Input
-          value={query}
-          onChange={(e) => setQuery(e.target.value)}
-          placeholder="Search courses or instructors..."
-          className="flex-1"
-        />
-      </form>
-
-      {!initialQuery ? (
-        <EmptyState
-          title="Search Saachi AI"
-          description="Type a course, topic, or instructor name above to get started."
-        />
-      ) : isLoading ? (
-        <Loading label="Searching..." />
-      ) : !data || data.items.length === 0 ? (
-        <EmptyState
-          title={`No results for "${initialQuery}"`}
-          description="Try a different search term or browse categories instead."
-        />
-      ) : (
-        <>
-          <p className="mb-4 flex items-center gap-2 text-[13px] text-ink-soft">
-            <SearchIcon size={14} />
-            {data.total} results for &quot;{initialQuery}&quot;
-          </p>
-          <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 xl:grid-cols-3">
-            {data.items.map((course) => (
-              <CourseCard
-                key={course.id}
-                slug={course.slug}
-                title={course.title}
-                thumbnailUrl={course.thumbnailUrl}
-                instructorName={course.instructor.fullName}
-                price={course.price}
-                currency={course.currency}
-                rating={course.rating}
-                ratingCount={course.ratingCount}
-              />
-            ))}
+      {/* Ã¢â€â‚¬Ã¢â€â‚¬ search bar Ã¢â€â‚¬Ã¢â€â‚¬ */}
+      <div className="mb-8">
+        <h1 className="mb-4 font-display text-[26px] font-bold text-ink">Search</h1>
+        <form onSubmit={handleSearch} className="flex max-w-lg gap-2">
+          <div className="flex flex-1 items-center gap-2 rounded-full border border-line-strong bg-card px-4 py-2.5 shadow-sm focus-within:border-accent-violet transition-colors">
+            <SearchIcon size={16} className="shrink-0 text-ink-soft" />
+            <input
+              value={inputVal}
+              onChange={(e) => setInputVal(e.target.value)}
+              placeholder="Search courses, news, blog, community..."
+              className="flex-1 bg-transparent text-[14px] text-ink placeholder:text-ink-soft/60 focus:outline-none"
+            />
           </div>
-        </>
-      )}
+          <button
+            type="submit"
+            className="rounded-full px-5 py-2.5 text-[13.5px] font-semibold text-white transition-all hover:brightness-110"
+            style={{ backgroundImage: "var(--color-accent-gradient)" }}
+          >
+            Search
+          </button>
+        </form>
+      </div>
+
+      {/* Ã¢â€â‚¬Ã¢â€â‚¬ tabs (Radix) Ã¢â€â‚¬Ã¢â€â‚¬ */}
+      <Tabs.Root value={tab} onValueChange={changeTab}>
+        <Tabs.List className="mb-8 flex flex-wrap gap-1.5 border-b border-line pb-0">
+          {TABS.map(({ value, label, icon: Icon }) => (
+            <Tabs.Trigger
+              key={value}
+              value={value}
+              className={cn(
+                "relative flex items-center gap-1.5 rounded-t-lg px-3.5 py-2 text-[12.5px] font-semibold transition-colors",
+                "text-ink-soft hover:text-ink",
+                "data-[state=active]:text-accent-violet",
+                // animated bottom border
+                "after:absolute after:bottom-[-1px] after:left-0 after:right-0 after:h-[2px] after:rounded-t-full after:bg-accent-violet after:scale-x-0 after:transition-transform",
+                "data-[state=active]:after:scale-x-100"
+              )}
+            >
+              <Icon size={13} />
+              {label}
+            </Tabs.Trigger>
+          ))}
+        </Tabs.List>
+
+        {/* Ã¢â€â‚¬Ã¢â€â‚¬ results Ã¢â€â‚¬Ã¢â€â‚¬ */}
+        <Tabs.Content value={tab} forceMount className="outline-none">
+          {!q0 ? (
+            <EmptyState
+              title="Search Saachi AI"
+              description="Type a course, topic, article, or instructor name above."
+            />
+          ) : loading ? (
+            <Loading label="Searching..." />
+          ) : total === 0 ? (
+            <EmptyState
+              title={`No results for "${q0}"`}
+              description="Try a different search term."
+            />
+          ) : (
+            <div className="flex flex-col gap-12">
+              {/* Courses */}
+              {show("courses") && courses.length > 0 && (
+                <section>
+                  <SectionHeading icon={GraduationCap} label="Courses" />
+                  <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 xl:grid-cols-3">
+                    {courses.map((c) => (
+                      <CourseCard
+                        key={c.id}
+                        slug={c.slug}
+                        title={c.title}
+                        thumbnailUrl={c.thumbnailUrl}
+                        instructorName={c.instructor.fullName}
+                        price={c.price}
+                        currency={c.currency}
+                        rating={c.rating}
+                        ratingCount={c.ratingCount}
+                      />
+                    ))}
+                  </div>
+                </section>
+              )}
+
+              {/* News */}
+              {show("news") && news.length > 0 && (
+                <section>
+                  <SectionHeading icon={Newspaper} label="News" />
+                  <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3">
+                    {news.map((a) => (
+                      <ContentCard
+                        key={a.id}
+                        href={`/news/${a.slug}`}
+                        title={a.title}
+                        sub={a.excerpt}
+                        tag={a.category}
+                        img={a.imageUrl}
+                      />
+                    ))}
+                  </div>
+                </section>
+              )}
+
+              {/* Blog */}
+              {show("blog") && blog.length > 0 && (
+                <section>
+                  <SectionHeading icon={BookOpen} label="Blog" />
+                  <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3">
+                    {blog.map((b) => (
+                      <ContentCard
+                        key={b.id}
+                        href={`/blog/${b.slug}`}
+                        title={b.title}
+                        sub={b.excerpt}
+                        tag={b.tag}
+                        img={b.imageUrl}
+                      />
+                    ))}
+                  </div>
+                </section>
+              )}
+
+              {/* Community */}
+              {show("community") && comm.length > 0 && (
+                <section>
+                  <SectionHeading icon={Users} label="Community" />
+                  <div className="flex flex-col gap-3">
+                    {comm.map((p) => (
+                      <ContentCard
+                        key={p.id}
+                        href={`/community/${p.id}`}
+                        title={p.title}
+                        sub={p.body}
+                        tag={p.category}
+                      />
+                    ))}
+                  </div>
+                </section>
+              )}
+
+              {/* Certificates */}
+              {show("certificates") && certs.length > 0 && (
+                <section>
+                  <SectionHeading icon={Award} label="Certificates" />
+                  <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-3">
+                    {certs.map((c) => (
+                      <Link
+                        key={c.id}
+                        href={`/certificates/${c.id}`}
+                        className="flex items-start gap-3 rounded-xl border border-line bg-card p-4 transition-all hover:-translate-y-0.5 hover:border-gold-dark/40 hover:shadow-md"
+                      >
+                        <Award size={20} className="mt-0.5 shrink-0 text-gold-dark" />
+                        <div className="min-w-0">
+                          <p className="font-semibold text-[14px] text-ink">{c.courseTitle}</p>
+                          <p className="mt-0.5 text-[12.5px] text-ink-soft">
+                            {c.learnerName} &middot; {c.verificationId}
+                          </p>
+                        </div>
+                      </Link>
+                    ))}
+                  </div>
+                </section>
+              )}
+            </div>
+          )}
+        </Tabs.Content>
+      </Tabs.Root>
     </div>
   );
 }
@@ -4336,10 +4774,12 @@ FILE: apps\web\app\(marketing)\page.tsx
 ================================================================================
 "use client";
 
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useCourseList } from "@saachi/api-client";
 import { Button, CourseCard, Loading } from "@saachi/ui";
 import {
+  ArrowRight,
   Sparkles,
   Users,
   BookOpen,
@@ -4349,25 +4789,26 @@ import {
   Zap,
   TrendingUp,
   PlayCircle,
-  Quote,
-  BadgeCheck,
-  ShieldCheck as VerifiedIcon
+  BadgeCheck
 } from "lucide-react";
 import { CATEGORIES } from "../../lib/categories";
 import { Reveal } from "./_components/Reveal";
-import { LandingSearch } from "./_components/LandingSearch";
 import { FaqAccordion } from "./_components/FaqAccordion";
 import { TrendingCarousel } from "./_components/TrendingCarousel";
 import { SpotlightPanels } from "./_components/SpotlightPanels";
-import { ActivityTicker } from "./_components/ActivityTicker";
 import { LogoCloud } from "./_components/LogoCloud";
 import { BlogPreview } from "./_components/BlogPreview";
 import { PricingTeaser } from "./_components/PricingTeaser";
 import { NewsletterCard } from "./_components/NewsletterCard";
-import { EXTRA_TESTIMONIALS } from "./_components/landing-fake-data";
+
 import { CoverflowCarousel } from "@/components/ui/coverflow-carousel";
+import { HeroMediaCollage } from "@/components/ui/hero-media-collage";
+import { HeroCursorTrail } from "@/components/ui/hero-cursor-trail";
+import { GalleryCursorTrail } from "@/components/ui/gallery-cursor-trail";
 import { ImageStreamHero } from "@/components/ui/image-stream-hero";
 import HowItWorks from "@/components/ui/how-it-works";
+import { LimitedTimeOfferPricing } from "@/components/ui/limited-time-offer-pricing";
+import { AnimatedTestimonials } from "@/components/ui/animated-testimonials";
 
 const STATS = [
   { label: "Active students", value: "42,000+", icon: Users },
@@ -4391,29 +4832,6 @@ const INSTRUCTORS = [
   { name: "Bilal S.", role: "Career & Freelancing", students: "1.9k", avatar: "https://i.pravatar.cc/96?img=8" }
 ];
 
-const TESTIMONIALS = [
-  {
-    name: "Fatima R.", role: "Freelance automation consultant", avatar: "https://i.pravatar.cc/64?img=5",
-    rating: 5, verified: true,
-    quote: "I landed 3 client projects within a month of finishing the n8n automation course. The invoice-parsing workflow alone paid for the course ten times over."
-  },
-  {
-    name: "Ali Raza", role: "Support team lead", avatar: "https://i.pravatar.cc/64?img=22",
-    rating: 5, verified: true,
-    quote: "Our WhatsApp response time dropped by 70% after building the chatbot from the course. Practical, no fluff, straight to the point."
-  },
-  {
-    name: "Hina Malik", role: "Marketing manager", avatar: "https://i.pravatar.cc/64?img=25",
-    rating: 4, verified: false,
-    quote: "Best structured AI marketing content I have found anywhere. Wish there were a couple more advanced modules, but genuinely worth it."
-  },
-  {
-    name: "Omar Sheikh", role: "Indie developer", avatar: "https://i.pravatar.cc/64?img=15",
-    rating: 5, verified: true,
-    quote: "Went from zero to shipping my own AI agent product in six weeks. The instructor actually answers Q&A -- that made all the difference."
-  },
-  ...EXTRA_TESTIMONIALS
-];
 
 const HOW_IT_WORKS = [
   { title: "Pick a skill", desc: "Browse 1,200+ practical AI courses across automation, marketing, design, and development.", icon: Sparkles },
@@ -4423,6 +4841,12 @@ const HOW_IT_WORKS = [
 
 export default function HomePage() {
   const { data: featured, isLoading } = useCourseList({ sort: "popular", page: 1 });
+  const [heroLoaded, setHeroLoaded] = useState(false);
+
+  useEffect(() => {
+    const t = setTimeout(() => setHeroLoaded(true), 700);
+    return () => clearTimeout(t);
+  }, []);
 
   return (
     <div className="overflow-hidden">
@@ -4433,38 +4857,59 @@ export default function HomePage() {
           style={{ backgroundImage: "var(--color-accent-gradient)" }}
         />
         <div className="relative max-w-2xl">
-          <div className="mb-5 inline-flex items-center gap-2 rounded-full border border-line bg-card px-3.5 py-1.5 text-[12.5px] font-semibold text-accent-violet">
-            <Zap size={13} />
-            42,000+ learners already building with AI
-          </div>
-          <h1 className="font-display text-[38px] font-bold leading-[1.05] text-ink md:text-[64px]">
-            Learn AI Skills.
-            <br />
-            <span className="text-gradient-brand">Build Real Projects.</span>
-          </h1>
-          <p className="mt-5 text-[16px] leading-relaxed text-ink-soft md:text-[18px]">
-            Not another watch-time platform. Saachi AI is a skills exchange for the AI era -
-            structured, practical, and paid.
-          </p>
+
+          {heroLoaded ? (
+            <>
+              <h1 className="font-display text-[38px] font-bold leading-[1.05] text-ink md:text-[64px]">
+                Learn AI Skills.
+                <br />
+                <span className="text-gradient-brand">Build Real Projects.</span>
+              </h1>
+              <p className="mt-5 text-[16px] leading-relaxed text-ink-soft md:text-[18px]">
+                Not another watch-time platform. Saachi AI is a skills exchange for the AI era -
+                structured, practical, and paid.
+              </p>
+            </>
+          ) : (
+            <div className="flex flex-col gap-3">
+              <div className="h-[38px] w-[92%] animate-pulse rounded-lg bg-paper-dim md:h-[64px]" />
+              <div className="h-[38px] w-[70%] animate-pulse rounded-lg bg-paper-dim md:h-[64px]" />
+              <div className="mt-3 h-4 w-full animate-pulse rounded bg-paper-dim" />
+              <div className="h-4 w-[85%] animate-pulse rounded bg-paper-dim" />
+            </div>
+          )}
           <div className="mt-8 flex flex-wrap gap-3">
-            <Link href="/courses">
-              <Button size="lg" variant="brand">Browse courses</Button>
+            <Link href="/courses" className="group">
+              <button
+                type="button"
+                className="inline-flex h-[52px] items-center gap-2 rounded-full px-7 text-[16px] font-semibold text-white shadow-[0_0_40px_-12px_rgba(124,58,237,0.5)] transition-all duration-200 ease-out hover:-translate-y-0.5 hover:shadow-[0_0_50px_-8px_rgba(124,58,237,0.65)] active:translate-y-0"
+                style={{ backgroundImage: "var(--color-accent-gradient)" }}
+              >
+                Browse courses
+                <ArrowRight size={16} className="transition-transform duration-200 ease-out group-hover:translate-x-1" />
+              </button>
             </Link>
-            <Link href="/register">
-              <Button size="lg" variant="secondary">
+            <Link href="/register" className="group">
+              <button
+                type="button"
+                className="inline-flex h-[52px] items-center gap-2 rounded-full border border-line-strong bg-card px-7 text-[16px] font-semibold text-ink transition-all duration-200 ease-out hover:-translate-y-0.5 hover:border-accent-violet/50 hover:bg-paper-dim active:translate-y-0"
+              >
                 Become an instructor
-              </Button>
+                <ArrowRight size={16} className="transition-transform duration-200 ease-out group-hover:translate-x-1" />
+              </button>
             </Link>
           </div>
 
-          <div className="mt-10">
-            <LandingSearch />
-          </div>
 
-          <div className="mt-6">
-            <ActivityTicker />
-          </div>
+
+
         </div>
+
+        <div className="pointer-events-auto absolute right-0 top-1/2 z-10 hidden -translate-y-1/2 lg:block xl:right-4">
+          <GalleryCursorTrail />
+        </div>
+
+        <HeroCursorTrail />
       </section>
 
       {/* Trust badges marquee */}
@@ -4593,6 +5038,13 @@ export default function HomePage() {
         </Reveal>
       </section>
 
+      {/* Limited-time offer */}
+      <section className="mx-auto max-w-7xl px-4 pb-16 md:px-8">
+        <Reveal delay={100}>
+          <LimitedTimeOfferPricing />
+        </Reveal>
+      </section>
+
       {/* Popular instructors -- coverflow */}
       <section className="mx-auto max-w-7xl px-4 pb-16 md:px-8">
         <Reveal>
@@ -4614,40 +5066,89 @@ export default function HomePage() {
           />
         </Reveal>
       </section>
-
-      {/* Testimonials */}
-      <section className="mx-auto max-w-7xl px-4 pb-16 md:px-8">
-        <Reveal>
-          <h2 className="mb-2 font-display text-[22px] font-semibold text-ink">What learners are saying</h2>
-          <p className="mb-8 text-[14px] text-ink-soft">4.8 average rating across 12,000+ reviews.</p>
-        </Reveal>
-        <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
-          {TESTIMONIALS.map((t, i) => (
-            <Reveal key={t.name} delay={i * 70}>
-              <div className="relative h-full rounded-card border border-line bg-card p-6">
-                <Quote size={28} className="absolute right-5 top-5 text-line-strong" />
-                <div className="mb-3 flex items-center gap-3">
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img src={t.avatar} alt={t.name} className="h-11 w-11 rounded-full object-cover" />
-                  <div>
-                    <p className="flex items-center gap-1 text-[13.5px] font-semibold text-ink">
-                      {t.name}
-                      {t.verified && <VerifiedIcon size={12} className="text-teal" />}
-                    </p>
-                    <p className="text-[12px] text-ink-soft">{t.role}</p>
-                  </div>
-                </div>
-                <div className="mb-2 flex items-center gap-0.5 text-accent-pink">
-                  {Array.from({ length: 5 }).map((_, idx) => (
-                    <Star key={idx} size={13} fill={idx < t.rating ? "currentColor" : "none"} />
-                  ))}
-                </div>
-                <p className="text-[13.5px] leading-relaxed text-ink-soft">&quot;{t.quote}&quot;</p>
-              </div>
-            </Reveal>
-          ))}
-        </div>
-      </section>
+      {/* Testimonials - AnimatedTestimonials */}
+      <AnimatedTestimonials
+        title="What learners are saying"
+        subtitle="4.8 average rating across 12,000+ reviews. Real results from real people."
+        badgeText="Verified reviews"
+        autoRotateInterval={6000}
+        testimonials={[
+          {
+            id: 1,
+            name: "Fatima R.",
+            role: "Freelance automation consultant",
+            company: "Independent",
+            content: "I landed 3 client projects within a month of finishing the n8n automation course. The invoice-parsing workflow alone paid for the course ten times over.",
+            rating: 5,
+            avatar: "https://i.pravatar.cc/150?img=5",
+          },
+          {
+            id: 2,
+            name: "Ali Raza",
+            role: "Support team lead",
+            company: "Local Retail Co.",
+            content: "Our WhatsApp response time dropped by 70% after building the chatbot from the course. Practical, no fluff, straight to the point.",
+            rating: 5,
+            avatar: "https://i.pravatar.cc/150?img=22",
+          },
+          {
+            id: 3,
+            name: "Hina Malik",
+            role: "Marketing manager",
+            company: "Agency Partner",
+            content: "Best structured AI marketing content I have found anywhere. Wish there were a couple more advanced modules, but genuinely worth it.",
+            rating: 4,
+            avatar: "https://i.pravatar.cc/150?img=25",
+          },
+          {
+            id: 4,
+            name: "Omar Sheikh",
+            role: "Indie developer",
+            company: "Self-employed",
+            content: "Went from zero to shipping my own AI agent product in six weeks. The instructor actually answers Q&A - that made all the difference.",
+            rating: 5,
+            avatar: "https://i.pravatar.cc/150?img=15",
+          },
+          {
+            id: 5,
+            name: "Zara Ahmed",
+            role: "Product designer",
+            company: "Independent",
+            content: "The design systems course completely changed how I hand off files to developers. Immediate ROI.",
+            rating: 5,
+            avatar: "https://i.pravatar.cc/150?img=48",
+          },
+          {
+            id: 6,
+            name: "Usman Tariq",
+            role: "Agency owner",
+            company: "Growth Agency",
+            content: "We onboarded our whole team through Saachi AI Business. Certificates and dashboards made tracking easy.",
+            rating: 5,
+            avatar: "https://i.pravatar.cc/150?img=13",
+          },
+          {
+            id: 7,
+            name: "Mahnoor Khalid",
+            role: "Content strategist",
+            company: "Freelance",
+            content: "Solid course library, wish there was more advanced copywriting content, but great value overall.",
+            rating: 4,
+            avatar: "https://i.pravatar.cc/150?img=45",
+          },
+          {
+            id: 8,
+            name: "Danish Iqbal",
+            role: "Automation freelancer",
+            company: "Freelance",
+            content: "Booked a mentorship call the same week I finished the course. Instructor feedback was gold.",
+            rating: 5,
+            avatar: "https://i.pravatar.cc/150?img=33",
+          },
+        ]}
+        trustedCompanies={["NovaWorks", "BrightStack", "Vertex Labs", "Cirrus Digital", "Ember Systems", "Northline Tech"]}
+        trustedCompaniesTitle="Learners from companies worldwide"
+      />
 
       {/* Course spotlight stream */}
       <section className="mx-auto max-w-7xl px-4 pb-16 md:px-8">
@@ -4879,35 +5380,53 @@ FILE: apps\web\app\_components\SiteHeader.tsx
 import Link from "next/link";
 import { useState } from "react";
 import { ShoppingCart, Heart, Menu as MenuIcon, X, LogOut } from "lucide-react";
-import { Button, ThemeToggle } from "@saachi/ui";
+import { Button } from "@saachi/ui";
 import { useCartStore, useWishlistStore } from "@saachi/store";
+import { AnimatedThemeToggler } from "@/components/ui/animated-theme-toggler";
 import { useSession, useLogout } from "@saachi/api-client";
 import { Menu, MenuItem, HoveredLink } from "@/components/ui/navbar-menu";
 import { CATEGORIES } from "../../lib/categories";
+import { TopSearchBar, useSearchBarHidden } from "./TopSearchBar";
 
 const MOBILE_NAV_LINKS = [
-  { href: "/courses", label: "All courses" },
-  { href: "/categories/ai-automation", label: "Automation" },
-  { href: "/categories/ai-marketing", label: "Marketing" },
-  { href: "/pricing", label: "Pricing" },
-  { href: "/about", label: "About" }
+  { href: "/courses",                   label: "All courses" },
+  { href: "/categories/ai-automation",  label: "Automation" },
+  { href: "/categories/ai-marketing",   label: "Marketing" },
+  { href: "/pricing",                   label: "Pricing" },
+  { href: "/about",                     label: "About" }
 ];
 
 export function SiteHeader() {
   const [mobileOpen, setMobileOpen] = useState(false);
-  const [active, setActive] = useState<string | null>(null);
-  const cartCount = useCartStore((s) => s.items.length);
+  const [active, setActive]         = useState<string | null>(null);
+
+  const cartCount     = useCartStore((s) => s.items.length);
   const wishlistCount = useWishlistStore((s) => s.items.length);
   const { data: session } = useSession();
   const logout = useLogout();
 
+  // single scroll listener Ã¢â‚¬â€ shared by TopSearchBar visibility
+  const searchHidden = useSearchBarHidden();
+
   return (
+    /*
+     * The entire header is sticky. TopSearchBar lives INSIDE it so it
+     * naturally hides behind the nav bar when collapsed Ã¢â‚¬â€ no z-index tricks.
+     */
     <header className="sticky top-0 z-40 border-b border-line bg-card/90 backdrop-blur">
+      {/* Ã¢â€â‚¬Ã¢â€â‚¬ top nav row Ã¢â€â‚¬Ã¢â€â‚¬ */}
       <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 md:px-8">
         <Link href="/" className="font-display text-[20px] font-bold text-ink">
           Saachi<span className="text-gold-dark">AI</span>
         </Link>
 
+        <div className="ml-3 hidden items-center gap-1 rounded-full border border-line bg-paper-dim px-2.5 py-1 text-[11px] font-semibold text-ink-soft lg:flex">
+          <span className="text-gold-dark">4.8</span>
+          <span aria-hidden="true">&#9733;</span>
+          <span>Rated by learners</span>
+        </div>
+
+        {/* desktop nav */}
         <div className="hidden md:block">
           <Menu setActive={setActive}>
             <MenuItem setActive={setActive} active={active} item="Courses">
@@ -4941,8 +5460,9 @@ export function SiteHeader() {
           </Menu>
         </div>
 
+        {/* right icons */}
         <div className="flex items-center gap-2">
-          <ThemeToggle />
+          <AnimatedThemeToggler />
 
           <Link
             href="/wishlist"
@@ -4980,9 +5500,7 @@ export function SiteHeader() {
           ) : (
             <div className="hidden items-center gap-2 md:flex">
               <Link href="/login">
-                <Button size="sm" variant="secondary">
-                  Log in
-                </Button>
+                <Button size="sm" variant="secondary">Log in</Button>
               </Link>
               <Link href="/register">
                 <Button size="sm" variant="brand">Sign up</Button>
@@ -5001,6 +5519,10 @@ export function SiteHeader() {
         </div>
       </div>
 
+      {/* Ã¢â€â‚¬Ã¢â€â‚¬ search bar row Ã¢â‚¬â€ inside header, collapses on scroll Ã¢â€â‚¬Ã¢â€â‚¬ */}
+      <TopSearchBar hidden={searchHidden} />
+
+      {/* Ã¢â€â‚¬Ã¢â€â‚¬ mobile nav Ã¢â€â‚¬Ã¢â€â‚¬ */}
       {mobileOpen && (
         <div className="border-t border-line bg-card px-4 py-4 md:hidden">
           <nav className="flex flex-col gap-3">
@@ -5022,14 +5544,10 @@ export function SiteHeader() {
               ) : (
                 <>
                   <Link href="/login" className="flex-1">
-                    <Button size="sm" variant="secondary" className="w-full">
-                      Log in
-                    </Button>
+                    <Button size="sm" variant="secondary" className="w-full">Log in</Button>
                   </Link>
                   <Link href="/register" className="flex-1">
-                    <Button size="sm" variant="brand" className="w-full">
-                      Sign up
-                    </Button>
+                    <Button size="sm" variant="brand" className="w-full">Sign up</Button>
                   </Link>
                 </>
               )}
@@ -5040,6 +5558,233 @@ export function SiteHeader() {
     </header>
   );
 }
+
+
+================================================================================
+FILE: apps\web\app\_components\TopSearchBar.tsx
+================================================================================
+"use client";
+
+import { useEffect, useMemo, useRef, useState, type FormEvent } from "react";
+import { useRouter } from "next/navigation";
+import { Search, ChevronDown, GraduationCap, Award, Newspaper, BookOpen, Users } from "lucide-react";
+import { cn } from "@/lib/utils";
+import {
+  useCourseList,
+  useNewsList,
+  useBlogList,
+  useCommunityList,
+  useCertificateList
+} from "@saachi/api-client";
+import { CATEGORIES } from "../../lib/categories";
+import { SearchCommand, type SearchGroup } from "@/components/ui/search-command";
+
+/**
+ * Returns true when the user is scrolling DOWN past 80 px.
+ * Used by SiteHeader to collapse the search row.
+ */
+export function useSearchBarHidden() {
+  const [hidden, setHidden] = useState(false);
+  const lastY = useRef(0);
+  useEffect(() => {
+    lastY.current = window.scrollY;
+    function onScroll() {
+      const y = window.scrollY;
+      setHidden(y > lastY.current && y > 80);
+      lastY.current = y;
+    }
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+  return hidden;
+}
+
+export function TopSearchBar({ hidden }: { hidden: boolean }) {
+  const router = useRouter();
+
+  const [query, setQuery]       = useState("");
+  const [deptOpen, setDeptOpen] = useState(false);
+  const [department, setDept]   = useState<string | undefined>(undefined);
+  const [open, setOpen]         = useState(false);
+
+  const deptRef    = useRef<HTMLDivElement>(null);
+  const wrapperRef = useRef<HTMLDivElement>(null);
+
+  const courseQ = useCourseList({ search: query || undefined, category: department, sort: "popular" });
+  const newsQ   = useNewsList({ search: query || undefined });
+  const blogQ   = useBlogList({ search: query || undefined });
+  const commQ   = useCommunityList({ search: query || undefined });
+  const certQ   = useCertificateList({ search: query || undefined });
+
+  const groups: SearchGroup[] = useMemo(() => [
+    {
+      key: "courses",
+      label: "Courses",
+      icon: <GraduationCap size={12} />,
+      items: (courseQ.data?.items ?? []).slice(0, 5).map((c) => ({
+        id: c.id,
+        title: c.title,
+        href: `/courses/${c.slug}`,
+        sub: c.instructor.fullName
+      }))
+    },
+    {
+      key: "news",
+      label: "News",
+      icon: <Newspaper size={12} />,
+      items: (newsQ.data ?? []).slice(0, 3).map((n) => ({
+        id: n.id,
+        title: n.title,
+        href: `/news/${n.slug}`,
+        sub: n.category
+      }))
+    },
+    {
+      key: "blog",
+      label: "Blog",
+      icon: <BookOpen size={12} />,
+      items: (blogQ.data ?? []).slice(0, 3).map((b) => ({
+        id: b.id,
+        title: b.title,
+        href: `/blog/${b.slug}`,
+        sub: b.tag
+      }))
+    },
+    {
+      key: "community",
+      label: "Community",
+      icon: <Users size={12} />,
+      items: (commQ.data ?? []).slice(0, 3).map((p) => ({
+        id: p.id,
+        title: p.title,
+        href: `/community/${p.id}`,
+        sub: p.category
+      }))
+    },
+    {
+      key: "certificates",
+      label: "Certificates",
+      icon: <Award size={12} />,
+      items: (certQ.data ?? []).slice(0, 3).map((c) => ({
+        id: c.id,
+        title: c.courseTitle,
+        href: `/certificates/${c.id}`,
+        sub: c.learnerName
+      }))
+    }
+  ], [courseQ.data, newsQ.data, blogQ.data, commQ.data, certQ.data]);
+
+  // close dept dropdown on outside click
+  useEffect(() => {
+    function handle(e: MouseEvent) {
+      if (deptRef.current && !deptRef.current.contains(e.target as Node)) setDeptOpen(false);
+    }
+    document.addEventListener("mousedown", handle);
+    return () => document.removeEventListener("mousedown", handle);
+  }, []);
+
+  function handleSubmit(e: FormEvent) {
+    e.preventDefault();
+    setOpen(false);
+    const params = new URLSearchParams();
+    if (query.trim()) params.set("q", query.trim());
+    if (department)   params.set("category", department);
+    router.push(`/search?${params.toString()}`);
+  }
+
+  const deptLabel = department
+    ? CATEGORIES.find((c) => c.id === department)?.name ?? "Department"
+    : "All depts";
+
+  return (
+    /*
+     * overflow-hidden + max-h transition = smooth accordion collapse.
+     * When hidden=true the bar slides up and disappears behind the nav bar
+     * because the entire <header> is sticky Ã¢â‚¬â€ no z-index clipping needed.
+     */
+    <div
+      className={cn(
+        "overflow-hidden border-t border-black/10 transition-all duration-300 ease-in-out",
+        hidden ? "max-h-0 opacity-0" : "max-h-20 opacity-100"
+      )}
+      style={{ backgroundImage: "var(--color-accent-gradient)" }}
+    >
+      <div className="mx-auto flex max-w-7xl items-center gap-3 px-4 py-3 md:px-8">
+        {/* Search input + cmdk dropdown */}
+        <form onSubmit={handleSubmit} className="relative flex-1 max-w-xl" ref={wrapperRef}>
+          <div className="flex h-10 items-center gap-2 rounded-full border border-white/25 bg-white pl-4 pr-2 shadow-sm">
+            <Search size={15} className="shrink-0 text-ink-soft" />
+            <input
+              value={query}
+              onChange={(e) => { setQuery(e.target.value); setOpen(true); }}
+              onFocus={() => setOpen(true)}
+              placeholder="Search courses, news, community..."
+              className="w-full bg-transparent text-[13px] text-ink placeholder:text-ink-soft/60 focus:outline-none"
+            />
+
+            {/* Department picker */}
+            <div ref={deptRef} className="relative shrink-0">
+              <button
+                type="button"
+                onClick={() => setDeptOpen((v) => !v)}
+                className="flex items-center gap-1 rounded-full bg-paper-dim px-2.5 py-1.5 text-[11px] font-semibold text-ink-soft hover:text-ink transition-colors"
+              >
+                <span className="hidden max-w-[80px] truncate sm:inline">{deptLabel}</span>
+                <ChevronDown size={11} className={cn("transition-transform duration-200", deptOpen && "rotate-180")} />
+              </button>
+
+              {deptOpen && (
+                <div className="absolute right-0 top-[calc(100%+8px)] z-50 w-56 overflow-hidden rounded-xl border border-line bg-card shadow-xl">
+                  <button
+                    type="button"
+                    onClick={() => { setDept(undefined); setDeptOpen(false); }}
+                    className={cn("flex w-full items-center px-4 py-2.5 text-left text-[13px] hover:bg-paper-dim", !department ? "font-semibold text-accent-violet" : "text-ink")}
+                  >
+                    All departments
+                  </button>
+                  {CATEGORIES.map((cat) => (
+                    <button
+                      key={cat.id}
+                      type="button"
+                      onClick={() => { setDept(cat.id); setDeptOpen(false); }}
+                      className={cn("flex w-full items-center px-4 py-2.5 text-left text-[13px] hover:bg-paper-dim", department === cat.id ? "font-semibold text-accent-violet" : "text-ink")}
+                    >
+                      {cat.name}
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* cmdk dropdown Ã¢â‚¬â€ renders below the white pill */}
+          {open && (
+            <SearchCommand
+              query={query}
+              groups={groups}
+              onClose={() => setOpen(false)}
+            />
+          )}
+        </form>
+
+        {/* Search submit button */}
+        <button
+          type="button"
+          onClick={handleSubmit as any}
+          className="group/btn relative hidden h-10 shrink-0 items-center gap-1.5 overflow-hidden rounded-full bg-zinc-900 px-5 sm:flex"
+        >
+          <span className="absolute inset-0 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 opacity-50 blur transition-opacity duration-500 group-hover/btn:opacity-90" />
+          <span className="relative flex items-center gap-1.5 text-[13px] font-semibold text-white">
+            <Search size={14} />
+            Search
+          </span>
+        </button>
+      </div>
+    </div>
+  );
+}
+
+export default TopSearchBar;
 
 
 ================================================================================
@@ -5193,6 +5938,25 @@ body {
   to { transform: translateX(-50%); }
 }
 
+/* â”€â”€ cmdk command palette base â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+[cmdk-root] {
+  outline: none;
+}
+[cmdk-group-heading] {
+  user-select: none;
+  pointer-events: none;
+}
+[cmdk-item] {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  user-select: none;
+  outline: none;
+}
+[cmdk-item][aria-selected="true"] {
+  background: var(--color-gold-tint);
+}
+
 
 
 ================================================================================
@@ -5227,16 +5991,354 @@ FILE: apps\web\app\providers.tsx
 ================================================================================
 "use client";
 
-import { useState, type ReactNode } from "react";
+import { useEffect, useState, type ReactNode } from "react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { useThemeStore } from "@saachi/store";
+
+function ThemeSync() {
+  const theme = useThemeStore((s) => s.theme);
+
+  useEffect(() => {
+    document.documentElement.setAttribute("data-theme", theme);
+  }, [theme]);
+
+  return null;
+}
 
 export function Providers({ children }: { children: ReactNode }) {
   const [client] = useState(() => new QueryClient({
     defaultOptions: { queries: { staleTime: 30_000, refetchOnWindowFocus: false } }
   }));
 
-  return <QueryClientProvider client={client}>{children}</QueryClientProvider>;
+  return (
+    <QueryClientProvider client={client}>
+      <ThemeSync />
+      {children}
+    </QueryClientProvider>
+  );
 }
+
+
+================================================================================
+FILE: apps\web\components\ui\animated-testimonials.tsx
+================================================================================
+"use client"
+
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import { Separator } from "@/components/ui/separator"
+import { Quote, Star } from "lucide-react"
+import { motion, useAnimation, useInView } from "framer-motion"
+import { useEffect, useRef, useState } from "react"
+
+export interface Testimonial {
+  id: number
+  name: string
+  role: string
+  company: string
+  content: string
+  rating: number
+  avatar: string
+}
+
+export interface AnimatedTestimonialsProps {
+  title?: string
+  subtitle?: string
+  badgeText?: string
+  testimonials?: Testimonial[]
+  autoRotateInterval?: number
+  trustedCompanies?: string[]
+  trustedCompaniesTitle?: string
+  className?: string
+}
+
+export function AnimatedTestimonials({
+  title = "Loved by the community",
+  subtitle = "Don't just take our word for it. See what learners have to say.",
+  badgeText = "Trusted by learners",
+  testimonials = [],
+  autoRotateInterval = 6000,
+  trustedCompanies = [],
+  trustedCompaniesTitle = "Trusted by learners from companies worldwide",
+  className,
+}: AnimatedTestimonialsProps) {
+  const [activeIndex, setActiveIndex] = useState(0)
+
+  const sectionRef = useRef(null)
+  const isInView = useInView(sectionRef, { once: true, amount: 0.2 })
+  const controls = useAnimation()
+
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: { staggerChildren: 0.1, delayChildren: 0.2 },
+    },
+  }
+
+  const itemVariants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: { duration: 0.5, ease: "easeOut" },
+    },
+  }
+
+  useEffect(() => {
+    if (isInView) controls.start("visible")
+  }, [isInView, controls])
+
+  useEffect(() => {
+    if (autoRotateInterval <= 0 || testimonials.length <= 1) return
+    const interval = setInterval(() => {
+      setActiveIndex((current) => (current + 1) % testimonials.length)
+    }, autoRotateInterval)
+    return () => clearInterval(interval)
+  }, [autoRotateInterval, testimonials.length])
+
+  if (testimonials.length === 0) return null
+
+  return (
+    <section
+      ref={sectionRef}
+      id="testimonials"
+      className={`py-24 overflow-hidden bg-paper-dim/40 ${className ?? ""}`}
+    >
+      <div className="mx-auto max-w-7xl px-4 md:px-8">
+        <motion.div
+          initial="hidden"
+          animate={controls}
+          variants={containerVariants}
+          className="grid grid-cols-1 gap-16 w-full md:grid-cols-2 lg:gap-24"
+        >
+          <motion.div variants={itemVariants} className="flex flex-col justify-center">
+            <div className="space-y-6">
+              {badgeText && (
+                <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[12px] font-semibold bg-gold-tint text-gold-dark border border-gold-dark/20">
+                  <Star className="h-3.5 w-3.5 fill-gold-dark" />
+                  {badgeText}
+                </div>
+              )}
+
+              <h2 className="font-display text-3xl font-bold tracking-tight text-ink sm:text-4xl md:text-5xl">
+                {title}
+              </h2>
+
+              <p className="max-w-[520px] text-[15px] leading-relaxed text-ink-soft md:text-[17px]">
+                {subtitle}
+              </p>
+
+              <div className="flex items-center gap-3 pt-4">
+                {testimonials.map((_, index) => (
+                  <button
+                    key={index}
+                    onClick={() => setActiveIndex(index)}
+                    className={`h-2.5 rounded-full transition-all duration-300 ${
+                      activeIndex === index
+                        ? "w-10 bg-accent-violet"
+                        : "w-2.5 bg-line-strong"
+                    }`}
+                    aria-label={`View testimonial ${index + 1}`}
+                  />
+                ))}
+              </div>
+            </div>
+          </motion.div>
+
+          <motion.div
+            variants={itemVariants}
+            className="relative h-full mr-10 min-h-[300px] md:min-h-[400px]"
+          >
+            {testimonials.map((testimonial, index) => (
+              <motion.div
+                key={testimonial.id}
+                className="absolute inset-0"
+                initial={{ opacity: 0, x: 100 }}
+                animate={{
+                  opacity: activeIndex === index ? 1 : 0,
+                  x: activeIndex === index ? 0 : 100,
+                  scale: activeIndex === index ? 1 : 0.9,
+                }}
+                transition={{ duration: 0.5, ease: "easeInOut" }}
+                style={{ zIndex: activeIndex === index ? 10 : 0 }}
+              >
+                <div className="rounded-card border border-line bg-card shadow-lg p-8 h-full flex flex-col">
+                  <div className="mb-6 flex gap-1">
+                    {Array(testimonial.rating)
+                      .fill(0)
+                      .map((_, i) => (
+                        <Star key={i} className="h-5 w-5 fill-gold-dark text-gold-dark" />
+                      ))}
+                  </div>
+
+                  <div className="relative mb-6 flex-1">
+                    <Quote className="absolute -top-2 -left-2 h-8 w-8 text-accent-violet/20 rotate-180" />
+                    <p className="relative z-10 text-[16px] font-medium leading-relaxed text-ink">
+                      &ldquo;{testimonial.content}&rdquo;
+                    </p>
+                  </div>
+
+                  <Separator className="my-4" />
+
+                  <div className="flex items-center gap-4">
+                    <Avatar className="h-12 w-12 border border-line">
+                      <AvatarImage src={testimonial.avatar} alt={testimonial.name} />
+                      <AvatarFallback>{testimonial.name.charAt(0)}</AvatarFallback>
+                    </Avatar>
+                    <div>
+                      <h3 className="text-[14px] font-semibold text-ink">{testimonial.name}</h3>
+                      <p className="text-[12.5px] text-ink-soft">
+                        {testimonial.role}, {testimonial.company}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </motion.div>
+            ))}
+
+            <div className="absolute -bottom-6 -left-6 h-24 w-24 rounded-xl bg-accent-violet/5 pointer-events-none" />
+            <div className="absolute -top-6 -right-6 h-24 w-24 rounded-xl bg-accent-pink/5 pointer-events-none" />
+          </motion.div>
+        </motion.div>
+
+        {trustedCompanies.length > 0 && (
+          <motion.div
+            variants={itemVariants}
+            initial="hidden"
+            animate={controls}
+            className="mt-24 text-center"
+          >
+            <h3 className="text-[12.5px] font-medium uppercase tracking-[0.08em] text-ink-soft/60 mb-8">
+              {trustedCompaniesTitle}
+            </h3>
+            <div className="flex flex-wrap justify-center gap-x-12 gap-y-6">
+              {trustedCompanies.map((company) => (
+                <div
+                  key={company}
+                  className="font-display text-[18px] font-bold text-ink-soft/40 hover:text-ink-soft transition-colors"
+                >
+                  {company}
+                </div>
+              ))}
+            </div>
+          </motion.div>
+        )}
+      </div>
+    </section>
+  )
+}
+
+
+================================================================================
+FILE: apps\web\components\ui\animated-theme-toggler.tsx
+================================================================================
+"use client";
+
+import { useCallback, useRef } from "react";
+import { flushSync } from "react-dom";
+import { Moon, Sun } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
+import { useThemeStore } from "@saachi/store";
+import { cn } from "@/lib/utils";
+
+type AnimatedThemeTogglerProps = {
+  className?: string;
+};
+
+export function AnimatedThemeToggler({ className }: AnimatedThemeTogglerProps) {
+  const buttonRef = useRef<HTMLButtonElement>(null);
+  const theme = useThemeStore((s) => s.theme);
+  const setTheme = useThemeStore((s) => s.setTheme);
+  const isDark = theme === "dark";
+
+  const onToggle = useCallback(async () => {
+    if (!buttonRef.current) return;
+
+    const next = isDark ? "light" : "dark";
+
+    const supportsViewTransition =
+      typeof document !== "undefined" && "startViewTransition" in document;
+
+    if (!supportsViewTransition) {
+      setTheme(next);
+      return;
+    }
+
+    const transition = (
+      document as unknown as {
+        startViewTransition: (callback: () => void) => { ready: Promise<void> };
+      }
+    ).startViewTransition(() => {
+      flushSync(() => {
+        setTheme(next);
+      });
+    });
+
+    await transition.ready;
+
+    const { left, top, width, height } = buttonRef.current.getBoundingClientRect();
+    const centerX = left + width / 2;
+    const centerY = top + height / 2;
+    const maxDistance = Math.hypot(
+      Math.max(centerX, window.innerWidth - centerX),
+      Math.max(centerY, window.innerHeight - centerY)
+    );
+
+    document.documentElement.animate(
+      {
+        clipPath: [
+          `circle(0px at ${centerX}px ${centerY}px)`,
+          `circle(${maxDistance}px at ${centerX}px ${centerY}px)`
+        ]
+      },
+      {
+        duration: 700,
+        easing: "ease-in-out",
+        pseudoElement: "::view-transition-new(root)"
+      }
+    );
+  }, [isDark, setTheme]);
+
+  return (
+    <button
+      ref={buttonRef}
+      onClick={onToggle}
+      aria-label={isDark ? "Switch to light mode" : "Switch to dark mode"}
+      type="button"
+      className={cn(
+        "flex h-9 w-9 shrink-0 items-center justify-center rounded-control border border-line text-ink outline-none transition-colors duration-150 ease-out hover:bg-paper-dim focus:outline-none focus:ring-0",
+        className
+      )}
+    >
+      <AnimatePresence mode="wait" initial={false}>
+        {isDark ? (
+          <motion.span
+            key="sun-icon"
+            initial={{ opacity: 0, scale: 0.55, rotate: 25 }}
+            animate={{ opacity: 1, scale: 1, rotate: 0 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.33 }}
+            className="flex items-center justify-center"
+          >
+            <Sun size={16} strokeWidth={1.75} />
+          </motion.span>
+        ) : (
+          <motion.span
+            key="moon-icon"
+            initial={{ opacity: 0, scale: 0.55, rotate: -25 }}
+            animate={{ opacity: 1, scale: 1, rotate: 0 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.33 }}
+            className="flex items-center justify-center"
+          >
+            <Moon size={16} strokeWidth={1.75} />
+          </motion.span>
+        )}
+      </AnimatePresence>
+    </button>
+  );
+}
+
 
 
 ================================================================================
@@ -5356,6 +6458,61 @@ export function AuthVisualPanel({
     </div>
   );
 }
+
+
+================================================================================
+FILE: apps\web\components\ui\avatar.tsx
+================================================================================
+"use client"
+
+import * as React from "react"
+import * as AvatarPrimitive from "@radix-ui/react-avatar"
+import { cn } from "@/lib/utils"
+
+type AvatarRootProps = React.ComponentPropsWithoutRef<typeof AvatarPrimitive.Root>
+type AvatarImageProps = React.ComponentPropsWithoutRef<typeof AvatarPrimitive.Image>
+type AvatarFallbackProps = React.ComponentPropsWithoutRef<typeof AvatarPrimitive.Fallback>
+
+const Avatar = React.forwardRef<React.ElementRef<typeof AvatarPrimitive.Root>, AvatarRootProps>(
+  function Avatar({ className, ...props }, ref) {
+    return (
+      <AvatarPrimitive.Root
+        ref={ref}
+        className={cn("relative flex h-10 w-10 shrink-0 overflow-hidden rounded-full", className)}
+        {...props}
+      />
+    )
+  }
+)
+
+const AvatarImage = React.forwardRef<React.ElementRef<typeof AvatarPrimitive.Image>, AvatarImageProps>(
+  function AvatarImage({ className, ...props }, ref) {
+    return (
+      <AvatarPrimitive.Image
+        ref={ref}
+        className={cn("aspect-square h-full w-full", className)}
+        {...props}
+      />
+    )
+  }
+)
+
+const AvatarFallback = React.forwardRef<React.ElementRef<typeof AvatarPrimitive.Fallback>, AvatarFallbackProps>(
+  function AvatarFallback({ className, ...props }, ref) {
+    return (
+      <AvatarPrimitive.Fallback
+        ref={ref}
+        className={cn(
+          "flex h-full w-full items-center justify-center rounded-full bg-paper-dim text-ink-soft text-sm font-semibold",
+          className
+        )}
+        {...props}
+      />
+    )
+  }
+)
+
+export { Avatar, AvatarImage, AvatarFallback }
 
 
 ================================================================================
@@ -5624,6 +6781,170 @@ export function BorderBeamPanel(props: BorderBeamPanelProps) {
 }
 
 export default BorderBeamPanel;
+
+
+================================================================================
+FILE: apps\web\components\ui\border-trail.tsx
+================================================================================
+"use client";
+
+import { cn } from "@/lib/utils";
+import { motion, type Transition } from "framer-motion";
+
+type BorderTrailProps = {
+  className?: string;
+  size?: number;
+  transition?: Transition;
+  delay?: number;
+  onAnimationComplete?: () => void;
+  style?: React.CSSProperties;
+};
+
+export function BorderTrail({
+  className,
+  size = 60,
+  transition,
+  delay,
+  onAnimationComplete,
+  style
+}: BorderTrailProps) {
+  const BASE_TRANSITION: Transition = {
+    repeat: Infinity,
+    duration: 5,
+    ease: "linear"
+  };
+
+  return (
+    <div className="pointer-events-none absolute inset-0 rounded-[inherit] border border-transparent [mask-clip:padding-box,border-box] [mask-composite:intersect] [mask-image:linear-gradient(transparent,transparent),linear-gradient(#000,#000)]">
+      <motion.div
+        className={cn("absolute aspect-square bg-accent-violet", className)}
+        style={{
+          width: size,
+          offsetPath: `rect(0 auto auto 0 round ${size}px)`,
+          ...style
+        }}
+        animate={{
+          offsetDistance: ["0%", "100%"]
+        }}
+        transition={{
+          ...(transition ?? BASE_TRANSITION),
+          delay: delay
+        }}
+        onAnimationComplete={onAnimationComplete}
+      />
+    </div>
+  );
+}
+
+
+
+================================================================================
+FILE: apps\web\components\ui\button-colorful.tsx
+================================================================================
+"use client";
+
+import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
+import { ArrowUpRight } from "lucide-react";
+
+interface ButtonColorfulProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
+  label?: string;
+}
+
+export function ButtonColorful({
+  className,
+  label = "Explore",
+  ...props
+}: ButtonColorfulProps) {
+  return (
+    <Button
+      className={cn(
+        "relative h-9 px-3.5 overflow-hidden",
+        "bg-zinc-900 dark:bg-zinc-100",
+        "transition-all duration-200",
+        "group/btn",
+        className
+      )}
+      {...props}
+    >
+      <div
+        className={cn(
+          "absolute inset-0",
+          "bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500",
+          "opacity-50 group-hover/btn:opacity-90",
+          "blur transition-opacity duration-500"
+        )}
+      />
+      <div className="relative flex items-center justify-center gap-1.5">
+        <span className="text-[12.5px] font-semibold text-white dark:text-zinc-900">{label}</span>
+        <ArrowUpRight className="h-3.5 w-3.5 text-white/90 dark:text-zinc-900/90" />
+      </div>
+    </Button>
+  );
+}
+
+export default ButtonColorful;
+
+
+================================================================================
+FILE: apps\web\components\ui\button.tsx
+================================================================================
+import * as React from "react"
+import { Slot } from "@radix-ui/react-slot"
+import { cva, type VariantProps } from "class-variance-authority"
+
+import { cn } from "@/lib/utils"
+
+const buttonVariants = cva(
+  "inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50",
+  {
+    variants: {
+      variant: {
+        default: "bg-primary text-primary-foreground hover:bg-primary/90",
+        destructive:
+          "bg-destructive text-destructive-foreground hover:bg-destructive/90",
+        outline:
+          "border border-input bg-background hover:bg-accent hover:text-accent-foreground",
+        secondary:
+          "bg-secondary text-secondary-foreground hover:bg-secondary/80",
+        ghost: "hover:bg-accent hover:text-accent-foreground",
+        link: "text-primary underline-offset-4 hover:underline",
+      },
+      size: {
+        default: "h-10 px-4 py-2",
+        sm: "h-9 rounded-md px-3",
+        lg: "h-11 rounded-md px-8",
+        icon: "h-10 w-10",
+      },
+    },
+    defaultVariants: {
+      variant: "default",
+      size: "default",
+    },
+  },
+)
+
+export interface ButtonProps
+  extends React.ButtonHTMLAttributes<HTMLButtonElement>,
+    VariantProps<typeof buttonVariants> {
+  asChild?: boolean
+}
+
+const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
+  ({ className, variant, size, asChild = false, ...props }, ref) => {
+    const Comp = asChild ? Slot : "button"
+    return (
+      <Comp
+        className={cn(buttonVariants({ variant, size, className }))}
+        ref={ref}
+        {...props}
+      />
+    )
+  },
+)
+Button.displayName = "Button"
+
+export { Button, buttonVariants }
 
 
 ================================================================================
@@ -5922,17 +7243,283 @@ export function CoverflowCarousel({
 
 
 ================================================================================
+FILE: apps\web\components\ui\gallery-cursor-trail.tsx
+================================================================================
+"use client";
+
+import { useState } from "react";
+import Link from "next/link";
+import { cn } from "@/lib/utils";
+import { ImageCursorTrail } from "@/components/ui/image-cursor-trail";
+import { ButtonColorful } from "@/components/ui/button-colorful";
+
+export type GalleryCard = {
+  label: string;
+  src: string;
+  href: string;
+  buttonLabel: string;
+};
+
+// Four content-relevant cards: News, Community, Courses, Certificate.
+export const GALLERY_CARDS: GalleryCard[] = [
+  {
+    label: "News",
+    src: "https://images.pexels.com/photos/3944425/pexels-photo-3944425.jpeg?cs=srgb&dl=pexels-cottonbro-3944425.jpg&fm=jpg",
+    href: "/about",
+    buttonLabel: "Read news"
+  },
+  {
+    label: "Community",
+    src: "https://benbellabooks.com/wp-content/uploads/2021/01/doing-ai-1.jpg",
+    href: "/mentorship",
+    buttonLabel: "Join community"
+  },
+  {
+    label: "Courses",
+    src: "https://verticalinstitute.com/wp-content/uploads/2025/12/why-opt-for-tech-course-in-singapore.webp",
+    href: "/courses",
+    buttonLabel: "Browse courses"
+  },
+  {
+    label: "Certificate",
+    src: "https://graphicsfamily.com/wp-content/uploads/edd/2021/01/Vertical-Modern-Certificate-of-Appreciation.jpg",
+    href: "/certificates",
+    buttonLabel: "Get certified"
+  }
+];
+
+export const GALLERY_IMAGES = GALLERY_CARDS.map((c) => c.src);
+
+/**
+ * Horizontal, compact card strip (fits the right-side hero column).
+ * On hover: the hovered card expands slightly, shows its label and a
+ * ButtonColorful CTA, and triggers a small cursor-trail using that
+ * same image. A mask-image gradient fades the whole strip out toward
+ * the left (text column) side so it never overlaps the headline,
+ * paragraph, or CTA buttons even if the mouse drifts that way.
+ */
+export function GalleryCursorTrail() {
+  const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
+
+  return (
+    <div
+      className="relative flex h-[400px] w-full max-w-[620px] items-stretch gap-2"
+      style={{
+        maskImage: "linear-gradient(to left, black 70%, transparent 100%)",
+        WebkitMaskImage: "linear-gradient(to left, black 70%, transparent 100%)"
+      }}
+    >
+      {GALLERY_CARDS.map((card, idx) => {
+        const isHovered = hoveredIndex === idx;
+        return (
+          <div
+            key={card.label}
+            onMouseEnter={() => setHoveredIndex(idx)}
+            onMouseLeave={() => setHoveredIndex(null)}
+            className={cn(
+              "group relative h-full flex-grow overflow-hidden rounded-lg transition-all duration-500 ease-out",
+              isHovered ? "w-[260px] flex-grow-[3]" : "w-20 flex-grow"
+            )}
+          >
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              className="h-full w-full object-cover object-center transition-transform duration-500 group-hover:scale-105"
+              src={card.src}
+              alt={card.label}
+            />
+
+            <div
+              className={cn(
+                "pointer-events-none absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent transition-opacity duration-300",
+                isHovered ? "opacity-100" : "opacity-60"
+              )}
+            />
+
+            <span
+              className={cn(
+                "absolute left-2.5 top-2.5 rounded-full bg-black/40 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-white backdrop-blur-sm transition-opacity duration-300",
+                isHovered ? "opacity-0" : "opacity-100"
+              )}
+            >
+              {card.label}
+            </span>
+
+            <div
+              className={cn(
+                "pointer-events-none absolute inset-x-0 bottom-0 flex flex-col gap-2 p-3 transition-all duration-300",
+                isHovered ? "translate-y-0 opacity-100" : "translate-y-2 opacity-0"
+              )}
+            >
+              <span className="text-[13px] font-semibold text-white">{card.label}</span>
+              <Link href={card.href} className="pointer-events-auto w-fit">
+                <ButtonColorful label={card.buttonLabel} />
+              </Link>
+            </div>
+
+            <ImageCursorTrail
+              items={[card.src, card.src, card.src]}
+              active={isHovered}
+              maxNumberOfImages={3}
+              distance={16}
+              imgClass="w-16 h-20"
+              className="!absolute !inset-0 !h-full !w-full !rounded-lg !bg-transparent"
+            />
+          </div>
+        );
+      })}
+    </div>
+  );
+}
+
+export default GalleryCursorTrail;
+
+
+================================================================================
+FILE: apps\web\components\ui\hero-cursor-trail.tsx
+================================================================================
+"use client";
+
+import { ImageCursorTrail } from "@/components/ui/image-cursor-trail";
+
+// Course/AI-relevant imagery for the hero cursor-trail effect.
+const SHOWCASE_IMAGES = [
+  "https://images.unsplash.com/photo-1555949963-aa79dcee981c?w=480&h=600&fit=crop&q=70&auto=format",
+  "https://images.unsplash.com/photo-1531482615713-2afd69097998?w=480&h=600&fit=crop&q=70&auto=format",
+  "https://images.unsplash.com/photo-1526378722484-bd91ca387e72?w=480&h=600&fit=crop&q=70&auto=format",
+  "https://images.unsplash.com/photo-1504384308090-c894fdcc538d?w=480&h=600&fit=crop&q=70&auto=format",
+  "https://images.unsplash.com/photo-1550439062-609e1531270e?w=480&h=600&fit=crop&q=70&auto=format",
+  "https://images.unsplash.com/photo-1519389950473-47ba0277781c?w=480&h=600&fit=crop&q=70&auto=format",
+  "https://images.unsplash.com/photo-1485827404703-89b55fcc595e?w=480&h=600&fit=crop&q=70&auto=format",
+  "https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=480&h=600&fit=crop&q=70&auto=format",
+  "https://images.unsplash.com/photo-1571171637578-41bc2dd41cd2?w=480&h=600&fit=crop&q=70&auto=format"
+];
+
+/**
+ * Covers the ENTIRE hero section (so the trail reacts to the mouse
+ * anywhere in the hero, not just a small box), but fades out via a
+ * mask-image gradient as it approaches the left text column so it
+ * never overlaps the heading, paragraph, or CTA buttons. Shifted
+ * slightly further right (pl-12) so it sits clear of the text column.
+ */
+export function HeroCursorTrail() {
+  return (
+    <div
+      className="pointer-events-none absolute inset-0 z-0 hidden pl-12 lg:block xl:pl-20"
+      style={{
+        maskImage: "linear-gradient(to right, transparent 0%, transparent 44%, black 62%, black 100%)",
+        WebkitMaskImage: "linear-gradient(to right, transparent 0%, transparent 44%, black 62%, black 100%)"
+      }}
+    >
+      <ImageCursorTrail
+        items={SHOWCASE_IMAGES}
+        maxNumberOfImages={5}
+        distance={20}
+        imgClass="w-28 h-32 xl:w-32 xl:h-36"
+        className="!h-full !w-full !rounded-none"
+      />
+    </div>
+  );
+}
+
+export default HeroCursorTrail;
+
+
+================================================================================
+FILE: apps\web\components\ui\hero-media-collage.tsx
+================================================================================
+"use client";
+
+import { motion } from "framer-motion";
+
+const COLLAGE_IMAGES = [
+  {
+    src: "https://media2.gogoprint.com/product-config/ggp-v1/product-part/CertificateNameOptions.png",
+    alt: "Course certificate preview",
+    className: "absolute right-6 top-2 w-[150px] rotate-[6deg]",
+    delay: 0.1
+  },
+  {
+    src: "https://media2.gogoprint.com/wysiwyg/GGP250919_Product%20Images_Assorted%202_Product%20Banner_V1_Certificates.png",
+    alt: "Printed certificate stack",
+    className: "absolute right-[130px] top-[110px] w-[130px] -rotate-[8deg]",
+    delay: 0.2
+  },
+  {
+    src: "https://img.magnific.com/free-photo/elevated-view-laptop-stationeries-blue-backdrop_23-2147880457.jpg?semt=ais_test_b&w=740&q=80",
+    alt: "Laptop and study desk",
+    className: "absolute right-2 top-[210px] w-[170px] rotate-[3deg]",
+    delay: 0.3
+  }
+];
+
+const TRUST_BADGES = [
+  "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRXw__JGEVPoYpshYYG8UuBjH7gxWJmlNu82dtp0iM3ww&s=10",
+  "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ7yozzI-aiXLy--A4tQX80TWaWt1YSSBDA-fDrcggKhQ&s=10",
+  "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSpa2Z8Pb_yaZthxdUoOsXaA8DsXMl4S980UXIUadYBxg&s=10",
+  "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTxV1v7Hc6n9DsaX6YdAE3CpbR9E5z8NRWut6CWeS0Y5Q&s=10"
+];
+
+export function HeroMediaCollage() {
+  return (
+    <div className="pointer-events-none absolute right-0 top-0 hidden h-[320px] w-[280px] lg:block xl:right-4">
+      {COLLAGE_IMAGES.map((img) => (
+        <motion.div
+          key={img.src}
+          initial={{ opacity: 0, y: 24, scale: 0.92 }}
+          animate={{ opacity: 1, y: 0, scale: 1 }}
+          transition={{ duration: 0.6, delay: img.delay, ease: [0.16, 1, 0.3, 1] }}
+          className={img.className}
+        >
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src={img.src}
+            alt={img.alt}
+            className="aspect-square w-full rounded-2xl border border-line/60 bg-card object-cover shadow-xl"
+          />
+        </motion.div>
+      ))}
+
+      <motion.div
+        initial={{ opacity: 0, y: 16 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6, delay: 0.5, ease: [0.16, 1, 0.3, 1] }}
+        className="pointer-events-auto absolute bottom-0 right-2 flex items-center gap-1.5 rounded-full border border-line bg-card/95 px-3 py-2 shadow-md backdrop-blur-sm"
+      >
+        {TRUST_BADGES.map((src, i) => (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img
+            key={src + i}
+            src={src}
+            alt="Trust badge"
+            className="h-6 w-6 rounded-full border border-line object-cover grayscale transition-all duration-200 hover:grayscale-0"
+            style={{ marginLeft: i === 0 ? 0 : -8 }}
+          />
+        ))}
+        <span className="ml-1.5 whitespace-nowrap text-[10px] font-semibold text-ink-soft">Trusted &amp; Certified</span>
+      </motion.div>
+    </div>
+  );
+}
+
+
+
+================================================================================
 FILE: apps\web\components\ui\how-it-works.tsx
 ================================================================================
 "use client";
 
-import React from "react";
-import { LazyMotion, domAnimation, m } from "motion/react";
+import React, { useState } from "react";
+import Link from "next/link";
+import { LazyMotion, domAnimation, m, AnimatePresence } from "motion/react";
+import { Info, ArrowUpRight } from "lucide-react";
 
 interface CardProps {
   number: string;
   title: string;
   description: string;
+  detail?: string;
+  ctaLabel?: string;
+  ctaHref?: string;
   className?: string;
   rotate?: string;
   colors?: { bg: string; text: string; border: string };
@@ -5947,17 +7534,61 @@ const Pin = ({ className }: { className?: string }) => (
 
 const DEFAULT_PALETTE = { bg: "bg-gold-tint", text: "text-accent-violet", border: "border-line-strong" };
 
-const Card = ({ number, title, description, className, rotate, colors }: CardProps) => {
+const Card = ({ number, title, description, detail, ctaLabel, ctaHref, className, rotate, colors }: CardProps) => {
   const c = colors ?? DEFAULT_PALETTE;
+  const [showDetail, setShowDetail] = useState(false);
 
   return (
-    <div className={`relative w-full md:w-[280px] transition-transform duration-300 hover:z-30 hover:scale-105 ${rotate ?? ""} ${className ?? ""}`}>
+    <div className={`relative w-full md:w-[300px] transition-transform duration-300 hover:z-30 hover:scale-105 ${rotate ?? ""} ${className ?? ""}`}>
       <div className="bg-card p-2 rounded-[25px] shadow-[0px_10px_20px_0px_rgba(124,58,237,0.12)] border border-line">
         <Pin className={`w-8 h-8 ${c.text} z-20 mb-6 mx-auto`} />
-        <div className={`${c.bg} border ${c.border} rounded-[15px] p-[15px] h-full flex flex-col relative overflow-hidden`}>
-          <span className={`${c.text} text-4xl font-bold mb-5`}>{number}</span>
-          <h3 className="text-2xl font-semibold text-ink leading-none mb-[10px]">{title}</h3>
-          <p className="text-ink-soft text-sm/5 tracking-tight">{description}</p>
+
+        <div className={`${c.bg} border ${c.border} rounded-[15px] p-[18px] h-full flex flex-col relative overflow-hidden`}>
+          <div className="mb-4 flex items-start justify-between">
+            <span className={`${c.text} font-display text-4xl font-bold leading-none`}>{number}</span>
+
+            {detail && (
+              <button
+                type="button"
+                onClick={() => setShowDetail((v) => !v)}
+                onMouseEnter={() => setShowDetail(true)}
+                onMouseLeave={() => setShowDetail(false)}
+                aria-label="More details"
+                className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-full border ${c.border} bg-card/70 ${c.text} transition-transform duration-200 hover:scale-110`}
+              >
+                <Info size={14} strokeWidth={2.25} />
+              </button>
+            )}
+          </div>
+
+          <h3 className="font-display text-[22px] font-semibold tracking-[-0.01em] text-ink leading-tight mb-2.5">
+            {title}
+          </h3>
+          <p className="text-ink-soft text-[14px]/[1.55] tracking-tight mb-5">{description}</p>
+
+          {ctaLabel && ctaHref && (
+            <Link
+              href={ctaHref}
+              className={`mt-auto inline-flex w-fit items-center gap-1.5 rounded-full border ${c.border} px-3.5 py-1.5 text-[12.5px] font-semibold ${c.text} transition-all duration-200 hover:gap-2.5 hover:bg-card`}
+            >
+              {ctaLabel}
+              <ArrowUpRight size={13} />
+            </Link>
+          )}
+
+          <AnimatePresence>
+            {showDetail && detail && (
+              <m.div
+                initial={{ opacity: 0, y: 8 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: 8 }}
+                transition={{ duration: 0.18, ease: "easeOut" }}
+                className="absolute inset-x-2 bottom-2 z-10 rounded-[12px] border border-line bg-card/98 p-4 text-[13px] leading-relaxed text-ink shadow-lg backdrop-blur-sm"
+              >
+                {detail}
+              </m.div>
+            )}
+          </AnimatePresence>
         </div>
       </div>
     </div>
@@ -5967,6 +7598,9 @@ const Card = ({ number, title, description, className, rotate, colors }: CardPro
 export interface Step {
   title: string;
   description: string;
+  detail?: string;
+  ctaLabel?: string;
+  ctaHref?: string;
   colors?: { bg: string; text: string; border: string };
 }
 
@@ -5991,11 +7625,41 @@ const DEFAULT_CARD_POSITIONS: StepPosition[] = [
 
 export default function HowItWorks({ features, className, stepPositions }: HowItWorksProps) {
   const defaultFeatures: Step[] = [
-    { title: "Create account", description: "Sign up in minutes and pick learner or instructor." },
-    { title: "Pick a skill", description: "Browse 1,200+ practical AI courses across every category." },
-    { title: "Learn by building", description: "Every course ships real templates and projects, not just video." },
-    { title: "Get certified", description: "Finish a course and earn a shareable completion certificate." },
-    { title: "Earn or teach", description: "Turn what you learned into freelance work, or publish your own course." }
+    {
+      title: "Create account",
+      description: "Sign up in minutes and pick learner or instructor.",
+      detail: "No credit card required to sign up. Choose learner to start browsing courses instantly, or apply as an instructor - approval usually takes 2-3 business days.",
+      ctaLabel: "Sign up",
+      ctaHref: "/register"
+    },
+    {
+      title: "Pick a skill",
+      description: "Browse 1,200+ practical AI courses across every category.",
+      detail: "Filter by category, skill level, and language. Every course shows real student ratings and a full curriculum preview before you buy.",
+      ctaLabel: "Browse courses",
+      ctaHref: "/courses"
+    },
+    {
+      title: "Learn by building",
+      description: "Every course ships real templates and projects, not just video.",
+      detail: "Each module includes downloadable templates, starter files, and step-by-step project walkthroughs you can reuse on real client work.",
+      ctaLabel: "See how it works",
+      ctaHref: "/courses"
+    },
+    {
+      title: "Get certified",
+      description: "Finish a course and earn a shareable completion certificate.",
+      detail: "Certificates include a unique verification ID that anyone can check, and can be added directly to LinkedIn with one click.",
+      ctaLabel: "View certificates",
+      ctaHref: "/certificates"
+    },
+    {
+      title: "Earn or teach",
+      description: "Turn what you learned into freelance work, or publish your own course.",
+      detail: "Apply to become an instructor from your dashboard anytime. Instructors set their own pricing and keep the majority of every sale.",
+      ctaLabel: "Become an instructor",
+      ctaHref: "/register"
+    }
   ];
 
   const data = features && features.length > 0 ? features : defaultFeatures;
@@ -6019,6 +7683,18 @@ export default function HowItWorks({ features, className, stepPositions }: HowIt
         <div className="from-paper pointer-events-none absolute inset-y-0 right-0 w-1/2 bg-gradient-to-l" />
 
         <div className="max-w-6xl mx-auto relative z-10">
+          <div className="mb-14 text-center md:mb-20">
+            <span className="mb-3 inline-block rounded-full border border-line bg-card px-3.5 py-1.5 text-[12.5px] font-semibold text-accent-violet">
+              How it works
+            </span>
+            <h2 className="font-display text-[28px] font-bold tracking-[-0.02em] text-ink md:text-[38px]">
+              From sign-up to shipped project
+            </h2>
+            <p className="mx-auto mt-3 max-w-md text-[14.5px] text-ink-soft">
+              Five steps, no fluff. Tap the info icon on each card for more detail.
+            </p>
+          </div>
+
           <div
             className="relative w-full max-w-[1000px] mx-auto flex flex-col space-y-8 md:space-y-0 md:block h-auto md:h-[var(--md-height)]"
             style={{ "--md-height": `${height}px` } as React.CSSProperties}
@@ -6061,6 +7737,9 @@ export default function HowItWorks({ features, className, stepPositions }: HowIt
                   number={`0${index + 1}`}
                   title={step.title}
                   description={step.description}
+                  detail={step.detail}
+                  ctaLabel={step.ctaLabel}
+                  ctaHref={step.ctaHref}
                   colors={step.colors}
                   rotate={position.rotate}
                   className={position.className}
@@ -6074,6 +7753,177 @@ export default function HowItWorks({ features, className, stepPositions }: HowIt
   );
 }
 
+
+================================================================================
+FILE: apps\web\components\ui\image-cursor-trail.tsx
+================================================================================
+"use client";
+
+import React, { createRef, useEffect, useRef, type ReactNode } from "react";
+import { cn } from "@/lib/utils";
+
+interface ImageMouseTrailProps {
+  items: string[];
+  children?: ReactNode;
+  className?: string;
+  imgClass?: string;
+  distance?: number;
+  maxNumberOfImages?: number;
+  fadeAnimation?: boolean;
+  /** When false, the component stops tracking/showing images (used for hover-triggered galleries). */
+  active?: boolean;
+}
+
+export function ImageCursorTrail({
+  items,
+  children,
+  className,
+  maxNumberOfImages = 5,
+  imgClass = "w-40 h-48",
+  distance = 20,
+  fadeAnimation = false,
+  active = true,
+}: ImageMouseTrailProps) {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const refs = useRef(items.map(() => createRef<HTMLImageElement>()));
+  const currentZIndexRef = useRef(1);
+  const globalIndexRef = useRef(0);
+  const lastRef = useRef({ x: 0, y: 0 });
+
+  const activate = (image: HTMLImageElement, x: number, y: number) => {
+    const containerRect = containerRef.current?.getBoundingClientRect();
+    if (!containerRect) return;
+    const relativeX = x - containerRect.left;
+    const relativeY = y - containerRect.top;
+    image.style.left = `${relativeX}px`;
+    image.style.top = `${relativeY}px`;
+
+    if (currentZIndexRef.current > 40) {
+      currentZIndexRef.current = 1;
+    }
+    image.style.zIndex = String(currentZIndexRef.current);
+    currentZIndexRef.current++;
+
+    image.dataset.status = "active";
+    if (fadeAnimation) {
+      setTimeout(() => {
+        image.dataset.status = "inactive";
+      }, 1500);
+    }
+    lastRef.current = { x, y };
+  };
+
+  const deactivate = (image: HTMLImageElement) => {
+    image.dataset.status = "inactive";
+  };
+
+  useEffect(() => {
+    if (!active) {
+      refs.current.forEach((r) => {
+        if (r.current) r.current.dataset.status = "inactive";
+      });
+      return;
+    }
+
+    function handlePoint(clientX: number, clientY: number) {
+      const rect = containerRef.current?.getBoundingClientRect();
+      if (!rect) return;
+      const inside =
+        clientX >= rect.left &&
+        clientX <= rect.right &&
+        clientY >= rect.top &&
+        clientY <= rect.bottom;
+      if (!inside) return;
+
+      const distFromLast = Math.hypot(clientX - lastRef.current.x, clientY - lastRef.current.y);
+      if (distFromLast > window.innerWidth / distance) {
+        const lead = refs.current[globalIndexRef.current % refs.current.length].current;
+        const tail =
+          refs.current[
+            (globalIndexRef.current - maxNumberOfImages) % refs.current.length
+          ]?.current;
+        if (lead) activate(lead, clientX, clientY);
+        if (tail) deactivate(tail);
+        globalIndexRef.current++;
+      }
+    }
+
+    function onMouseMove(e: MouseEvent) {
+      handlePoint(e.clientX, e.clientY);
+    }
+    function onTouchMove(e: TouchEvent) {
+      const t = e.touches[0];
+      if (t) handlePoint(t.clientX, t.clientY);
+    }
+
+    window.addEventListener("mousemove", onMouseMove);
+    window.addEventListener("touchmove", onTouchMove);
+    return () => {
+      window.removeEventListener("mousemove", onMouseMove);
+      window.removeEventListener("touchmove", onTouchMove);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [active, distance, maxNumberOfImages, fadeAnimation]);
+
+  return (
+    <section
+      ref={containerRef}
+      className={cn(
+        "relative grid h-[600px] w-full place-content-center overflow-hidden rounded-lg pointer-events-none",
+        className
+      )}
+    >
+      {items.map((item, index) => (
+        <img
+          key={index}
+          className={cn(
+            "opacity:0 data-[status='active']:ease-out-expo pointer-events-none absolute -translate-x-[50%] -translate-y-[50%] scale-0 rounded-3xl object-cover transition-transform duration-300 data-[status='active']:scale-100 data-[status='active']:opacity-100 data-[status='active']:duration-500",
+            imgClass
+          )}
+          data-index={index}
+          data-status="inactive"
+          src={item}
+          alt={`saachi-ai-showcase-${index}`}
+          ref={refs.current[index]}
+        />
+      ))}
+      {children}
+    </section>
+  );
+}
+
+export default ImageCursorTrail;
+
+
+================================================================================
+FILE: apps\web\components\ui\image-gallery.tsx
+================================================================================
+"use client";
+
+import { cn } from "@/lib/utils";
+import { GALLERY_IMAGES } from "@/components/ui/gallery-cursor-trail";
+
+export function ImageGallery() {
+  return (
+    <div className={cn("flex items-center gap-2 h-[320px] w-full")}>
+      {GALLERY_IMAGES.map((src, idx) => (
+        <div
+          key={idx}
+          className="relative group flex-grow transition-all w-40 rounded-lg overflow-hidden h-[320px] duration-500 hover:w-full"
+        >
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            className="h-full w-full object-cover object-center"
+            src={src}
+            alt={`saachi-ai-gallery-${idx}`}
+          />
+        </div>
+      ))}
+    </div>
+  );
+}
+
+export default ImageGallery;
 
 
 ================================================================================
@@ -6199,6 +8049,199 @@ export function ImageStreamHero({ images, cards = 9, speed = 18, axis = 55, path
 
 export default ImageStreamHero;
 
+
+
+================================================================================
+FILE: apps\web\components\ui\limited-time-offer-pricing.tsx
+================================================================================
+"use client";
+
+import * as React from "react";
+import { PlusIcon, ShieldCheckIcon, TimerIcon } from "lucide-react";
+import { motion } from "framer-motion";
+import { Badge } from "@saachi/ui";
+import { cn } from "@/lib/utils";
+import { BorderTrail } from "./border-trail";
+
+// NOTE: demo-only offer window. Replace with a real campaign end-date
+// from the backend once the promotions API is wired up.
+const OFFER_DURATION_MS = 5 * 24 * 60 * 60 * 1000; // 5 days
+
+type TimeLeft = {
+  days: number;
+  hours: number;
+  minutes: number;
+  seconds: number;
+  expired: boolean;
+};
+
+function getTimeLeft(target: number): TimeLeft {
+  const diff = target - Date.now();
+  if (diff <= 0) {
+    return { days: 0, hours: 0, minutes: 0, seconds: 0, expired: true };
+  }
+  const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+  const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
+  const minutes = Math.floor((diff / (1000 * 60)) % 60);
+  const seconds = Math.floor((diff / 1000) % 60);
+  return { days, hours, minutes, seconds, expired: false };
+}
+
+function pad(n: number) {
+  return n.toString().padStart(2, "0");
+}
+
+function CountdownUnit({ value, label }: { value: number; label: string }) {
+  return (
+    <div className="flex flex-col items-center">
+      <span className="font-mono text-[20px] font-bold leading-none text-ink md:text-[24px]">{pad(value)}</span>
+      <span className="mt-1 text-[10px] font-medium uppercase tracking-[0.08em] text-ink-soft">{label}</span>
+    </div>
+  );
+}
+
+const monthlyCtaClassName =
+  "inline-flex h-11 w-full items-center justify-center gap-2 rounded-full border border-line-strong bg-card text-[15px] font-semibold text-ink transition-colors duration-150 ease-out hover:bg-paper-dim";
+
+const yearlyCtaClassName =
+  "inline-flex h-11 w-full items-center justify-center gap-2 rounded-full text-[15px] font-semibold text-white transition-transform duration-150 ease-out hover:brightness-110";
+
+const yearlyCtaStyle = { backgroundImage: "var(--color-accent-gradient)" };
+
+export function LimitedTimeOfferPricing() {
+  const targetRef = React.useRef<number>(Date.now() + OFFER_DURATION_MS);
+  const [timeLeft, setTimeLeft] = React.useState<TimeLeft>(() => getTimeLeft(targetRef.current));
+
+  React.useEffect(() => {
+    const id = setInterval(() => {
+      setTimeLeft(getTimeLeft(targetRef.current));
+    }, 1000);
+    return () => clearInterval(id);
+  }, []);
+
+  return (
+    <section className="relative overflow-hidden py-10 md:py-16">
+      <div className="mx-auto w-full max-w-6xl space-y-5 px-4">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
+          viewport={{ once: true }}
+          className="mx-auto max-w-xl space-y-5"
+        >
+          <div className="flex justify-center">
+            <div className="flex items-center gap-2 rounded-lg border border-line bg-card px-4 py-1 font-mono text-[13px] text-ink-soft">
+              <TimerIcon size={14} className="text-accent-violet" />
+              Limited Time Offer
+            </div>
+          </div>
+          <h2 className="mt-5 text-center font-display text-2xl font-bold tracking-tighter text-ink md:text-3xl lg:text-4xl">
+            Lock In Early-Bird Pricing
+          </h2>
+          <p className="mt-5 text-center text-sm text-ink-soft md:text-base">
+            This discount disappears when the timer hits zero. Same courses, same certificates, just less to pay while the offer lasts.
+          </p>
+
+          {!timeLeft.expired ? (
+            <div className="mx-auto flex w-fit items-center gap-4 rounded-card border border-line bg-card px-6 py-3 shadow-sm md:gap-6">
+              <CountdownUnit value={timeLeft.days} label="Days" />
+              <span className="text-[20px] font-bold text-line-strong">:</span>
+              <CountdownUnit value={timeLeft.hours} label="Hrs" />
+              <span className="text-[20px] font-bold text-line-strong">:</span>
+              <CountdownUnit value={timeLeft.minutes} label="Min" />
+              <span className="text-[20px] font-bold text-line-strong">:</span>
+              <CountdownUnit value={timeLeft.seconds} label="Sec" />
+            </div>
+          ) : (
+            <div className="mx-auto w-fit rounded-card border border-line bg-card px-6 py-3 text-[13px] font-medium text-ink-soft">
+              This offer has ended, check back soon for the next one.
+            </div>
+          )}
+        </motion.div>
+
+        <div className="relative">
+          <div
+            className={cn(
+              "z--10 pointer-events-none absolute inset-0 size-full",
+              "bg-[linear-gradient(to_right,--theme(--color-line/.3)_1px,transparent_1px),linear-gradient(to_bottom,--theme(--color-line/.3)_1px,transparent_1px)]",
+              "bg-[size:32px_32px]",
+              "[mask-image:radial-gradient(ellipse_at_center,var(--color-paper)_10%,transparent)]"
+            )}
+          />
+
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
+            viewport={{ once: true }}
+            className="mx-auto w-full max-w-2xl space-y-2"
+          >
+            <div className="relative grid border border-line bg-card p-4 md:grid-cols-2">
+              <PlusIcon className="absolute -left-3 -top-3 size-5.5 text-ink-soft" />
+              <PlusIcon className="absolute -right-3 -top-3 size-5.5 text-ink-soft" />
+              <PlusIcon className="absolute -bottom-3 -left-3 size-5.5 text-ink-soft" />
+              <PlusIcon className="absolute -bottom-3 -right-3 size-5.5 text-ink-soft" />
+
+              <div className="w-full px-4 pb-4 pt-5">
+                <div className="space-y-1">
+                  <div className="flex items-center justify-between">
+                    <h3 className="font-semibold leading-none text-ink">Monthly</h3>
+                    <div className="flex items-center gap-x-1">
+                      <span className="text-sm text-ink-soft line-through">$19</span>
+                      <Badge>15% off</Badge>
+                    </div>
+                  </div>
+                  <p className="text-sm text-ink-soft">Full Pro access, cancel anytime.</p>
+                </div>
+                <div className="mt-10 space-y-4">
+                  <div className="flex items-end gap-0.5 text-xl text-ink-soft">
+                    <span>$</span>
+                    <span className="-mb-0.5 font-display text-4xl font-extrabold tracking-tighter text-ink md:text-5xl">16</span>
+                    <span>/month</span>
+                  </div>
+                  <a href="/register" className={monthlyCtaClassName}>Start Your Journey</a>
+                </div>
+              </div>
+
+              <div className="relative w-full rounded-lg border border-line px-4 pb-4 pt-5">
+                <BorderTrail
+                  style={{
+                    boxShadow:
+                      "0px 0px 60px 30px rgb(124 58 237 / 25%), 0 0 100px 60px rgb(236 72 153 / 15%), 0 0 140px 90px rgb(124 58 237 / 10%)"
+                  }}
+                  size={100}
+                />
+                <div className="space-y-1">
+                  <div className="flex items-center justify-between">
+                    <h3 className="font-semibold leading-none text-ink">Yearly</h3>
+                    <div className="flex items-center gap-x-1">
+                      <span className="text-sm text-ink-soft line-through">$19</span>
+                      <Badge>32% off</Badge>
+                    </div>
+                  </div>
+                  <p className="text-sm text-ink-soft">Unlock the best rate with an annual plan.</p>
+                </div>
+                <div className="mt-10 space-y-4">
+                  <div className="flex items-end text-xl text-ink-soft">
+                    <span>$</span>
+                    <span className="-mb-0.5 font-display text-4xl font-extrabold tracking-tighter text-ink md:text-5xl">12.99</span>
+                    <span>/month</span>
+                  </div>
+                  <a href="/register" className={yearlyCtaClassName} style={yearlyCtaStyle}>Claim This Offer</a>
+                </div>
+              </div>
+            </div>
+
+            <div className="flex items-center justify-center gap-x-2 text-sm text-ink-soft">
+              <ShieldCheckIcon size={16} />
+              <span>Access to all Pro features, no hidden fees</span>
+            </div>
+          </motion.div>
+        </div>
+      </div>
+    </section>
+  );
+}
 
 
 ================================================================================
@@ -6444,6 +8487,175 @@ export default PricingSection;
 
 
 ================================================================================
+FILE: apps\web\components\ui\search-command.tsx
+================================================================================
+"use client";
+
+/**
+ * SearchCommand
+ * cmdk-based command palette that powers the TopSearchBar dropdown.
+ * Keyboard-navigable, grouped by content type, zero custom CSS hacks.
+ */
+import { useEffect, useRef, type ReactNode } from "react";
+import { Command } from "cmdk";
+import Link from "next/link";
+import {
+  GraduationCap,
+  Newspaper,
+  BookOpen,
+  Users,
+  Award,
+  ArrowUpRight,
+  Search
+} from "lucide-react";
+import { cn } from "@/lib/utils";
+
+export type SearchGroup = {
+  key: string;
+  label: string;
+  icon: ReactNode;
+  items: { id: string; title: string; href: string; sub?: string }[];
+};
+
+type SearchCommandProps = {
+  query: string;
+  groups: SearchGroup[];
+  onClose: () => void;
+  className?: string;
+};
+
+export function SearchCommand({ query, groups, onClose, className }: SearchCommandProps) {
+  const ref = useRef<HTMLDivElement>(null);
+
+  // close on outside click
+  useEffect(() => {
+    function handleClick(e: MouseEvent) {
+      if (ref.current && !ref.current.contains(e.target as Node)) onClose();
+    }
+    document.addEventListener("mousedown", handleClick);
+    return () => document.removeEventListener("mousedown", handleClick);
+  }, [onClose]);
+
+  const totalItems = groups.reduce((s, g) => s + g.items.length, 0);
+  const isEmpty = totalItems === 0;
+
+  return (
+    <div
+      ref={ref}
+      className={cn(
+        "absolute left-0 right-0 top-[calc(100%+8px)] z-50 overflow-hidden rounded-xl border border-line bg-card shadow-2xl",
+        className
+      )}
+    >
+      <Command className="w-full" shouldFilter={false}>
+        <Command.List className="max-h-[420px] overflow-y-auto p-1.5">
+          {isEmpty ? (
+            <Command.Empty className="py-10 text-center text-[13px] text-ink-soft">
+              {query.trim()
+                ? `No results for "${query}"`
+                : "Start typing to search across courses, news, blog, and more."}
+            </Command.Empty>
+          ) : (
+            groups.map((group) => {
+              if (group.items.length === 0) return null;
+              return (
+                <Command.Group
+                  key={group.key}
+                  heading={
+                    <div className="mb-1 flex items-center gap-1.5 px-2 pt-2 pb-0.5 text-[10.5px] font-semibold uppercase tracking-[0.08em] text-ink-soft/60">
+                      {group.icon}
+                      {group.label}
+                    </div>
+                  }
+                >
+                  {group.items.map((item) => (
+                    <Command.Item
+                      key={item.id}
+                      value={item.id}
+                      asChild
+                      className="cursor-pointer rounded-lg px-3 py-2.5 text-[13px] transition-colors aria-selected:bg-gold-tint aria-selected:text-ink"
+                      onSelect={() => onClose()}
+                    >
+                      <Link
+                        href={item.href}
+                        onClick={onClose}
+                        className="flex items-center justify-between gap-3 outline-none"
+                      >
+                        <div className="min-w-0">
+                          <p className="truncate font-medium text-ink">{item.title}</p>
+                          {item.sub && (
+                            <p className="mt-0.5 truncate text-[11.5px] text-ink-soft">{item.sub}</p>
+                          )}
+                        </div>
+                        <ArrowUpRight size={13} className="shrink-0 text-ink-soft/60" />
+                      </Link>
+                    </Command.Item>
+                  ))}
+                </Command.Group>
+              );
+            })
+          )}
+
+          {/* footer: see all */}
+          {query.trim() && (
+            <div className="border-t border-line mt-1 pt-1">
+              <Command.Item
+                value="__see_all__"
+                asChild
+                className="cursor-pointer rounded-lg aria-selected:bg-gold-tint"
+                onSelect={onClose}
+              >
+                <Link
+                  href={`/search?q=${encodeURIComponent(query)}`}
+                  onClick={onClose}
+                  className="flex items-center justify-center gap-2 py-2.5 text-[12.5px] font-semibold text-accent-violet outline-none hover:underline"
+                >
+                  <Search size={13} />
+                  See all results for &quot;{query}&quot;
+                </Link>
+              </Command.Item>
+            </div>
+          )}
+        </Command.List>
+      </Command>
+    </div>
+  );
+}
+
+
+================================================================================
+FILE: apps\web\components\ui\separator.tsx
+================================================================================
+"use client"
+
+import * as React from "react"
+import * as SeparatorPrimitive from "@radix-ui/react-separator"
+import { cn } from "@/lib/utils"
+
+type SeparatorProps = React.ComponentPropsWithoutRef<typeof SeparatorPrimitive.Root>
+
+const Separator = React.forwardRef<React.ElementRef<typeof SeparatorPrimitive.Root>, SeparatorProps>(
+  function Separator({ className, orientation = "horizontal", decorative = true, ...props }, ref) {
+    return (
+      <SeparatorPrimitive.Root
+        ref={ref}
+        decorative={decorative}
+        orientation={orientation}
+        className={cn(
+          "shrink-0 bg-line",
+          orientation === "horizontal" ? "h-[1px] w-full" : "h-full w-[1px]",
+          className
+        )}
+        {...props}
+      />
+    )
+  }
+)
+
+export { Separator }
+
+
+================================================================================
 FILE: apps\web\lib\design-system\generate-css-vars.mjs
 ================================================================================
 // Stub: static tokens already live in app/globals.css + tailwind.config.js.
@@ -6663,56 +8875,62 @@ module.exports = nextConfig;
 FILE: apps\web\package.json
 ================================================================================
 {
-    "name":  "web",
-    "version":  "0.1.0",
-    "private":  true,
-    "scripts":  {
-                    "dev":  "npm run tokens:sync \u0026\u0026 next dev -p 3000",
-                    "build":  "npm run tokens:sync \u0026\u0026 next build",
-                    "start":  "next start -p 3000",
-                    "lint":  "next lint",
-                    "type-check":  "tsc --noEmit",
-                    "tokens:sync":  "node lib/design-system/generate-css-vars.mjs"
-                },
-    "dependencies":  {
-                         "next":  "^15.0.0",
-                         "react":  "^18.3.0",
-                         "react-dom":  "^18.3.0",
-                         "@tanstack/react-query":  "^5.56.0",
-                         "@tanstack/react-table":  "^8.20.0",
-                         "zustand":  "^4.5.0",
-                         "@saachi/store":  "workspace:*",
-                         "react-hook-form":  "^7.53.0",
-                         "@hookform/resolvers":  "^3.9.0",
-                         "zod":  "^3.23.0",
-                         "framer-motion":  "^11.5.0",
-                         "recharts":  "^2.12.0",
-                         "lucide-react":  "^0.445.0",
-                         "motion":  "^11.15.0",
-                         "lottie-react":  "^2.4.0",
-                         "next-intl":  "^3.19.0",
-                         "clsx":  "^2.1.0",
-                         "tailwind-merge":  "^2.5.0",
-                         "@tiptap/react":  "^2.7.0",
-                         "@tiptap/starter-kit":  "^2.7.0",
-                         "antd":  "^5.21.0",
-                         "@ant-design/nextjs-registry":  "^1.0.0",
-                         "@paper-design/shaders-react":  "^0.0.35"
-                     },
-    "devDependencies":  {
-                            "@types/node":  "^22.5.0",
-                            "@types/react":  "^18.3.0",
-                            "@types/react-dom":  "^18.3.0",
-                            "typescript":  "^5.5.0",
-                            "tailwindcss":  "^4.0.0",
-                            "@tailwindcss/postcss":  "^4.0.0",
-                            "postcss":  "^8.4.0",
-                            "eslint":  "^9.9.0",
-                            "eslint-config-next":  "^15.0.0",
-                            "vitest":  "^2.0.0",
-                            "@testing-library/react":  "^16.0.0",
-                            "playwright":  "^1.47.0"
-                        }
+    "name": "web",
+    "version": "0.1.0",
+    "private": true,
+    "scripts": {
+        "dev": "npm run tokens:sync && next dev -p 3000",
+        "build": "npm run tokens:sync && next build",
+        "start": "next start -p 3000",
+        "lint": "next lint",
+        "type-check": "tsc --noEmit",
+        "tokens:sync": "node lib/design-system/generate-css-vars.mjs"
+    },
+    "dependencies": {
+        "@ant-design/nextjs-registry": "^1.0.0",
+        "@hookform/resolvers": "^3.9.0",
+        "@paper-design/shaders-react": "^0.0.35",
+        "@radix-ui/react-avatar": "^1.2.6",
+        "@radix-ui/react-separator": "^1.1.15",
+        "@radix-ui/react-slot": "^1.3.3",
+        "@radix-ui/react-tabs": "^1.1.21",
+        "@saachi/store": "workspace:*",
+        "@tanstack/react-query": "^5.56.0",
+        "@tanstack/react-table": "^8.20.0",
+        "@tiptap/react": "^2.7.0",
+        "@tiptap/starter-kit": "^2.7.0",
+        "antd": "^5.21.0",
+        "class-variance-authority": "^0.7.1",
+        "clsx": "^2.1.0",
+        "cmdk": "^1.1.1",
+        "framer-motion": "^11.5.0",
+        "lottie-react": "^2.4.0",
+        "lucide-react": "^0.445.0",
+        "motion": "^11.15.0",
+        "next": "^15.0.0",
+        "next-intl": "^3.19.0",
+        "react": "^18.3.0",
+        "react-dom": "^18.3.0",
+        "react-hook-form": "^7.53.0",
+        "recharts": "^2.12.0",
+        "tailwind-merge": "^2.5.0",
+        "zod": "^3.23.0",
+        "zustand": "^4.5.0"
+    },
+    "devDependencies": {
+        "@tailwindcss/postcss": "^4.0.0",
+        "@testing-library/react": "^16.0.0",
+        "@types/node": "^22.5.0",
+        "@types/react": "^18.3.0",
+        "@types/react-dom": "^18.3.0",
+        "eslint": "^9.9.0",
+        "eslint-config-next": "^15.0.0",
+        "playwright": "^1.47.0",
+        "postcss": "^8.4.0",
+        "tailwindcss": "^4.0.0",
+        "typescript": "^5.5.0",
+        "vitest": "^2.0.0"
+    }
 }
 
 

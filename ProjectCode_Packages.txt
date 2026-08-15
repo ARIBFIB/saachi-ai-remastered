@@ -1,7 +1,7 @@
 ﻿================================================================================
 MODULE CODE EXPORT: Packages
-Generated: 2026-08-15 05:09:08
-Total Files: 78
+Generated: 2026-08-16 01:02:31
+Total Files: 83
 ================================================================================
 
 
@@ -1191,6 +1191,118 @@ export function useLogout() {
 
 
 ================================================================================
+FILE: packages\api-client\src\hooks\useContentHubs.ts
+================================================================================
+"use client";
+
+import { useQuery } from "@tanstack/react-query";
+import { DUMMY_NEWS, type NewsArticle } from "../dummy-data-news";
+import { DUMMY_BLOG_POSTS, type BlogPost } from "../dummy-data-blog";
+import { DUMMY_COMMUNITY_POSTS, type CommunityPost } from "../dummy-data-community";
+import { DUMMY_CERTIFICATES, type CertificateRecord } from "../dummy-data-certificates";
+
+function delay<T>(value: T, ms = 300): Promise<T> {
+  return new Promise((resolve) => setTimeout(() => resolve(value), ms));
+}
+
+export type ContentSearchFilters = { search?: string };
+
+export function useNewsList(filters: ContentSearchFilters = {}) {
+  return useQuery({
+    queryKey: ["news", "list", filters],
+    queryFn: async () => {
+      let items = [...DUMMY_NEWS];
+      if (filters.search) {
+        const q = filters.search.toLowerCase();
+        items = items.filter((n) => n.title.toLowerCase().includes(q) || n.excerpt.toLowerCase().includes(q) || n.category.toLowerCase().includes(q));
+      }
+      return delay(items);
+    }
+  });
+}
+
+export function useNewsDetail(slug: string) {
+  return useQuery({
+    queryKey: ["news", "detail", slug],
+    queryFn: async () => {
+      const found = DUMMY_NEWS.find((n) => n.slug === slug);
+      if (!found) throw new Error("Article not found");
+      return delay(found);
+    },
+    enabled: Boolean(slug)
+  });
+}
+
+export function useBlogList(filters: ContentSearchFilters = {}) {
+  return useQuery({
+    queryKey: ["blog", "list", filters],
+    queryFn: async () => {
+      let items = [...DUMMY_BLOG_POSTS];
+      if (filters.search) {
+        const q = filters.search.toLowerCase();
+        items = items.filter((b) => b.title.toLowerCase().includes(q) || b.excerpt.toLowerCase().includes(q) || b.tag.toLowerCase().includes(q));
+      }
+      return delay(items);
+    }
+  });
+}
+
+export function useBlogDetail(slug: string) {
+  return useQuery({
+    queryKey: ["blog", "detail", slug],
+    queryFn: async () => {
+      const found = DUMMY_BLOG_POSTS.find((b) => b.slug === slug);
+      if (!found) throw new Error("Post not found");
+      return delay(found);
+    },
+    enabled: Boolean(slug)
+  });
+}
+
+export function useCommunityList(filters: ContentSearchFilters = {}) {
+  return useQuery({
+    queryKey: ["community", "list", filters],
+    queryFn: async () => {
+      let items = [...DUMMY_COMMUNITY_POSTS];
+      if (filters.search) {
+        const q = filters.search.toLowerCase();
+        items = items.filter((c) => c.title.toLowerCase().includes(q) || c.body.toLowerCase().includes(q) || c.category.toLowerCase().includes(q));
+      }
+      return delay(items);
+    }
+  });
+}
+
+export function useCommunityDetail(id: string) {
+  return useQuery({
+    queryKey: ["community", "detail", id],
+    queryFn: async () => {
+      const found = DUMMY_COMMUNITY_POSTS.find((c) => c.id === id);
+      if (!found) throw new Error("Post not found");
+      return delay(found);
+    },
+    enabled: Boolean(id)
+  });
+}
+
+export function useCertificateList(filters: ContentSearchFilters = {}) {
+  return useQuery({
+    queryKey: ["certificates", "list", filters],
+    queryFn: async () => {
+      let items = [...DUMMY_CERTIFICATES];
+      if (filters.search) {
+        const q = filters.search.toLowerCase();
+        items = items.filter((c) => c.courseTitle.toLowerCase().includes(q) || c.learnerName.toLowerCase().includes(q) || c.category.toLowerCase().includes(q));
+      }
+      return delay(items);
+    }
+  });
+}
+
+export type { NewsArticle, BlogPost, CommunityPost, CertificateRecord };
+
+
+================================================================================
 FILE: packages\api-client\src\hooks\useCourseDetailStubs.ts
 ================================================================================
 // Stub hooks - frontend-only placeholders so pages relying on these hooks
@@ -2109,6 +2221,299 @@ export function getAdminAuditLog(userId: string): AdminAuditLogEntry[] {
 
 
 ================================================================================
+FILE: packages\api-client\src\dummy-data-blog.ts
+================================================================================
+export type BlogPost = {
+  id: string;
+  slug: string;
+  title: string;
+  excerpt: string;
+  body: string;
+  tag: string;
+  author: string;
+  authorAvatarUrl?: string;
+  imageUrl: string;
+  publishedAt: string;
+  readTime: string;
+};
+
+function img(seed: string): string {
+  return `https://picsum.photos/seed/${encodeURIComponent(seed)}/800/450`;
+}
+
+export const DUMMY_BLOG_POSTS: BlogPost[] = [
+  {
+    id: "blog_1", slug: "5-n8n-workflows-every-freelancer-should-automate-first",
+    title: "5 n8n workflows every freelancer should automate first",
+    excerpt: "Stop manually copying leads into spreadsheets. Here are the five automations that saved us the most hours.",
+    body: "If you're a freelancer juggling client work and admin, these five n8n workflows will give you the fastest return on the time you spend setting them up:\n\n1. Lead qualification - auto-score inbound form submissions and route hot leads to Slack instantly.\n2. Invoice parsing - extract line items from PDF invoices straight into your bookkeeping sheet.\n3. Content repurposing - turn one long-form post into five social variants automatically.\n4. Support ticket routing - classify and assign incoming support emails by topic.\n5. Daily AI digest - a morning summary of your calendar, tasks, and inbox, delivered before you even open your laptop.\n\nEach of these is covered step-by-step in the Automate Everything with n8n & AI course, including downloadable workflow files.",
+    tag: "Automation", author: "Ayesha Khan", imageUrl: img("blog-n8n-workflows"),
+    publishedAt: "2026-08-01T09:00:00.000Z", readTime: "6 min read"
+  },
+  {
+    id: "blog_2", slug: "how-we-structure-a-beginner-to-advanced-ai-curriculum",
+    title: "How we structure a beginner-to-advanced AI curriculum",
+    excerpt: "A behind-the-scenes look at how Saachi AI's course review team evaluates curriculum structure before approval.",
+    body: "Every course submitted to Saachi AI goes through a curriculum structure review before it's approved for publishing. We look for three things: a clear progression from foundational to applied skills, at least one hands-on project per module, and a final capstone that ties everything together.\n\nCourses that pass this review tend to have significantly higher completion rates - our data shows a 22-point difference in average completion between courses with a capstone project and those without.",
+    tag: "Teaching", author: "Saachi AI Team", imageUrl: img("blog-curriculum-structure"),
+    publishedAt: "2026-07-24T09:00:00.000Z", readTime: "8 min read"
+  },
+  {
+    id: "blog_3", slug: "from-student-to-instructor-ayeshas-story",
+    title: "From student to instructor: Ayesha's story",
+    excerpt: "How a freelance automation consultant became one of Saachi AI's most successful instructors.",
+    body: "Before teaching on Saachi AI, Ayesha Khan was a freelance automation consultant building n8n workflows for e-commerce clients. After enrolling in a prompt engineering course as a student, she pitched her own course idea to the platform's instructor team.\n\nHer first course, Automate Everything with n8n & AI, now has over 650 enrollments and a 4.7-star rating. \"I built the course I wish existed when I was learning,\" she said. \"Every lesson is a workflow I actually shipped for a real client.\"",
+    tag: "Community", author: "Saachi AI Team", imageUrl: img("blog-ayesha-story"),
+    publishedAt: "2026-07-10T09:00:00.000Z", readTime: "4 min read"
+  },
+  {
+    id: "blog_4", slug: "prompt-engineering-mistakes-beginners-make",
+    title: "7 prompt engineering mistakes every beginner makes",
+    excerpt: "From vague instructions to missing context - the most common issues we see in student-submitted prompts.",
+    body: "After reviewing thousands of student prompt submissions in Prompt Engineering Fundamentals, a few mistakes come up again and again: vague instructions without a clear output format, missing context about the audience or use case, no examples for the model to follow, overly long prompts that bury the actual ask, and forgetting to specify tone or length constraints.\n\nThe fix for most of these is the same: treat your first draft as a rough brief, then rewrite it as if you were handing it to a new employee with zero context.",
+    tag: "Fundamentals", author: "Sana Rizvi", imageUrl: img("blog-prompt-mistakes"),
+    publishedAt: "2026-06-28T09:00:00.000Z", readTime: "5 min read"
+  },
+  {
+    id: "blog_5", slug: "pricing-your-first-ai-course",
+    title: "How to price your first AI course on Saachi AI",
+    excerpt: "A practical framework for new instructors deciding between $19, $39, and $59 price points.",
+    body: "New instructors consistently ask the same question: how do I price my first course? Our data suggests a simple framework: courses under 2 hours with a narrow, specific outcome (e.g. \"build one WhatsApp bot\") do best at $19-29. Courses in the 3-6 hour range covering a full workflow do best at $39-49. Anything over 6 hours with production-level depth can support $59+.\n\nUnderpricing is the more common mistake - learners often associate price with depth, and a $19 course promising \"master AI automation\" can actually hurt conversion versus a well-scoped $45 course.",
+    tag: "Instructors", author: "Zara Farooq", imageUrl: img("blog-pricing-course"),
+    publishedAt: "2026-06-14T09:00:00.000Z", readTime: "6 min read"
+  },
+  {
+    id: "blog_6", slug: "whatsapp-ai-bots-for-small-business",
+    title: "Why every small business should have a WhatsApp AI bot by 2027",
+    excerpt: "Customer support response times are the biggest lever most small businesses aren't pulling yet.",
+    body: "For small businesses across Pakistan and South Asia, WhatsApp is often the primary customer support channel - and the primary bottleneck. A well-built AI auto-responder can handle the 60-70% of inbound questions that are repetitive (order status, hours, pricing) while escalating anything complex to a human.\n\nBuild a WhatsApp AI Auto-Responder walks through the exact setup used by three Pakistani D2C brands, including the human handoff logic that keeps customers from getting stuck talking to a bot.",
+    tag: "Automation", author: "Bilal Ahmed", imageUrl: img("blog-whatsapp-bots"),
+    publishedAt: "2026-05-30T09:00:00.000Z", readTime: "7 min read"
+  }
+];
+
+
+================================================================================
+FILE: packages\api-client\src\dummy-data-certificates.ts
+================================================================================
+export type CertificateRecord = {
+  id: string;
+  verificationId: string;
+  courseTitle: string;
+  courseSlug: string;
+  learnerName: string;
+  instructorName: string;
+  issuedAt: string;
+  category: string;
+};
+
+export const DUMMY_CERTIFICATES: CertificateRecord[] = [
+  { id: "cert_1", verificationId: "SAI-8H2K1F", courseTitle: "Prompt Engineering Fundamentals", courseSlug: "prompt-engineering-fundamentals", learnerName: "Hina Malik", instructorName: "Sana Rizvi", issuedAt: "2026-07-20T00:00:00.000Z", category: "AI Fundamentals & Prompt Engineering" },
+  { id: "cert_2", verificationId: "SAI-4M9P2Q", courseTitle: "AI-Powered Marketing Campaigns", courseSlug: "ai-powered-marketing-campaigns", learnerName: "Omar Sheikh", instructorName: "Zara Farooq", issuedAt: "2026-07-12T00:00:00.000Z", category: "AI for Marketing & Sales" },
+  { id: "cert_3", verificationId: "SAI-9X3R7T", courseTitle: "Automate Everything with n8n & AI", courseSlug: "automate-everything-with-n8n-and-ai", learnerName: "Fatima Noor", instructorName: "Ayesha Khan", issuedAt: "2026-06-30T00:00:00.000Z", category: "AI Automation & Workflow Tools" },
+  { id: "cert_4", verificationId: "SAI-2L6W4E", courseTitle: "Build a WhatsApp AI Auto-Responder", courseSlug: "build-a-whatsapp-ai-auto-responder", learnerName: "Sara Iqbal", instructorName: "Bilal Ahmed", issuedAt: "2026-06-18T00:00:00.000Z", category: "AI Customer Support & Communication" },
+  { id: "cert_5", verificationId: "SAI-7Y1N8D", courseTitle: "Ship Your First AI-Powered Web App", courseSlug: "ship-your-first-ai-powered-web-app", learnerName: "Noor Fatima", instructorName: "Hamza Tariq", issuedAt: "2026-06-05T00:00:00.000Z", category: "AI Website & App Development" },
+  { id: "cert_6", verificationId: "SAI-5K3B9C", courseTitle: "Integrating OpenAI & Claude APIs into Node.js Apps", courseSlug: "integrating-openai-and-claude-apis-into-node", learnerName: "Ali Raza", instructorName: "Usman Ali", issuedAt: "2026-05-22T00:00:00.000Z", category: "AI Integration for Developers" },
+  { id: "cert_7", verificationId: "SAI-1Q8Z5A", courseTitle: "Prompt Engineering Fundamentals", courseSlug: "prompt-engineering-fundamentals", learnerName: "Mahnoor Fatima", instructorName: "Sana Rizvi", issuedAt: "2026-05-10T00:00:00.000Z", category: "AI Fundamentals & Prompt Engineering" },
+  { id: "cert_8", verificationId: "SAI-6T2H4J", courseTitle: "Automate Everything with n8n & AI", courseSlug: "automate-everything-with-n8n-and-ai", learnerName: "Danish Raza", instructorName: "Ayesha Khan", issuedAt: "2026-04-28T00:00:00.000Z", category: "AI Automation & Workflow Tools" }
+];
+
+
+================================================================================
+FILE: packages\api-client\src\dummy-data-community.ts
+================================================================================
+export type CommunityReply = {
+  id: string;
+  authorName: string;
+  isInstructor: boolean;
+  body: string;
+  createdAt: string;
+};
+
+export type CommunityPost = {
+  id: string;
+  title: string;
+  courseTitle?: string;
+  category: string;
+  authorName: string;
+  body: string;
+  createdAt: string;
+  upvotes: number;
+  replies: CommunityReply[];
+};
+
+export const DUMMY_COMMUNITY_POSTS: CommunityPost[] = [
+  {
+    id: "cmty_1", title: "How many few-shot examples is actually enough?",
+    courseTitle: "Prompt Engineering Fundamentals", category: "Prompt Engineering",
+    authorName: "Hina Malik",
+    body: "For few-shot prompting, how many examples is usually enough before it stops improving results? I've been adding more and more and not seeing much difference past a certain point.",
+    createdAt: "2026-08-09T10:00:00.000Z", upvotes: 14,
+    replies: [
+      { id: "r1", authorName: "Sana Rizvi", isInstructor: true, body: "Usually 3-5 well-chosen examples get you most of the benefit - past that you're often better off improving instructions instead of piling on more examples.", createdAt: "2026-08-09T14:00:00.000Z" },
+      { id: "r2", authorName: "Omar Sheikh", isInstructor: false, body: "This matches what I found too. I went from 10 examples down to 4 and got basically the same output quality.", createdAt: "2026-08-10T08:00:00.000Z" }
+    ]
+  },
+  {
+    id: "cmty_2", title: "Does the n8n workflow template work outside the self-hosted version?",
+    courseTitle: "Automate Everything with n8n & AI", category: "Automation",
+    authorName: "Bilal Ahmed",
+    body: "I'm using n8n cloud instead of self-hosted. Will the invoice parsing workflow from module 2 work without changes?",
+    createdAt: "2026-08-07T09:00:00.000Z", upvotes: 9,
+    replies: [
+      { id: "r1", authorName: "Ayesha Khan", isInstructor: true, body: "Yes, it should work as-is on n8n cloud. Just double check your OpenAI node has its own credential set up since cloud doesn't share your local .env file.", createdAt: "2026-08-07T15:30:00.000Z" }
+    ]
+  },
+  {
+    id: "cmty_3", title: "Best way to structure a portfolio after finishing the design track?",
+    courseTitle: "Midjourney for Product Mockups", category: "Design",
+    authorName: "Noor Fatima",
+    body: "Just finished the course and want to build a portfolio to start pitching freelance clients. Should I show before/after or just the final mockups?",
+    createdAt: "2026-08-05T11:20:00.000Z", upvotes: 6,
+    replies: []
+  },
+  {
+    id: "cmty_4", title: "WhatsApp Business API approval taking longer than expected",
+    courseTitle: "Build a WhatsApp AI Auto-Responder", category: "Support & Communication",
+    authorName: "Sara Iqbal",
+    body: "It's been 5 days and my WhatsApp Business API application is still pending. Is this normal? The course says it usually takes 1-2 days.",
+    createdAt: "2026-08-03T13:00:00.000Z", upvotes: 11,
+    replies: [
+      { id: "r1", authorName: "Bilal Ahmed", isInstructor: true, body: "It varies a lot by region and business type - I've seen it take anywhere from same-day to 2 weeks. Nothing wrong on your end, just Meta's review queue.", createdAt: "2026-08-03T18:00:00.000Z" }
+    ]
+  },
+  {
+    id: "cmty_5", title: "Anyone else finding function/tool calling confusing at first?",
+    courseTitle: "Integrating OpenAI & Claude APIs into Node.js Apps", category: "Development",
+    authorName: "Ali Raza",
+    body: "The tool calling section clicked for me on the second watch but I was pretty lost the first time through. Any extra resources people found helpful?",
+    createdAt: "2026-07-30T10:15:00.000Z", upvotes: 8,
+    replies: [
+      { id: "r1", authorName: "Usman Ali", isInstructor: true, body: "Totally normal - it's the trickiest concept in the course. I'd recommend rebuilding the tool-calling example from scratch without looking at the solution first, that's what made it click for most students.", createdAt: "2026-07-30T16:40:00.000Z" },
+      { id: "r2", authorName: "Danish Raza", isInstructor: false, body: "Same experience here, agree with rebuilding it from memory. Took me two tries but it stuck after that.", createdAt: "2026-07-31T09:00:00.000Z" }
+    ]
+  },
+  {
+    id: "cmty_6", title: "Is there a study group for the AI Automation track?",
+    category: "General",
+    authorName: "Fatima Noor",
+    body: "Working through the automation certification track solo and wondering if there's an active study group or Discord for people going through it together.",
+    createdAt: "2026-07-27T12:00:00.000Z", upvotes: 5,
+    replies: []
+  },
+  {
+    id: "cmty_7", title: "How strict is the 30% completion cutoff for refunds?",
+    category: "Billing",
+    authorName: "Omar Sheikh",
+    body: "If I've watched a course but skipped around, does the 30% completion cutoff count time watched or lessons marked complete?",
+    createdAt: "2026-07-22T09:30:00.000Z", upvotes: 4,
+    replies: [
+      { id: "r1", authorName: "Saachi AI Team", isInstructor: true, body: "It's based on lessons marked complete, not total watch time. You can check your exact progress percentage on the course page under My Courses.", createdAt: "2026-07-22T13:00:00.000Z" }
+    ]
+  },
+  {
+    id: "cmty_8", title: "Mentorship session was worth every rupee",
+    courseTitle: "Automate Everything with n8n & AI", category: "General",
+    authorName: "Hina Malik",
+    body: "Just wanted to share - booked a 30 min mentorship session with Ayesha after finishing the course and it saved me hours of debugging on a client project. Highly recommend if you're on the fence.",
+    createdAt: "2026-07-18T10:00:00.000Z", upvotes: 19,
+    replies: [
+      { id: "r1", authorName: "Ayesha Khan", isInstructor: true, body: "Thank you for the kind words! Always happy to help debug real client workflows.", createdAt: "2026-07-18T14:00:00.000Z" }
+    ]
+  }
+];
+
+
+================================================================================
+FILE: packages\api-client\src\dummy-data-news.ts
+================================================================================
+export type NewsArticle = {
+  id: string;
+  slug: string;
+  title: string;
+  excerpt: string;
+  body: string;
+  category: string;
+  author: string;
+  authorAvatarUrl?: string;
+  imageUrl: string;
+  publishedAt: string;
+  readTime: string;
+};
+
+function img(seed: string): string {
+  return `https://picsum.photos/seed/${encodeURIComponent(seed)}/800/450`;
+}
+
+export const DUMMY_NEWS: NewsArticle[] = [
+  {
+    id: "news_1", slug: "saachi-ai-crosses-42000-learners",
+    title: "Saachi AI crosses 42,000 active learners milestone",
+    excerpt: "The platform's course marketplace has grown 3x in the last two quarters, driven by demand for automation and prompt engineering skills.",
+    body: "Saachi AI announced today that its learner base has surpassed 42,000 active accounts, a threefold increase since the start of the year. Growth has been led by the AI Automation & Workflow Tools category, which now accounts for nearly a third of all enrollments. Instructor payouts have also crossed the $2.1M mark cumulatively, with the platform's top instructors earning a full-time income teaching part-time.\n\nThe platform's leadership credited the growth to a shift in learner behavior away from passive watch-time courses toward project-based, outcome-driven learning. \"People don't want another 40-hour video course they'll never finish,\" said the team. \"They want five focused hours that end with something they can ship.\"",
+    category: "Platform", author: "Saachi AI Team", imageUrl: img("news-42000-learners"),
+    publishedAt: "2026-08-10T09:00:00.000Z", readTime: "3 min read"
+  },
+  {
+    id: "news_2", slug: "instructor-payouts-hit-2-1-million",
+    title: "Instructor payouts hit $2.1M as marketplace matures",
+    excerpt: "A look at how commission tiers and trust badges are reshaping instructor earnings on Saachi AI.",
+    body: "Since launch, Saachi AI has paid out over $2.1M to instructors across its four trust tiers - New, Verified, Top-Rated, and Partner. Verified and above instructors report significantly higher completion rates on their courses, likely due to the additional review process required to reach those tiers.\n\nThe platform is also piloting a new mentorship marketplace, allowing instructors to offer paid 1-on-1 sessions directly from their course pages. Early data shows mentorship bookings convert at a higher rate when the instructor has published at least three courses.",
+    category: "Instructors", author: "Ayesha Khan", imageUrl: img("news-instructor-payouts"),
+    publishedAt: "2026-08-05T09:00:00.000Z", readTime: "4 min read"
+  },
+  {
+    id: "news_3", slug: "new-ai-automation-track-launches",
+    title: "New AI Automation certification track launches",
+    excerpt: "A guided, five-course path through n8n, prompt engineering, and agent-building - with a verified certificate at the end.",
+    body: "Saachi AI has launched its first structured certification track, combining five existing courses into a guided sequence: Prompt Engineering Fundamentals, Automate Everything with n8n & AI, Build a WhatsApp AI Auto-Responder, Integrating OpenAI & Claude APIs into Node.js Apps, and a capstone project course.\n\nLearners who complete all five courses in order receive a Track Completion Certificate, distinct from individual course certificates, which can be independently verified via a public verification page.",
+    category: "Product", author: "Saachi AI Team", imageUrl: img("news-automation-track"),
+    publishedAt: "2026-07-28T09:00:00.000Z", readTime: "3 min read"
+  },
+  {
+    id: "news_4", slug: "mentorship-marketplace-beta",
+    title: "Mentorship marketplace enters public beta",
+    excerpt: "Learners can now book paid 1-on-1 sessions directly with verified instructors from their course dashboard.",
+    body: "The mentorship feature, previously available to a small group of pilot instructors, is now open to all Verified and Top-Rated instructors. Sessions are booked in 30, 45, or 60-minute blocks, with pricing set entirely by the instructor.\n\nEarly usage data shows the most-booked session topics are code review, portfolio feedback, and career transition advice - suggesting learners increasingly see Saachi AI courses as a stepping stone to freelance or full-time AI roles rather than a standalone credential.",
+    category: "Product", author: "Saachi AI Team", imageUrl: img("news-mentorship-beta"),
+    publishedAt: "2026-07-15T09:00:00.000Z", readTime: "3 min read"
+  },
+  {
+    id: "news_5", slug: "top-instructor-spotlight-sana-rizvi",
+    title: "Instructor spotlight: how Sana Rizvi built an 8,300-student course",
+    excerpt: "Prompt Engineering Fundamentals is now the platform's highest-rated course. Here's how she built it.",
+    body: "When Sana Rizvi published Prompt Engineering Fundamentals over a year ago, she expected a few hundred students. It now has over 8,300 enrolled learners and a 4.8-star average rating across 1,240 reviews.\n\nIn a recent interview, Rizvi credited the course's success to a strict \"no filler\" policy - every lesson had to directly produce something the learner could reuse at work, from a prompt library template to a knowledge-check quiz tied to a real business scenario. She's now working on an advanced follow-up course focused on agentic workflows.",
+    category: "Community", author: "Saachi AI Team", imageUrl: img("news-sana-rizvi-spotlight"),
+    publishedAt: "2026-07-02T09:00:00.000Z", readTime: "5 min read"
+  },
+  {
+    id: "news_6", slug: "corporate-team-plans-launch",
+    title: "Saachi AI Business launches for corporate teams",
+    excerpt: "Bulk seat licenses, team completion dashboards, and custom invoicing - now available for organizations.",
+    body: "Following demand from several mid-sized agencies already bulk-purchasing seats manually, Saachi AI has formalized its Business tier. Teams can now purchase seat bundles, assign specific courses to specific employees, and track completion across the whole team from a single dashboard.\n\nAcme Agency, an early corporate pilot customer, reported a 40% increase in course completion rates once managers could see team-wide progress rather than relying on self-reporting.",
+    category: "Platform", author: "Saachi AI Team", imageUrl: img("news-business-launch"),
+    publishedAt: "2026-06-20T09:00:00.000Z", readTime: "4 min read"
+  },
+  {
+    id: "news_7", slug: "refund-policy-update",
+    title: "Refund policy updated to a clearer 7-day / 30% window",
+    excerpt: "Saachi AI simplifies its refund eligibility rules based on learner and instructor feedback.",
+    body: "Following feedback from both learners and instructors about ambiguity in refund eligibility, Saachi AI has clarified its policy: refunds are available within 7 days of purchase, provided the learner has not completed more than 30% of the course content. Approved refunds are now processed within 5-7 business days, down from the previous 10-14 day window.",
+    category: "Platform", author: "Saachi AI Team", imageUrl: img("news-refund-policy"),
+    publishedAt: "2026-06-08T09:00:00.000Z", readTime: "2 min read"
+  },
+  {
+    id: "news_8", slug: "ai-design-category-expands",
+    title: "AI Design & Creative Tools category triples in size",
+    excerpt: "New courses on Midjourney, Figma AI plugins, and AI-assisted brand identity design are now live.",
+    body: "The AI Design & Creative Tools category has grown from 5 to 15 published courses this quarter, reflecting rising demand from freelance designers looking to speed up mockup and concept work with AI tools. Instructor Sara Iqbal's Midjourney for Product Mockups course has been a standout, with a 94% completion rate - well above the platform average of 61%.",
+    category: "Product", author: "Saachi AI Team", imageUrl: img("news-design-category"),
+    publishedAt: "2026-05-22T09:00:00.000Z", readTime: "3 min read"
+  }
+];
+
+
+================================================================================
 FILE: packages\api-client\src\dummy-data.ts
 ================================================================================
 import type { Course, CourseDetail, Session } from "./types";
@@ -2599,6 +3004,11 @@ export * from "./hooks/useAdminTicketDetail";
 
 export * from "./hooks/useCourseDetailStubs";
 
+export * from "./dummy-data-news";
+export * from "./dummy-data-blog";
+export * from "./dummy-data-community";
+export * from "./dummy-data-certificates";
+export * from "./hooks/useContentHubs";
 
 
 ================================================================================

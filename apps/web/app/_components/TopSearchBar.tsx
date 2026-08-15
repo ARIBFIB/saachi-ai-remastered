@@ -43,7 +43,7 @@ export function TopSearchBar({ hidden }: { hidden: boolean }) {
   const [open, setOpen]         = useState(false);
 
   const deptRef    = useRef<HTMLDivElement>(null);
-  const wrapperRef = useRef<HTMLDivElement>(null);
+  const wrapperRef = useRef<HTMLFormElement>(null);
 
   const courseQ = useCourseList({ search: query || undefined, category: department, sort: "popular" });
   const newsQ   = useNewsList({ search: query || undefined });
