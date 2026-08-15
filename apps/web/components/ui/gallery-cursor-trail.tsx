@@ -56,7 +56,7 @@ export function GalleryCursorTrail() {
 
   return (
     <div
-      className="relative flex h-[220px] w-full max-w-[420px] items-stretch gap-1.5"
+      className="relative flex h-[400px] w-full max-w-[420px] items-stretch gap-1.5"
       style={{
         maskImage: "linear-gradient(to left, black 70%, transparent 100%)",
         WebkitMaskImage: "linear-gradient(to left, black 70%, transparent 100%)"
