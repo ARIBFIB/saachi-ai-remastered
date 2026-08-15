@@ -30,8 +30,11 @@ export function AnimatedThemeToggler({ className }: AnimatedThemeTogglerProps) {
       return;
     }
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const transition = (document as any).startViewTransition(() => {
+    const transition = (
+      document as unknown as {
+        startViewTransition: (callback: () => void) => { ready: Promise<void> };
+      }
+    ).startViewTransition(() => {
       flushSync(() => {
         setTheme(next);
       });
