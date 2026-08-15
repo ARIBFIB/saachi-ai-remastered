@@ -59,7 +59,7 @@ export function ImageCursorTrail({
     image.dataset.status = "inactive";
   };
 
-  const handleOnMove = (e: MouseEvent | Touch) => {
+  const handleOnMove = (e: { clientX: number; clientY: number }) => {
     if (distanceFromLast(e.clientX, e.clientY) > window.innerWidth / distance) {
       const lead = refs.current[globalIndex % refs.current.length].current;
       const tail =
@@ -75,7 +75,7 @@ export function ImageCursorTrail({
   return (
     <section
       onMouseMove={(e) => handleOnMove(e.nativeEvent)}
-      onTouchMove={(e) => handleOnMove(e.touches[0])}
+      onTouchMove={(e) => handleOnMove({ clientX: e.touches[0].clientX, clientY: e.touches[0].clientY })}
       ref={containerRef}
       className={cn(
         "relative grid h-[600px] w-full place-content-center overflow-hidden rounded-lg",
