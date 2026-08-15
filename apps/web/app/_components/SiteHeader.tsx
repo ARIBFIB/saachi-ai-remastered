@@ -9,26 +9,35 @@ import { AnimatedThemeToggler } from "@/components/ui/animated-theme-toggler";
 import { useSession, useLogout } from "@saachi/api-client";
 import { Menu, MenuItem, HoveredLink } from "@/components/ui/navbar-menu";
 import { CATEGORIES } from "../../lib/categories";
-import { TopSearchBar } from "./TopSearchBar";
+import { TopSearchBar, useSearchBarHidden } from "./TopSearchBar";
 
 const MOBILE_NAV_LINKS = [
-  { href: "/courses", label: "All courses" },
-  { href: "/categories/ai-automation", label: "Automation" },
-  { href: "/categories/ai-marketing", label: "Marketing" },
-  { href: "/pricing", label: "Pricing" },
-  { href: "/about", label: "About" }
+  { href: "/courses",                   label: "All courses" },
+  { href: "/categories/ai-automation",  label: "Automation" },
+  { href: "/categories/ai-marketing",   label: "Marketing" },
+  { href: "/pricing",                   label: "Pricing" },
+  { href: "/about",                     label: "About" }
 ];
 
 export function SiteHeader() {
   const [mobileOpen, setMobileOpen] = useState(false);
-  const [active, setActive] = useState<string | null>(null);
-  const cartCount = useCartStore((s) => s.items.length);
+  const [active, setActive]         = useState<string | null>(null);
+
+  const cartCount     = useCartStore((s) => s.items.length);
   const wishlistCount = useWishlistStore((s) => s.items.length);
   const { data: session } = useSession();
   const logout = useLogout();
 
+  // single scroll listener â€” shared by TopSearchBar visibility
+  const searchHidden = useSearchBarHidden();
+
   return (
+    /*
+     * The entire header is sticky. TopSearchBar lives INSIDE it so it
+     * naturally hides behind the nav bar when collapsed â€” no z-index tricks.
+     */
     <header className="sticky top-0 z-40 border-b border-line bg-card/90 backdrop-blur">
+      {/* â”€â”€ top nav row â”€â”€ */}
       <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 md:px-8">
         <Link href="/" className="font-display text-[20px] font-bold text-ink">
           Saachi<span className="text-gold-dark">AI</span>
@@ -40,6 +49,7 @@ export function SiteHeader() {
           <span>Rated by learners</span>
         </div>
 
+        {/* desktop nav */}
         <div className="hidden md:block">
           <Menu setActive={setActive}>
             <MenuItem setActive={setActive} active={active} item="Courses">
@@ -73,6 +83,7 @@ export function SiteHeader() {
           </Menu>
         </div>
 
+        {/* right icons */}
         <div className="flex items-center gap-2">
           <AnimatedThemeToggler />
 
@@ -112,9 +123,7 @@ export function SiteHeader() {
           ) : (
             <div className="hidden items-center gap-2 md:flex">
               <Link href="/login">
-                <Button size="sm" variant="secondary">
-                  Log in
-                </Button>
+                <Button size="sm" variant="secondary">Log in</Button>
               </Link>
               <Link href="/register">
                 <Button size="sm" variant="brand">Sign up</Button>
@@ -133,8 +142,10 @@ export function SiteHeader() {
         </div>
       </div>
 
-      <TopSearchBar />
+      {/* â”€â”€ search bar row â€” inside header, collapses on scroll â”€â”€ */}
+      <TopSearchBar hidden={searchHidden} />
 
+      {/* â”€â”€ mobile nav â”€â”€ */}
       {mobileOpen && (
         <div className="border-t border-line bg-card px-4 py-4 md:hidden">
           <nav className="flex flex-col gap-3">
@@ -156,14 +167,10 @@ export function SiteHeader() {
               ) : (
                 <>
                   <Link href="/login" className="flex-1">
-                    <Button size="sm" variant="secondary" className="w-full">
-                      Log in
-                    </Button>
+                    <Button size="sm" variant="secondary" className="w-full">Log in</Button>
                   </Link>
                   <Link href="/register" className="flex-1">
-                    <Button size="sm" variant="brand" className="w-full">
-                      Sign up
-                    </Button>
+                    <Button size="sm" variant="brand" className="w-full">Sign up</Button>
                   </Link>
                 </>
               )}

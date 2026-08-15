@@ -14,7 +14,11 @@ import {
 import { CATEGORIES } from "../../lib/categories";
 import { SearchCommand, type SearchGroup } from "@/components/ui/search-command";
 
-function useHideOnScroll() {
+/**
+ * Returns true when the user is scrolling DOWN past 80 px.
+ * Used by SiteHeader to collapse the search row.
+ */
+export function useSearchBarHidden() {
   const [hidden, setHidden] = useState(false);
   const lastY = useRef(0);
   useEffect(() => {
@@ -30,9 +34,8 @@ function useHideOnScroll() {
   return hidden;
 }
 
-export function TopSearchBar() {
+export function TopSearchBar({ hidden }: { hidden: boolean }) {
   const router = useRouter();
-  const hidden = useHideOnScroll();
 
   const [query, setQuery]       = useState("");
   const [deptOpen, setDeptOpen] = useState(false);
@@ -40,10 +43,8 @@ export function TopSearchBar() {
   const [open, setOpen]         = useState(false);
 
   const deptRef    = useRef<HTMLDivElement>(null);
-  const inputRef   = useRef<HTMLInputElement>(null);
   const wrapperRef = useRef<HTMLDivElement>(null);
 
-  // live search hooks
   const courseQ = useCourseList({ search: query || undefined, category: department, sort: "popular" });
   const newsQ   = useNewsList({ search: query || undefined });
   const blogQ   = useBlogList({ search: query || undefined });
@@ -128,28 +129,32 @@ export function TopSearchBar() {
 
   const deptLabel = department
     ? CATEGORIES.find((c) => c.id === department)?.name ?? "Department"
-    : "All departments";
+    : "All depts";
 
   return (
+    /*
+     * overflow-hidden + max-h transition = smooth accordion collapse.
+     * When hidden=true the bar slides up and disappears behind the nav bar
+     * because the entire <header> is sticky â€” no z-index clipping needed.
+     */
     <div
       className={cn(
-        "sticky top-16 z-30 border-b border-black/10 transition-transform duration-300 ease-out",
-        hidden ? "-translate-y-full" : "translate-y-0"
+        "overflow-hidden border-t border-black/10 transition-all duration-300 ease-in-out",
+        hidden ? "max-h-0 opacity-0" : "max-h-20 opacity-100"
       )}
       style={{ backgroundImage: "var(--color-accent-gradient)" }}
     >
       <div className="mx-auto flex max-w-7xl items-center gap-3 px-4 py-3 md:px-8">
         {/* Search input + cmdk dropdown */}
         <form onSubmit={handleSubmit} className="relative flex-1 max-w-xl" ref={wrapperRef}>
-          <div className="flex h-11 items-center gap-2 rounded-full border border-white/25 bg-white pl-4 pr-2 shadow-sm">
-            <Search size={16} className="shrink-0 text-ink-soft" />
+          <div className="flex h-10 items-center gap-2 rounded-full border border-white/25 bg-white pl-4 pr-2 shadow-sm">
+            <Search size={15} className="shrink-0 text-ink-soft" />
             <input
-              ref={inputRef}
               value={query}
               onChange={(e) => { setQuery(e.target.value); setOpen(true); }}
               onFocus={() => setOpen(true)}
               placeholder="Search courses, news, community..."
-              className="w-full bg-transparent text-[13.5px] text-ink placeholder:text-ink-soft/60 focus:outline-none"
+              className="w-full bg-transparent text-[13px] text-ink placeholder:text-ink-soft/60 focus:outline-none"
             />
 
             {/* Department picker */}
@@ -159,8 +164,8 @@ export function TopSearchBar() {
                 onClick={() => setDeptOpen((v) => !v)}
                 className="flex items-center gap-1 rounded-full bg-paper-dim px-2.5 py-1.5 text-[11px] font-semibold text-ink-soft hover:text-ink transition-colors"
               >
-                <span className="hidden max-w-[90px] truncate sm:inline">{deptLabel}</span>
-                <ChevronDown size={12} className={cn("transition-transform duration-200", deptOpen && "rotate-180")} />
+                <span className="hidden max-w-[80px] truncate sm:inline">{deptLabel}</span>
+                <ChevronDown size={11} className={cn("transition-transform duration-200", deptOpen && "rotate-180")} />
               </button>
 
               {deptOpen && (
@@ -187,7 +192,7 @@ export function TopSearchBar() {
             </div>
           </div>
 
-          {/* cmdk dropdown */}
+          {/* cmdk dropdown â€” renders below the white pill */}
           {open && (
             <SearchCommand
               query={query}
@@ -197,12 +202,11 @@ export function TopSearchBar() {
           )}
         </form>
 
-        {/* Search button */}
+        {/* Search submit button */}
         <button
-          type="submit"
-          form="top-search-form"
+          type="button"
           onClick={handleSubmit as any}
-          className="group/btn relative hidden h-11 shrink-0 items-center gap-1.5 overflow-hidden rounded-full bg-zinc-900 px-5 sm:flex"
+          className="group/btn relative hidden h-10 shrink-0 items-center gap-1.5 overflow-hidden rounded-full bg-zinc-900 px-5 sm:flex"
         >
           <span className="absolute inset-0 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 opacity-50 blur transition-opacity duration-500 group-hover/btn:opacity-90" />
           <span className="relative flex items-center gap-1.5 text-[13px] font-semibold text-white">
