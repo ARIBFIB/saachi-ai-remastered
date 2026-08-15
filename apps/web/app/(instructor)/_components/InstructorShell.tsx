@@ -1,10 +1,10 @@
-"use client";
+﻿"use client";
 
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useRef, useState, type ReactNode } from "react";
 import { Menu, X, LogOut, ChevronLeft, ChevronRight, Bell, ChevronDown, Settings, User } from "lucide-react";
-import { ThemeToggle } from "@saachi/ui";
+import { AnimatedThemeToggler } from "@/components/ui/animated-theme-toggler";
 import { useSession, useLogout } from "@saachi/api-client";
 import { INSTRUCTOR_NAV } from "../../../lib/instructor-nav-config";
 
@@ -180,7 +180,7 @@ export function InstructorShell({ children }: { children: ReactNode }) {
             )}
           </div>
 
-          <ThemeToggle />
+          <AnimatedThemeToggler />
 
           <div className="relative" ref={userMenuRef}>
             <button

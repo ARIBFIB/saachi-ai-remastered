@@ -1,10 +1,11 @@
-"use client";
+﻿"use client";
 
 import Link from "next/link";
 import { useState } from "react";
 import { ShoppingCart, Heart, Menu as MenuIcon, X, LogOut } from "lucide-react";
-import { Button, ThemeToggle } from "@saachi/ui";
+import { Button } from "@saachi/ui";
 import { useCartStore, useWishlistStore } from "@saachi/store";
+import { AnimatedThemeToggler } from "@/components/ui/animated-theme-toggler";
 import { useSession, useLogout } from "@saachi/api-client";
 import { Menu, MenuItem, HoveredLink } from "@/components/ui/navbar-menu";
 import { CATEGORIES } from "../../lib/categories";
@@ -66,7 +67,7 @@ export function SiteHeader() {
         </div>
 
         <div className="flex items-center gap-2">
-          <ThemeToggle />
+          <AnimatedThemeToggler />
 
           <Link
             href="/wishlist"
