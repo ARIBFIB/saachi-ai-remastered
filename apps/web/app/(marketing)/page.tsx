@@ -164,8 +164,8 @@ export default function HomePage() {
           </div>
         </div>
 
-        <div className="pointer-events-auto absolute right-0 top-1/2 z-10 hidden w-[380px] -translate-y-1/2 lg:block xl:right-4 xl:w-[420px]">
-          <GalleryCursorTrail orientation="vertical" />
+        <div className="pointer-events-auto absolute right-0 top-1/2 z-10 hidden -translate-y-1/2 lg:block xl:right-4">
+          <GalleryCursorTrail />
         </div>
 
         <HeroCursorTrail />
