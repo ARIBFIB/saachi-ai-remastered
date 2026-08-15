@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import Link from "next/link";
 import { useState } from "react";
@@ -9,6 +9,7 @@ import { AnimatedThemeToggler } from "@/components/ui/animated-theme-toggler";
 import { useSession, useLogout } from "@saachi/api-client";
 import { Menu, MenuItem, HoveredLink } from "@/components/ui/navbar-menu";
 import { CATEGORIES } from "../../lib/categories";
+import { TopSearchBar } from "./TopSearchBar";
 
 const MOBILE_NAV_LINKS = [
   { href: "/courses", label: "All courses" },
@@ -131,6 +132,8 @@ export function SiteHeader() {
           </button>
         </div>
       </div>
+
+      <TopSearchBar />
 
       {mobileOpen && (
         <div className="border-t border-line bg-card px-4 py-4 md:hidden">
