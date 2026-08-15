@@ -25,7 +25,6 @@ import { LandingSearch } from "./_components/LandingSearch";
 import { FaqAccordion } from "./_components/FaqAccordion";
 import { TrendingCarousel } from "./_components/TrendingCarousel";
 import { SpotlightPanels } from "./_components/SpotlightPanels";
-import { ActivityTicker } from "./_components/ActivityTicker";
 import { LogoCloud } from "./_components/LogoCloud";
 import { BlogPreview } from "./_components/BlogPreview";
 import { PricingTeaser } from "./_components/PricingTeaser";
@@ -109,10 +108,7 @@ export default function HomePage() {
           style={{ backgroundImage: "var(--color-accent-gradient)" }}
         />
         <div className="relative max-w-2xl">
-          <div className="mb-5 inline-flex items-center gap-2 rounded-full border border-line bg-card px-3.5 py-1.5 text-[12.5px] font-semibold text-accent-violet">
-            <Zap size={13} />
-            42,000+ learners already building with AI
-          </div>
+
           {heroLoaded ? (
             <>
               <h1 className="font-display text-[38px] font-bold leading-[1.05] text-ink md:text-[64px]">
@@ -159,9 +155,7 @@ export default function HomePage() {
             <LandingSearch />
           </div>
 
-          <div className="mt-6">
-            <ActivityTicker />
-          </div>
+
         </div>
 
         <div className="pointer-events-auto absolute right-0 top-1/2 z-10 hidden -translate-y-1/2 lg:block xl:right-4">
