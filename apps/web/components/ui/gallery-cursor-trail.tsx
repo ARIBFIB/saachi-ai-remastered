@@ -17,25 +17,25 @@ export type GalleryCard = {
 export const GALLERY_CARDS: GalleryCard[] = [
   {
     label: "News",
-    src: "https://images.unsplash.com/photo-1495020689067-958852a7765e?q=80&h=800&w=800&auto=format&fit=crop",
+    src: "https://images.pexels.com/photos/3944425/pexels-photo-3944425.jpeg?cs=srgb&dl=pexels-cottonbro-3944425.jpg&fm=jpg",
     href: "/about",
     buttonLabel: "Read news"
   },
   {
     label: "Community",
-    src: "https://images.unsplash.com/photo-1522202176988-66273c2fd55f?q=80&h=800&w=800&auto=format&fit=crop",
+    src: "https://benbellabooks.com/wp-content/uploads/2021/01/doing-ai-1.jpg",
     href: "/mentorship",
     buttonLabel: "Join community"
   },
   {
     label: "Courses",
-    src: "https://images.unsplash.com/photo-1555949963-aa79dcee981c?q=80&h=800&w=800&auto=format&fit=crop",
+    src: "https://verticalinstitute.com/wp-content/uploads/2025/12/why-opt-for-tech-course-in-singapore.webp",
     href: "/courses",
     buttonLabel: "Browse courses"
   },
   {
     label: "Certificate",
-    src: "https://images.unsplash.com/photo-1546410531-bb4caa6b424d?q=80&h=800&w=800&auto=format&fit=crop",
+    src: "https://graphicsfamily.com/wp-content/uploads/edd/2021/01/Vertical-Modern-Certificate-of-Appreciation.jpg",
     href: "/certificates",
     buttonLabel: "Get certified"
   }
