@@ -14,10 +14,7 @@ import {
   ShieldCheck,
   Zap,
   TrendingUp,
-  PlayCircle,
-  Quote,
-  BadgeCheck,
-  ShieldCheck as VerifiedIcon
+  PlayCircle
 } from "lucide-react";
 import { CATEGORIES } from "../../lib/categories";
 import { Reveal } from "./_components/Reveal";
@@ -28,7 +25,7 @@ import { LogoCloud } from "./_components/LogoCloud";
 import { BlogPreview } from "./_components/BlogPreview";
 import { PricingTeaser } from "./_components/PricingTeaser";
 import { NewsletterCard } from "./_components/NewsletterCard";
-import { EXTRA_TESTIMONIALS } from "./_components/landing-fake-data";
+
 import { CoverflowCarousel } from "@/components/ui/coverflow-carousel";
 import { HeroMediaCollage } from "@/components/ui/hero-media-collage";
 import { HeroCursorTrail } from "@/components/ui/hero-cursor-trail";
@@ -36,6 +33,7 @@ import { GalleryCursorTrail } from "@/components/ui/gallery-cursor-trail";
 import { ImageStreamHero } from "@/components/ui/image-stream-hero";
 import HowItWorks from "@/components/ui/how-it-works";
 import { LimitedTimeOfferPricing } from "@/components/ui/limited-time-offer-pricing";
+import { AnimatedTestimonials } from "@/components/ui/animated-testimonials";
 
 const STATS = [
   { label: "Active students", value: "42,000+", icon: Users },
@@ -59,29 +57,6 @@ const INSTRUCTORS = [
   { name: "Bilal S.", role: "Career & Freelancing", students: "1.9k", avatar: "https://i.pravatar.cc/96?img=8" }
 ];
 
-const TESTIMONIALS = [
-  {
-    name: "Fatima R.", role: "Freelance automation consultant", avatar: "https://i.pravatar.cc/64?img=5",
-    rating: 5, verified: true,
-    quote: "I landed 3 client projects within a month of finishing the n8n automation course. The invoice-parsing workflow alone paid for the course ten times over."
-  },
-  {
-    name: "Ali Raza", role: "Support team lead", avatar: "https://i.pravatar.cc/64?img=22",
-    rating: 5, verified: true,
-    quote: "Our WhatsApp response time dropped by 70% after building the chatbot from the course. Practical, no fluff, straight to the point."
-  },
-  {
-    name: "Hina Malik", role: "Marketing manager", avatar: "https://i.pravatar.cc/64?img=25",
-    rating: 4, verified: false,
-    quote: "Best structured AI marketing content I have found anywhere. Wish there were a couple more advanced modules, but genuinely worth it."
-  },
-  {
-    name: "Omar Sheikh", role: "Indie developer", avatar: "https://i.pravatar.cc/64?img=15",
-    rating: 5, verified: true,
-    quote: "Went from zero to shipping my own AI agent product in six weeks. The instructor actually answers Q&A -- that made all the difference."
-  },
-  ...EXTRA_TESTIMONIALS
-];
 
 const HOW_IT_WORKS = [
   { title: "Pick a skill", desc: "Browse 1,200+ practical AI courses across automation, marketing, design, and development.", icon: Sparkles },
@@ -316,40 +291,89 @@ export default function HomePage() {
           />
         </Reveal>
       </section>
-
-      {/* Testimonials */}
-      <section className="mx-auto max-w-7xl px-4 pb-16 md:px-8">
-        <Reveal>
-          <h2 className="mb-2 font-display text-[22px] font-semibold text-ink">What learners are saying</h2>
-          <p className="mb-8 text-[14px] text-ink-soft">4.8 average rating across 12,000+ reviews.</p>
-        </Reveal>
-        <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
-          {TESTIMONIALS.map((t, i) => (
-            <Reveal key={t.name} delay={i * 70}>
-              <div className="relative h-full rounded-card border border-line bg-card p-6">
-                <Quote size={28} className="absolute right-5 top-5 text-line-strong" />
-                <div className="mb-3 flex items-center gap-3">
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img src={t.avatar} alt={t.name} className="h-11 w-11 rounded-full object-cover" />
-                  <div>
-                    <p className="flex items-center gap-1 text-[13.5px] font-semibold text-ink">
-                      {t.name}
-                      {t.verified && <VerifiedIcon size={12} className="text-teal" />}
-                    </p>
-                    <p className="text-[12px] text-ink-soft">{t.role}</p>
-                  </div>
-                </div>
-                <div className="mb-2 flex items-center gap-0.5 text-accent-pink">
-                  {Array.from({ length: 5 }).map((_, idx) => (
-                    <Star key={idx} size={13} fill={idx < t.rating ? "currentColor" : "none"} />
-                  ))}
-                </div>
-                <p className="text-[13.5px] leading-relaxed text-ink-soft">&quot;{t.quote}&quot;</p>
-              </div>
-            </Reveal>
-          ))}
-        </div>
-      </section>
+      {/* Testimonials - AnimatedTestimonials */}
+      <AnimatedTestimonials
+        title="What learners are saying"
+        subtitle="4.8 average rating across 12,000+ reviews. Real results from real people."
+        badgeText="Verified reviews"
+        autoRotateInterval={6000}
+        testimonials={[
+          {
+            id: 1,
+            name: "Fatima R.",
+            role: "Freelance automation consultant",
+            company: "Independent",
+            content: "I landed 3 client projects within a month of finishing the n8n automation course. The invoice-parsing workflow alone paid for the course ten times over.",
+            rating: 5,
+            avatar: "https://i.pravatar.cc/150?img=5",
+          },
+          {
+            id: 2,
+            name: "Ali Raza",
+            role: "Support team lead",
+            company: "Local Retail Co.",
+            content: "Our WhatsApp response time dropped by 70% after building the chatbot from the course. Practical, no fluff, straight to the point.",
+            rating: 5,
+            avatar: "https://i.pravatar.cc/150?img=22",
+          },
+          {
+            id: 3,
+            name: "Hina Malik",
+            role: "Marketing manager",
+            company: "Agency Partner",
+            content: "Best structured AI marketing content I have found anywhere. Wish there were a couple more advanced modules, but genuinely worth it.",
+            rating: 4,
+            avatar: "https://i.pravatar.cc/150?img=25",
+          },
+          {
+            id: 4,
+            name: "Omar Sheikh",
+            role: "Indie developer",
+            company: "Self-employed",
+            content: "Went from zero to shipping my own AI agent product in six weeks. The instructor actually answers Q&A - that made all the difference.",
+            rating: 5,
+            avatar: "https://i.pravatar.cc/150?img=15",
+          },
+          {
+            id: 5,
+            name: "Zara Ahmed",
+            role: "Product designer",
+            company: "Independent",
+            content: "The design systems course completely changed how I hand off files to developers. Immediate ROI.",
+            rating: 5,
+            avatar: "https://i.pravatar.cc/150?img=48",
+          },
+          {
+            id: 6,
+            name: "Usman Tariq",
+            role: "Agency owner",
+            company: "Growth Agency",
+            content: "We onboarded our whole team through Saachi AI Business. Certificates and dashboards made tracking easy.",
+            rating: 5,
+            avatar: "https://i.pravatar.cc/150?img=13",
+          },
+          {
+            id: 7,
+            name: "Mahnoor Khalid",
+            role: "Content strategist",
+            company: "Freelance",
+            content: "Solid course library, wish there was more advanced copywriting content, but great value overall.",
+            rating: 4,
+            avatar: "https://i.pravatar.cc/150?img=45",
+          },
+          {
+            id: 8,
+            name: "Danish Iqbal",
+            role: "Automation freelancer",
+            company: "Freelance",
+            content: "Booked a mentorship call the same week I finished the course. Instructor feedback was gold.",
+            rating: 5,
+            avatar: "https://i.pravatar.cc/150?img=33",
+          },
+        ]}
+        trustedCompanies={["NovaWorks", "BrightStack", "Vertex Labs", "Cirrus Digital", "Ember Systems", "Northline Tech"]}
+        trustedCompaniesTitle="Learners from companies worldwide"
+      />
 
       {/* Course spotlight stream */}
       <section className="mx-auto max-w-7xl px-4 pb-16 md:px-8">
