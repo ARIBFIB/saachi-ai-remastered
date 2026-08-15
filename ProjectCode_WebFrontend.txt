@@ -1,6 +1,6 @@
 ﻿================================================================================
 WEBSITE FRONTEND CODE EXPORT (apps/web + shared packages)
-Generated: 2026-08-16 00:54:12
+Generated: 2026-08-16 01:13:45
 Total Files: 193
 ================================================================================
 
@@ -4788,7 +4788,8 @@ import {
   ShieldCheck,
   Zap,
   TrendingUp,
-  PlayCircle
+  PlayCircle,
+  BadgeCheck
 } from "lucide-react";
 import { CATEGORIES } from "../../lib/categories";
 import { Reveal } from "./_components/Reveal";
@@ -5607,7 +5608,7 @@ export function TopSearchBar({ hidden }: { hidden: boolean }) {
   const [open, setOpen]         = useState(false);
 
   const deptRef    = useRef<HTMLDivElement>(null);
-  const wrapperRef = useRef<HTMLDivElement>(null);
+  const wrapperRef = useRef<HTMLFormElement>(null);
 
   const courseQ = useCourseList({ search: query || undefined, category: department, sort: "popular" });
   const newsQ   = useNewsList({ search: query || undefined });

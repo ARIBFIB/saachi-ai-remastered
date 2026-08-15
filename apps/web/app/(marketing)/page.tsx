@@ -25,7 +25,7 @@ import { SpotlightPanels } from "./_components/SpotlightPanels";
 import { LogoCloud } from "./_components/LogoCloud";
 import { BlogPreview } from "./_components/BlogPreview";
 import { PricingTeaser } from "./_components/PricingTeaser";
-import { NewsletterCard } from "./_components/NewsletterCard";
+import NewsletterBlock from "@/components/ui/newsletter-2";
 
 import { CoverflowCarousel } from "@/components/ui/coverflow-carousel";
 import { HeroMediaCollage } from "@/components/ui/hero-media-collage";
@@ -433,7 +433,7 @@ export default function HomePage() {
       {/* Newsletter */}
       <section className="mx-auto max-w-7xl px-4 pb-16 md:px-8">
         <Reveal>
-          <NewsletterCard />
+          <NewsletterBlock />
         </Reveal>
       </section>
 
