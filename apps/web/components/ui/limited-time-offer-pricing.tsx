@@ -129,7 +129,7 @@ export function LimitedTimeOfferPricing() {
                     <h3 className="font-semibold leading-none text-ink">Monthly</h3>
                     <div className="flex items-center gap-x-1">
                       <span className="text-sm text-ink-soft line-through">$19</span>
-                      <Badge variant="secondary">15% off</Badge>
+                      <Badge>15% off</Badge>
                     </div>
                   </div>
                   <p className="text-sm text-ink-soft">Full Pro access, cancel anytime.</p>
