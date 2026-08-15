@@ -24,7 +24,7 @@
                          "framer-motion":  "^11.5.0",
                          "recharts":  "^2.12.0",
                          "lucide-react":  "^0.445.0",
-                         "motion": "^11.15.0",
+                         "motion":  "^11.15.0",
                          "lottie-react":  "^2.4.0",
                          "next-intl":  "^3.19.0",
                          "clsx":  "^2.1.0",
@@ -32,7 +32,8 @@
                          "@tiptap/react":  "^2.7.0",
                          "@tiptap/starter-kit":  "^2.7.0",
                          "antd":  "^5.21.0",
-                         "@ant-design/nextjs-registry":  "^1.0.0"
+                         "@ant-design/nextjs-registry":  "^1.0.0",
+                         "@paper-design/shaders-react":  "^0.0.35"
                      },
     "devDependencies":  {
                             "@types/node":  "^22.5.0",
