@@ -110,3 +110,22 @@ body {
   from { transform: translateX(0); }
   to { transform: translateX(-50%); }
 }
+
+/* â”€â”€ cmdk command palette base â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+[cmdk-root] {
+  outline: none;
+}
+[cmdk-group-heading] {
+  user-select: none;
+  pointer-events: none;
+}
+[cmdk-item] {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  user-select: none;
+  outline: none;
+}
+[cmdk-item][aria-selected="true"] {
+  background: var(--color-gold-tint);
+}
