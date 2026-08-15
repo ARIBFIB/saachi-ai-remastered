@@ -115,6 +115,7 @@ export function ImageCursorTrail({
       )}
     >
       {items.map((item, index) => (
+        {/* eslint-disable-next-line @next/next/no-img-element -- intentional: dynamic cursor-trail image, next/image not suitable here */}
         <img
           key={index}
           className={cn(

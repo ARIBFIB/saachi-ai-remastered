@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
@@ -304,7 +304,7 @@ export default function AdminDashboardPage() {
     return () => {
       toast.dismiss(id);
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+
   }, [isLoading]);
 
   useEffect(() => {
