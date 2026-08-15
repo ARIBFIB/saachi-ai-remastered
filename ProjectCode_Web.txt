@@ -1,7 +1,7 @@
 ﻿================================================================================
 MODULE CODE EXPORT: Web
-Generated: 2026-08-15 04:00:00
-Total Files: 80
+Generated: 2026-08-15 05:09:05
+Total Files: 93
 ================================================================================
 
 
@@ -85,8 +85,10 @@ FILE: apps\web\app\(auth)\login\page.tsx
 import { useState, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { Button, Input, SocialLoginButtons } from "@saachi/ui";
+import { Button, SocialLoginButtons } from "@saachi/ui";
 import { useLogin } from "@saachi/api-client";
+import { AuthField } from "@/components/ui/auth-field";
+import { AuthVisualPanel } from "@/components/ui/auth-visual-panel";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -106,43 +108,77 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="mx-auto flex max-w-md flex-col px-4 py-16 md:px-0">
-      <h1 className="mb-1 font-display text-[26px] font-bold text-ink">Log in</h1>
-      <p className="mb-8 text-[14px] text-ink-soft">Welcome back to Saachi AI.</p>
+    <section className="min-h-screen bg-paper p-3">
+      <div className="grid min-h-[calc(100vh-1.5rem)] gap-6 lg:grid-cols-[0.94fr_1.06fr]">
+        <div className="flex min-h-[760px] items-center rounded-md border border-line bg-card px-6 py-12 sm:px-10 lg:min-h-0 lg:px-14 xl:px-20">
+          <div className="mx-auto w-full max-w-[480px]">
+            <h1 className="font-display text-3xl font-medium tracking-[-0.03em] text-ink sm:text-4xl">
+              Welcome back
+            </h1>
+            <p className="mt-3 text-[15px] leading-snug text-ink-soft sm:text-[17px]">
+              Log in to keep learning where you left off.
+            </p>
 
-      <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-        <Input
-          label="Email"
-          type="email"
-          required
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          placeholder="you@example.com"
-        />
-        <Input
-          label="Password"
-          type="password"
-          required
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          placeholder="At least 8 characters"
-        />
-        <Button type="submit" size="lg" loading={login.isPending}>
-          Log in
-        </Button>
-      </form>
+            <div className="mt-10">
+              <SocialLoginButtons />
+            </div>
 
-      <div className="mt-6">
-        <SocialLoginButtons />
+            <div className="my-8 flex items-center gap-3">
+              <div className="h-px flex-1 bg-line" />
+              <span className="text-[13px] font-medium text-ink-soft">or</span>
+              <div className="h-px flex-1 bg-line" />
+            </div>
+
+            <form onSubmit={handleSubmit} className="space-y-4">
+              <AuthField
+                label="Email"
+                type="email"
+                required
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+              />
+              <AuthField
+                label="Password"
+                type="password"
+                required
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+              />
+
+              <div className="flex justify-end pt-1">
+                <Link href="/forgot-password" className="text-[13px] font-medium text-accent-violet hover:underline">
+                  Forgot password?
+                </Link>
+              </div>
+
+              <Button type="submit" size="lg" loading={login.isPending} className="mt-4 w-full">
+                Log in
+              </Button>
+            </form>
+
+            <p className="mt-8 text-center text-[14px] text-ink-soft">
+              Don&apos;t have an account?{" "}
+              <Link href="/register" className="font-semibold text-accent-violet hover:underline">
+                Sign up
+              </Link>
+            </p>
+          </div>
+        </div>
+
+        <AuthVisualPanel
+          headline={
+            <>
+              Learn AI skills,
+              <br />
+              build real projects.
+            </>
+          }
+          tagline="Join 42,000+ learners already building with AI on Saachi AI."
+          ctaLabel="Explore the course marketplace"
+          ctaHref="/courses"
+        />
       </div>
-
-      <p className="mt-8 text-center text-[14px] text-ink-soft">
-        Don&apos;t have an account?{" "}
-        <Link href="/register" className="font-semibold text-gold-dark hover:underline">
-          Sign up
-        </Link>
-      </p>
-    </div>
+    </section>
   );
 }
 
@@ -155,8 +191,10 @@ FILE: apps\web\app\(auth)\register\page.tsx
 import { useState, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { Button, Input, Select, SocialLoginButtons } from "@saachi/ui";
+import { Button, Select, SocialLoginButtons } from "@saachi/ui";
 import { useRegister } from "@saachi/api-client";
+import { AuthField } from "@/components/ui/auth-field";
+import { AuthVisualPanel } from "@/components/ui/auth-visual-panel";
 
 const ROLE_OPTIONS = [
   { label: "Learner - I want to learn AI skills", value: "learner" },
@@ -171,10 +209,13 @@ export default function RegisterPage() {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [role, setRole] = useState("learner");
+  const [agreedToTerms, setAgreedToTerms] = useState(false);
+
+  const passwordsMismatch = confirmPassword.length > 0 && password !== confirmPassword;
 
   function handleSubmit(e: FormEvent) {
     e.preventDefault();
-    if (password !== confirmPassword) return;
+    if (password !== confirmPassword || !agreedToTerms) return;
     register.mutate(
       { fullName, email, password, confirmPassword, role: role as "learner" | "instructor" },
       { onSuccess: () => router.push(role === "instructor" ? "/instructor/dashboard" : "/dashboard") }
@@ -182,59 +223,108 @@ export default function RegisterPage() {
   }
 
   return (
-    <div className="mx-auto flex max-w-md flex-col px-4 py-16 md:px-0">
-      <h1 className="mb-1 font-display text-[26px] font-bold text-ink">Create your account</h1>
-      <p className="mb-8 text-[14px] text-ink-soft">Join the Saachi AI marketplace.</p>
+    <section className="min-h-screen bg-paper p-3">
+      <div className="grid min-h-[calc(100vh-1.5rem)] gap-6 lg:grid-cols-[0.94fr_1.06fr]">
+        <div className="flex min-h-[760px] items-start rounded-md border border-line bg-card px-6 py-12 sm:px-10 lg:min-h-0 lg:px-14 lg:py-20 xl:px-20">
+          <div className="mx-auto w-full max-w-[560px]">
+            <h1 className="font-display text-3xl font-medium tracking-[-0.03em] text-ink sm:text-4xl lg:text-[42px]">
+              Create an account
+            </h1>
+            <p className="mt-3 text-[15px] leading-snug text-ink-soft sm:text-[17px]">
+              Join the Saachi AI marketplace and start building.
+            </p>
 
-      <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-        <Input
-          label="Full name"
-          required
-          value={fullName}
-          onChange={(e) => setFullName(e.target.value)}
-          placeholder="Your full name"
-        />
-        <Input
-          label="Email"
-          type="email"
-          required
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          placeholder="you@example.com"
-        />
-        <Select label="I am joining as" options={ROLE_OPTIONS} value={role} onChange={(e) => setRole(e.target.value)} />
-        <Input
-          label="Password"
-          type="password"
-          required
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          placeholder="At least 8 characters"
-        />
-        <Input
-          label="Confirm password"
-          type="password"
-          required
-          value={confirmPassword}
-          onChange={(e) => setConfirmPassword(e.target.value)}
-          error={confirmPassword && password !== confirmPassword ? "Passwords do not match" : undefined}
-        />
-        <Button type="submit" size="lg" loading={register.isPending}>
-          Create account
-        </Button>
-      </form>
+            <div className="mt-10 grid gap-4 sm:grid-cols-2">
+              <SocialLoginButtons />
+            </div>
 
-      <div className="mt-6">
-        <SocialLoginButtons />
+            <div className="my-8 flex items-center gap-3">
+              <div className="h-px flex-1 bg-line" />
+              <span className="text-[13px] font-medium text-ink-soft">or</span>
+              <div className="h-px flex-1 bg-line" />
+            </div>
+
+            <form onSubmit={handleSubmit} className="space-y-4">
+              <AuthField
+                label="Full name"
+                required
+                value={fullName}
+                onChange={(e) => setFullName(e.target.value)}
+              />
+              <AuthField
+                label="Email"
+                type="email"
+                required
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+              />
+
+              <Select label="I am joining as" options={ROLE_OPTIONS} value={role} onChange={(e) => setRole(e.target.value)} />
+
+              <AuthField
+                label="Password"
+                type="password"
+                required
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+              />
+              <AuthField
+                label="Confirm password"
+                type="password"
+                required
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+              />
+              {passwordsMismatch && <p className="text-[13px] text-error">Passwords do not match</p>}
+
+              <label className="flex items-start gap-3 pt-2 text-[13px] leading-5 text-ink-soft">
+                <input
+                  type="checkbox"
+                  checked={agreedToTerms}
+                  onChange={(e) => setAgreedToTerms(e.target.checked)}
+                  required
+                  className="mt-0.5 h-4 w-4 shrink-0 accent-accent-violet"
+                />
+                <span>
+                  By creating an account, you agree to our{" "}
+                  <Link href="/legal/terms" className="font-medium text-ink underline underline-offset-2">
+                    Terms &amp; Conditions
+                  </Link>{" "}
+                  and{" "}
+                  <Link href="/legal/privacy" className="font-medium text-ink underline underline-offset-2">
+                    Privacy Policy
+                  </Link>
+                </span>
+              </label>
+
+              <Button type="submit" size="lg" loading={register.isPending} className="mt-4 w-full">
+                Create account
+              </Button>
+            </form>
+
+            <p className="mt-8 text-center text-[14px] text-ink-soft">
+              Already have an account?{" "}
+              <Link href="/login" className="font-semibold text-accent-violet hover:underline">
+                Log in
+              </Link>
+            </p>
+          </div>
+        </div>
+
+        <AuthVisualPanel
+          headline={
+            <>
+              Think fast,
+              <br />
+              build faster.
+            </>
+          }
+          tagline="1,280+ practical AI courses across automation, marketing, design, and development."
+          ctaLabel="Browse the course marketplace"
+          ctaHref="/courses"
+        />
       </div>
-
-      <p className="mt-8 text-center text-[14px] text-ink-soft">
-        Already have an account?{" "}
-        <Link href="/login" className="font-semibold text-gold-dark hover:underline">
-          Log in
-        </Link>
-      </p>
-    </div>
+    </section>
   );
 }
 
@@ -3549,6 +3639,78 @@ export default function SearchPage() {
 
 
 ================================================================================
+FILE: apps\web\app\(marketing)\_components\ActivityTicker.tsx
+================================================================================
+"use client";
+
+import { useEffect, useState } from "react";
+import { Sparkle } from "lucide-react";
+import { ACTIVITY_FEED } from "./landing-fake-data";
+
+export function ActivityTicker() {
+  const [index, setIndex] = useState(0);
+
+  useEffect(() => {
+    const id = setInterval(() => {
+      setIndex((i) => (i + 1) % ACTIVITY_FEED.length);
+    }, 3200);
+    return () => clearInterval(id);
+  }, []);
+
+  const item = ACTIVITY_FEED[index];
+
+  return (
+    <div className="mx-auto flex w-fit max-w-full items-center gap-2 rounded-full border border-line bg-card px-4 py-2 shadow-sm">
+      <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-teal-light text-teal">
+        <Sparkle size={11} />
+      </span>
+      <span key={item.id} className="truncate text-[12.5px] text-ink-soft duration-300 animate-in fade-in slide-in-from-bottom-1">
+        {item.text}
+      </span>
+    </div>
+  );
+}
+
+
+================================================================================
+FILE: apps\web\app\(marketing)\_components\BlogPreview.tsx
+================================================================================
+import Link from "next/link";
+import { ArrowUpRight } from "lucide-react";
+import { BLOG_POSTS } from "./landing-fake-data";
+
+export function BlogPreview() {
+  return (
+    <div className="grid grid-cols-1 gap-5 md:grid-cols-3">
+      {BLOG_POSTS.map((post) => (
+        <Link
+          key={post.id}
+          href="/about"
+          className="group overflow-hidden rounded-card border border-line bg-card transition-all hover:-translate-y-1 hover:shadow-lg"
+        >
+          <div className="aspect-video w-full overflow-hidden">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src={post.image} alt={post.title} className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105" />
+          </div>
+          <div className="p-5">
+            <div className="mb-2 flex items-center justify-between">
+              <span className="rounded-full bg-gold-tint px-2.5 py-0.5 text-[10.5px] font-semibold text-gold-dark">{post.tag}</span>
+              <span className="text-[11.5px] text-ink-soft">{post.readTime}</span>
+            </div>
+            <h3 className="line-clamp-2 text-[15px] font-semibold leading-snug text-ink">{post.title}</h3>
+            <span className="mt-3 flex items-center gap-1 text-[12.5px] font-medium text-accent-violet">
+              Read more
+              <ArrowUpRight size={13} className="transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+            </span>
+          </div>
+        </Link>
+      ))}
+    </div>
+  );
+}
+
+
+================================================================================
 FILE: apps\web\app\(marketing)\_components\FaqAccordion.tsx
 ================================================================================
 "use client";
@@ -3617,6 +3779,88 @@ export function FaqAccordion() {
   );
 }
 
+
+
+================================================================================
+FILE: apps\web\app\(marketing)\_components\landing-fake-data.ts
+================================================================================
+// Landing-page dummy content. All names, numbers, quotes, and logos here are
+// fictional placeholders for UI/UX purposes only -- swap for real API data
+// once the backend endpoints (courses, reviews, activity feed) are wired up.
+
+export type TrendingCourse = {
+  id: string;
+  title: string;
+  category: string;
+  instructor: string;
+  price: string;
+  rating: number;
+  students: string;
+  badge: "Bestseller" | "New" | "Hot" | "Staff pick";
+  image: string;
+};
+
+export const TRENDING_COURSES: TrendingCourse[] = [
+  { id: "t1", title: "Automate Everything with n8n & AI", category: "Automation", instructor: "Ayesha Khan", price: "$39", rating: 4.8, students: "6.2k", badge: "Bestseller", image: "https://images.unsplash.com/photo-1555949963-aa79dcee981c?w=480&h=320&fit=crop&q=70&auto=format" },
+  { id: "t2", title: "Build AI Agents with LangChain", category: "Development", instructor: "Omar Sheikh", price: "$59", rating: 4.9, students: "3.2k", badge: "Hot", image: "https://images.unsplash.com/photo-1531482615713-2afd69097998?w=480&h=320&fit=crop&q=70&auto=format" },
+  { id: "t3", title: "AI Chatbots for WhatsApp Support", category: "Automation", instructor: "Ayesha Khan", price: "$49", rating: 4.7, students: "1.6k", badge: "New", image: "https://images.unsplash.com/photo-1526378722484-bd91ca387e72?w=480&h=320&fit=crop&q=70&auto=format" },
+  { id: "t4", title: "AI Design Systems in Figma", category: "Design", instructor: "Noor Fatima", price: "$45", rating: 4.7, students: "1.1k", badge: "Staff pick", image: "https://images.unsplash.com/photo-1504384308090-c894fdcc538d?w=480&h=320&fit=crop&q=70&auto=format" },
+  { id: "t5", title: "Prompt Engineering for Client Work", category: "Fundamentals", instructor: "Hamza Malik", price: "$29", rating: 4.6, students: "980", badge: "Bestseller", image: "https://images.unsplash.com/photo-1550439062-609e1531270e?w=480&h=320&fit=crop&q=70&auto=format" },
+  { id: "t6", title: "Voice AI & Call Automation", category: "Automation", instructor: "Hina Malik", price: "$55", rating: 4.6, students: "890", badge: "New", image: "https://images.unsplash.com/photo-1519389950473-47ba0277781c?w=480&h=320&fit=crop&q=70&auto=format" }
+];
+
+export type ActivityItem = { id: string; text: string };
+
+export const ACTIVITY_FEED: ActivityItem[] = [
+  { id: "a1", text: "Bilal S. just enrolled in \"Automate Everything with n8n & AI\"" },
+  { id: "a2", text: "Fatima R. earned a certificate in \"AI Chatbots for WhatsApp Support\"" },
+  { id: "a3", text: "Omar Sheikh booked a mentorship session with Ayesha Khan" },
+  { id: "a4", text: "Hina Malik just enrolled in \"Voice AI & Call Automation\"" },
+  { id: "a5", text: "Sara Iqbal left a 5-star review on \"Prompt Engineering for Client Work\"" },
+  { id: "a6", text: "Ali Raza just enrolled in \"Build AI Agents with LangChain\"" },
+  { id: "a7", text: "Noor Fatima earned a certificate in \"AI Design Systems in Figma\"" }
+];
+
+export const COMPANY_LOGOS: string[] = [
+  "NovaWorks", "BrightStack", "Vertex Labs", "Cirrus Digital", "Ember Systems",
+  "Northline Tech", "Quill & Co", "Fenwick Studio"
+];
+
+export type BlogPost = {
+  id: string;
+  title: string;
+  tag: string;
+  readTime: string;
+  image: string;
+};
+
+export const BLOG_POSTS: BlogPost[] = [
+  { id: "b1", title: "5 n8n workflows every freelancer should automate first", tag: "Automation", readTime: "6 min read", image: "https://images.unsplash.com/photo-1555949963-aa79dcee981c?w=480&h=320&fit=crop&q=70&auto=format" },
+  { id: "b2", title: "How we structure a beginner-to-advanced AI curriculum", tag: "Teaching", readTime: "8 min read", image: "https://images.unsplash.com/photo-1531482615713-2afd69097998?w=480&h=320&fit=crop&q=70&auto=format" },
+  { id: "b3", title: "From student to instructor: Ayesha's story", tag: "Community", readTime: "4 min read", image: "https://images.unsplash.com/photo-1526378722484-bd91ca387e72?w=480&h=320&fit=crop&q=70&auto=format" }
+];
+
+export type ExtraTestimonial = {
+  name: string;
+  role: string;
+  avatar: string;
+  rating: number;
+  quote: string;
+  verified?: boolean;
+};
+
+export const EXTRA_TESTIMONIALS: ExtraTestimonial[] = [
+  { name: "Zara Ahmed", role: "Product designer", avatar: "https://i.pravatar.cc/64?img=48", rating: 5, verified: true, quote: "The design systems course completely changed how I hand off files to developers. Immediate ROI." },
+  { name: "Usman Tariq", role: "Agency owner", avatar: "https://i.pravatar.cc/64?img=13", rating: 5, verified: true, quote: "We onboarded our whole team through Saachi AI Business. Certificates and dashboards made tracking easy." },
+  { name: "Mahnoor Khalid", role: "Content strategist", avatar: "https://i.pravatar.cc/64?img=45", rating: 4, verified: false, quote: "Solid course library, wish there was more advanced copywriting content, but great value overall." },
+  { name: "Danish Iqbal", role: "Automation freelancer", avatar: "https://i.pravatar.cc/64?img=33", rating: 5, verified: true, quote: "Booked a mentorship call the same week I finished the course. Instructor feedback was gold." }
+];
+
+export const EXTRA_FAQS: { q: string; a: string }[] = [
+  { q: "Do certificates expire?", a: "No -- once issued, your completion certificate is yours to keep and share forever." },
+  { q: "Can I switch from learner to instructor later?", a: "Yes, anytime. Apply from your dashboard and our team reviews applications within a few business days." },
+  { q: "Is there a mobile app?", a: "The platform is fully responsive today; native apps are on our roadmap." }
+];
 
 
 ================================================================================
@@ -3729,6 +3973,157 @@ export function LandingSearch() {
 
 
 ================================================================================
+FILE: apps\web\app\(marketing)\_components\LogoCloud.tsx
+================================================================================
+import { COMPANY_LOGOS } from "./landing-fake-data";
+
+export function LogoCloud() {
+  return (
+    <div>
+      <p className="mb-6 text-center text-[12.5px] font-medium uppercase tracking-[0.1em] text-ink-soft/70">
+        Teams upskilling with Saachi AI
+      </p>
+      <div className="flex flex-wrap items-center justify-center gap-x-10 gap-y-5">
+        {COMPANY_LOGOS.map((name) => (
+          <span key={name} className="font-display text-[16px] font-bold text-ink-soft/50 transition-colors hover:text-ink-soft">
+            {name}
+          </span>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+
+================================================================================
+FILE: apps\web\app\(marketing)\_components\NewsletterCard.tsx
+================================================================================
+"use client";
+
+import { useState, type FormEvent } from "react";
+import { Mail, CheckCircle2 } from "lucide-react";
+
+export function NewsletterCard() {
+  const [email, setEmail] = useState("");
+  const [submitted, setSubmitted] = useState(false);
+
+  function handleSubmit(e: FormEvent) {
+    e.preventDefault();
+    // NOTE: demo-only, no backend newsletter-signup endpoint wired up yet.
+    setSubmitted(true);
+  }
+
+  return (
+    <div
+      className="relative overflow-hidden rounded-card p-8 text-center md:p-12"
+      style={{ backgroundImage: "var(--color-accent-gradient)" }}
+    >
+      <Mail size={26} className="mx-auto mb-3 text-white/90" />
+      <h2 className="font-display text-[22px] font-bold text-white md:text-[26px]">
+        Get new courses in your inbox
+      </h2>
+      <p className="mx-auto mt-2 max-w-md text-[13.5px] text-white/85">
+        One email a week. New releases, instructor spotlights, and the occasional discount code.
+      </p>
+
+      {submitted ? (
+        <div className="mx-auto mt-6 flex w-fit items-center gap-2 rounded-full bg-white/15 px-4 py-2 text-[13px] font-medium text-white">
+          <CheckCircle2 size={16} />
+          You&apos;re on the list -- check your inbox.
+        </div>
+      ) : (
+        <form onSubmit={handleSubmit} className="mx-auto mt-6 flex max-w-md flex-col gap-2 sm:flex-row">
+          <input
+            type="email"
+            required
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            placeholder="you@example.com"
+            className="w-full rounded-full border-0 px-4 py-2.5 text-[13.5px] text-ink outline-none placeholder:text-ink-soft/60 focus:ring-2 focus:ring-white/60"
+          />
+          <button
+            type="submit"
+            className="shrink-0 rounded-full bg-white px-5 py-2.5 text-[13.5px] font-semibold text-accent-violet transition-transform hover:scale-105"
+          >
+            Subscribe
+          </button>
+        </form>
+      )}
+    </div>
+  );
+}
+
+
+================================================================================
+FILE: apps\web\app\(marketing)\_components\PricingTeaser.tsx
+================================================================================
+import { PricingSection, type PricingSectionData } from "@/components/ui/pricing-tiers";
+
+const PRICING_DATA: PricingSectionData = {
+  title: "Simple, transparent pricing",
+  subtitle: "Buy individual courses, or go unlimited with Pro.",
+  plans: [
+    {
+      id: "basic",
+      name: "Basic",
+      price: "Free",
+      description: "Browse the marketplace and buy individual courses.",
+      features: ["Buy any course individually", "Completion certificates", "Community Q&A access"],
+      buttonText: "Get started",
+      buttonLink: "/register",
+      isFeatured: false
+    },
+    {
+      id: "pro",
+      name: "Pro",
+      price: "$19",
+      frequency: "/ mo",
+      description: "Unlimited access to all Standard-tier courses.",
+      features: [
+        "Unlimited standard courses",
+        "Everything in Basic",
+        "Priority support",
+        "Verified certificates included"
+      ],
+      buttonText: "Start Pro",
+      buttonLink: "/register",
+      isFeatured: true,
+      badge: "Most popular"
+    },
+    {
+      id: "business",
+      name: "Business",
+      price: "Custom",
+      description: "Bulk seats and team management for organizations.",
+      features: [
+        "Everything in Pro",
+        "Bulk seat licenses",
+        "Team completion dashboards",
+        "Custom invoicing"
+      ],
+      buttonText: "Contact sales",
+      buttonLink: "/contact",
+      isFeatured: false
+    }
+  ]
+};
+
+export function PricingTeaser() {
+  return (
+    <PricingSection
+      data={PRICING_DATA}
+      header={
+        <>
+          <h2 className="mb-2 font-display text-[22px] font-semibold text-ink">{PRICING_DATA.title}</h2>
+          <p className="mb-8 text-[14px] text-ink-soft">{PRICING_DATA.subtitle}</p>
+        </>
+      }
+    />
+  );
+}
+
+
+================================================================================
 FILE: apps\web\app\(marketing)\_components\Reveal.tsx
 ================================================================================
 "use client";
@@ -3783,6 +4178,160 @@ export function Reveal({
 
 
 ================================================================================
+FILE: apps\web\app\(marketing)\_components\SpotlightPanels.tsx
+================================================================================
+"use client";
+
+import Link from "next/link";
+import { GraduationCap, Users, Building2 } from "lucide-react";
+import { BorderBeamPanel } from "@/components/ui/border-beam-panel";
+
+const PANELS = [
+  {
+    icon: GraduationCap,
+    tag: "Certification",
+    title: "AI Automation Track",
+    desc: "A guided path through automation, prompt engineering, and agent-building -- finish with a verified certificate.",
+    cta: "Explore track",
+    href: "/courses",
+    colors: ["#7c3aed", "#ec4899"] as [string, string]
+  },
+  {
+    icon: Users,
+    tag: "1-on-1",
+    title: "Mentorship Sessions",
+    desc: "Book paid sessions directly with verified instructors for code review, feedback, or career advice.",
+    cta: "Book a mentor",
+    href: "/mentorship",
+    colors: ["#c026d3", "#22c7d9"] as [string, string]
+  },
+  {
+    icon: Building2,
+    tag: "For teams",
+    title: "Saachi AI Business",
+    desc: "Bulk seat licenses, team dashboards, and custom invoicing for organizations upskilling at scale.",
+    cta: "Talk to sales",
+    href: "/contact",
+    colors: ["#009fb3", "#7c3aed"] as [string, string]
+  }
+];
+
+export function SpotlightPanels() {
+  return (
+    <div className="grid grid-cols-1 gap-5 md:grid-cols-3">
+      {PANELS.map((p) => (
+        <BorderBeamPanel key={p.title} beams={2} thickness={2} radius={18} colors={p.colors} className="!bg-card !border-line">
+          <div className="flex flex-col gap-4">
+            <span className="flex w-fit items-center gap-1.5 rounded-full border border-line px-2.5 py-0.5 text-[10px] font-semibold uppercase tracking-[0.14em] text-ink-soft">
+              <p.icon size={12} />
+              {p.tag}
+            </span>
+            <h3 className="font-display text-[20px] font-semibold text-ink">{p.title}</h3>
+            <p className="text-[13.5px] leading-relaxed text-ink-soft">{p.desc}</p>
+            <Link
+              href={p.href}
+              className="mt-1 w-fit rounded-lg bg-ink px-4 py-2 text-[13px] font-medium text-paper transition-opacity hover:opacity-90"
+            >
+              {p.cta}
+            </Link>
+          </div>
+        </BorderBeamPanel>
+      ))}
+    </div>
+  );
+}
+
+
+================================================================================
+FILE: apps\web\app\(marketing)\_components\TrendingCarousel.tsx
+================================================================================
+"use client";
+
+import Link from "next/link";
+import { useRef } from "react";
+import { ChevronLeft, ChevronRight, Star, Flame } from "lucide-react";
+import { cn } from "@saachi/ui";
+import { TRENDING_COURSES } from "./landing-fake-data";
+
+const BADGE_STYLES: Record<string, string> = {
+  Bestseller: "bg-gold text-ink",
+  New: "bg-teal text-white",
+  Hot: "bg-accent-pink text-white",
+  "Staff pick": "bg-accent-violet text-white"
+};
+
+export function TrendingCarousel() {
+  const trackRef = useRef<HTMLDivElement>(null);
+
+  function scrollBy(amount: number) {
+    trackRef.current?.scrollBy({ left: amount, behavior: "smooth" });
+  }
+
+  return (
+    <div>
+      <div className="mb-5 flex items-center justify-between">
+        <div className="flex items-center gap-2">
+          <Flame size={18} className="text-accent-pink" />
+          <h2 className="font-display text-[22px] font-semibold text-ink">Trending this week</h2>
+        </div>
+        <div className="hidden items-center gap-2 md:flex">
+          <button
+            type="button"
+            aria-label="Scroll left"
+            onClick={() => scrollBy(-360)}
+            className="flex h-9 w-9 items-center justify-center rounded-full border border-line bg-card text-ink-soft hover:bg-paper-dim"
+          >
+            <ChevronLeft size={16} />
+          </button>
+          <button
+            type="button"
+            aria-label="Scroll right"
+            onClick={() => scrollBy(360)}
+            className="flex h-9 w-9 items-center justify-center rounded-full border border-line bg-card text-ink-soft hover:bg-paper-dim"
+          >
+            <ChevronRight size={16} />
+          </button>
+        </div>
+      </div>
+
+      <div
+        ref={trackRef}
+        className="flex snap-x snap-mandatory gap-4 overflow-x-auto pb-3 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+      >
+        {TRENDING_COURSES.map((c) => (
+          <Link
+            key={c.id}
+            href="/courses"
+            className="group relative w-[260px] shrink-0 snap-start overflow-hidden rounded-card border border-line bg-card transition-all hover:-translate-y-1 hover:shadow-lg"
+          >
+            <div className="relative aspect-video w-full overflow-hidden">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src={c.image} alt={c.title} className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105" />
+              <span className={cn("absolute left-3 top-3 rounded-full px-2.5 py-1 text-[10px] font-bold uppercase tracking-wide", BADGE_STYLES[c.badge])}>
+                {c.badge}
+              </span>
+            </div>
+            <div className="p-4">
+              <p className="text-[11px] font-medium uppercase tracking-wide text-accent-violet">{c.category}</p>
+              <h3 className="mt-1 line-clamp-2 text-[14.5px] font-semibold leading-snug text-ink">{c.title}</h3>
+              <p className="mt-1 text-[12.5px] text-ink-soft">{c.instructor}</p>
+              <div className="mt-3 flex items-center justify-between">
+                <span className="flex items-center gap-1 text-[12.5px] font-medium text-ink-soft">
+                  <Star size={12} className="fill-current text-accent-pink" />
+                  {c.rating} ({c.students})
+                </span>
+                <span className="font-mono text-[14px] font-bold text-ink">{c.price}</span>
+              </div>
+            </div>
+          </Link>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+
+================================================================================
 FILE: apps\web\app\(marketing)\page.tsx
 ================================================================================
 "use client";
@@ -3801,12 +4350,21 @@ import {
   TrendingUp,
   PlayCircle,
   Quote,
-  BadgeCheck
+  BadgeCheck,
+  ShieldCheck as VerifiedIcon
 } from "lucide-react";
 import { CATEGORIES } from "../../lib/categories";
 import { Reveal } from "./_components/Reveal";
 import { LandingSearch } from "./_components/LandingSearch";
 import { FaqAccordion } from "./_components/FaqAccordion";
+import { TrendingCarousel } from "./_components/TrendingCarousel";
+import { SpotlightPanels } from "./_components/SpotlightPanels";
+import { ActivityTicker } from "./_components/ActivityTicker";
+import { LogoCloud } from "./_components/LogoCloud";
+import { BlogPreview } from "./_components/BlogPreview";
+import { PricingTeaser } from "./_components/PricingTeaser";
+import { NewsletterCard } from "./_components/NewsletterCard";
+import { EXTRA_TESTIMONIALS } from "./_components/landing-fake-data";
 import { CoverflowCarousel } from "@/components/ui/coverflow-carousel";
 import { ImageStreamHero } from "@/components/ui/image-stream-hero";
 import HowItWorks from "@/components/ui/how-it-works";
@@ -3818,7 +4376,11 @@ const STATS = [
   { label: "Avg. rating", value: "4.8 / 5", icon: Star }
 ];
 
-const TRUST_BADGES = ["Featured on ProductHunt", "AI Weekly Pick", "TechCrunch Mentioned", "500+ 5-star reviews", "SSL Secured Checkout", "7-Day Refunds"];
+const TRUST_BADGES = [
+  "Featured on ProductHunt", "AI Weekly Pick", "TechCrunch Mentioned",
+  "500+ 5-star reviews", "SSL Secured Checkout", "7-Day Refunds",
+  "42,000+ learners", "1,280+ live courses"
+];
 
 const INSTRUCTORS = [
   { name: "Ayesha Khan", role: "Automation & n8n", students: "6.2k", avatar: "https://i.pravatar.cc/96?img=47" },
@@ -3831,33 +4393,26 @@ const INSTRUCTORS = [
 
 const TESTIMONIALS = [
   {
-    name: "Fatima R.",
-    role: "Freelance automation consultant",
-    avatar: "https://i.pravatar.cc/64?img=5",
-    rating: 5,
+    name: "Fatima R.", role: "Freelance automation consultant", avatar: "https://i.pravatar.cc/64?img=5",
+    rating: 5, verified: true,
     quote: "I landed 3 client projects within a month of finishing the n8n automation course. The invoice-parsing workflow alone paid for the course ten times over."
   },
   {
-    name: "Ali Raza",
-    role: "Support team lead",
-    avatar: "https://i.pravatar.cc/64?img=22",
-    rating: 5,
+    name: "Ali Raza", role: "Support team lead", avatar: "https://i.pravatar.cc/64?img=22",
+    rating: 5, verified: true,
     quote: "Our WhatsApp response time dropped by 70% after building the chatbot from the course. Practical, no fluff, straight to the point."
   },
   {
-    name: "Hina Malik",
-    role: "Marketing manager",
-    avatar: "https://i.pravatar.cc/64?img=25",
-    rating: 4,
+    name: "Hina Malik", role: "Marketing manager", avatar: "https://i.pravatar.cc/64?img=25",
+    rating: 4, verified: false,
     quote: "Best structured AI marketing content I have found anywhere. Wish there were a couple more advanced modules, but genuinely worth it."
   },
   {
-    name: "Omar Sheikh",
-    role: "Indie developer",
-    avatar: "https://i.pravatar.cc/64?img=15",
-    rating: 5,
+    name: "Omar Sheikh", role: "Indie developer", avatar: "https://i.pravatar.cc/64?img=15",
+    rating: 5, verified: true,
     quote: "Went from zero to shipping my own AI agent product in six weeks. The instructor actually answers Q&A -- that made all the difference."
-  }
+  },
+  ...EXTRA_TESTIMONIALS
 ];
 
 const HOW_IT_WORKS = [
@@ -3905,6 +4460,10 @@ export default function HomePage() {
           <div className="mt-10">
             <LandingSearch />
           </div>
+
+          <div className="mt-6">
+            <ActivityTicker />
+          </div>
         </div>
       </section>
 
@@ -3938,6 +4497,13 @@ export default function HomePage() {
         </Reveal>
       </section>
 
+      {/* Logo cloud */}
+      <section className="mx-auto max-w-7xl px-4 pb-16 md:px-8">
+        <Reveal>
+          <LogoCloud />
+        </Reveal>
+      </section>
+
       {/* Category grid */}
       <section className="mx-auto max-w-7xl px-4 pb-16 md:px-8">
         <Reveal>
@@ -3958,6 +4524,24 @@ export default function HomePage() {
             </Reveal>
           ))}
         </div>
+      </section>
+
+      {/* Trending carousel */}
+      <section className="mx-auto max-w-7xl px-4 pb-16 md:px-8">
+        <Reveal>
+          <TrendingCarousel />
+        </Reveal>
+      </section>
+
+      {/* Spotlight panels (Border Beam) */}
+      <section className="mx-auto max-w-7xl px-4 pb-16 md:px-8">
+        <Reveal>
+          <h2 className="mb-2 font-display text-[22px] font-semibold text-ink">Ways to level up</h2>
+          <p className="mb-8 text-[14px] text-ink-soft">Pick the path that fits how you learn best.</p>
+        </Reveal>
+        <Reveal delay={80}>
+          <SpotlightPanels />
+        </Reveal>
       </section>
 
       {/* How it works */}
@@ -3998,6 +4582,17 @@ export default function HomePage() {
         )}
       </section>
 
+      {/* Pricing teaser */}
+      <section className="mx-auto max-w-7xl px-4 pb-16 md:px-8">
+        <Reveal>
+          <h2 className="mb-2 font-display text-[22px] font-semibold text-ink">Simple, transparent pricing</h2>
+          <p className="mb-8 text-[14px] text-ink-soft">Buy individual courses, or go unlimited with Pro.</p>
+        </Reveal>
+        <Reveal delay={80}>
+          <PricingTeaser />
+        </Reveal>
+      </section>
+
       {/* Popular instructors -- coverflow */}
       <section className="mx-auto max-w-7xl px-4 pb-16 md:px-8">
         <Reveal>
@@ -4028,14 +4623,17 @@ export default function HomePage() {
         </Reveal>
         <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
           {TESTIMONIALS.map((t, i) => (
-            <Reveal key={t.name} delay={i * 80}>
+            <Reveal key={t.name} delay={i * 70}>
               <div className="relative h-full rounded-card border border-line bg-card p-6">
                 <Quote size={28} className="absolute right-5 top-5 text-line-strong" />
                 <div className="mb-3 flex items-center gap-3">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img src={t.avatar} alt={t.name} className="h-11 w-11 rounded-full object-cover" />
                   <div>
-                    <p className="text-[13.5px] font-semibold text-ink">{t.name}</p>
+                    <p className="flex items-center gap-1 text-[13.5px] font-semibold text-ink">
+                      {t.name}
+                      {t.verified && <VerifiedIcon size={12} className="text-teal" />}
+                    </p>
                     <p className="text-[12px] text-ink-soft">{t.role}</p>
                   </div>
                 </div>
@@ -4078,6 +4676,22 @@ export default function HomePage() {
           </ImageStreamHero>
         </Reveal>
       </section>
+
+      {/* Blog / resources */}
+      <section className="mx-auto max-w-7xl px-4 pb-16 md:px-8">
+        <Reveal>
+          <div className="mb-5 flex items-center justify-between">
+            <h2 className="font-display text-[22px] font-semibold text-ink">From the blog</h2>
+            <Link href="/about" className="text-[14px] font-medium text-accent-violet hover:underline">
+              View all
+            </Link>
+          </div>
+        </Reveal>
+        <Reveal delay={80}>
+          <BlogPreview />
+        </Reveal>
+      </section>
+
       {/* FAQ */}
       <section className="mx-auto max-w-4xl px-4 pb-16 md:px-8">
         <Reveal>
@@ -4086,6 +4700,13 @@ export default function HomePage() {
         </Reveal>
         <Reveal delay={100}>
           <FaqAccordion />
+        </Reveal>
+      </section>
+
+      {/* Newsletter */}
+      <section className="mx-auto max-w-7xl px-4 pb-16 md:px-8">
+        <Reveal>
+          <NewsletterCard />
         </Reveal>
       </section>
 
@@ -4121,7 +4742,6 @@ export default function HomePage() {
     </div>
   );
 }
-
 
 
 ================================================================================
@@ -4258,20 +4878,24 @@ FILE: apps\web\app\_components\SiteHeader.tsx
 
 import Link from "next/link";
 import { useState } from "react";
-import { ShoppingCart, Heart, Menu, X, LogOut } from "lucide-react";
+import { ShoppingCart, Heart, Menu as MenuIcon, X, LogOut } from "lucide-react";
 import { Button, ThemeToggle } from "@saachi/ui";
 import { useCartStore, useWishlistStore } from "@saachi/store";
 import { useSession, useLogout } from "@saachi/api-client";
+import { Menu, MenuItem, HoveredLink } from "@/components/ui/navbar-menu";
+import { CATEGORIES } from "../../lib/categories";
 
-const NAV_LINKS = [
-  { href: "/courses", label: "Courses" },
+const MOBILE_NAV_LINKS = [
+  { href: "/courses", label: "All courses" },
   { href: "/categories/ai-automation", label: "Automation" },
   { href: "/categories/ai-marketing", label: "Marketing" },
+  { href: "/pricing", label: "Pricing" },
   { href: "/about", label: "About" }
 ];
 
 export function SiteHeader() {
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [active, setActive] = useState<string | null>(null);
   const cartCount = useCartStore((s) => s.items.length);
   const wishlistCount = useWishlistStore((s) => s.items.length);
   const { data: session } = useSession();
@@ -4284,17 +4908,38 @@ export function SiteHeader() {
           Saachi<span className="text-gold-dark">AI</span>
         </Link>
 
-        <nav className="hidden items-center gap-6 md:flex">
-          {NAV_LINKS.map((link) => (
-            <Link
-              key={link.href}
-              href={link.href}
-              className="text-[14px] font-medium text-ink-soft transition-colors hover:text-ink"
-            >
-              {link.label}
-            </Link>
-          ))}
-        </nav>
+        <div className="hidden md:block">
+          <Menu setActive={setActive}>
+            <MenuItem setActive={setActive} active={active} item="Courses">
+              <div className="grid grid-cols-2 gap-x-10 gap-y-2 p-1 text-sm">
+                {CATEGORIES.map((cat) => (
+                  <HoveredLink key={cat.id} href={`/categories/${cat.slug}`}>
+                    {cat.name}
+                  </HoveredLink>
+                ))}
+                <HoveredLink href="/courses" className="font-semibold text-gold-dark">
+                  Browse all courses &rarr;
+                </HoveredLink>
+              </div>
+            </MenuItem>
+
+            <MenuItem setActive={setActive} active={active} item="For Instructors">
+              <div className="flex flex-col gap-3 text-sm">
+                <HoveredLink href="/register">Become an instructor</HoveredLink>
+                <HoveredLink href="/mentorship">Offer mentorship</HoveredLink>
+                <HoveredLink href="/legal/instructor-agreement">Instructor agreement</HoveredLink>
+              </div>
+            </MenuItem>
+
+            <MenuItem setActive={setActive} active={active} item="Company">
+              <div className="flex flex-col gap-3 text-sm">
+                <HoveredLink href="/about">About us</HoveredLink>
+                <HoveredLink href="/pricing">Pricing</HoveredLink>
+                <HoveredLink href="/contact">Contact</HoveredLink>
+              </div>
+            </MenuItem>
+          </Menu>
+        </div>
 
         <div className="flex items-center gap-2">
           <ThemeToggle />
@@ -4328,12 +4973,7 @@ export function SiteHeader() {
           {session ? (
             <div className="hidden items-center gap-2 md:flex">
               <span className="text-[13px] text-ink-soft">{session.fullName}</span>
-              <Button
-                size="sm"
-                variant="ghost"
-                onClick={() => logout.mutate()}
-                aria-label="Log out"
-              >
+              <Button size="sm" variant="ghost" onClick={() => logout.mutate()} aria-label="Log out">
                 <LogOut size={14} />
               </Button>
             </div>
@@ -4356,7 +4996,7 @@ export function SiteHeader() {
             onClick={() => setMobileOpen((v) => !v)}
             aria-label="Toggle menu"
           >
-            {mobileOpen ? <X size={20} /> : <Menu size={20} />}
+            {mobileOpen ? <X size={20} /> : <MenuIcon size={20} />}
           </button>
         </div>
       </div>
@@ -4364,7 +5004,7 @@ export function SiteHeader() {
       {mobileOpen && (
         <div className="border-t border-line bg-card px-4 py-4 md:hidden">
           <nav className="flex flex-col gap-3">
-            {NAV_LINKS.map((link) => (
+            {MOBILE_NAV_LINKS.map((link) => (
               <Link
                 key={link.href}
                 href={link.href}
@@ -4597,6 +5237,393 @@ export function Providers({ children }: { children: ReactNode }) {
 
   return <QueryClientProvider client={client}>{children}</QueryClientProvider>;
 }
+
+
+================================================================================
+FILE: apps\web\components\ui\auth-field.tsx
+================================================================================
+"use client";
+
+import { useState, type InputHTMLAttributes } from "react";
+import { cn } from "@/lib/utils";
+
+export type AuthFieldProps = InputHTMLAttributes<HTMLInputElement> & {
+  label: string;
+};
+
+/**
+ * Floating-label input box: while empty and unfocused, the label sits
+ * centered inside the box like a placeholder. As soon as the field has
+ * focus or a value, the label lifts to the right edge.
+ */
+export function AuthField({ label, className, value, onFocus, onBlur, id, ...props }: AuthFieldProps) {
+  const [focused, setFocused] = useState(false);
+  const hasValue = Boolean(value);
+  const showFloatingLabel = focused || hasValue;
+  const fieldId = id ?? props.name;
+
+  return (
+    <label
+      htmlFor={fieldId}
+      className={cn(
+        "flex h-14 items-center justify-between gap-4 rounded-[10px] border border-line bg-card px-5 text-[16px] leading-none transition-colors",
+        focused && "border-accent-violet",
+        className
+      )}
+    >
+      <input
+        id={fieldId}
+        value={value}
+        onFocus={(e) => {
+          setFocused(true);
+          onFocus?.(e);
+        }}
+        onBlur={(e) => {
+          setFocused(false);
+          onBlur?.(e);
+        }}
+        aria-label={label}
+        className="min-w-0 flex-1 truncate bg-transparent text-ink outline-none placeholder:text-transparent"
+        {...props}
+      />
+      <span
+        className={cn(
+          "shrink-0 text-ink-soft transition-opacity",
+          showFloatingLabel ? "text-[12px] font-medium uppercase tracking-wide" : "text-[16px]"
+        )}
+      >
+        {label}
+      </span>
+    </label>
+  );
+}
+
+
+================================================================================
+FILE: apps\web\components\ui\auth-visual-panel.tsx
+================================================================================
+"use client";
+
+import Link from "next/link";
+import { GrainGradient } from "@paper-design/shaders-react";
+import { Sparkles } from "lucide-react";
+
+export function AuthVisualPanel({
+  headline,
+  tagline,
+  ctaLabel,
+  ctaHref
+}: {
+  headline: React.ReactNode;
+  tagline: string;
+  ctaLabel: string;
+  ctaHref: string;
+}) {
+  return (
+    <div className="relative hidden min-h-[720px] overflow-hidden rounded-md bg-ink p-8 text-white sm:p-12 lg:flex">
+      <GrainGradient
+        speed={1}
+        scale={1}
+        rotation={0}
+        offsetX={0}
+        offsetY={0}
+        softness={0.5}
+        intensity={0.5}
+        noise={0.25}
+        shape="corners"
+        frame={2854.5}
+        colors={["#ffffff", "#7c3aed", "#ec4899", "#ffffff"]}
+        colorBack="#00000000"
+        className="absolute inset-0 bg-ink"
+      />
+
+      <div className="relative z-10 flex h-full w-full flex-col justify-between">
+        <h2 className="max-w-[560px] pt-0 font-display text-4xl font-medium leading-[1.05] tracking-[-0.03em] text-white sm:text-5xl lg:pt-16 lg:text-[56px]">
+          {headline}
+        </h2>
+
+        <div>
+          <p className="mb-6 max-w-md text-[14.5px] text-white/75">{tagline}</p>
+          <Link
+            href={ctaHref}
+            className="inline-flex h-12 max-w-full items-center gap-2.5 rounded-[10px] border border-white/25 px-5 text-[14px] font-medium text-white/90 backdrop-blur-sm transition-colors hover:border-white/45 hover:text-white"
+          >
+            <Sparkles size={16} className="shrink-0" />
+            <span className="truncate whitespace-nowrap">{ctaLabel}</span>
+          </Link>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+
+================================================================================
+FILE: apps\web\components\ui\border-beam-panel.tsx
+================================================================================
+"use client";
+
+import * as React from "react";
+import { clsx, type ClassValue } from "clsx";
+import { twMerge } from "tailwind-merge";
+
+/* Border Beam Panel Ã¢â‚¬â€ from Motiq (https://motiq.dev/components/border-beam-panel).
+   MIT licensed. Zero runtime dependencies. */
+
+const MOTIQ_TOKENS = "@layer motiq{:root{--motiq-accent:#315fea;--motiq-accent-text:#244fd1;--motiq-bg:#f7f9fc;--motiq-border:#dce4ef;--motiq-border-strong:#c5d1e1;--motiq-fg:#101828;--motiq-fg-secondary:#344054;--motiq-muted:#667085;--motiq-secondary-accent:#009fb3;--motiq-signature:#e9564a;--motiq-surface:#ffffff;--motiq-surface-2:#f8fafd}}@layer motiq{.dark,[data-theme=\"dark\"]{--motiq-accent:#4f7cff;--motiq-accent-text:#7f9fff;--motiq-bg:#080c14;--motiq-border:#263449;--motiq-border-strong:#354863;--motiq-fg:#f8fafc;--motiq-fg-secondary:#cbd5e1;--motiq-muted:#9caabd;--motiq-secondary-accent:#22c7d9;--motiq-signature:#ff6b5e;--motiq-surface:#111827;--motiq-surface-2:#192337}}";
+
+function cn(...inputs: ClassValue[]): string {
+  return twMerge(clsx(inputs));
+}
+
+function useReducedMotion(): boolean {
+  const [reduced, setReduced] = React.useState(
+    () => typeof window !== "undefined" && window.matchMedia("(prefers-reduced-motion: reduce)").matches,
+  );
+  React.useEffect(() => {
+    const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
+    setReduced(mq.matches);
+    const onChange = (e: MediaQueryListEvent) => setReduced(e.matches);
+    mq.addEventListener("change", onChange);
+    return () => mq.removeEventListener("change", onChange);
+  }, []);
+  return reduced;
+}
+
+function useVisibilityPause<T extends Element>(
+  ref: React.RefObject<T | null>,
+  { threshold = 0.1 }: { threshold?: number } = {},
+): boolean {
+  const [onScreen, setOnScreen] = React.useState(true);
+  const [tabVisible, setTabVisible] = React.useState(true);
+
+  React.useEffect(() => {
+    const el = ref.current;
+    if (!el || typeof IntersectionObserver === "undefined") return;
+    const io = new IntersectionObserver(
+      (entries) => setOnScreen(entries.some((e) => e.isIntersecting)),
+      { threshold },
+    );
+    io.observe(el);
+    return () => io.disconnect();
+  }, [ref, threshold]);
+
+  React.useEffect(() => {
+    const onVis = () => setTabVisible(document.visibilityState !== "hidden");
+    onVis();
+    document.addEventListener("visibilitychange", onVis);
+    return () => document.removeEventListener("visibilitychange", onVis);
+  }, []);
+
+  return onScreen && tabVisible;
+}
+
+export interface BorderBeamPanelProps extends React.HTMLAttributes<HTMLDivElement> {
+  children?: React.ReactNode;
+  beams?: 1 | 2;
+  colors?: [string, string?];
+  thickness?: number;
+  idleSpeed?: number;
+  hoverSpeed?: number;
+  glow?: boolean;
+  radius?: number;
+  spring?: { stiffness?: number; damping?: number };
+  seed?: number;
+  pauseWhenHidden?: boolean;
+  reducedMotion?: boolean;
+}
+
+class Spring {
+  x: number;
+  v = 0;
+  target: number;
+  k: number;
+  d: number;
+  constructor(value: number, k: number, d: number) {
+    this.x = value;
+    this.target = value;
+    this.k = k;
+    this.d = d;
+  }
+  step(dt: number): number {
+    const a = this.k * (this.target - this.x) - this.d * this.v;
+    this.v += a * dt;
+    this.x += this.v * dt;
+    return this.x;
+  }
+}
+
+const clamp = (n: number, lo: number, hi: number) => Math.min(hi, Math.max(lo, n));
+
+const PARKED_ANGLE = 40;
+
+function comet(tail: string, head: string, tip: string, midAlpha: number, start: number): string {
+  return [
+    `color-mix(in srgb, ${tail} 4%, transparent) ${start + 18}deg`,
+    `color-mix(in srgb, ${tail} ${midAlpha}%, transparent) ${start + 46}deg`,
+    `${head} ${start + 56}deg`,
+    `${tip} ${start + 60}deg`,
+    `transparent ${start + 63}deg`,
+  ].join(", ");
+}
+
+function ringGradient(beams: 1 | 2, colors: [string, string?] | undefined): string {
+  const tail0 = colors?.[0] ?? "var(--motiq-accent, #4f7cff)";
+  const head0 = colors?.[0] ?? "var(--motiq-secondary-accent, #22c7d9)";
+  const stops = [
+    "transparent 0deg",
+    comet(tail0, head0, `color-mix(in srgb, ${head0} 22%, #ffffff)`, 55, 0),
+  ];
+  if (beams === 2) {
+    const c1 = colors?.[1] ?? "var(--motiq-signature, #ff6b5e)";
+    stops.push("transparent 198deg", comet(c1, c1, `color-mix(in srgb, ${c1} 26%, #ffffff)`, 50, 198));
+  }
+  stops.push("transparent 360deg");
+  return `conic-gradient(from var(--mk-beam-a, 0deg), ${stops.join(", ")})`;
+}
+
+function BorderBeamPanelBase({
+  children,
+  beams = 2,
+  colors,
+  thickness = 2,
+  idleSpeed = 42,
+  hoverSpeed = 240,
+  glow = true,
+  radius = 16,
+  spring,
+  seed = 1,
+  pauseWhenHidden = true,
+  reducedMotion,
+  className,
+  style,
+  ...props
+}: BorderBeamPanelProps) {
+  const uid = React.useId().replace(/[^a-zA-Z0-9]/g, "");
+  const cls = `mk-beam-${uid}`;
+  const rootRef = React.useRef<HTMLDivElement | null>(null);
+
+  const systemReduced = useReducedMotion();
+  const [hydrated, setHydrated] = React.useState(false);
+  React.useEffect(() => setHydrated(true), []);
+  const staticMode = reducedMotion === true || (hydrated && systemReduced);
+  const onScreen = useVisibilityPause(rootRef, { threshold: 0.05 });
+  const paused = pauseWhenHidden && !onScreen;
+  const animate = !staticMode && !paused;
+
+  const stiffness = spring?.stiffness ?? 30;
+  const damping = spring?.damping ?? 11;
+
+  const startAngle = React.useMemo(() => ((seed * 137.508) % 360 + 360) % 360, [seed]);
+
+  const speedRef = React.useRef(new Spring(idleSpeed, stiffness, damping));
+  const angleRef = React.useRef(startAngle);
+  const liveRef = React.useRef({ idleSpeed, hoverSpeed });
+  liveRef.current = { idleSpeed, hoverSpeed };
+
+  React.useEffect(() => {
+    speedRef.current.k = stiffness;
+    speedRef.current.d = damping;
+  }, [stiffness, damping]);
+
+  const paint = React.useCallback((angle: number) => {
+    rootRef.current?.style.setProperty("--mk-beam-a", `${(((angle % 360) + 360) % 360).toFixed(2)}deg`);
+  }, []);
+
+  React.useEffect(() => {
+    if (!animate) return;
+    let raf = 0;
+    let last = 0;
+    const frame = (now: number) => {
+      if (!last) last = now;
+      const dt = clamp((now - last) / 1000, 0, 0.05);
+      last = now;
+      angleRef.current += speedRef.current.step(dt) * dt;
+      paint(angleRef.current);
+      raf = requestAnimationFrame(frame);
+    };
+    raf = requestAnimationFrame(frame);
+    return () => cancelAnimationFrame(raf);
+  }, [animate, paint]);
+
+  React.useEffect(() => {
+    if (!staticMode) return;
+    angleRef.current = PARKED_ANGLE;
+    speedRef.current.x = speedRef.current.target = liveRef.current.idleSpeed;
+    speedRef.current.v = 0;
+    paint(PARKED_ANGLE);
+  }, [staticMode, paint]);
+
+  const surge = React.useCallback(() => {
+    speedRef.current.target = liveRef.current.hoverSpeed;
+  }, []);
+  const settle = React.useCallback(() => {
+    speedRef.current.target = liveRef.current.idleSpeed;
+  }, []);
+
+  const gradient = React.useMemo(() => ringGradient(beams, colors), [beams, colors]);
+
+  const css = `
+.${cls} .mk-beam-ring, .${cls} .mk-beam-glow {
+  position: absolute;
+  inset: -1px;
+  border-radius: ${radius}px;
+  pointer-events: none;
+  background: ${gradient};
+}
+.${cls} .mk-beam-ring {
+  padding: ${Math.max(1, thickness)}px;
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  mask-composite: exclude;
+}
+.${cls} .mk-beam-glow { filter: blur(14px); opacity: 0.35; z-index: -1; }
+@media (forced-colors: active) {
+  .${cls} .mk-beam-ring, .${cls} .mk-beam-glow { display: none; }
+  .${cls} { border-color: CanvasText; }
+}`.trim();
+
+  return (
+    <div
+      ref={rootRef}
+      data-motion={staticMode ? "static" : "animated"}
+      data-paused={paused ? "true" : "false"}
+      onPointerEnter={surge}
+      onPointerLeave={settle}
+      onFocus={surge}
+      onBlur={settle}
+      className={cn(
+        "relative w-full border border-[var(--motiq-border,#263449)] bg-[var(--motiq-surface,#111827)] p-7",
+        cls,
+        className,
+      )}
+      style={{
+        borderRadius: `${radius}px`,
+        isolation: "isolate",
+        ["--mk-beam-a" as string]: `${startAngle.toFixed(2)}deg`,
+        ...style,
+      }}
+      {...props}
+    >
+      <style dangerouslySetInnerHTML={{ __html: css }} />
+      {glow ? <div aria-hidden="true" className="mk-beam-glow" /> : null}
+      <div aria-hidden="true" className="mk-beam-ring" />
+      {children}
+    </div>
+  );
+}
+
+export function BorderBeamPanel(props: BorderBeamPanelProps) {
+  return (
+    <>
+      <style dangerouslySetInnerHTML={{ __html: MOTIQ_TOKENS }} />
+      <BorderBeamPanelBase {...props} />
+    </>
+  );
+}
+
+export default BorderBeamPanel;
 
 
 ================================================================================
@@ -5175,6 +6202,248 @@ export default ImageStreamHero;
 
 
 ================================================================================
+FILE: apps\web\components\ui\navbar-menu.tsx
+================================================================================
+"use client";
+import React from "react";
+import { motion } from "framer-motion";
+import Link from "next/link";
+import Image from "next/image";
+import { cn } from "@/lib/utils";
+
+const transition = {
+  type: "spring",
+  mass: 0.5,
+  damping: 11.5,
+  stiffness: 100,
+  restDelta: 0.001,
+  restSpeed: 0.001,
+};
+
+export const MenuItem = ({
+  setActive,
+  active,
+  item,
+  children,
+}: {
+  setActive: (item: string) => void;
+  active: string | null;
+  item: string;
+  children?: React.ReactNode;
+}) => {
+  return (
+    <div onMouseEnter={() => setActive(item)} className="relative">
+      <motion.p
+        transition={{ duration: 0.3 }}
+        className="cursor-pointer text-[14px] font-medium text-ink-soft transition-colors hover:text-ink"
+      >
+        {item}
+      </motion.p>
+      {active !== null && (
+        <motion.div
+          initial={{ opacity: 0, scale: 0.85, y: 10 }}
+          animate={{ opacity: 1, scale: 1, y: 0 }}
+          transition={transition}
+        >
+          {active === item && (
+            <div className="absolute top-[calc(100%_+_1.2rem)] left-1/2 -translate-x-1/2 pt-4">
+              <motion.div
+                transition={transition}
+                layoutId="active"
+                className="overflow-hidden rounded-2xl border border-line bg-card shadow-xl backdrop-blur-sm"
+              >
+                <motion.div layout className="h-full w-max p-4">
+                  {children}
+                </motion.div>
+              </motion.div>
+            </div>
+          )}
+        </motion.div>
+      )}
+    </div>
+  );
+};
+
+export const Menu = ({
+  setActive,
+  children,
+}: {
+  setActive: (item: string | null) => void;
+  children: React.ReactNode;
+}) => {
+  return (
+    <nav
+      onMouseLeave={() => setActive(null)}
+      className="relative flex items-center justify-center gap-6"
+    >
+      {children}
+    </nav>
+  );
+};
+
+export const ProductItem = ({
+  title,
+  description,
+  href,
+  src,
+}: {
+  title: string;
+  description: string;
+  href: string;
+  src: string;
+}) => {
+  return (
+    <Link href={href} className="flex gap-3">
+      <Image
+        src={src}
+        width={128}
+        height={64}
+        alt={title}
+        className="h-16 w-32 shrink-0 rounded-md object-cover shadow-lg"
+      />
+      <div>
+        <h4 className="mb-1 text-[14.5px] font-semibold text-ink">{title}</h4>
+        <p className="max-w-[10rem] text-[12.5px] leading-snug text-ink-soft">{description}</p>
+      </div>
+    </Link>
+  );
+};
+
+export const HoveredLink = ({ children, className, ...rest }: any) => {
+  return (
+    <Link
+      {...rest}
+      className={cn("text-[13.5px] text-ink-soft transition-colors hover:text-ink", className)}
+    >
+      {children}
+    </Link>
+  );
+};
+
+
+================================================================================
+FILE: apps\web\components\ui\pricing-tiers.tsx
+================================================================================
+import type { ReactNode } from "react";
+import Link from "next/link";
+import { Check } from "lucide-react";
+import { cn } from "@/lib/utils";
+
+export type PricingPlan = {
+  id: string;
+  name: string;
+  price: string;
+  frequency?: string;
+  description: string;
+  features: string[];
+  buttonText: string;
+  buttonLink: string;
+  isFeatured?: boolean;
+  badge?: string;
+};
+
+export type PricingSectionData = {
+  title: string;
+  subtitle?: string;
+  plans: PricingPlan[];
+};
+
+function PricingTier({
+  name,
+  price,
+  frequency,
+  description,
+  features,
+  buttonText,
+  buttonLink,
+  isFeatured = false,
+  badge
+}: PricingPlan) {
+  return (
+    <div
+      className={cn(
+        "flex w-full max-w-sm flex-col rounded-card border p-8 transition-transform duration-200",
+        isFeatured
+          ? "border-accent-violet/50 bg-gold-tint shadow-xl ring-1 ring-accent-violet/30 md:-translate-y-2"
+          : "border-line bg-card shadow-sm hover:-translate-y-1"
+      )}
+    >
+      {isFeatured && badge && (
+        <span className="mb-3 w-fit self-center rounded-full bg-gold-dark px-3 py-1 text-[11px] font-bold uppercase tracking-wide text-white">
+          {badge}
+        </span>
+      )}
+
+      <h3 className="text-center font-display text-[22px] font-bold text-ink">{name}</h3>
+
+      <div className="mt-4 flex items-baseline justify-center gap-1">
+        <span className="font-mono text-[42px] font-extrabold leading-none text-ink">{price}</span>
+        {frequency && <span className="text-[14px] font-medium text-ink-soft">{frequency}</span>}
+      </div>
+
+      <p className="mt-4 text-center text-[13.5px] leading-relaxed text-ink-soft">{description}</p>
+
+      <ul className="mt-8 flex flex-1 flex-col gap-3.5">
+        {features.map((feature) => (
+          <li key={feature} className="flex items-start gap-3 text-[13.5px] text-ink">
+            <span
+              className={cn(
+                "mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full",
+                isFeatured ? "bg-accent-violet text-white" : "bg-teal-light text-teal"
+              )}
+            >
+              <Check size={12} strokeWidth={3} />
+            </span>
+            {feature}
+          </li>
+        ))}
+      </ul>
+
+      <Link
+        href={buttonLink}
+        className={cn(
+          "mt-8 w-full rounded-full py-3 text-center text-[13.5px] font-semibold transition-transform hover:scale-[1.02]",
+          isFeatured ? "bg-ink text-paper" : "border border-line text-ink hover:bg-paper-dim"
+        )}
+      >
+        {buttonText}
+      </Link>
+    </div>
+  );
+}
+
+export function PricingSection({
+  data,
+  className,
+  header
+}: {
+  data: PricingSectionData;
+  className?: string;
+  header?: ReactNode;
+}) {
+  return (
+    <div className={className}>
+      {header ?? (
+        <div className="mb-10 text-center">
+          <h2 className="font-display text-[26px] font-bold text-ink md:text-[32px]">{data.title}</h2>
+          {data.subtitle && (
+            <p className="mx-auto mt-3 max-w-xl text-[14.5px] text-ink-soft">{data.subtitle}</p>
+          )}
+        </div>
+      )}
+      <div className="flex flex-col items-stretch justify-center gap-6 md:flex-row md:items-center">
+        {data.plans.map((plan) => (
+          <PricingTier key={plan.id} {...plan} />
+        ))}
+      </div>
+    </div>
+  );
+}
+
+export default PricingSection;
+
+
+================================================================================
 FILE: apps\web\lib\design-system\generate-css-vars.mjs
 ================================================================================
 // Stub: static tokens already live in app/globals.css + tailwind.config.js.
@@ -5419,7 +6688,7 @@ FILE: apps\web\package.json
                          "framer-motion":  "^11.5.0",
                          "recharts":  "^2.12.0",
                          "lucide-react":  "^0.445.0",
-                         "motion": "^11.15.0",
+                         "motion":  "^11.15.0",
                          "lottie-react":  "^2.4.0",
                          "next-intl":  "^3.19.0",
                          "clsx":  "^2.1.0",
@@ -5427,7 +6696,8 @@ FILE: apps\web\package.json
                          "@tiptap/react":  "^2.7.0",
                          "@tiptap/starter-kit":  "^2.7.0",
                          "antd":  "^5.21.0",
-                         "@ant-design/nextjs-registry":  "^1.0.0"
+                         "@ant-design/nextjs-registry":  "^1.0.0",
+                         "@paper-design/shaders-react":  "^0.0.35"
                      },
     "devDependencies":  {
                             "@types/node":  "^22.5.0",

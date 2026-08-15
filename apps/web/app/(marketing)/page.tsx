@@ -32,6 +32,7 @@ import { EXTRA_TESTIMONIALS } from "./_components/landing-fake-data";
 import { CoverflowCarousel } from "@/components/ui/coverflow-carousel";
 import { ImageStreamHero } from "@/components/ui/image-stream-hero";
 import HowItWorks from "@/components/ui/how-it-works";
+import { LimitedTimeOfferPricing } from "@/components/ui/limited-time-offer-pricing";
 
 const STATS = [
   { label: "Active students", value: "42,000+", icon: Users },
@@ -254,6 +255,13 @@ export default function HomePage() {
         </Reveal>
         <Reveal delay={80}>
           <PricingTeaser />
+        </Reveal>
+      </section>
+
+      {/* Limited-time offer */}
+      <section className="mx-auto max-w-7xl px-4 pb-16 md:px-8">
+        <Reveal delay={100}>
+          <LimitedTimeOfferPricing />
         </Reveal>
       </section>
 
