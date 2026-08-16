@@ -143,7 +143,7 @@ export function LimitedTimeOfferPricing() {
                     <span className="-mb-0.5 font-display text-4xl font-extrabold tracking-tighter text-ink md:text-5xl">16</span>
                     <span>/month</span>
                   </div>
-                  <a href="/register" className={monthlyCtaClassName}>Start Your Journey</a>
+                  <a href="/checkout" className={monthlyCtaClassName}>Start Your Journey</a>
                 </div>
               </div>
 
@@ -171,7 +171,7 @@ export function LimitedTimeOfferPricing() {
                     <span className="-mb-0.5 font-display text-4xl font-extrabold tracking-tighter text-ink md:text-5xl">12.99</span>
                     <span>/month</span>
                   </div>
-                  <a href="/register" className={yearlyCtaClassName} style={yearlyCtaStyle}>Claim This Offer</a>
+                  <a href="/checkout" className={yearlyCtaClassName} style={yearlyCtaStyle}>Claim This Offer</a>
                 </div>
               </div>
             </div>

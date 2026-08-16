@@ -1,4 +1,4 @@
-import Link from "next/link";
+﻿import Link from "next/link";
 import { Button, Badge } from "@saachi/ui";
 
 const PLANS = [
@@ -21,7 +21,7 @@ const PLANS = [
       "Verified certificates included"
     ],
     cta: "Start Pro",
-    href: "/register",
+    href: "/checkout",
     highlighted: true
   },
   {

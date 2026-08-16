@@ -1,11 +1,10 @@
 ﻿"use client";
 
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { ShieldCheck, Lock } from "lucide-react";
-import { useCartStore } from "@saachi/store";
-import { useOrderStore } from "@saachi/store";
+import { useCartStore, useOrderStore } from "@saachi/store";
 import { Button, EmptyState } from "@saachi/ui";
 import { CreditCardForm, type CardState, type CardValidity } from "@/components/ui/credit-card-form";
 
@@ -21,21 +20,14 @@ export default function CheckoutPage() {
 
   const addOrder = useOrderStore((s) => s.addOrder);
 
-  const [validity, setValidity] = useState<CardValidity | null>(null);
   const [processing, setProcessing] = useState(false);
 
   const currency = items[0]?.currency ?? "USD";
   const fmt = (n: number) =>
     new Intl.NumberFormat("en-US", { style: "currency", currency }).format(n);
 
-  const canPay = useMemo(() => items.length > 0 && validity?.allValid, [items, validity]);
-
-  function handleCardChange(_state: CardState, v: CardValidity) {
-    setValidity(v);
-  }
-
-  function handleCardSubmit(_state: CardState, v: CardValidity) {
-    if (!v.allValid || items.length === 0 || processing) return;
+  function handleCardSubmit(_state: CardState, validity: CardValidity) {
+    if (!validity.allValid || items.length === 0 || processing) return;
 
     setProcessing(true);
 
@@ -82,13 +74,9 @@ export default function CheckoutPage() {
         Secure checkout - your card details never leave your browser in this demo.
       </p>
 
-      <div className="grid grid-cols-1 gap-8 md:grid-cols-[1fr_320px]">
-        <div className="rounded-card border border-line bg-card p-6 md:p-8">
-          <CreditCardForm
-            onChange={handleCardChange}
-            onSubmit={handleCardSubmit}
-            submitLabel={processing ? "Processing..." : `Pay ${fmt(total)}`}
-          />
+      <div className="grid grid-cols-1 gap-8 lg:grid-cols-[1fr_320px]">
+        <div className="overflow-hidden rounded-card border border-line bg-card">
+          <CreditCardForm onSubmit={handleCardSubmit} />
         </div>
 
         <aside className="h-fit rounded-card border border-line bg-card p-6">
@@ -132,12 +120,6 @@ export default function CheckoutPage() {
             <ShieldCheck size={14} className="shrink-0 text-teal" />
             7-day refund window on all courses.
           </div>
-
-          {!canPay && (
-            <p className="mt-4 text-[12.5px] text-ink-soft">
-              Fill in valid card details on the left to enable payment.
-            </p>
-          )}
         </aside>
       </div>
     </div>

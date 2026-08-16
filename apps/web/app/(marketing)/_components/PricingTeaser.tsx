@@ -1,4 +1,4 @@
-import { PricingSection, type PricingSectionData } from "@/components/ui/pricing-tiers";
+﻿import { PricingSection, type PricingSectionData } from "@/components/ui/pricing-tiers";
 
 const PRICING_DATA: PricingSectionData = {
   title: "Simple, transparent pricing",
@@ -27,7 +27,7 @@ const PRICING_DATA: PricingSectionData = {
         "Verified certificates included"
       ],
       buttonText: "Start Pro",
-      buttonLink: "/register",
+      buttonLink: "/checkout",
       isFeatured: true,
       badge: "Most popular"
     },

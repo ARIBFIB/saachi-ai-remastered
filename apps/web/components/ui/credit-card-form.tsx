@@ -1,7 +1,6 @@
 ﻿"use client";
 
 import React, { useEffect, useMemo, useState } from "react";
-import { cn } from "@/lib/utils";
 
 type CardState = {
   number: string;
@@ -27,8 +26,9 @@ type Props = {
   defaultYear?: string;
   defaultCVV?: string;
   maskMiddle?: boolean;
+  ring1?: string;
+  ring2?: string;
   showSubmit?: boolean;
-  submitLabel?: string;
   onChange?: (state: CardState, validity: CardValidity) => void;
   onSubmit?: (state: CardState, validity: CardValidity) => void;
   className?: string;
@@ -42,19 +42,20 @@ function clampDigits(value: string, maxLen: number) {
   return value.replace(/\D/g, "").slice(0, maxLen);
 }
 
-export function CreditCardForm({
+const CreditCardForm = ({
   defaultNumber = "",
   defaultHolder = "",
   defaultMonth = "",
   defaultYear = "",
   defaultCVV = "",
   maskMiddle = true,
+  ring1 = "#ff6be7",
+  ring2 = "#7288ff",
   showSubmit = true,
-  submitLabel,
   onChange,
   onSubmit,
   className = "",
-}: Props) {
+}: Props) => {
   const [number, setNumber] = useState(clampDigits(defaultNumber, 19));
   const [holder, setHolder] = useState(defaultHolder.toUpperCase());
   const [month, setMonth] = useState(defaultMonth);
@@ -86,13 +87,12 @@ export function CreditCardForm({
 
   useEffect(() => {
     onChange?.({ number, holder, month, year, cvv }, validity);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [number, holder, month, year, cvv, validity]);
+  }, [number, holder, month, year, cvv, validity, onChange]);
 
   const displayDigits = useMemo(() => number.slice(0, 16).split(""), [number]);
 
   const displayedSlots = useMemo(() => {
-    const arr: { text: string; filled: boolean }[] = [];
+    const arr: { textTop: string; filed: boolean }[] = [];
     for (let i = 0; i < 16; i++) {
       let content = "#";
       if (i < displayDigits.length) {
@@ -100,114 +100,97 @@ export function CreditCardForm({
         const shouldMask = maskMiddle && i >= 4 && i <= 11;
         content = shouldMask ? "*" : d;
       }
-      arr.push({ text: content, filled: i < displayDigits.length });
+      arr.push({ textTop: content, filed: i < displayDigits.length });
     }
     return arr;
   }, [displayDigits, maskMiddle]);
 
-  function handleSubmit(e: React.FormEvent) {
+  const highlightClass = (() => {
+    switch (focusField) {
+      case "number":
+        return "highlight__number";
+      case "holder":
+        return "highlight__holder";
+      case "expire":
+        return "highlight__expire";
+      case "cvv":
+        return "highlight__cvv";
+      default:
+        return "hidden";
+    }
+  })();
+
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     onSubmit?.({ number, holder, month, year, cvv }, validity);
-  }
+  };
 
   return (
-    <div className={cn("w-full", className)}>
-      <div className="grid grid-cols-1 gap-8 md:grid-cols-2 md:items-start">
-        {/* CARD PREVIEW */}
-        <div
-          className="relative mx-auto w-full max-w-[380px]"
-          style={{ perspective: "1000px" }}
-        >
-          <div
-            className="relative h-[210px] w-full transition-transform duration-700"
-            style={{
-              transformStyle: "preserve-3d",
-              transform: flip ? "rotateY(180deg)" : "rotateY(0deg)",
-            }}
-          >
-            {/* FRONT */}
-            <div
-              className="absolute inset-0 overflow-hidden rounded-card p-6"
-              style={{
-                backfaceVisibility: "hidden",
-                backgroundImage: "var(--color-accent-gradient)",
-              }}
-            >
-              <div className="pointer-events-none absolute -right-10 -top-10 h-40 w-40 rounded-full bg-white/10 blur-2xl" />
-              <div className="pointer-events-none absolute -bottom-14 -left-10 h-40 w-40 rounded-full bg-black/10 blur-2xl" />
+    <section className={`ccp ${className}`}>
+      <div className="wrap">
+        <section id="card" className={`card ${flip ? "flip" : ""}`}>
+          <div id="highlight" className={highlightClass} />
 
-              <div className="relative flex items-center justify-between text-white">
-                <span className="font-display text-[14px] font-semibold tracking-wide">
-                  Saachi<span className="opacity-80">AI</span>
-                </span>
-                <span className="text-[11px] font-medium uppercase tracking-[0.08em] opacity-80">
-                  Credit Card
-                </span>
-              </div>
-
-              <div className="relative mt-8 flex gap-2 font-mono text-[19px] font-medium text-white">
-                {displayedSlots.map((slot, idx) => (
-                  <span
-                    key={idx}
-                    className={cn(
-                      "inline-block w-[13px] text-center",
-                      idx > 0 && idx % 4 === 0 && "ml-1.5"
-                    )}
-                  >
-                    {slot.text}
-                  </span>
-                ))}
-              </div>
-
-              <div className="relative mt-8 flex items-end justify-between text-white">
-                <div className="min-w-0">
-                  <div className="text-[10px] font-medium uppercase tracking-[0.08em] opacity-70">
-                    Card holder
-                  </div>
-                  <div className="mt-1 truncate text-[13.5px] font-semibold uppercase">
-                    {holder || "NAME ON CARD"}
-                  </div>
-                </div>
-                <div className="shrink-0 text-right">
-                  <div className="text-[10px] font-medium uppercase tracking-[0.08em] opacity-70">
-                    Expires
-                  </div>
-                  <div className="mt-1 text-[13.5px] font-semibold">
-                    {month || "MM"}/{year ? year.slice(-2) : "YY"}
-                  </div>
-                </div>
-              </div>
+          <section className="card__front" style={{ ["--ring1" as any]: ring1, ["--ring2" as any]: ring2 }}>
+            <div className="card__header">
+              <div>CreditCard</div>
+              <svg xmlns="http://www.w3.org/2000/svg" height="40" width="60" viewBox="-96 -98.908 832 593.448">
+                <path fill="#ff5f00" d="M224.833 42.298h190.416v311.005H224.833z" />
+                <path
+                  d="M244.446 197.828a197.448 197.448 0 0175.54-155.475 197.777 197.777 0 100 311.004 197.448 197.448 0 01-75.54-155.53z"
+                  fill="#eb001b"
+                />
+                <path
+                  d="M621.101 320.394v-6.372h2.747v-1.319h-6.537v1.319h2.582v6.373zm12.691 0v-7.69h-1.978l-2.307 5.493-2.308-5.494h-1.977v7.691h1.428v-5.823l2.143 5h1.483l2.143-5v5.823z"
+                  fill="#f79e1b"
+                />
+                <path
+                  d="M640 197.828a197.777 197.777 0 01-320.015 155.474 197.777 197.777 0 000-311.004A197.777 197.777 0 01640 197.773z"
+                  fill="#f79e1b"
+                />
+              </svg>
             </div>
 
-            {/* BACK */}
-            <div
-              className="absolute inset-0 overflow-hidden rounded-card bg-ink"
-              style={{
-                backfaceVisibility: "hidden",
-                transform: "rotateY(180deg)",
-              }}
-            >
-              <div className="mt-6 h-10 w-full bg-black/60" />
-              <div className="mt-6 flex flex-col items-end gap-1.5 px-6">
-                <span className="text-[11px] font-semibold uppercase tracking-wide text-white/70">
-                  CVV
+          <div id="card_number" className="card__number" aria-label="Card number">
+            {displayedSlots.map((slot, idx) => (
+              <span key={idx} className="slot">
+                <span className={`digit ${slot.filed ? "filed" : ""}`}>
+                  <span className="row placeholder">#</span>
+                  <span className="row value">{slot.textTop}</span>
                 </span>
-                <div className="flex h-10 w-full items-center justify-end rounded-control bg-white px-3 font-mono text-[18px] tracking-widest text-ink">
-                  {"*".repeat(cvv.length)}
-                </div>
+              </span>
+            ))}
+           </div>
+
+            <div className="card__footer">
+              <div className="card__holder">
+                <div className="card__section__title">Card Holder</div>
+                <div id="card_holder">{holder || "NAME ON CARD"}</div>
+              </div>
+              <div className="card__expires">
+                <div className="card__section__title">Expires</div>
+                <span id="card_expires_month">{month || "MM"}</span>/
+                <span id="card_expires_year">{year ? year.slice(-2) : "YY"}</span>
               </div>
             </div>
-          </div>
-        </div>
+          </section>
 
-        {/* FORM */}
-        <form onSubmit={handleSubmit} noValidate className="flex flex-col gap-4">
-          <div className="flex flex-col gap-1.5">
-            <label htmlFor="cc-number" className="text-[13px] font-semibold text-ink">
-              Card number
-            </label>
+          <section className="card__back" style={{ ["--ring1" as any]: ring1, ["--ring2" as any]: ring2 }}>
+            <div className="card__hide_line" />
+            <div className="card_cvv">
+              <span>CVV</span>
+              <div id="card_cvv_field" className="card_cvv_field">
+                {"*".repeat(cvv.length)}
+              </div>
+            </div>
+          </section>
+        </section>
+
+        <form className="form" onSubmit={handleSubmit} noValidate>
+          <div>
+            <label htmlFor="number">Card Number</label>
             <input
-              id="cc-number"
+              id="number"
               inputMode="numeric"
               autoComplete="cc-number"
               placeholder="1234 5678 9012 3456"
@@ -216,22 +199,16 @@ export function CreditCardForm({
               onFocus={() => setFocusField("number")}
               onBlur={() => setFocusField(null)}
               aria-invalid={!validity.number}
-              className={cn(
-                "h-11 w-full rounded-control border border-line-strong bg-card px-3.5 text-[15px] text-ink outline-none transition-colors duration-150 ease-out placeholder:text-ink-soft/50 focus:border-gold",
-                !validity.number && number.length >= 13 && "border-error focus:border-error"
-              )}
             />
             {!validity.number && number.length >= 13 && (
-              <p className="text-[13px] text-error">Card number looks invalid</p>
+              <small className="err">Card number looks invalid</small>
             )}
           </div>
 
-          <div className="flex flex-col gap-1.5">
-            <label htmlFor="cc-holder" className="text-[13px] font-semibold text-ink">
-              Card holder
-            </label>
+          <div>
+            <label htmlFor="holder">Card Holder</label>
             <input
-              id="cc-holder"
+              id="holder"
               type="text"
               autoComplete="cc-name"
               placeholder="JANE DOE"
@@ -240,23 +217,20 @@ export function CreditCardForm({
               onFocus={() => setFocusField("holder")}
               onBlur={() => setFocusField(null)}
               aria-invalid={!validity.holder}
-              className="h-11 w-full rounded-control border border-line-strong bg-card px-3.5 text-[15px] text-ink outline-none transition-colors duration-150 ease-out placeholder:text-ink-soft/50 focus:border-gold"
             />
           </div>
 
-          <div className="grid grid-cols-2 gap-4 sm:grid-cols-[2fr_1fr]">
+          <div className="filed__group">
             <div>
-              <label className="mb-1.5 block text-[13px] font-semibold text-ink">
-                Expiration date
-              </label>
-              <div className="grid grid-cols-2 gap-2">
+              <label>Expiration Date</label>
+              <div className="filed__date">
                 <select
-                  value={month}
+                  id="expiration_month"
+                  value={month || ""}
                   onChange={(e) => setMonth(e.target.value)}
                   onFocus={() => setFocusField("expire")}
                   onBlur={() => setFocusField(null)}
                   aria-invalid={!validity.month}
-                  className="h-11 w-full rounded-control border border-line-strong bg-card px-3 text-[14px] text-ink outline-none transition-colors duration-150 ease-out focus:border-gold"
                 >
                   <option value="" disabled>
                     Month
@@ -268,12 +242,12 @@ export function CreditCardForm({
                   ))}
                 </select>
                 <select
-                  value={year}
+                  id="expiration_year"
+                  value={year || ""}
                   onChange={(e) => setYear(e.target.value)}
                   onFocus={() => setFocusField("expire")}
                   onBlur={() => setFocusField(null)}
                   aria-invalid={!validity.year}
-                  className="h-11 w-full rounded-control border border-line-strong bg-card px-3 text-[14px] text-ink outline-none transition-colors duration-150 ease-out focus:border-gold"
                 >
                   <option value="" disabled>
                     Year
@@ -288,11 +262,9 @@ export function CreditCardForm({
             </div>
 
             <div>
-              <label htmlFor="cc-cvv" className="mb-1.5 block text-[13px] font-semibold text-ink">
-                CVV
-              </label>
+              <label htmlFor="cvv">CVV</label>
               <input
-                id="cc-cvv"
+                id="cvv"
                 inputMode="numeric"
                 autoComplete="cc-csc"
                 placeholder="***"
@@ -301,28 +273,355 @@ export function CreditCardForm({
                 onFocus={() => setFocusField("cvv")}
                 onBlur={() => setFocusField(null)}
                 aria-invalid={!validity.cvv}
-                className="h-11 w-full rounded-control border border-line-strong bg-card px-3.5 text-[15px] text-ink outline-none transition-colors duration-150 ease-out placeholder:text-ink-soft/50 focus:border-gold"
               />
             </div>
           </div>
 
           {showSubmit && (
-            <button
-              type="submit"
-              disabled={!validity.allValid}
-              className={cn(
-                "mt-2 inline-flex h-12 w-full items-center justify-center rounded-full text-[15px] font-semibold text-white transition-transform duration-150 ease-out",
-                validity.allValid ? "hover:brightness-110" : "cursor-not-allowed opacity-50"
-              )}
-              style={{ backgroundImage: "var(--color-accent-gradient)" }}
-            >
-              {submitLabel ?? (validity.allValid ? "Pay now" : "Complete all fields")}
+            <button className="submit" type="submit" disabled={!validity.allValid} aria-disabled={!validity.allValid}>
+              {validity.allValid ? "Submit" : "Complete all fields"}
             </button>
           )}
         </form>
       </div>
-    </div>
-  );
-}
 
+      <style jsx>{`
+        .ccp {
+          width: 100%;
+          display: flex;
+          justify-content: center;
+          padding: 24px;
+          background: transparent;
+          color: #0d0c22;
+        }
+        .wrap {
+          width: 100%;
+          max-width: 1000px;
+          display: grid;
+          grid-template-columns: 1fr 1fr;
+          gap: 24px;
+          align-items: start;
+        }
+
+        @media (max-width: 920px) {
+          .wrap {
+            grid-template-columns: 1fr;
+          }
+        }
+
+        * {
+          box-sizing: border-box;
+        }
+
+        #highlight {
+          position: absolute;
+          border: 1px solid #fff;
+          border-radius: 12px;
+          z-index: 1;
+          width: 0;
+          height: 0;
+          top: 0;
+          left: 0;
+          box-shadow: 0 0 5px #fff;
+          transition: 0.3s;
+        }
+        #highlight.highlight__number {
+          width: 346px;
+          height: 40px;
+          top: 92px;
+          left: 18px;
+        }
+        #highlight.highlight__holder {
+          width: 264px;
+          height: 56px;
+          top: 156px;
+          left: 18px;
+        }
+        #highlight.highlight__expire {
+          width: 86px;
+          height: 56px;
+          top: 156px;
+          left: 323px;
+        }
+        #highlight.highlight__cvv {
+          width: 381px;
+          height: 91px;
+          top: 83px;
+          left: 18px;
+        }
+        #highlight.hidden {
+          display: none;
+        }
+
+        .card {
+          position: relative;
+          width: 100%;
+          max-width: 420px;
+          margin: 0 auto;
+          transform-style: preserve-3d;
+          transition: 0.8s;
+          perspective: 1000px;
+        }
+        .card.flip {
+          transform: rotateY(180deg);
+        }
+
+        .card__front,
+        .card__back {
+          width: 100%;
+          max-width: 420px;
+          height: 233px;
+          border-radius: 20px;
+          padding: 24px 30px 30px;
+          background: linear-gradient(to right bottom, #323941, #061018);
+          box-shadow: 0 33px 50px -15px rgba(50, 55, 63, 0.66);
+          color: #fff;
+          overflow: hidden;
+          margin: 0 auto;
+          backface-visibility: hidden;
+          position: relative;
+        }
+
+        @media (max-width: 450px) {
+          .card__front,
+          .card__back {
+            padding: 12px 14px 16px;
+            height: 206px;
+          }
+          #highlight.highlight__number {
+            width: 300px;
+            left: 14px;
+          }
+          #highlight.highlight__holder {
+            width: 220px;
+            left: 14px;
+          }
+          #highlight.highlight__expire {
+            left: 280px;
+          }
+          #highlight.highlight__cvv {
+            width: 330px;
+            left: 14px;
+          }
+        }
+
+        .card__back {
+          position: absolute;
+          top: 0;
+          left: 0;
+          transform: rotateY(180deg);
+          padding: 24px 0 0;
+        }
+
+        .card__front::before,
+        .card__back::before {
+          content: "";
+          position: absolute;
+          border: 16px solid var(--ring1, ${ring1});
+          border-radius: 100%;
+          left: -17%;
+          top: -45px;
+          height: 300px;
+          width: 300px;
+          filter: blur(13px);
+        }
+
+        .card__front::after,
+        .card__back::after {
+          content: "";
+          position: absolute;
+          border: 16px solid var(--ring2, ${ring2});
+          border-radius: 100%;
+          width: 300px;
+          top: 55%;
+          left: -200px;
+          height: 300px;
+          filter: blur(13px);
+        }
+
+        .card__hide_line {
+          height: 40px;
+          width: 100%;
+          background-color: #6b7280;
+          position: relative;
+          z-index: 1;
+        }
+
+        .card_cvv {
+          position: relative;
+          z-index: 1;
+          margin-top: 24px;
+          padding: 0 32px;
+          display: flex;
+          flex-direction: column;
+          align-items: end;
+          font-size: 14px;
+          font-weight: 600;
+          text-transform: uppercase;
+        }
+        .card_cvv_field {
+          margin-top: 6px;
+          background-color: #fff;
+          border-radius: 12px;
+          height: 44px;
+          width: 100%;
+          color: #000;
+          display: flex;
+          align-items: center;
+          justify-content: end;
+          padding: 0 12px;
+          font-size: 25px;
+          line-height: 21px;
+        }
+
+        .card__header {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          font-weight: 600;
+          margin-bottom: 32px;
+          position: relative;
+          z-index: 1;
+        }
+
+        .card__number {
+          font-size: 22px;
+          margin-bottom: 32px;
+          position: relative;
+          z-index: 1;
+          display: flex;
+          height: 33px;
+          overflow: hidden;
+          color: #fff;
+        }
+
+        .card__number .slot {
+          display: inline-flex;
+          margin-right: 0;
+        }
+
+        .card__number .slot:nth-child(4n) {
+          margin-right: 10px;
+        }
+
+        .card__number .digit {
+          display: flex;
+          flex-direction: column;
+          height: 33px;
+          line-height: 33px;
+          transition: transform 0.2s;
+        }
+
+        .card__number .digit.filed {
+          transform: translateY(-33px);
+        }
+
+        .card__number .row {
+          height: 33px;
+          display: block;
+        }
+
+        .card__footer {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          position: relative;
+          z-index: 1;
+        }
+        .card__holder {
+          text-transform: uppercase;
+        }
+        .card__section__title {
+          font-size: 14px;
+          font-weight: 600;
+          text-transform: uppercase;
+        }
+
+        .form {
+          border-radius: 12px;
+          background: #fff;
+          width: 100%;
+          max-width: 600px;
+          margin: 0 auto;
+          padding: 24px;
+          border: 1px solid #f1f1f1;
+          box-shadow: 0 0 40px rgba(50, 55, 63, 0.16);
+          display: grid;
+          gap: 12px;
+          color: #0d0c22;
+        }
+
+        label {
+          display: block;
+          margin: 6px 0 4px;
+          color: #0d0c22;
+          font-weight: 500;
+        }
+
+        input,
+        select {
+          height: 52px;
+          display: block;
+          width: 100%;
+          border: 1px solid #6b7280;
+          padding: 18px 20px;
+          transition: outline 200ms ease, box-shadow 200ms ease;
+          border-radius: 12px;
+          outline: none;
+          background-color: #fff;
+          color: #0d0c22;
+          font-size: 16px;
+        }
+
+        input:focus,
+        select:focus {
+          border: 1px solid #000;
+          outline: 4px solid rgba(0, 0, 0, 0.1);
+        }
+
+        select {
+          padding: 0 20px;
+        }
+
+        .filed__group {
+          display: grid;
+          grid-template-columns: 2fr 1fr;
+          gap: 24px;
+        }
+
+        @media (max-width: 560px) {
+          .filed__group {
+            grid-template-columns: 1fr;
+          }
+        }
+
+        .filed__date {
+          display: grid;
+          grid-template-columns: 1fr 1fr;
+          gap: 12px;
+        }
+
+        .err {
+          color: #b42318;
+          font-size: 12px;
+          margin-top: 4px;
+        }
+
+        .submit {
+          margin-top: 8px;
+          height: 48px;
+          border: none;
+          border-radius: 10px;
+          background: #0d0c22;
+          color: #fff;
+          font-weight: 600;
+          cursor: pointer;
+          opacity: ${validity.allValid ? 1 : 0.6};
+        }
+      `}</style>
+    </section>
+  );
+};
+
+export { CreditCardForm };
 export type { CardState, CardValidity };
