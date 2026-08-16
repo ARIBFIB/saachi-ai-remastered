@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
@@ -36,6 +36,7 @@ import HowItWorks from "@/components/ui/how-it-works";
 import { LimitedTimeOfferPricing } from "@/components/ui/limited-time-offer-pricing";
 import { AnimatedTestimonials } from "@/components/ui/animated-testimonials";
 import { GlobalVisitorsPanel } from "@/components/ui/global-visitors-panel";
+import GlassCta from "@/components/ui/glass-cta";
 
 const STATS = [
   { label: "Active students", value: "42,000+", icon: Users },
@@ -452,30 +453,7 @@ export default function HomePage() {
       {/* Final CTA */}
       <section className="mx-auto max-w-7xl px-4 pb-24 md:px-8">
         <Reveal>
-          <div
-            className="relative overflow-hidden rounded-card p-10 text-center md:p-16"
-            style={{ backgroundImage: "var(--color-accent-gradient)" }}
-          >
-            <ShieldCheck size={28} className="mx-auto mb-4 text-white/90" />
-            <h2 className="font-display text-[26px] font-bold text-white md:text-[34px]">
-              Your next skill is one course away.
-            </h2>
-            <p className="mx-auto mt-3 max-w-lg text-[14.5px] text-white/85">
-              Join 42,000+ learners already building real AI projects. 7-day refund window, no risk.
-            </p>
-            <div className="mt-7 flex flex-wrap items-center justify-center gap-3">
-              <Link href="/courses">
-                <button className="rounded-full bg-white px-6 py-3 text-[14px] font-semibold text-accent-violet transition-transform hover:scale-105">
-                  Start learning free
-                </button>
-              </Link>
-              <Link href="/register">
-                <button className="rounded-full border border-white/40 px-6 py-3 text-[14px] font-semibold text-white transition-colors hover:bg-white/10">
-                  Become an instructor
-                </button>
-              </Link>
-            </div>
-          </div>
+          <GlassCta />
         </Reveal>
       </section>
     </div>
