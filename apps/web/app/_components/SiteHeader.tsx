@@ -1,7 +1,8 @@
-"use client";
+﻿"use client";
 
 import Link from "next/link";
 import { useState } from "react";
+import { usePathname } from "next/navigation";
 import { ShoppingCart, Heart, Menu as MenuIcon, X, LogOut } from "lucide-react";
 import { Button } from "@saachi/ui";
 import { useCartStore, useWishlistStore } from "@saachi/store";
@@ -28,16 +29,18 @@ export function SiteHeader() {
   const { data: session } = useSession();
   const logout = useLogout();
 
-  // single scroll listener â€” shared by TopSearchBar visibility
+  // single scroll listener Ã¢â‚¬â€ shared by TopSearchBar visibility
   const searchHidden = useSearchBarHidden();
+  const pathname = usePathname();
+  const isCheckoutRoute = pathname?.startsWith("/checkout") ?? false;
 
   return (
     /*
      * The entire header is sticky. TopSearchBar lives INSIDE it so it
-     * naturally hides behind the nav bar when collapsed â€” no z-index tricks.
+     * naturally hides behind the nav bar when collapsed Ã¢â‚¬â€ no z-index tricks.
      */
     <header className="sticky top-0 z-40 border-b border-line bg-card/90 backdrop-blur">
-      {/* â”€â”€ top nav row â”€â”€ */}
+      {/* Ã¢â€â‚¬Ã¢â€â‚¬ top nav row Ã¢â€â‚¬Ã¢â€â‚¬ */}
       <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 md:px-8">
         <Link href="/" className="font-display text-[20px] font-bold text-ink">
           Saachi<span className="text-gold-dark">AI</span>
@@ -142,10 +145,10 @@ export function SiteHeader() {
         </div>
       </div>
 
-      {/* â”€â”€ search bar row â€” inside header, collapses on scroll â”€â”€ */}
-      <TopSearchBar hidden={searchHidden} />
+      {/* Ã¢â€â‚¬Ã¢â€â‚¬ search bar row Ã¢â‚¬â€ inside header, collapses on scroll Ã¢â€â‚¬Ã¢â€â‚¬ */}
+      <TopSearchBar hidden={searchHidden || isCheckoutRoute} />
 
-      {/* â”€â”€ mobile nav â”€â”€ */}
+      {/* Ã¢â€â‚¬Ã¢â€â‚¬ mobile nav Ã¢â€â‚¬Ã¢â€â‚¬ */}
       {mobileOpen && (
         <div className="border-t border-line bg-card px-4 py-4 md:hidden">
           <nav className="flex flex-col gap-3">
