@@ -7,7 +7,7 @@ import { SiteFooter } from "./SiteFooter";
 
 // Routes that render their own header/shell (e.g. InstructorShell) and
 // should NOT also get the public SiteHeader/SiteFooter.
-const CHROME_EXCLUDED_PREFIXES = ["/instructor"];
+const CHROME_EXCLUDED_PREFIXES = ["/instructor", "/checkout"];
 
 export function ConditionalChrome({ children }: { children: ReactNode }) {
   const pathname = usePathname();
@@ -25,3 +25,4 @@ export function ConditionalChrome({ children }: { children: ReactNode }) {
     </>
   );
 }
+

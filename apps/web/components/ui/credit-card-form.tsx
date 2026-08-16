@@ -290,23 +290,26 @@ const CreditCardForm = ({
           width: 100%;
           display: flex;
           justify-content: center;
-          padding: 24px;
+          padding: 20px;
           background: transparent;
           color: #0d0c22;
+          box-sizing: border-box;
         }
         .wrap {
           width: 100%;
           max-width: 1000px;
-          display: grid;
-          grid-template-columns: 1fr 1fr;
+          display: flex;
+          flex-wrap: wrap;
           gap: 24px;
-          align-items: start;
+          align-items: flex-start;
+          justify-content: center;
         }
-
-        @media (max-width: 920px) {
-          .wrap {
-            grid-template-columns: 1fr;
-          }
+        .wrap > :global(section#card) {
+          flex: 0 1 380px;
+        }
+        .wrap > :global(form.form) {
+          flex: 1 1 320px;
+          min-width: 0;
         }
 
         * {
@@ -356,7 +359,8 @@ const CreditCardForm = ({
         .card {
           position: relative;
           width: 100%;
-          max-width: 420px;
+          max-width: 380px;
+          min-width: 260px;
           margin: 0 auto;
           transform-style: preserve-3d;
           transition: 0.8s;
@@ -369,7 +373,7 @@ const CreditCardForm = ({
         .card__front,
         .card__back {
           width: 100%;
-          max-width: 420px;
+          max-width: 380px;
           height: 233px;
           border-radius: 20px;
           padding: 24px 30px 30px;
@@ -541,7 +545,8 @@ const CreditCardForm = ({
           border-radius: 12px;
           background: #fff;
           width: 100%;
-          max-width: 600px;
+          max-width: 420px;
+          min-width: 0;
           margin: 0 auto;
           padding: 24px;
           border: 1px solid #f1f1f1;
@@ -549,6 +554,7 @@ const CreditCardForm = ({
           display: grid;
           gap: 12px;
           color: #0d0c22;
+          box-sizing: border-box;
         }
 
         label {
@@ -564,13 +570,14 @@ const CreditCardForm = ({
           display: block;
           width: 100%;
           border: 1px solid #6b7280;
-          padding: 18px 20px;
+          padding: 18px 16px;
           transition: outline 200ms ease, box-shadow 200ms ease;
           border-radius: 12px;
           outline: none;
           background-color: #fff;
           color: #0d0c22;
           font-size: 16px;
+          box-sizing: border-box;
         }
 
         input:focus,
@@ -625,3 +632,4 @@ const CreditCardForm = ({
 
 export { CreditCardForm };
 export type { CardState, CardValidity };
+
