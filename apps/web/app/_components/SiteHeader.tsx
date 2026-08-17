@@ -1,8 +1,8 @@
-﻿"use client";
+"use client";
 
 import Link from "next/link";
 import { useState } from "react";
-import { usePathname } from "next/navigation";
+
 import { ShoppingCart, Heart, Menu as MenuIcon, X, LogOut } from "lucide-react";
 import { Button } from "@saachi/ui";
 import { useCartStore, useWishlistStore } from "@saachi/store";
@@ -10,7 +10,6 @@ import { AnimatedThemeToggler } from "@/components/ui/animated-theme-toggler";
 import { useSession, useLogout } from "@saachi/api-client";
 import { Menu, MenuItem, HoveredLink } from "@/components/ui/navbar-menu";
 import { CATEGORIES } from "../../lib/categories";
-import { TopSearchBar, useSearchBarHidden } from "./TopSearchBar";
 
 const MOBILE_NAV_LINKS = [
   { href: "/courses",                   label: "All courses" },
@@ -30,10 +29,6 @@ export function SiteHeader() {
   const logout = useLogout();
 
   // single scroll listener Ã¢â‚¬â€ shared by TopSearchBar visibility
-  const searchHidden = useSearchBarHidden();
-  const pathname = usePathname();
-  const isCheckoutRoute = pathname?.startsWith("/checkout") ?? false;
-
   return (
     /*
      * The entire header is sticky. TopSearchBar lives INSIDE it so it
@@ -146,8 +141,6 @@ export function SiteHeader() {
       </div>
 
       {/* Ã¢â€â‚¬Ã¢â€â‚¬ search bar row Ã¢â‚¬â€ inside header, collapses on scroll Ã¢â€â‚¬Ã¢â€â‚¬ */}
-      <TopSearchBar hidden={searchHidden || isCheckoutRoute} />
-
       {/* Ã¢â€â‚¬Ã¢â€â‚¬ mobile nav Ã¢â€â‚¬Ã¢â€â‚¬ */}
       {mobileOpen && (
         <div className="border-t border-line bg-card px-4 py-4 md:hidden">
