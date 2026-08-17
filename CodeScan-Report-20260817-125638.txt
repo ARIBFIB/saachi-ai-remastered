@@ -1,5 +1,5 @@
 SAI2 CODEBASE SCAN REPORT
-Generated: 2026-08-16 20:47:14
+Generated: 2026-08-17 12:56:38
 Root: D:\Rozmarrah-CUST\Saim Ashraf\Saachi AI\Working\Code\Saachi_ai_1\SAI2
 
 This report includes:
@@ -10,12 +10,19 @@ This report includes:
 ==========================================================================================
   TYPE CHECK: apps/web  (tsc --noEmit)
 ==========================================================================================
-  No type errors found.
+app/(marketing)/page.tsx(132,14): error TS2304: Cannot find name 'TopSearchBar'.
 
 ==========================================================================================
   ESLINT: apps/web
 ==========================================================================================
-  No lint issues found.
+
+D:\Rozmarrah-CUST\Saim Ashraf\Saachi AI\Working\Code\Saachi_ai_1\SAI2\apps\web\app\(marketing)\page.tsx
+  132:14  error  'TopSearchBar' is not defined  react/jsx-no-undef
+
+Γ£û 1 problem (1 error, 0 warnings)
+
+
+  Summary line: Γ£û 1 problem (1 error, 0 warnings)
 
 ==========================================================================================
   TYPE CHECK: apps/admin  (tsc --noEmit)
@@ -65,7 +72,7 @@ D:\Rozmarrah-CUST\Saim Ashraf\Saachi AI\Working\Code\Saachi_ai_1\SAI2\apps\admin
 ==========================================================================================
   SUMMARY
 ==========================================================================================
-  Approx. TypeScript error count across scanned targets: 0
+  Approx. TypeScript error count across scanned targets: 1
   Full detail above. Search this file for 'error TS' and 'problem' to jump to issues.
 
-Report complete: 2026-08-16 20:53:42
+Report complete: 2026-08-17 12:58:47

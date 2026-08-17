@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useCourseList } from "@saachi/api-client";
 import { Button, CourseCard, Loading } from "@saachi/ui";
+import { TopSearchBar } from "../_components/TopSearchBar";
 import {
   ArrowRight,
   Sparkles,
