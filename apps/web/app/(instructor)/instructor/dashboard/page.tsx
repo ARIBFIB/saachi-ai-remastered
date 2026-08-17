@@ -4,6 +4,7 @@ import Link from "next/link";
 import { DollarSign, Users, Star, MessageCircle } from "lucide-react";
 import { useSession } from "@saachi/api-client";
 import { Button, KpiCard, EmptyState } from "@saachi/ui";
+import { InstructorBentoCard } from "@/components/ui/instructor-bento-card";
 
 // NOTE: demo-only dummy data. Replace with real analytics/enrollment hooks
 // once packages/api-client hooks/useInstructorAnalytics.ts is confirmed.
