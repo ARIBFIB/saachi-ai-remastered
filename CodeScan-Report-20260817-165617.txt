@@ -1,0 +1,82 @@
+SAI2 CODEBASE SCAN REPORT
+Generated: 2026-08-17 16:56:17
+Root: D:\Rozmarrah-CUST\Saim Ashraf\Saachi AI\Working\Code\Saachi_ai_1\SAI2
+
+This report includes:
+  1. TypeScript type-checking (tsc --noEmit) for apps/web, apps/admin, packages/*
+  2. ESLint (syntax, logic, unused vars, react-hooks rules, etc.) for apps/web, apps/admin
+
+
+==========================================================================================
+  TYPE CHECK: apps/web  (tsc --noEmit)
+==========================================================================================
+app/(instructor)/instructor/courses/quiz-builder/page.tsx(7,46): error TS1005: '(' expected.
+app/(instructor)/instructor/courses/quiz-builder/page.tsx(7,61): error TS1005: ';' expected.
+
+==========================================================================================
+  ESLINT: apps/web
+==========================================================================================
+
+D:\Rozmarrah-CUST\Saim Ashraf\Saachi AI\Working\Code\Saachi_ai_1\SAI2\apps\web\app\(instructor)\instructor\courses\quiz-builder\page.tsx
+  7:45  error  Parsing error: '(' expected
+
+Γ£û 1 problem (1 error, 0 warnings)
+
+
+  Summary line: Γ£û 1 problem (1 error, 0 warnings)
+
+==========================================================================================
+  TYPE CHECK: apps/admin  (tsc --noEmit)
+==========================================================================================
+  No type errors found.
+
+==========================================================================================
+  ESLINT: apps/admin
+==========================================================================================
+
+D:\Rozmarrah-CUST\Saim Ashraf\Saachi AI\Working\Code\Saachi_ai_1\SAI2\apps\admin\app\(console)\dashboard\page.tsx
+  320:9  warning  The 'allKpis' array makes the dependencies of useMemo Hook (at line 362) change on every render. Move it inside the useMemo callback. Alternatively, wrap the initialization of 'allKpis' in its own useMemo() Hook  react-hooks/exhaustive-deps
+
+D:\Rozmarrah-CUST\Saim Ashraf\Saachi AI\Working\Code\Saachi_ai_1\SAI2\apps\admin\app\(console)\users\page.tsx
+   99:9  warning  The 'toggleSelectAll' function makes the dependencies of useMemo Hook (at line 328) change on every render. Move it inside the useMemo callback. Alternatively, wrap the definition of 'toggleSelectAll' in its own useCallback() Hook  react-hooks/exhaustive-deps
+  178:9  warning  The 'buildActions' function makes the dependencies of useMemo Hook (at line 328) change on every render. Move it inside the useMemo callback. Alternatively, wrap the definition of 'buildActions' in its own useCallback() Hook        react-hooks/exhaustive-deps
+
+Γ£û 3 problems (0 errors, 3 warnings)
+
+
+  Summary line: Γ£û 3 problems (0 errors, 3 warnings)
+
+==========================================================================================
+  TYPE CHECK: packages/api-client  (tsc --noEmit)
+==========================================================================================
+  No type errors found.
+
+==========================================================================================
+  TYPE CHECK: packages/ui  (tsc --noEmit)
+==========================================================================================
+  No type errors found.
+
+==========================================================================================
+  TYPE CHECK: packages/utils  (tsc --noEmit)
+==========================================================================================
+  No type errors found.
+
+==========================================================================================
+  TYPE CHECK: packages/store  (tsc --noEmit)
+==========================================================================================
+  No type errors found.
+
+==========================================================================================
+  QUICK PATTERN SCAN (console.log / TODO / any / debugger leftovers)
+==========================================================================================
+
+  [: any] in .\apps\web  -  1 match(es)
+    .\apps\web\components\ui\instructor-bento-card.tsx:26  icon: any;
+
+==========================================================================================
+  SUMMARY
+==========================================================================================
+  Approx. TypeScript error count across scanned targets: 2
+  Full detail above. Search this file for 'error TS' and 'problem' to jump to issues.
+
+Report complete: 2026-08-17 16:57:20

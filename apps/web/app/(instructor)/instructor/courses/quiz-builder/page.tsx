@@ -4,7 +4,7 @@ import { EmptyState } from "@saachi/ui";
 
 // Phase 1 scaffold - placeholder route so sidebar navigation works end-to-end.
 // Real content/dummy data for this screen is filled in a later phase.
-export default function InstructorCoursesQuiz-BuilderPage() {
+export default function InstructorCoursesQuizBuilderPage() {
   return (
     <div>
       <h1 className="mb-1 font-display text-[26px] font-bold text-ink">Quiz Builder</h1>
@@ -17,3 +17,4 @@ export default function InstructorCoursesQuiz-BuilderPage() {
     </div>
   );
 }
+
