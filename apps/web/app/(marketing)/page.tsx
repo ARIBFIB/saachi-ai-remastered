@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
@@ -126,6 +126,10 @@ export default function HomePage() {
                 <ArrowRight size={16} className="transition-transform duration-200 ease-out group-hover:translate-x-1" />
               </button>
             </Link>
+          </div>
+
+          <div className="relative z-10 mt-8 max-w-xl">
+            <TopSearchBar />
           </div>
 
 

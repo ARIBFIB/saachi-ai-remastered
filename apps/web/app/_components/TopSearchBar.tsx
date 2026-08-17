@@ -34,7 +34,7 @@ export function useSearchBarHidden() {
   return hidden;
 }
 
-export function TopSearchBar({ hidden }: { hidden: boolean }) {
+export function TopSearchBar({ hidden = false }: { hidden?: boolean }) {
   const router = useRouter();
 
   const [query, setQuery]       = useState("");
@@ -135,11 +135,11 @@ export function TopSearchBar({ hidden }: { hidden: boolean }) {
     /*
      * overflow-hidden + max-h transition = smooth accordion collapse.
      * When hidden=true the bar slides up and disappears behind the nav bar
-     * because the entire <header> is sticky â€” no z-index clipping needed.
+     * because the entire <header> is sticky Ã¢â‚¬â€ no z-index clipping needed.
      */
     <div
       className={cn(
-        "overflow-hidden border-t border-black/10 transition-all duration-300 ease-in-out",
+        "overflow-hidden rounded-full border border-line-strong shadow-lg transition-all duration-300 ease-in-out",
         hidden ? "max-h-0 opacity-0" : "max-h-20 opacity-100"
       )}
       style={{ backgroundImage: "var(--color-accent-gradient)" }}
@@ -192,7 +192,7 @@ export function TopSearchBar({ hidden }: { hidden: boolean }) {
             </div>
           </div>
 
-          {/* cmdk dropdown â€” renders below the white pill */}
+          {/* cmdk dropdown Ã¢â‚¬â€ renders below the white pill */}
           {open && (
             <SearchCommand
               query={query}
