@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
@@ -7,6 +7,7 @@ import { Menu, X, LogOut, ChevronLeft, ChevronRight, Bell, ChevronDown, Settings
 import { AnimatedThemeToggler } from "@/components/ui/animated-theme-toggler";
 import { useSession, useLogout } from "@saachi/api-client";
 import { INSTRUCTOR_NAV } from "../../../lib/instructor-nav-config";
+import { InstructorTwoLevelSidebar } from "./InstructorTwoLevelSidebar";
 
 function cx(...parts: Array<string | false | undefined>) {
   return parts.filter(Boolean).join(" ");
@@ -255,12 +256,12 @@ export function InstructorShell({ children }: { children: ReactNode }) {
             >
               <X size={18} strokeWidth={1.75} />
             </button>
-            {sidebarContent}
+            <InstructorTwoLevelSidebar onNavigate={() => setMobileOpen(false)} />
           </div>
         </div>
       )}
 
-      <div className={cx("transition-[padding] duration-200 ease-out", collapsed ? "md:pl-[76px]" : "md:pl-[248px]")}>
+      <div className="transition-[padding] duration-200 ease-out md:pl-16">
         <main className="mx-auto max-w-[1200px] px-4 py-8 md:px-8 md:py-10">{children}</main>
       </div>
     </div>
