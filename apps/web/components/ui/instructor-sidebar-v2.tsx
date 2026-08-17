@@ -3,7 +3,11 @@
 /**
  * Instructor Module - Two-level sidebar (icon rail + expandable detail panel)
  * Frontend-only. All counts/sub-items below are DUMMY data - swap for real
- * hooks (useInstructorCourses, useInstructorReviews, etc.) once available.
+ * hooks (useInstructorCourses, useInstructorPayouts, etc.) once available.
+ *
+ * PHASE 1: restructured into 9 groups per Doc 2 (Frontend Technical Spec),
+ * Section 12 - Instructor Portal page inventory. Routes for new items are
+ * scaffolded as placeholder pages and filled in over later phases.
  */
 
 import Link from "next/link";
@@ -13,14 +17,24 @@ import {
   LayoutDashboard,
   BookOpen,
   PlusCircle,
+  ListTree,
+  HelpCircle,
+  Eye,
   Star,
   Users,
+  MessageSquare,
+  Activity,
   Rocket,
   BarChart3,
   Wallet,
+  Banknote,
+  CreditCard,
   CalendarClock,
+  CalendarDays,
+  Inbox,
   Settings as SettingsIcon,
   ShieldCheck,
+  BellRing,
   Search,
   ChevronDown,
   ChevronLeft,
@@ -77,10 +91,14 @@ export const INSTRUCTOR_SIDEBAR: InstructorNavGroup[] = [
           { label: "Published", href: "/instructor/courses?status=published", meta: "1" },
           { label: "Pending review", href: "/instructor/courses?status=pending_review", meta: "1" },
           { label: "Draft", href: "/instructor/courses?status=draft", meta: "1" },
-          { label: "Rejected", href: "/instructor/courses?status=rejected", meta: "1" }
+          { label: "Rejected", href: "/instructor/courses?status=rejected", meta: "1" },
+          { label: "Archived", href: "/instructor/courses?status=archived", meta: "0" }
         ]
       },
-      { label: "Create Course", href: "/instructor/courses/new" }
+      { label: "Create Course", href: "/instructor/courses/new" },
+      { label: "Curriculum Builder", href: "/instructor/courses/curriculum" },
+      { label: "Quiz Builder", href: "/instructor/courses/quiz-builder" },
+      { label: "Course Preview", href: "/instructor/courses/preview" }
     ]
   },
   {
@@ -98,7 +116,9 @@ export const INSTRUCTOR_SIDEBAR: InstructorNavGroup[] = [
           { label: "Completed course", href: "/instructor/students", meta: "8" },
           { label: "In progress", href: "/instructor/students", meta: "5" }
         ]
-      }
+      },
+      { label: "Engagement Status", href: "/instructor/students/engagement" },
+      { label: "Message Students", href: "/instructor/students/messages" }
     ]
   },
   {
@@ -132,33 +152,59 @@ export const INSTRUCTOR_SIDEBAR: InstructorNavGroup[] = [
         children: [
           { label: "Enrollment trends", href: "/instructor/analytics" },
           { label: "Completion rate", href: "/instructor/analytics" },
-          { label: "Traffic sources", href: "/instructor/analytics" }
+          { label: "Traffic sources", href: "/instructor/analytics" },
+          { label: "Engagement heatmap", href: "/instructor/analytics" }
         ]
       }
     ]
   },
   {
     id: "finance",
-    label: "Earnings",
+    label: "Finance",
     icon: Wallet,
+    badge: "1",
     items: [
+      { label: "Earnings Overview", href: "/instructor/earnings" },
       {
-        label: "Earnings",
-        href: "/instructor/earnings",
+        label: "Payout Requests",
+        href: "/instructor/payouts",
         hasChildren: true,
         children: [
-          { label: "Available balance", href: "/instructor/earnings" },
-          { label: "Lifetime earnings", href: "/instructor/earnings" },
-          { label: "Request payout", href: "/instructor/earnings" }
+          { label: "Pending", href: "/instructor/payouts", meta: "1" },
+          { label: "Paid", href: "/instructor/payouts", meta: "6" },
+          { label: "Rejected", href: "/instructor/payouts", meta: "0" }
         ]
-      }
+      },
+      { label: "Payout Methods", href: "/instructor/payouts/methods" }
     ]
   },
   {
     id: "mentorship",
     label: "Mentorship",
     icon: CalendarClock,
-    items: [{ label: "Mentorship Settings", href: "/instructor/mentorship" }]
+    badge: "1",
+    items: [
+      { label: "Mentorship Settings", href: "/instructor/mentorship" },
+      { label: "Availability Calendar", href: "/instructor/mentorship/availability" },
+      { label: "Session Requests", href: "/instructor/mentorship/requests" }
+    ]
+  },
+  {
+    id: "community",
+    label: "Community",
+    icon: MessageSquare,
+    badge: "5",
+    items: [
+      {
+        label: "Course Q&A",
+        href: "/instructor/community",
+        hasChildren: true,
+        children: [
+          { label: "Unanswered", href: "/instructor/community", meta: "5" },
+          { label: "Answered", href: "/instructor/community", meta: "21" }
+        ]
+      }
+    ]
   },
   {
     id: "account",
@@ -166,7 +212,8 @@ export const INSTRUCTOR_SIDEBAR: InstructorNavGroup[] = [
     icon: SettingsIcon,
     items: [
       { label: "Settings", href: "/instructor/settings" },
-      { label: "Verification", href: "/instructor/verification" }
+      { label: "Verification", href: "/instructor/verification" },
+      { label: "Notification Preferences", href: "/instructor/settings/notifications" }
     ]
   }
 ];
@@ -245,7 +292,7 @@ export function InstructorDetailPanel({
     <div
       className={cn(
         "flex h-full flex-col gap-4 border-r border-line bg-card py-4 transition-[width] duration-300 ease-out",
-        collapsed ? "w-16 items-center px-0" : "w-64 px-3"
+        collapsed ? "w-16 items-center px-0" : "w-72 px-3"
       )}
       style={{ transitionTimingFunction: softSpring }}
     >

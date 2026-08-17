@@ -74,7 +74,7 @@ export function InstructorShell({ children }: { children: ReactNode }) {
       </div>
 
       {/* Top bar */}
-      <div className="sticky top-0 z-40 flex items-center justify-between gap-3 border-b border-line bg-card/95 px-4 py-3 backdrop-blur-sm md:ml-[336px] md:px-6">
+      <div className="sticky top-0 z-40 flex items-center justify-between gap-3 border-b border-line bg-card/95 px-4 py-3 backdrop-blur-sm md:ml-[352px] md:px-6">
         <div className="flex min-w-0 items-center gap-3">
           <button
             type="button"
@@ -214,9 +214,10 @@ export function InstructorShell({ children }: { children: ReactNode }) {
         </div>
       )}
 
-      <div className="md:ml-[336px]">
+      <div className="md:ml-[352px]">
         <main className="mx-auto max-w-[1200px] px-4 py-8 md:px-8 md:py-10">{children}</main>
       </div>
     </div>
   );
 }
+
