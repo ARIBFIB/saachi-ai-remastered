@@ -1,13 +1,17 @@
-"use client";
+﻿"use client";
 
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useRef, useState, type ReactNode } from "react";
-import { Menu, X, LogOut, ChevronLeft, ChevronRight, Bell, ChevronDown, Settings, User } from "lucide-react";
+import { Menu, X, LogOut, Bell, ChevronDown, Settings, User } from "lucide-react";
 import { AnimatedThemeToggler } from "@/components/ui/animated-theme-toggler";
 import { useSession, useLogout } from "@saachi/api-client";
-import { INSTRUCTOR_NAV } from "../../../lib/instructor-nav-config";
-import { InstructorTwoLevelSidebar } from "./InstructorTwoLevelSidebar";
+import {
+  INSTRUCTOR_SIDEBAR,
+  InstructorIconRail,
+  InstructorDetailPanel,
+  InstructorSidebarMobile
+} from "@/components/ui/instructor-sidebar-v2";
 
 function cx(...parts: Array<string | false | undefined>) {
   return parts.filter(Boolean).join(" ");
@@ -22,6 +26,14 @@ const NOTIFICATIONS: NotificationItem[] = [
   { id: "n3", label: "Your Silver Boost promotion expires in 4 days", href: "/instructor/promotions" }
 ];
 
+function activeGroupIdFromPathname(pathname: string | null): string {
+  if (!pathname) return "overview";
+  const found = INSTRUCTOR_SIDEBAR.find((group) =>
+    group.items.some((item) => pathname === item.href.split("?")[0] || pathname.startsWith(item.href.split("?")[0] + "/"))
+  );
+  return found?.id ?? "overview";
+}
+
 export function InstructorShell({ children }: { children: ReactNode }) {
   const pathname = usePathname();
   const router = useRouter();
@@ -29,12 +41,16 @@ export function InstructorShell({ children }: { children: ReactNode }) {
   const logout = useLogout();
 
   const [mobileOpen, setMobileOpen] = useState(false);
-  const [collapsed, setCollapsed] = useState(false);
   const [notifOpen, setNotifOpen] = useState(false);
   const [userMenuOpen, setUserMenuOpen] = useState(false);
+  const [activeGroupId, setActiveGroupId] = useState(() => activeGroupIdFromPathname(pathname));
 
   const notifRef = useRef<HTMLDivElement>(null);
   const userMenuRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    setActiveGroupId(activeGroupIdFromPathname(pathname));
+  }, [pathname]);
 
   useEffect(() => {
     function handleClickOutside(e: MouseEvent) {
@@ -49,80 +65,16 @@ export function InstructorShell({ children }: { children: ReactNode }) {
     logout.mutate(undefined, { onSuccess: () => router.push("/login") });
   }
 
-  const sidebarContent = (
-    <div className="flex h-full flex-col pt-[65px]">
-      <nav className="flex flex-1 flex-col gap-5 overflow-y-auto px-3 pb-4 pt-4">
-        {INSTRUCTOR_NAV.map((section) => (
-          <div key={section.title}>
-            {!collapsed && (
-              <div className="mb-1.5 px-2.5 text-[10px] font-semibold uppercase tracking-[0.08em] text-ink-soft/60">
-                {section.title}
-              </div>
-            )}
-            <div className="flex flex-col gap-0.5">
-              {section.items.map((item) => {
-                const active = pathname === item.href || Boolean(pathname?.startsWith(`${item.href}/`));
-                return (
-                  <Link
-                    key={item.href}
-                    href={item.href}
-                    onClick={() => setMobileOpen(false)}
-                    title={collapsed ? item.label : undefined}
-                    className={cx(
-                      "flex items-center gap-3 rounded-control px-2.5 py-2 text-[13px] font-medium transition-colors duration-150 ease-out",
-                      collapsed && "justify-center",
-                      active ? "bg-gold text-ink" : "text-ink-soft hover:bg-paper-dim hover:text-ink"
-                    )}
-                  >
-                    <item.icon size={16} strokeWidth={1.75} className="shrink-0" />
-                    {!collapsed && <span className="truncate">{item.label}</span>}
-                  </Link>
-                );
-              })}
-            </div>
-          </div>
-        ))}
-      </nav>
-
-      <div className="border-t border-line px-3 py-3">
-        <button
-          type="button"
-          onClick={() => setCollapsed((v) => !v)}
-          className={cx(
-            "mb-1 hidden w-full items-center gap-3 rounded-control px-2.5 py-2 text-[13px] font-medium text-ink-soft transition-colors duration-150 ease-out hover:bg-paper-dim hover:text-ink md:flex",
-            collapsed && "justify-center"
-          )}
-        >
-          {collapsed ? <ChevronRight size={16} strokeWidth={1.75} /> : <ChevronLeft size={16} strokeWidth={1.75} />}
-          {!collapsed && "Collapse"}
-        </button>
-        <button
-          type="button"
-          onClick={handleLogout}
-          className={cx(
-            "flex w-full items-center gap-3 rounded-control px-2.5 py-2 text-[13px] font-medium text-ink-soft transition-colors duration-150 ease-out hover:bg-paper-dim hover:text-error",
-            collapsed && "justify-center"
-          )}
-        >
-          <LogOut size={16} strokeWidth={1.75} />
-          {!collapsed && "Log out"}
-        </button>
-      </div>
-    </div>
-  );
-
   return (
     <div className="min-h-screen bg-paper">
-      <div
-        className={cx(
-          "hidden shrink-0 border-r border-line bg-card transition-[width] duration-200 ease-out md:fixed md:inset-y-0 md:flex",
-          collapsed ? "w-[76px]" : "w-[248px]"
-        )}
-      >
-        {sidebarContent}
+      {/* Desktop two-level sidebar (icon rail + detail panel) */}
+      <div className="hidden md:fixed md:inset-y-0 md:flex">
+        <InstructorIconRail activeGroupId={activeGroupId} onSelect={setActiveGroupId} />
+        <InstructorDetailPanel activeGroupId={activeGroupId} showBrand />
       </div>
 
-      <div className="sticky top-0 z-40 flex items-center justify-between gap-3 border-b border-line bg-card/95 px-4 py-3 backdrop-blur-sm md:px-6">
+      {/* Top bar */}
+      <div className="sticky top-0 z-40 flex items-center justify-between gap-3 border-b border-line bg-card/95 px-4 py-3 backdrop-blur-sm md:ml-[336px] md:px-6">
         <div className="flex min-w-0 items-center gap-3">
           <button
             type="button"
@@ -133,7 +85,7 @@ export function InstructorShell({ children }: { children: ReactNode }) {
             <Menu size={18} strokeWidth={1.75} />
           </button>
 
-          <Link href="/instructor/dashboard" className="hidden shrink-0 items-center gap-2 sm:flex">
+          <Link href="/instructor/dashboard" className="flex shrink-0 items-center gap-2 md:hidden">
             <span className="font-display text-[16px] font-bold text-ink">
               Saachi<span className="text-gold-dark">AI</span>
             </span>
@@ -241,27 +193,28 @@ export function InstructorShell({ children }: { children: ReactNode }) {
         </div>
       </div>
 
+      {/* Mobile drawer */}
       {mobileOpen && (
         <div className="fixed inset-0 z-50 flex md:hidden">
           <div
             className="absolute inset-0 bg-ink/40 transition-opacity duration-200 ease-out"
             onClick={() => setMobileOpen(false)}
           />
-          <div className="relative flex h-full w-[280px] flex-col bg-card transition-transform duration-200 ease-out">
+          <div className="relative flex h-full w-[300px] bg-card transition-transform duration-200 ease-out">
             <button
               type="button"
               onClick={() => setMobileOpen(false)}
               aria-label="Close menu"
-              className="absolute right-3 top-3 flex h-9 w-9 items-center justify-center rounded-control text-ink"
+              className="absolute right-2 top-2 z-10 flex h-8 w-8 items-center justify-center rounded-control bg-card text-ink shadow"
             >
-              <X size={18} strokeWidth={1.75} />
+              <X size={16} strokeWidth={1.75} />
             </button>
-            <InstructorTwoLevelSidebar onNavigate={() => setMobileOpen(false)} />
+            <InstructorSidebarMobile onNavigate={() => setMobileOpen(false)} />
           </div>
         </div>
       )}
 
-      <div className="transition-[padding] duration-200 ease-out md:pl-16">
+      <div className="md:ml-[336px]">
         <main className="mx-auto max-w-[1200px] px-4 py-8 md:px-8 md:py-10">{children}</main>
       </div>
     </div>

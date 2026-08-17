@@ -1,7 +1,7 @@
 ﻿================================================================================
 WEBSITE FRONTEND CODE EXPORT (apps/web + shared packages)
-Generated: 2026-08-17 12:40:19
-Total Files: 202
+Generated: 2026-08-17 16:20:58
+Total Files: 204
 ================================================================================
 
 
@@ -949,6 +949,7 @@ import Link from "next/link";
 import { DollarSign, Users, Star, MessageCircle } from "lucide-react";
 import { useSession } from "@saachi/api-client";
 import { Button, KpiCard, EmptyState } from "@saachi/ui";
+import { InstructorBentoCard } from "@/components/ui/instructor-bento-card";
 
 // NOTE: demo-only dummy data. Replace with real analytics/enrollment hooks
 // once packages/api-client hooks/useInstructorAnalytics.ts is confirmed.
@@ -1710,6 +1711,7 @@ import { Menu, X, LogOut, ChevronLeft, ChevronRight, Bell, ChevronDown, Settings
 import { AnimatedThemeToggler } from "@/components/ui/animated-theme-toggler";
 import { useSession, useLogout } from "@saachi/api-client";
 import { INSTRUCTOR_NAV } from "../../../lib/instructor-nav-config";
+import { InstructorTwoLevelSidebar } from "./InstructorTwoLevelSidebar";
 
 function cx(...parts: Array<string | false | undefined>) {
   return parts.filter(Boolean).join(" ");
@@ -1958,18 +1960,142 @@ export function InstructorShell({ children }: { children: ReactNode }) {
             >
               <X size={18} strokeWidth={1.75} />
             </button>
-            {sidebarContent}
+            <InstructorTwoLevelSidebar onNavigate={() => setMobileOpen(false)} />
           </div>
         </div>
       )}
 
-      <div className={cx("transition-[padding] duration-200 ease-out", collapsed ? "md:pl-[76px]" : "md:pl-[248px]")}>
+      <div className="transition-[padding] duration-200 ease-out md:pl-16">
         <main className="mx-auto max-w-[1200px] px-4 py-8 md:px-8 md:py-10">{children}</main>
       </div>
     </div>
   );
 }
 
+
+
+================================================================================
+FILE: apps\web\app\(instructor)\_components\InstructorTwoLevelSidebar.tsx
+================================================================================
+"use client";
+
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { useState } from "react";
+import { ChevronLeft, ChevronRight, ChevronDown } from "lucide-react";
+import { INSTRUCTOR_NAV } from "../../../lib/instructor-nav-config";
+
+const softSpring = "cubic-bezier(0.25, 1.1, 0.4, 1)";
+
+function cx(...parts: Array<string | false | undefined>) {
+  return parts.filter(Boolean).join(" ");
+}
+
+export function InstructorTwoLevelSidebar({ onNavigate }: { onNavigate?: () => void }) {
+  const pathname = usePathname();
+
+  const [activeSectionIndex, setActiveSectionIndex] = useState(() => {
+    const idx = INSTRUCTOR_NAV.findIndex((section) =>
+      section.items.some(
+        (item) => pathname === item.href || Boolean(pathname?.startsWith(`${item.href}/`))
+      )
+    );
+    return idx >= 0 ? idx : 0;
+  });
+  const [collapsed, setCollapsed] = useState(false);
+
+  const activeSection = INSTRUCTOR_NAV[activeSectionIndex];
+
+  return (
+    <div className="flex h-full">
+      {/* Icon rail */}
+      <div className="flex w-16 shrink-0 flex-col items-center gap-2 border-r border-line bg-card py-4">
+        {INSTRUCTOR_NAV.map((section, index) => {
+          const FirstIcon = section.items[0]?.icon;
+          const isActiveSection = index === activeSectionIndex;
+          return (
+            <button
+              key={section.title}
+              type="button"
+              title={section.title}
+              onClick={() => setActiveSectionIndex(index)}
+              className={cx(
+                "flex h-10 w-10 shrink-0 items-center justify-center rounded-control transition-colors duration-200 ease-out",
+                isActiveSection
+                  ? "bg-gold text-ink"
+                  : "text-ink-soft hover:bg-paper-dim hover:text-ink"
+              )}
+              style={{ transitionTimingFunction: softSpring }}
+            >
+              {FirstIcon && <FirstIcon size={17} strokeWidth={1.75} />}
+            </button>
+          );
+        })}
+      </div>
+
+      {/* Detail panel */}
+      <div
+        className={cx(
+          "flex flex-col overflow-hidden border-r border-line bg-card transition-[width] duration-300 ease-out",
+          collapsed ? "w-0 border-r-0" : "w-56"
+        )}
+        style={{ transitionTimingFunction: softSpring }}
+      >
+        <div className="flex items-center justify-between px-4 pt-5 pb-3">
+          <span className="truncate text-[13px] font-semibold uppercase tracking-[0.06em] text-ink-soft/70">
+            {activeSection?.title}
+          </span>
+        </div>
+
+        <nav className="flex flex-1 flex-col gap-0.5 overflow-y-auto px-2 pb-4">
+          {activeSection?.items.map((item) => {
+            const active = pathname === item.href || Boolean(pathname?.startsWith(`${item.href}/`));
+            return (
+              <Link
+                key={item.href}
+                href={item.href}
+                onClick={onNavigate}
+                className={cx(
+                  "flex items-center gap-3 rounded-control px-2.5 py-2 text-[13px] font-medium transition-colors duration-150 ease-out",
+                  active ? "bg-gold text-ink" : "text-ink-soft hover:bg-paper-dim hover:text-ink"
+                )}
+              >
+                <item.icon size={16} strokeWidth={1.75} className="shrink-0" />
+                <span className="truncate">{item.label}</span>
+              </Link>
+            );
+          })}
+        </nav>
+
+        <div className="border-t border-line px-2 py-3">
+          <button
+            type="button"
+            onClick={() => setCollapsed(true)}
+            className="flex w-full items-center gap-3 rounded-control px-2.5 py-2 text-[13px] font-medium text-ink-soft transition-colors duration-150 ease-out hover:bg-paper-dim hover:text-ink"
+          >
+            <ChevronLeft size={16} strokeWidth={1.75} />
+            Collapse
+          </button>
+        </div>
+      </div>
+
+      {collapsed && (
+        <div className="flex w-10 shrink-0 flex-col items-center border-r border-line bg-card py-4">
+          <button
+            type="button"
+            onClick={() => setCollapsed(false)}
+            aria-label="Expand sidebar"
+            className="flex h-9 w-9 items-center justify-center rounded-control text-ink-soft transition-colors duration-150 ease-out hover:bg-paper-dim hover:text-ink"
+          >
+            <ChevronRight size={16} strokeWidth={1.75} />
+          </button>
+        </div>
+      )}
+    </div>
+  );
+}
+
+export default InstructorTwoLevelSidebar;
 
 
 ================================================================================
@@ -4780,6 +4906,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useCourseList } from "@saachi/api-client";
 import { Button, CourseCard, Loading } from "@saachi/ui";
+import { TopSearchBar } from "../_components/TopSearchBar";
 import {
   ArrowRight,
   Sparkles,
@@ -4902,6 +5029,10 @@ export default function HomePage() {
                 <ArrowRight size={16} className="transition-transform duration-200 ease-out group-hover:translate-x-1" />
               </button>
             </Link>
+          </div>
+
+          <div className="relative z-10 mt-8 max-w-xl">
+            <TopSearchBar />
           </div>
 
 
@@ -5314,7 +5445,7 @@ FILE: apps\web\app\_components\SiteHeader.tsx
 
 import Link from "next/link";
 import { useState } from "react";
-import { usePathname } from "next/navigation";
+
 import { ShoppingCart, Heart, Menu as MenuIcon, X, LogOut } from "lucide-react";
 import { Button } from "@saachi/ui";
 import { useCartStore, useWishlistStore } from "@saachi/store";
@@ -5322,7 +5453,6 @@ import { AnimatedThemeToggler } from "@/components/ui/animated-theme-toggler";
 import { useSession, useLogout } from "@saachi/api-client";
 import { Menu, MenuItem, HoveredLink } from "@/components/ui/navbar-menu";
 import { CATEGORIES } from "../../lib/categories";
-import { TopSearchBar, useSearchBarHidden } from "./TopSearchBar";
 
 const MOBILE_NAV_LINKS = [
   { href: "/courses",                   label: "All courses" },
@@ -5341,18 +5471,14 @@ export function SiteHeader() {
   const { data: session } = useSession();
   const logout = useLogout();
 
-  // single scroll listener Ã¢â‚¬â€ shared by TopSearchBar visibility
-  const searchHidden = useSearchBarHidden();
-  const pathname = usePathname();
-  const isCheckoutRoute = pathname?.startsWith("/checkout") ?? false;
-
+  // single scroll listener ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â shared by TopSearchBar visibility
   return (
     /*
      * The entire header is sticky. TopSearchBar lives INSIDE it so it
-     * naturally hides behind the nav bar when collapsed Ã¢â‚¬â€ no z-index tricks.
+     * naturally hides behind the nav bar when collapsed ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â no z-index tricks.
      */
     <header className="sticky top-0 z-40 border-b border-line bg-card/90 backdrop-blur">
-      {/* Ã¢â€â‚¬Ã¢â€â‚¬ top nav row Ã¢â€â‚¬Ã¢â€â‚¬ */}
+      {/* ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ top nav row ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ */}
       <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 md:px-8">
         <Link href="/" className="font-display text-[20px] font-bold text-ink">
           Saachi<span className="text-gold-dark">AI</span>
@@ -5457,10 +5583,8 @@ export function SiteHeader() {
         </div>
       </div>
 
-      {/* Ã¢â€â‚¬Ã¢â€â‚¬ search bar row Ã¢â‚¬â€ inside header, collapses on scroll Ã¢â€â‚¬Ã¢â€â‚¬ */}
-      <TopSearchBar hidden={searchHidden || isCheckoutRoute} />
-
-      {/* Ã¢â€â‚¬Ã¢â€â‚¬ mobile nav Ã¢â€â‚¬Ã¢â€â‚¬ */}
+      {/* ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ search bar row ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â inside header, collapses on scroll ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ */}
+      {/* ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ mobile nav ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ */}
       {mobileOpen && (
         <div className="border-t border-line bg-card px-4 py-4 md:hidden">
           <nav className="flex flex-col gap-3">
@@ -5538,7 +5662,7 @@ export function useSearchBarHidden() {
   return hidden;
 }
 
-export function TopSearchBar({ hidden }: { hidden: boolean }) {
+export function TopSearchBar({ hidden = false }: { hidden?: boolean }) {
   const router = useRouter();
 
   const [query, setQuery]       = useState("");
@@ -5639,11 +5763,11 @@ export function TopSearchBar({ hidden }: { hidden: boolean }) {
     /*
      * overflow-hidden + max-h transition = smooth accordion collapse.
      * When hidden=true the bar slides up and disappears behind the nav bar
-     * because the entire <header> is sticky Ã¢â‚¬â€ no z-index clipping needed.
+     * because the entire <header> is sticky ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â no z-index clipping needed.
      */
     <div
       className={cn(
-        "overflow-hidden border-t border-black/10 transition-all duration-300 ease-in-out",
+        "overflow-hidden rounded-full border border-line-strong shadow-lg transition-all duration-300 ease-in-out",
         hidden ? "max-h-0 opacity-0" : "max-h-20 opacity-100"
       )}
       style={{ backgroundImage: "var(--color-accent-gradient)" }}
@@ -5696,7 +5820,7 @@ export function TopSearchBar({ hidden }: { hidden: boolean }) {
             </div>
           </div>
 
-          {/* cmdk dropdown Ã¢â‚¬â€ renders below the white pill */}
+          {/* cmdk dropdown ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â renders below the white pill */}
           {open && (
             <SearchCommand
               query={query}
@@ -9151,6 +9275,387 @@ export default ImageStreamHero;
 
 
 ================================================================================
+FILE: apps\web\components\ui\instructor-bento-card.tsx
+================================================================================
+"use client";
+
+import React, { useState, useMemo } from "react";
+import { motion, AnimatePresence, LayoutGroup } from "motion/react";
+import { HugeiconsIcon } from "@hugeicons/react";
+import {
+  DashboardSquare01Icon,
+  BookOpen01Icon,
+  UserGroupIcon,
+  StarIcon,
+  Add01Icon,
+  CircleArrowUpRight02Icon,
+  Search01Icon,
+  BarChartIcon,
+  Tick01Icon,
+  Settings02Icon,
+  InformationCircleIcon,
+  Wallet01Icon,
+  UserIcon,
+} from "@hugeicons/core-free-icons";
+import { cn } from "@/lib/utils";
+
+interface TabConfig {
+  id: string;
+  label: string;
+  icon: any;
+  badge?: string;
+  header: string;
+  description: string;
+}
+
+const TABS: TabConfig[] = [
+  {
+    id: "overview",
+    label: "Overview",
+    icon: DashboardSquare01Icon,
+    header: "Course Performance",
+    description: "Daily summary across all your courses.",
+  },
+  {
+    id: "courses",
+    label: "Courses",
+    icon: BookOpen01Icon,
+    header: "My Courses",
+    description: "Track status and enrollment per course.",
+    badge: "4",
+  },
+  {
+    id: "students",
+    label: "Students",
+    icon: UserGroupIcon,
+    header: "Student Activity",
+    description: "Recent learners across your courses.",
+    badge: "654",
+  },
+  {
+    id: "reviews",
+    label: "Reviews",
+    icon: StarIcon,
+    header: "Recent Reviews",
+    description: "What learners are saying right now.",
+    badge: "3",
+  },
+];
+
+export function InstructorBentoCard() {
+  const [activeTab, setActiveTab] = useState(TABS[0]);
+
+  const content = useMemo(() => {
+    switch (activeTab.id) {
+      case "overview":
+        return <OverviewPanel />;
+      case "courses":
+        return <CoursesPanel />;
+      case "students":
+        return <StudentsPanel />;
+      case "reviews":
+        return <ReviewsPanel />;
+      default:
+        return null;
+    }
+  }, [activeTab.id]);
+
+  return (
+    <div className="flex items-center justify-center w-full antialiased">
+      <div className="group relative w-full max-w-xl overflow-hidden rounded-3xl sm:rounded-4xl border border-line bg-card shadow-2xl shadow-accent-violet/5 transition-all duration-500 hover:shadow-accent-violet/10 hover:-translate-y-1 m-0">
+        <div className="p-4 sm:p-6 space-y-1.5 z-10 relative">
+          <h2 className="text-xs text-ink-soft uppercase">
+            Instructor Dashboard
+          </h2>
+          <p className="text-lg sm:text-2xl text-ink font-display font-medium leading-snug max-w-[480px]">
+            Course performance and student activity in one place.
+          </p>
+        </div>
+
+        <div className="relative w-full h-[260px] sm:h-[300px] overflow-hidden rounded-2xl sm:rounded-[2rem]">
+          <div className="absolute top-16 left-16 w-full h-full bg-paper-dim rounded-3xl border border-line/50 opacity-80" />
+
+          <div className="absolute top-8 left-24 w-full h-full bg-card rounded-tl-3xl shadow-xl flex flex-col overflow-hidden ring-6 ring-line">
+            <div className="px-5 py-4 rounded-tl-3xl border-b border-line/70 flex items-center relative backdrop-blur-sm">
+              <div className="flex gap-1.5">
+                <div className="w-2 h-2 rounded-full bg-ink-soft/20" />
+                <div className="w-2 h-2 rounded-full bg-ink-soft/20" />
+                <div className="w-2 h-2 rounded-full bg-ink-soft/20" />
+              </div>
+              <div className="absolute left-1/2 -translate-x-1/2 flex items-center gap-2">
+                <span className="text-xs text-ink-soft/50 uppercase">
+                  Saachi AI Instructor
+                </span>
+              </div>
+            </div>
+
+            <div className="flex flex-1 overflow-hidden">
+              <div className="w-36 border-r border-line/30 p-2 flex flex-col gap-1 pt-6 bg-paper-dim/20">
+                <LayoutGroup>
+                  {TABS.map((tab) => {
+                    const isActive = activeTab.id === tab.id;
+                    const Icon = tab.icon;
+
+                    return (
+                      <button
+                        key={tab.id}
+                        type="button"
+                        onClick={() => setActiveTab(tab)}
+                        className={cn(
+                          "relative flex items-center gap-1.5 p-2 rounded-xl text-xs transition-colors cursor-pointer",
+                          isActive
+                            ? "text-ink"
+                            : "text-ink-soft hover:text-ink",
+                        )}
+                      >
+                        <HugeiconsIcon
+                          icon={Icon}
+                          size={14}
+                          className="z-20 shrink-0 relative"
+                        />
+                        <span className="truncate z-20 relative font-medium">
+                          {tab.label}
+                        </span>
+                        {tab.badge && (
+                          <span
+                            className={cn(
+                              "ml-auto text-[8px] leading-none py-0.5 px-1 rounded-md tabular-nums transition-all z-20 relative",
+                              isActive
+                                ? "bg-accent-violet/10 text-accent-violet border border-accent-violet/20"
+                                : "bg-paper-dim text-ink-soft border border-transparent",
+                            )}
+                          >
+                            {tab.badge}
+                          </span>
+                        )}
+
+                        {isActive && (
+                          <motion.div
+                            layoutId="instructor-sidebar-pill"
+                            className="absolute left-0 w-[2px] h-4 rounded-full bg-accent-violet z-30 border border-accent-violet/20"
+                            transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
+                          />
+                        )}
+                        {isActive && (
+                          <motion.div
+                            layoutId="instructor-background-indicator"
+                            className="absolute inset-0 rounded-lg bg-paper-dim border border-line/40"
+                            transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
+                          />
+                        )}
+                      </button>
+                    );
+                  })}
+                </LayoutGroup>
+              </div>
+
+              <div className="flex-1 bg-card p-5 pt-6 flex flex-col gap-4 overflow-hidden relative">
+                <header className="flex flex-col gap-0.5">
+                  <h3 className="text-xs font-semibold text-ink tracking-tight line-clamp-1 uppercase opacity-60">
+                    {activeTab.header}
+                  </h3>
+                  <p className="text-[10px] text-ink-soft font-normal leading-tight line-clamp-1">
+                    {activeTab.description}
+                  </p>
+                </header>
+
+                <AnimatePresence mode="popLayout" initial={false}>
+                  <motion.div
+                    key={activeTab.id}
+                    initial={{ opacity: 0, y: 8, filter: "blur(4px)" }}
+                    animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+                    exit={{ opacity: 0, y: -8, filter: "blur(4px)" }}
+                    transition={{ duration: 0.3, ease: [0.23, 1, 0.32, 1] }}
+                    className="flex-1"
+                  >
+                    {content}
+                  </motion.div>
+                </AnimatePresence>
+
+                <div className="absolute bottom-0 left-0 right-0 h-10 bg-linear-to-t from-card to-transparent pointer-events-none z-20" />
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+export default InstructorBentoCard;
+
+const OverviewPanel = () => (
+  <div className="flex flex-col gap-3 h-full">
+    <div className="relative p-3.5 rounded-xl border border-line/40 bg-linear-to-br from-card to-paper-dim/20 overflow-hidden">
+      <div className="flex flex-col gap-2 relative z-10">
+        <div className="flex items-center justify-between">
+          <span className="text-[9px] font-medium text-ink-soft">
+            Completion Rate
+          </span>
+          <HugeiconsIcon
+            icon={CircleArrowUpRight02Icon}
+            size={12}
+            className="text-accent-violet"
+          />
+        </div>
+        <div className="flex flex-col gap-0.5">
+          <span className="text-xl font-medium tracking-tight text-ink">
+            58%
+          </span>
+          <div className="w-full h-1 bg-paper-dim rounded-full overflow-hidden mt-1">
+            <motion.div
+              initial={{ width: 0 }}
+              animate={{ width: "58%" }}
+              className="h-full bg-accent-violet rounded-full"
+            />
+          </div>
+        </div>
+        <span className="text-[9px] text-ink-soft">
+          Across all published courses
+        </span>
+      </div>
+      <div className="absolute -right-2 -bottom-2 opacity-5 scale-150 rotate-12">
+        <HugeiconsIcon icon={BarChartIcon} size={64} />
+      </div>
+    </div>
+
+    <div className="grid grid-cols-2 gap-2">
+      <div className="p-3 rounded-xl border border-line/40 bg-card/50 flex items-center justify-between">
+        <div className="flex flex-col">
+          <span className="text-[10px] font-medium text-ink">654</span>
+          <span className="text-[8px] text-ink-soft uppercase font-medium">
+            Enrollments
+          </span>
+        </div>
+        <HugeiconsIcon icon={UserIcon} size={14} className="opacity-20" />
+      </div>
+      <div className="p-3 rounded-xl border border-line/40 bg-card/50 flex items-center justify-between">
+        <div className="flex flex-col">
+          <span className="text-[10px] font-medium text-ink">$8,420</span>
+          <span className="text-[8px] text-ink-soft uppercase font-medium">
+            Lifetime earnings
+          </span>
+        </div>
+        <HugeiconsIcon icon={Wallet01Icon} size={14} className="opacity-20" />
+      </div>
+    </div>
+  </div>
+);
+
+const CoursesPanel = () => (
+  <div className="flex flex-col h-full not-prose">
+    <div className="rounded-xl border border-line/40 overflow-hidden flex flex-col h-full bg-card/50">
+      <div className="bg-paper-dim/30 px-3 py-2 border-b border-line/40 flex items-center justify-between">
+        <span className="text-[9px] font-semibold text-ink-soft uppercase tracking-wider">
+          My Courses
+        </span>
+        <div className="flex items-center gap-1.5 px-1.5 py-0.5 rounded-md bg-card border border-line/40">
+          <HugeiconsIcon icon={Search01Icon} size={10} className="text-ink-soft/50" />
+          <span className="text-[8px] text-ink-soft font-medium">Search</span>
+        </div>
+      </div>
+      <div className="p-1 flex flex-col gap-0.5">
+        {[
+          { name: "Automate Everything with n8n & AI", status: "Published", color: "bg-emerald-400" },
+          { name: "AI Chatbots for WhatsApp Support", status: "Pending review", color: "bg-amber-400" },
+          { name: "Prompt Engineering for Client Work", status: "Draft", color: "bg-slate-400" },
+        ].map((course, i) => (
+          <div
+            key={i}
+            className="flex items-center gap-3 p-2 rounded-lg hover:bg-paper-dim/30 transition-colors group"
+          >
+            <div className="w-6 h-6 rounded-full bg-paper-dim border border-line/40 flex items-center justify-center relative">
+              <HugeiconsIcon icon={BookOpen01Icon} size={10} className="text-ink-soft" />
+              <div className={cn("absolute -bottom-0.5 -right-0.5 w-2 h-2 rounded-full border border-card", course.color)} />
+            </div>
+            <div className="flex flex-col min-w-0 flex-1">
+              <span className="text-[10px] font-medium text-ink truncate">{course.name}</span>
+              <span className="text-[8px] text-ink-soft truncate">{course.status}</span>
+            </div>
+            <div className="opacity-0 group-hover:opacity-100 transition-opacity">
+              <HugeiconsIcon icon={Settings02Icon} size={12} className="text-ink-soft" />
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  </div>
+);
+
+const StudentsPanel = () => (
+  <div className="flex flex-col gap-3 h-full">
+    <div className="grid grid-cols-2 gap-3">
+      {[
+        { title: "Message students", desc: "Reach out in bulk.", icon: UserGroupIcon },
+        { title: "View progress", desc: "Track completions.", icon: Tick01Icon },
+      ].map((card, i) => (
+        <div
+          key={i}
+          className="p-3.5 rounded-xl border border-line/40 bg-card/50 flex flex-col gap-3 relative overflow-hidden group"
+        >
+          <div className="flex flex-col gap-1 z-10">
+            <span className="text-[12px] font-medium text-ink leading-tight">{card.title}</span>
+            <span className="text-[9px] text-ink-soft leading-tight">{card.desc}</span>
+          </div>
+          <button
+            type="button"
+            className="w-fit flex items-center gap-1.5 px-2 py-1 rounded-md bg-ink text-paper text-[8px] font-semibold transition-transform active:scale-95 group-hover:bg-accent-violet z-10"
+          >
+            <HugeiconsIcon icon={Add01Icon} size={8} strokeWidth={3} />
+            Open
+          </button>
+        </div>
+      ))}
+    </div>
+
+    <div className="mt-auto p-3 rounded-xl bg-paper-dim/20 border border-line/30 flex items-center justify-between">
+      <div className="flex items-center gap-2">
+        <div className="p-1 px-1.5 rounded-md bg-card border border-line/40">
+          <HugeiconsIcon icon={InformationCircleIcon} size={10} className="text-ink-soft" />
+        </div>
+        <span className="text-[9px] text-ink-soft font-medium">2 new students this week</span>
+      </div>
+      <HugeiconsIcon icon={CircleArrowUpRight02Icon} size={12} className="text-ink-soft/50" />
+    </div>
+  </div>
+);
+
+const ReviewsPanel = () => (
+  <div className="flex flex-col gap-3 h-full overflow-hidden">
+    <div className="flex-1 rounded-xl border border-line/40 flex flex-col bg-card/50 overflow-hidden">
+      <div className="bg-paper-dim/30 px-3 py-2 border-b border-line/40 flex items-center justify-between">
+        <span className="text-[9px] font-semibold text-ink-soft uppercase tracking-wider">
+          Recent Reviews
+        </span>
+        <HugeiconsIcon icon={StarIcon} size={12} className="text-ink-soft/30" />
+      </div>
+      <div className="flex-1 p-1 overflow-y-auto scrollbar-hide">
+        {[
+          { author: "Bilal S.", course: "n8n & AI", rating: "5.0" },
+          { author: "Fatima R.", course: "WhatsApp Support", rating: "4.0" },
+          { author: "Omar Sheikh", course: "n8n & AI", rating: "5.0" },
+        ].map((review, i) => (
+          <div
+            key={i}
+            className="flex items-center gap-2.5 p-2 rounded-lg hover:bg-paper-dim/30 transition-colors cursor-pointer group"
+          >
+            <div className="w-6 h-6 rounded-md bg-paper-dim/50 border border-line/40 flex items-center justify-center text-ink-soft/60 group-hover:text-accent-violet group-hover:bg-accent-violet/5 transition-colors">
+              <HugeiconsIcon icon={StarIcon} size={12} />
+            </div>
+            <div className="flex flex-col min-w-0 flex-1">
+              <span className="text-[10px] font-medium text-ink truncate">{review.author}</span>
+              <span className="text-[8px] text-ink-soft uppercase truncate">{review.course}</span>
+            </div>
+            <span className="text-[9px] font-mono text-ink-soft">{review.rating}</span>
+          </div>
+        ))}
+      </div>
+    </div>
+  </div>
+);
+
+
+================================================================================
 FILE: apps\web\components\ui\limited-time-offer-pricing.tsx
 ================================================================================
 "use client";
@@ -10261,68 +10766,70 @@ module.exports = nextConfig;
 FILE: apps\web\package.json
 ================================================================================
 {
-    "name":  "web",
-    "version":  "0.1.0",
-    "private":  true,
-    "scripts":  {
-                    "dev":  "npm run tokens:sync \u0026\u0026 next dev -p 3000",
-                    "build":  "npm run tokens:sync \u0026\u0026 next build",
-                    "start":  "next start -p 3000",
-                    "lint":  "next lint",
-                    "type-check":  "tsc --noEmit",
-                    "tokens:sync":  "node lib/design-system/generate-css-vars.mjs"
-                },
-    "dependencies":  {
-                         "@ant-design/nextjs-registry":  "^1.0.0",
-                         "@hookform/resolvers":  "^3.9.0",
-                         "@paper-design/shaders-react":  "^0.0.35",
-                         "@radix-ui/react-avatar":  "^1.2.6",
-                         "@radix-ui/react-separator":  "^1.1.15",
-                         "@radix-ui/react-slot":  "^1.3.3",
-                         "@radix-ui/react-tabs":  "^1.1.21",
-                         "@saachi/store":  "workspace:*",
-                         "@tanstack/react-query":  "^5.56.0",
-                         "@tanstack/react-table":  "^8.20.0",
-                         "@tiptap/react":  "^2.7.0",
-                         "@tiptap/starter-kit":  "^2.7.0",
-                         "antd":  "^5.21.0",
-                         "class-variance-authority":  "^0.7.1",
-                         "clsx":  "^2.1.0",
-                         "cmdk":  "^1.1.1",
-                         "framer-motion":  "^11.5.0",
-                         "lottie-react":  "^2.4.0",
-                         "lucide-react":  "^0.445.0",
-                         "motion":  "^11.15.0",
-                         "next":  "^15.0.0",
-                         "next-intl":  "^3.19.0",
-                         "react":  "^18.3.0",
-                         "react-dom":  "^18.3.0",
-                         "react-hook-form":  "^7.53.0",
-                         "recharts":  "^2.12.0",
-                         "tailwind-merge":  "^2.5.0",
-                         "zod":  "^3.23.0",
-                         "zustand":  "^4.5.0",
-                         "next-themes":  "^0.4.0",
-                         "@radix-ui/react-checkbox":  "^1.1.4",
-                         "@remixicon/react":  "^4.5.0",
-                         "sonner":  "^1.7.0",
-                         "cobe":  "^0.6.3"
-                     },
-    "devDependencies":  {
-                            "@tailwindcss/postcss":  "^4.0.0",
-                            "@testing-library/react":  "^16.0.0",
-                            "@types/node":  "^22.5.0",
-                            "@types/react":  "^18.3.0",
-                            "@types/react-dom":  "^18.3.0",
-                            "eslint":  "^9.9.0",
-                            "eslint-config-next":  "^15.0.0",
-                            "playwright":  "^1.47.0",
-                            "postcss":  "^8.4.0",
-                            "tailwindcss":  "^4.0.0",
-                            "typescript":  "^5.5.0",
-                            "vitest":  "^2.0.0",
-                            "@eslint/eslintrc":  "^3.1.0"
-                        }
+    "name": "web",
+    "version": "0.1.0",
+    "private": true,
+    "scripts": {
+        "dev": "npm run tokens:sync && next dev -p 3000",
+        "build": "npm run tokens:sync && next build",
+        "start": "next start -p 3000",
+        "lint": "next lint",
+        "type-check": "tsc --noEmit",
+        "tokens:sync": "node lib/design-system/generate-css-vars.mjs"
+    },
+    "dependencies": {
+        "@ant-design/nextjs-registry": "^1.0.0",
+        "@hookform/resolvers": "^3.9.0",
+        "@hugeicons/core-free-icons": "^4.2.3",
+        "@hugeicons/react": "^1.1.9",
+        "@paper-design/shaders-react": "^0.0.35",
+        "@radix-ui/react-avatar": "^1.2.6",
+        "@radix-ui/react-checkbox": "^1.1.4",
+        "@radix-ui/react-separator": "^1.1.15",
+        "@radix-ui/react-slot": "^1.3.3",
+        "@radix-ui/react-tabs": "^1.1.21",
+        "@remixicon/react": "^4.5.0",
+        "@saachi/store": "workspace:*",
+        "@tanstack/react-query": "^5.56.0",
+        "@tanstack/react-table": "^8.20.0",
+        "@tiptap/react": "^2.7.0",
+        "@tiptap/starter-kit": "^2.7.0",
+        "antd": "^5.21.0",
+        "class-variance-authority": "^0.7.1",
+        "clsx": "^2.1.0",
+        "cmdk": "^1.1.1",
+        "cobe": "^0.6.3",
+        "framer-motion": "^11.5.0",
+        "lottie-react": "^2.4.0",
+        "lucide-react": "^0.445.0",
+        "motion": "^11.15.0",
+        "next": "^15.0.0",
+        "next-intl": "^3.19.0",
+        "next-themes": "^0.4.0",
+        "react": "^18.3.0",
+        "react-dom": "^18.3.0",
+        "react-hook-form": "^7.53.0",
+        "recharts": "^2.12.0",
+        "sonner": "^1.7.0",
+        "tailwind-merge": "^2.5.0",
+        "zod": "^3.23.0",
+        "zustand": "^4.5.0"
+    },
+    "devDependencies": {
+        "@eslint/eslintrc": "^3.1.0",
+        "@tailwindcss/postcss": "^4.0.0",
+        "@testing-library/react": "^16.0.0",
+        "@types/node": "^22.5.0",
+        "@types/react": "^18.3.0",
+        "@types/react-dom": "^18.3.0",
+        "eslint": "^9.9.0",
+        "eslint-config-next": "^15.0.0",
+        "playwright": "^1.47.0",
+        "postcss": "^8.4.0",
+        "tailwindcss": "^4.0.0",
+        "typescript": "^5.5.0",
+        "vitest": "^2.0.0"
+    }
 }
 
 
