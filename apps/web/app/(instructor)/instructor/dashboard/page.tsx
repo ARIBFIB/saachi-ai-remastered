@@ -1,10 +1,11 @@
-"use client";
+﻿"use client";
 
 import Link from "next/link";
 import { DollarSign, Users, Star, MessageCircle } from "lucide-react";
 import { useSession } from "@saachi/api-client";
 import { Button, KpiCard, EmptyState } from "@saachi/ui";
 import { InstructorBentoCard } from "@/components/ui/instructor-bento-card";
+import { InstructorOnboardingChecklist } from "@/components/ui/instructor-onboarding-checklist";
 
 // NOTE: demo-only dummy data. Replace with real analytics/enrollment hooks
 // once packages/api-client hooks/useInstructorAnalytics.ts is confirmed.
@@ -23,6 +24,8 @@ export default function InstructorDashboardPage() {
         Welcome back{session ? `, ${session.fullName}` : ""}
       </h1>
       <p className="mb-8 text-[14px] text-ink-soft">Here is how your courses are performing.</p>
+
+      <InstructorOnboardingChecklist />
 
       <div className="mb-10 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <KpiCard label="Lifetime earnings" value="$8,420.00" icon={DollarSign} />
