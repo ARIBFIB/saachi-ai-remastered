@@ -9,6 +9,16 @@ import { useEnrollmentStore, useNotificationStore } from "@saachi/store";
 import { Button, EmptyState, KpiCard } from "@saachi/ui";
 import { LearnerOnboardingTour } from "@/components/ui/learner-onboarding-tour";
 import { LearnerOnboardingChecklist } from "@/components/ui/learner-onboarding-checklist";
+import { ActivityChartCard } from "@/components/ui/activity-chart-card";
+import { BentoCard, BentoGrid } from "@/components/ui/bento-grid";
+import {
+  BookOpen as BentoBookOpen,
+  Award as BentoAward,
+  Users as BentoUsers,
+  Heart as BentoHeart,
+  MessageCircle as BentoMessageCircle,
+  GraduationCap as BentoGraduationCap
+} from "lucide-react";
 
 export default function LearnerDashboardPage() {
   const { data: session } = useSession();
@@ -131,5 +141,6 @@ export default function LearnerDashboardPage() {
     </div>
   );
 }
+
 
 
