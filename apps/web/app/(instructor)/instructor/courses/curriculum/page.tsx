@@ -17,6 +17,8 @@ import {
 } from "lucide-react";
 import { useInstructorCourseStore, type InstructorCourseLesson, type InstructorCourseModule } from "@saachi/store";
 import { Button, Select, EmptyState, cn } from "@saachi/ui";
+import { Info } from "lucide-react";
+import { useBottomPanelStore } from "@saachi/store";
 
 type LessonType = InstructorCourseLesson["type"];
 
@@ -87,7 +89,9 @@ function ModuleList({
   modules,
   onChange
 }: {
-  modules: InstructorCourseModule[];
+  
+  const openTab = useBottomPanelStore((s) => s.openTab);
+modules: InstructorCourseModule[];
   onChange: (modules: InstructorCourseModule[]) => void;
 }) {
   const [dragIndex, setDragIndex] = useState<number | null>(null);
@@ -207,6 +211,29 @@ function ModuleList({
               </button>
               <ModuleTitle title={m.title} onSave={(title) => updateModule(m.id, { title })} />
               <span className="ml-auto shrink-0 text-[12px] text-ink-soft">{m.lessons.length} lesson(s)</span>
+              <button
+                type="button"
+                aria-label="View module details"
+                onClick={() =>
+                  openTab({
+                    id: `module-details-${m.id}`,
+                    title: m.title,
+                    kind: "details",
+                    rows: [
+                      { label: "Module ID", value: m.id },
+                      { label: "Lessons", value: String(m.lessons.length) },
+                      // NOTE: dummy timestamps - module type has no real
+                      // createdAt/updatedAt yet. Replace once backend adds them.
+                      { label: "Created At", value: new Date(Date.now() - 1000 * 60 * 60 * 24 * 6).toLocaleString() },
+                      { label: "Updated At", value: new Date(Date.now() - 1000 * 60 * 45).toLocaleString() },
+                      { label: "Status", value: "Draft" }
+                    ]
+                  })
+                }
+                className="mr-1 flex h-8 w-8 shrink-0 items-center justify-center rounded-control text-ink-soft transition-colors hover:bg-paper-dim hover:text-ink"
+              >
+                <Info size={14} />
+              </button>
               <button
                 type="button"
                 aria-label="Delete module"

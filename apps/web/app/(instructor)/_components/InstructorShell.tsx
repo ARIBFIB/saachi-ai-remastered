@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
@@ -13,6 +13,8 @@ import {
   InstructorDetailPanel,
   InstructorSidebarMobile
 } from "@/components/ui/instructor-sidebar-v2";
+import { BottomTerminalPanel } from "@/components/ui/bottom-terminal-panel";
+import { useBottomPanelStore } from "@saachi/store";
 
 function cx(...parts: Array<string | false | undefined>) {
   return parts.filter(Boolean).join(" ");
@@ -46,6 +48,8 @@ export function InstructorShell({ children }: { children: ReactNode }) {
   const [userMenuOpen, setUserMenuOpen] = useState(false);
   const [activeGroupId, setActiveGroupId] = useState(() => activeGroupIdFromPathname(pathname));
   const [panelCollapsed, setPanelCollapsed] = useState(false);
+  const panelIsOpen = useBottomPanelStore((s) => s.isOpen);
+  const panelHeight = useBottomPanelStore((s) => s.height);
 
   const notifRef = useRef<HTMLDivElement>(null);
   const userMenuRef = useRef<HTMLDivElement>(null);
@@ -225,8 +229,15 @@ export function InstructorShell({ children }: { children: ReactNode }) {
       )}
 
       <div className={`transition-[margin] duration-300 ease-out ${sidebarOffsetClass}`}>
-        <main className="mx-auto max-w-[1200px] px-4 py-8 md:px-8 md:py-10">{children}</main>
+        <main
+          className="mx-auto max-w-[1200px] px-4 py-8 md:px-8 md:py-10 transition-[padding] duration-150 ease-out"
+          style={{ paddingBottom: panelIsOpen ? panelHeight + 32 : undefined }}
+        >
+          {children}
+        </main>
       </div>
+
+      <BottomTerminalPanel />
     </div>
   );
 }

@@ -1,4 +1,4 @@
-﻿export * from "./useCartStore";
+export * from "./useCartStore";
 export * from "./useWishlistStore";
 export * from "./useEnrollmentStore";
 export * from "./useNotificationStore";
@@ -13,3 +13,4 @@ export * from "./useThemeStore";
 export * from "./useQuizStore";
 export * from "./useNotifPrefsStore";
 export * from "./useInstructorMessagesStore";
+export * from "./useBottomPanelStore";
