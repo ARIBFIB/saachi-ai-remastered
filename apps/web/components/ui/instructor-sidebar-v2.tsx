@@ -11,7 +11,7 @@
  */
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useState } from "react";
 import {
   LayoutDashboard,
@@ -220,6 +220,12 @@ export const INSTRUCTOR_SIDEBAR: InstructorNavGroup[] = [
 
 /* --------------------------------- Icon rail ------------------------------ */
 
+function resolveGroupHref(group: InstructorNavGroup): string {
+  const firstItem = group.items[0];
+  if (!firstItem) return "/instructor/dashboard";
+  return firstItem.href.split("?")[0];
+}
+
 export function InstructorIconRail({
   activeGroupId,
   onSelect
@@ -227,6 +233,13 @@ export function InstructorIconRail({
   activeGroupId: string;
   onSelect: (id: string) => void;
 }) {
+  const router = useRouter();
+
+  function handleClick(group: InstructorNavGroup) {
+    onSelect(group.id);
+    router.push(resolveGroupHref(group));
+  }
+
   return (
     <div className="hidden md:flex w-16 shrink-0 flex-col items-center gap-2 border-r border-line bg-card py-4">
       {INSTRUCTOR_SIDEBAR.map((group) => {
@@ -237,7 +250,7 @@ export function InstructorIconRail({
             key={group.id}
             type="button"
             title={group.label}
-            onClick={() => onSelect(group.id)}
+            onClick={() => handleClick(group)}
             className={cn(
               "relative flex h-10 w-10 shrink-0 items-center justify-center rounded-control transition-colors duration-200 ease-out",
               isActive ? "bg-gold text-ink" : "text-ink-soft hover:bg-paper-dim hover:text-ink"
@@ -414,6 +427,12 @@ export function InstructorDetailPanel({
 
 export function InstructorSidebarMobile({ onNavigate }: { onNavigate?: () => void }) {
   const [activeGroupId, setActiveGroupId] = useState("overview");
+  const router = useRouter();
+
+  function handleMobileClick(group: InstructorNavGroup) {
+    setActiveGroupId(group.id);
+    router.push(resolveGroupHref(group));
+  }
 
   return (
     <div className="flex h-full">
@@ -426,7 +445,7 @@ export function InstructorSidebarMobile({ onNavigate }: { onNavigate?: () => voi
               key={group.id}
               type="button"
               title={group.label}
-              onClick={() => setActiveGroupId(group.id)}
+              onClick={() => handleMobileClick(group)}
               className={cn(
                 "relative flex h-10 w-10 shrink-0 items-center justify-center rounded-control transition-colors duration-200 ease-out",
                 isActive ? "bg-gold text-ink" : "text-ink-soft hover:bg-paper-dim hover:text-ink"
