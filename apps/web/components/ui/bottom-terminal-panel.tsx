@@ -1,42 +1,33 @@
 "use client";
 
-/**
- * BottomTerminalPanel
- * --------------------
- * VS Code-style bottom panel: multiple tabs, close (X) per tab,
- * drag-to-resize from the top edge, full-width, bottom-attached.
- * Frontend-only. Content is whatever the caller passed via
- * useBottomPanelStore().openTab({ ... dummy rows ... }).
- */
-
 import { useCallback, useEffect, useRef } from "react";
 import { X, TerminalSquare, ChevronDown, Trash2 } from "lucide-react";
 import {
   useBottomPanelStore,
   MIN_PANEL_HEIGHT,
-  MAX_PANEL_HEIGHT
+  MAX_PANEL_HEIGHT,
 } from "@saachi/store";
 import { cn } from "@/lib/utils";
 
 export function BottomTerminalPanel() {
-  const isOpen = useBottomPanelStore((s) => s.isOpen);
-  const height = useBottomPanelStore((s) => s.height);
-  const tabs = useBottomPanelStore((s) => s.tabs);
+  const isOpen      = useBottomPanelStore((s) => s.isOpen);
+  const height      = useBottomPanelStore((s) => s.height);
+  const tabs        = useBottomPanelStore((s) => s.tabs);
   const activeTabId = useBottomPanelStore((s) => s.activeTabId);
-  const setActiveTab = useBottomPanelStore((s) => s.setActiveTab);
-  const closeTab = useBottomPanelStore((s) => s.closeTab);
-  const closeAllTabs = useBottomPanelStore((s) => s.closeAllTabs);
-  const setHeight = useBottomPanelStore((s) => s.setHeight);
-  const collapse = useBottomPanelStore((s) => s.collapse);
+  const setActiveTab  = useBottomPanelStore((s) => s.setActiveTab);
+  const closeTab      = useBottomPanelStore((s) => s.closeTab);
+  const closeAllTabs  = useBottomPanelStore((s) => s.closeAllTabs);
+  const setHeight     = useBottomPanelStore((s) => s.setHeight);
+  const collapse      = useBottomPanelStore((s) => s.collapse);
 
-  const draggingRef = useRef(false);
-  const startYRef = useRef(0);
-  const startHeightRef = useRef(height);
+  const draggingRef     = useRef(false);
+  const startYRef       = useRef(0);
+  const startHeightRef  = useRef(height);
 
   const handlePointerMove = useCallback(
     (e: PointerEvent) => {
       if (!draggingRef.current) return;
-      const delta = startYRef.current - e.clientY; // drag up = increase height
+      const delta = startYRef.current - e.clientY;
       setHeight(startHeightRef.current + delta);
     },
     [setHeight]
@@ -78,7 +69,7 @@ export function BottomTerminalPanel() {
       role="region"
       aria-label="Details panel"
     >
-      {/* Drag handle - top edge, full width */}
+      {/* Drag handle */}
       <div
         onPointerDown={handleDragStart}
         className="group flex h-2 w-full shrink-0 cursor-ns-resize items-center justify-center"
@@ -108,10 +99,7 @@ export function BottomTerminalPanel() {
                 <button
                   type="button"
                   aria-label={`Close ${tab.title}`}
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    closeTab(tab.id);
-                  }}
+                  onClick={(e) => { e.stopPropagation(); closeTab(tab.id); }}
                   className="flex h-4 w-4 shrink-0 items-center justify-center rounded text-ink-soft/60 opacity-0 transition-opacity hover:bg-error-tint hover:text-error group-hover:opacity-100"
                 >
                   <X size={11} />
@@ -141,7 +129,7 @@ export function BottomTerminalPanel() {
         </div>
       </div>
 
-      {/* Panel content - terminal style */}
+      {/* Content */}
       <div className="flex-1 overflow-y-auto bg-ink/[0.02] px-5 py-4 font-mono text-[12.5px] text-ink dark:bg-white/[0.02]">
         <p className="mb-3 text-[11px] uppercase tracking-[0.06em] text-ink-soft/70">
           {activeTab.title}

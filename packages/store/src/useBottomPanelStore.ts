@@ -2,13 +2,6 @@
 
 import { create } from "zustand";
 
-/**
- * Bottom Terminal Panel store (VS Code-style).
- * Frontend-only, dummy data. Manages open tabs, active tab, panel height,
- * and open/collapsed state. Any part of the instructor UI can call
- * `openTab(...)` to push a new details tab into the panel.
- */
-
 export type BottomPanelTabKind = "details" | "log" | "info";
 
 export type BottomPanelDetailRow = {
@@ -20,16 +13,14 @@ export type BottomPanelTab = {
   id: string;
   title: string;
   kind: BottomPanelTabKind;
-  // Generic rows shown terminal-style, e.g. Created At / Updated At / Status
   rows: BottomPanelDetailRow[];
 };
 
 type BottomPanelState = {
   isOpen: boolean;
-  height: number; // px
+  height: number;
   tabs: BottomPanelTab[];
   activeTabId: string | null;
-
   openTab: (tab: BottomPanelTab) => void;
   closeTab: (id: string) => void;
   closeAllTabs: () => void;
@@ -52,18 +43,17 @@ export const useBottomPanelStore = create<BottomPanelState>((set, get) => ({
   openTab: (tab) => {
     const existing = get().tabs.find((t) => t.id === tab.id);
     if (existing) {
-      // Refresh content of an already-open tab and just focus it.
       set((state) => ({
         tabs: state.tabs.map((t) => (t.id === tab.id ? tab : t)),
         activeTabId: tab.id,
-        isOpen: true
+        isOpen: true,
       }));
       return;
     }
     set((state) => ({
       tabs: [...state.tabs, tab],
       activeTabId: tab.id,
-      isOpen: true
+      isOpen: true,
     }));
   },
 
@@ -77,13 +67,12 @@ export const useBottomPanelStore = create<BottomPanelState>((set, get) => ({
       return {
         tabs: remaining,
         activeTabId: nextActive,
-        isOpen: remaining.length > 0 ? state.isOpen : false
+        isOpen: remaining.length > 0 ? state.isOpen : false,
       };
     });
   },
 
   closeAllTabs: () => set({ tabs: [], activeTabId: null, isOpen: false }),
-
   setActiveTab: (id) => set({ activeTabId: id }),
 
   setHeight: (height) => {
@@ -92,6 +81,5 @@ export const useBottomPanelStore = create<BottomPanelState>((set, get) => ({
   },
 
   togglePanel: () => set((state) => ({ isOpen: !state.isOpen })),
-
-  collapse: () => set({ isOpen: false })
+  collapse: () => set({ isOpen: false }),
 }));

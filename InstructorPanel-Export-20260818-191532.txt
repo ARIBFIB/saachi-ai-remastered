@@ -31,6 +31,8 @@ import {
   InstructorDetailPanel,
   InstructorSidebarMobile
 } from "@/components/ui/instructor-sidebar-v2";
+import { BottomTerminalPanel } from "@/components/ui/bottom-terminal-panel";
+import { useBottomPanelStore } from "@saachi/store";
 
 function cx(...parts: Array<string | false | undefined>) {
   return parts.filter(Boolean).join(" ");
@@ -64,6 +66,8 @@ export function InstructorShell({ children }: { children: ReactNode }) {
   const [userMenuOpen, setUserMenuOpen] = useState(false);
   const [activeGroupId, setActiveGroupId] = useState(() => activeGroupIdFromPathname(pathname));
   const [panelCollapsed, setPanelCollapsed] = useState(false);
+  const panelIsOpen = useBottomPanelStore((s) => s.isOpen);
+  const panelHeight = useBottomPanelStore((s) => s.height);
 
   const notifRef = useRef<HTMLDivElement>(null);
   const userMenuRef = useRef<HTMLDivElement>(null);
@@ -243,8 +247,15 @@ export function InstructorShell({ children }: { children: ReactNode }) {
       )}
 
       <div className={`transition-[margin] duration-300 ease-out ${sidebarOffsetClass}`}>
-        <main className="mx-auto max-w-[1200px] px-4 py-8 md:px-8 md:py-10">{children}</main>
+        <main
+          className="mx-auto max-w-[1200px] px-4 py-8 md:px-8 md:py-10 transition-[padding] duration-150 ease-out"
+          style={{ paddingBottom: panelIsOpen ? panelHeight + 32 : undefined }}
+        >
+          {children}
+        </main>
       </div>
+
+      <BottomTerminalPanel />
     </div>
   );
 }
@@ -842,6 +853,8 @@ import {
 } from "lucide-react";
 import { useInstructorCourseStore, type InstructorCourseLesson, type InstructorCourseModule } from "@saachi/store";
 import { Button, Select, EmptyState, cn } from "@saachi/ui";
+import { Info } from "lucide-react";
+import { useBottomPanelStore } from "@saachi/store";
 
 type LessonType = InstructorCourseLesson["type"];
 
@@ -912,7 +925,9 @@ function ModuleList({
   modules,
   onChange
 }: {
-  modules: InstructorCourseModule[];
+  
+  const openTab = useBottomPanelStore((s) => s.openTab);
+modules: InstructorCourseModule[];
   onChange: (modules: InstructorCourseModule[]) => void;
 }) {
   const [dragIndex, setDragIndex] = useState<number | null>(null);
@@ -1032,6 +1047,29 @@ function ModuleList({
               </button>
               <ModuleTitle title={m.title} onSave={(title) => updateModule(m.id, { title })} />
               <span className="ml-auto shrink-0 text-[12px] text-ink-soft">{m.lessons.length} lesson(s)</span>
+              <button
+                type="button"
+                aria-label="View module details"
+                onClick={() =>
+                  openTab({
+                    id: `module-details-${m.id}`,
+                    title: m.title,
+                    kind: "details",
+                    rows: [
+                      { label: "Module ID", value: m.id },
+                      { label: "Lessons", value: String(m.lessons.length) },
+                      // NOTE: dummy timestamps - module type has no real
+                      // createdAt/updatedAt yet. Replace once backend adds them.
+                      { label: "Created At", value: new Date(Date.now() - 1000 * 60 * 60 * 24 * 6).toLocaleString() },
+                      { label: "Updated At", value: new Date(Date.now() - 1000 * 60 * 45).toLocaleString() },
+                      { label: "Status", value: "Draft" }
+                    ]
+                  })
+                }
+                className="mr-1 flex h-8 w-8 shrink-0 items-center justify-center rounded-control text-ink-soft transition-colors hover:bg-paper-dim hover:text-ink"
+              >
+                <Info size={14} />
+              </button>
               <button
                 type="button"
                 aria-label="Delete module"
@@ -5661,6 +5699,7 @@ export default InstructorSearchBar;
 
 --- packages/store (state used by instructor panel) ---
 TRUE   : packages\store\src\index.ts
+TRUE   : packages\store\src\useBottomPanelStore.ts
 TRUE   : packages\store\src\useCartStore.ts
 TRUE   : packages\store\src\useCommunityStore.ts
 TRUE   : packages\store\src\useCorporateStore.ts

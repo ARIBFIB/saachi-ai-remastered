@@ -13,20 +13,24 @@ import {
   HelpCircle,
   Paperclip,
   ChevronDown,
-  Save
+  Save,
+  Info,
 } from "lucide-react";
-import { useInstructorCourseStore, type InstructorCourseLesson, type InstructorCourseModule } from "@saachi/store";
-import { Button, Select, EmptyState, cn } from "@saachi/ui";
-import { Info } from "lucide-react";
+import {
+  useInstructorCourseStore,
+  type InstructorCourseLesson,
+  type InstructorCourseModule,
+} from "@saachi/store";
 import { useBottomPanelStore } from "@saachi/store";
+import { Button, Select, EmptyState, cn } from "@saachi/ui";
 
 type LessonType = InstructorCourseLesson["type"];
 
 const LESSON_TYPE_META: Record<LessonType, { label: string; icon: typeof Video }> = {
-  video: { label: "Video", icon: Video },
-  text: { label: "Text", icon: FileText },
-  quiz: { label: "Quiz", icon: HelpCircle },
-  resource: { label: "Resource", icon: Paperclip }
+  video:    { label: "Video",    icon: Video    },
+  text:     { label: "Text",     icon: FileText  },
+  quiz:     { label: "Quiz",     icon: HelpCircle },
+  resource: { label: "Resource", icon: Paperclip },
 };
 
 let idCounter = 0;
@@ -36,14 +40,13 @@ function nextId(prefix: string) {
 }
 
 export default function InstructorCoursesCurriculumPage() {
-  const courses = useInstructorCourseStore((s) => s.courses);
+  const courses    = useInstructorCourseStore((s) => s.courses);
   const setModules = useInstructorCourseStore((s) => s.setModules);
 
   const [courseId, setCourseId] = useState(courses[0]?.id ?? "");
   const [savedTick, setSavedTick] = useState(0);
 
   const course = useMemo(() => courses.find((c) => c.id === courseId), [courses, courseId]);
-
   const courseOptions = courses.map((c) => ({ label: c.title, value: c.id }));
 
   function persist(modules: InstructorCourseModule[]) {
@@ -56,7 +59,7 @@ export default function InstructorCoursesCurriculumPage() {
     return (
       <div>
         <h1 className="mb-1 font-display text-[26px] font-bold text-ink">Curriculum Builder</h1>
-        <p className="mb-8 text-[14px] text-ink-soft">Drag-and-drop module and lesson structuring for your courses.</p>
+        <p className="mb-8 text-[14px] text-ink-soft">Drag-and-drop module and lesson structuring.</p>
         <EmptyState title="No courses yet" description="Create a course first to start building its curriculum." />
       </div>
     );
@@ -76,26 +79,37 @@ export default function InstructorCoursesCurriculumPage() {
               Saved
             </span>
           )}
-          <Select options={courseOptions} value={courseId} onChange={(e) => setCourseId(e.target.value)} className="w-72" />
+          <Select
+            options={courseOptions}
+            value={courseId}
+            onChange={(e) => setCourseId(e.target.value)}
+            className="w-72"
+          />
         </div>
       </div>
 
-      {course && <ModuleList key={course.id} modules={course.modules} onChange={persist} />}
+      {course && (
+        <ModuleList key={course.id} modules={course.modules} onChange={persist} />
+      )}
     </div>
   );
 }
 
+// â”€â”€ ModuleList â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 function ModuleList({
   modules,
-  onChange
+  onChange,
 }: {
-  
-  const openTab = useBottomPanelStore((s) => s.openTab);
-modules: InstructorCourseModule[];
+  modules: InstructorCourseModule[];
   onChange: (modules: InstructorCourseModule[]) => void;
 }) {
+  // Hook is correctly inside the function body
+  const openTab = useBottomPanelStore((s) => s.openTab);
+
   const [dragIndex, setDragIndex] = useState<number | null>(null);
-  const [expanded, setExpanded] = useState<Set<string>>(() => new Set(modules.map((m) => m.id)));
+  const [expanded, setExpanded] = useState<Set<string>>(
+    () => new Set(modules.map((m) => m.id))
+  );
 
   function toggleExpanded(id: string) {
     setExpanded((prev) => {
@@ -106,9 +120,7 @@ modules: InstructorCourseModule[];
     });
   }
 
-  function handleDragStart(index: number) {
-    setDragIndex(index);
-  }
+  function handleDragStart(index: number) { setDragIndex(index); }
 
   function handleDragOver(e: DragEvent, index: number) {
     e.preventDefault();
@@ -120,12 +132,14 @@ modules: InstructorCourseModule[];
     onChange(reordered);
   }
 
-  function handleDrop() {
-    setDragIndex(null);
-  }
+  function handleDrop() { setDragIndex(null); }
 
   function addModule() {
-    const newModule: InstructorCourseModule = { id: nextId("mod"), title: `Module ${modules.length + 1}`, lessons: [] };
+    const newModule: InstructorCourseModule = {
+      id: nextId("mod"),
+      title: `Module ${modules.length + 1}`,
+      lessons: [],
+    };
     setExpanded((prev) => new Set(prev).add(newModule.id));
     onChange([...modules, newModule]);
   }
@@ -160,7 +174,9 @@ modules: InstructorCourseModule[];
 
   function removeLesson(moduleId: string, lessonId: string) {
     onChange(
-      modules.map((m) => (m.id === moduleId ? { ...m, lessons: m.lessons.filter((l) => l.id !== lessonId) } : m))
+      modules.map((m) =>
+        m.id === moduleId ? { ...m, lessons: m.lessons.filter((l) => l.id !== lessonId) } : m
+      )
     );
   }
 
@@ -179,7 +195,10 @@ modules: InstructorCourseModule[];
   return (
     <div className="flex flex-col gap-3">
       {modules.length === 0 ? (
-        <EmptyState title="No modules yet" description="Add your first module to start building the curriculum." />
+        <EmptyState
+          title="No modules yet"
+          description="Add your first module to start building the curriculum."
+        />
       ) : (
         modules.map((m, index) => (
           <div
@@ -193,10 +212,12 @@ modules: InstructorCourseModule[];
               dragIndex === index && "opacity-60 shadow-lg"
             )}
           >
+            {/* Module header row */}
             <div className="flex items-center gap-2 px-4 py-3">
               <span className="cursor-grab text-ink-soft/50" title="Drag to reorder">
                 <GripVertical size={16} />
               </span>
+
               <button
                 type="button"
                 onClick={() => toggleExpanded(m.id)}
@@ -209,8 +230,14 @@ modules: InstructorCourseModule[];
                   style={{ transform: expanded.has(m.id) ? "rotate(0deg)" : "rotate(-90deg)" }}
                 />
               </button>
+
               <ModuleTitle title={m.title} onSave={(title) => updateModule(m.id, { title })} />
-              <span className="ml-auto shrink-0 text-[12px] text-ink-soft">{m.lessons.length} lesson(s)</span>
+
+              <span className="ml-auto shrink-0 text-[12px] text-ink-soft">
+                {m.lessons.length} lesson(s)
+              </span>
+
+              {/* Info button â€“ opens bottom panel */}
               <button
                 type="button"
                 aria-label="View module details"
@@ -220,20 +247,20 @@ modules: InstructorCourseModule[];
                     title: m.title,
                     kind: "details",
                     rows: [
-                      { label: "Module ID", value: m.id },
-                      { label: "Lessons", value: String(m.lessons.length) },
-                      // NOTE: dummy timestamps - module type has no real
-                      // createdAt/updatedAt yet. Replace once backend adds them.
-                      { label: "Created At", value: new Date(Date.now() - 1000 * 60 * 60 * 24 * 6).toLocaleString() },
-                      { label: "Updated At", value: new Date(Date.now() - 1000 * 60 * 45).toLocaleString() },
-                      { label: "Status", value: "Draft" }
-                    ]
+                      { label: "Module ID",   value: m.id },
+                      { label: "Lessons",     value: String(m.lessons.length) },
+                      { label: "Created At",  value: new Date(Date.now() - 1000 * 60 * 60 * 24 * 6).toLocaleString() },
+                      { label: "Updated At",  value: new Date(Date.now() - 1000 * 60 * 45).toLocaleString() },
+                      { label: "Status",      value: "Draft" },
+                    ],
                   })
                 }
                 className="mr-1 flex h-8 w-8 shrink-0 items-center justify-center rounded-control text-ink-soft transition-colors hover:bg-paper-dim hover:text-ink"
               >
                 <Info size={14} />
               </button>
+
+              {/* Delete button */}
               <button
                 type="button"
                 aria-label="Delete module"
@@ -244,6 +271,7 @@ modules: InstructorCourseModule[];
               </button>
             </div>
 
+            {/* Expanded lessons area */}
             {expanded.has(m.id) && (
               <div className="border-t border-line px-4 py-3">
                 <LessonList
@@ -256,8 +284,14 @@ modules: InstructorCourseModule[];
                   {(Object.keys(LESSON_TYPE_META) as LessonType[]).map((type) => {
                     const Icon = LESSON_TYPE_META[type].icon;
                     return (
-                      <Button key={type} size="sm" variant="secondary" onClick={() => addLesson(m.id, type)}>
-                        <Icon size={13} className="mr-1.5" />+ {LESSON_TYPE_META[type].label}
+                      <Button
+                        key={type}
+                        size="sm"
+                        variant="secondary"
+                        onClick={() => addLesson(m.id, type)}
+                      >
+                        <Icon size={13} className="mr-1.5" />
+                        + {LESSON_TYPE_META[type].label}
                       </Button>
                     );
                   })}
@@ -276,6 +310,7 @@ modules: InstructorCourseModule[];
   );
 }
 
+// â”€â”€ ModuleTitle â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 function ModuleTitle({ title, onSave }: { title: string; onSave: (title: string) => void }) {
   const [editing, setEditing] = useState(false);
   const [value, setValue] = useState(title);
@@ -284,10 +319,7 @@ function ModuleTitle({ title, onSave }: { title: string; onSave: (title: string)
     return (
       <button
         type="button"
-        onClick={() => {
-          setValue(title);
-          setEditing(true);
-        }}
+        onClick={() => { setValue(title); setEditing(true); }}
         className="group flex min-w-0 flex-1 items-center gap-2 text-left"
       >
         <span className="truncate text-[14px] font-semibold text-ink">{title}</span>
@@ -303,20 +335,14 @@ function ModuleTitle({ title, onSave }: { title: string; onSave: (title: string)
         value={value}
         onChange={(e) => setValue(e.target.value)}
         onKeyDown={(e) => {
-          if (e.key === "Enter") {
-            onSave(value.trim() || title);
-            setEditing(false);
-          }
+          if (e.key === "Enter") { onSave(value.trim() || title); setEditing(false); }
           if (e.key === "Escape") setEditing(false);
         }}
         className="min-w-0 flex-1 rounded-control border border-line-strong bg-paper px-2 py-1 text-[14px] font-semibold text-ink outline-none focus:border-gold"
       />
       <button
         type="button"
-        onClick={() => {
-          onSave(value.trim() || title);
-          setEditing(false);
-        }}
+        onClick={() => { onSave(value.trim() || title); setEditing(false); }}
         className="flex h-7 w-7 shrink-0 items-center justify-center rounded-control text-teal hover:bg-teal-light"
       >
         <Check size={14} />
@@ -332,11 +358,12 @@ function ModuleTitle({ title, onSave }: { title: string; onSave: (title: string)
   );
 }
 
+// â”€â”€ LessonList â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 function LessonList({
   lessons,
   onReorder,
   onUpdate,
-  onRemove
+  onRemove,
 }: {
   lessons: InstructorCourseLesson[];
   onReorder: (fromIndex: number, toIndex: number) => void;
@@ -376,7 +403,10 @@ function LessonList({
             <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded bg-card text-ink-soft">
               <Icon size={12} />
             </span>
-            <LessonTitleInline title={lesson.title} onSave={(title) => onUpdate(lesson.id, { title })} />
+            <LessonTitleInline
+              title={lesson.title}
+              onSave={(title) => onUpdate(lesson.id, { title })}
+            />
             <button
               type="button"
               aria-label="Delete lesson"
@@ -392,6 +422,7 @@ function LessonList({
   );
 }
 
+// â”€â”€ LessonTitleInline â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 function LessonTitleInline({ title, onSave }: { title: string; onSave: (title: string) => void }) {
   const [editing, setEditing] = useState(false);
   const [value, setValue] = useState(title);
@@ -400,10 +431,7 @@ function LessonTitleInline({ title, onSave }: { title: string; onSave: (title: s
     return (
       <button
         type="button"
-        onClick={() => {
-          setValue(title);
-          setEditing(true);
-        }}
+        onClick={() => { setValue(title); setEditing(true); }}
         className="min-w-0 flex-1 truncate text-left text-[13px] text-ink"
       >
         {title}
@@ -416,15 +444,9 @@ function LessonTitleInline({ title, onSave }: { title: string; onSave: (title: s
       autoFocus
       value={value}
       onChange={(e) => setValue(e.target.value)}
-      onBlur={() => {
-        onSave(value.trim() || title);
-        setEditing(false);
-      }}
+      onBlur={() => { onSave(value.trim() || title); setEditing(false); }}
       onKeyDown={(e) => {
-        if (e.key === "Enter") {
-          onSave(value.trim() || title);
-          setEditing(false);
-        }
+        if (e.key === "Enter") { onSave(value.trim() || title); setEditing(false); }
         if (e.key === "Escape") setEditing(false);
       }}
       className="min-w-0 flex-1 rounded border border-line-strong bg-card px-1.5 py-0.5 text-[13px] text-ink outline-none focus:border-gold"
