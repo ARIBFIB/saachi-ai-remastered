@@ -1,10 +1,11 @@
-"use client";
+﻿"use client";
 
 import Link from "next/link";
 import { BookOpen, Award, Bell } from "lucide-react";
 import { useSession } from "@saachi/api-client";
 import { useEnrollmentStore, useNotificationStore } from "@saachi/store";
 import { Button, EmptyState, KpiCard } from "@saachi/ui";
+import { LearnerOnboardingChecklist } from "@/components/ui/learner-onboarding-checklist";
 
 export default function LearnerDashboardPage() {
   const { data: session } = useSession();
@@ -17,6 +18,8 @@ export default function LearnerDashboardPage() {
 
   return (
     <div>
+            <LearnerOnboardingChecklist />
+
       <h1 className="mb-1 font-display text-[26px] font-bold text-ink">
         Welcome back{session ? `, ${session.fullName}` : ""}
       </h1>
