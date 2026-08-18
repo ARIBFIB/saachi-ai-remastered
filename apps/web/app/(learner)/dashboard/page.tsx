@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 
 import { useEffect } from "react";
@@ -39,6 +39,60 @@ export default function LearnerDashboardPage() {
         <KpiCard label="Unread notifications" value={String(unreadCount)} icon={Bell} />
       </div>
 
+      <div className="mb-10">
+        <ActivityChartCard />
+      </div>
+
+      <h2 className="mb-4 font-display text-[20px] font-semibold text-ink">Explore</h2>
+      <div className="mb-10">
+        <BentoGrid>
+          <BentoCard
+            name="Continue learning"
+            description="Jump back into your enrolled courses."
+            Icon={BentoBookOpen}
+            href="/my-courses"
+            cta="Go to My Courses"
+            className="md:col-span-2 md:row-span-2"
+          />
+          <BentoCard
+            name="Certificates"
+            description="View and download your earned certificates."
+            Icon={BentoAward}
+            href="/certificates"
+            cta="View certificates"
+          />
+          <BentoCard
+            name="Book mentorship"
+            description="1-on-1 sessions with verified instructors."
+            Icon={BentoUsers}
+            href="/mentorship"
+            cta="Find a mentor"
+            className="md:row-span-2"
+          />
+          <BentoCard
+            name="Wishlist"
+            description="Courses you have saved for later."
+            Icon={BentoHeart}
+            href="/wishlist"
+            cta="View wishlist"
+          />
+          <BentoCard
+            name="Course community"
+            description="Ask questions and get answers from instructors."
+            Icon={BentoMessageCircle}
+            href="/my-courses"
+            cta="Browse my courses"
+          />
+          <BentoCard
+            name="Become an instructor"
+            description="Apply to teach and sell your own courses."
+            Icon={BentoGraduationCap}
+            href="/become-instructor"
+            cta="Apply now"
+          />
+        </BentoGrid>
+      </div>
+
       <h2 data-onboard="continue-learning" className="mb-4 font-display text-[20px] font-semibold text-ink">Continue learning</h2>
       {inProgress.length === 0 ? (
         <EmptyState
@@ -77,4 +131,5 @@ export default function LearnerDashboardPage() {
     </div>
   );
 }
+
 
