@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
@@ -25,8 +25,9 @@ export function LearnerOnboardingChecklist() {
 
   useEffect(() => {
     setHydrated(true);
+    const justSignedUp = window.localStorage.getItem("saachi-just-signed-up") === "true";
     const stored = window.localStorage.getItem(DISMISS_KEY);
-    setDismissed(stored === "true");
+    setDismissed(justSignedUp ? false : stored === "true");
   }, []);
 
   const hasEnrollment = enrollments.length > 0;

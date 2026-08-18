@@ -1,10 +1,13 @@
-﻿"use client";
+"use client";
 
+
+import { useEffect } from "react";
 import Link from "next/link";
 import { BookOpen, Award, Bell } from "lucide-react";
 import { useSession } from "@saachi/api-client";
 import { useEnrollmentStore, useNotificationStore } from "@saachi/store";
 import { Button, EmptyState, KpiCard } from "@saachi/ui";
+import { LearnerOnboardingTour } from "@/components/ui/learner-onboarding-tour";
 import { LearnerOnboardingChecklist } from "@/components/ui/learner-onboarding-checklist";
 
 export default function LearnerDashboardPage() {
@@ -16,8 +19,13 @@ export default function LearnerDashboardPage() {
   const completed = enrollments.filter((e) => e.progressPercent === 100);
   const unreadCount = notifications.filter((n) => !n.read).length;
 
+  useEffect(() => {
+    window.localStorage.removeItem("saachi-just-signed-up");
+  }, []);
+
   return (
     <div>
+      <LearnerOnboardingTour />
             <LearnerOnboardingChecklist />
 
       <h1 className="mb-1 font-display text-[26px] font-bold text-ink">
@@ -25,13 +33,13 @@ export default function LearnerDashboardPage() {
       </h1>
       <p className="mb-8 text-[14px] text-ink-soft">Here is where you left off.</p>
 
-      <div className="mb-10 grid grid-cols-1 gap-4 sm:grid-cols-3">
+      <div data-onboard="kpi-row" className="mb-10 grid grid-cols-1 gap-4 sm:grid-cols-3">
         <KpiCard label="Enrolled courses" value={String(enrollments.length)} icon={BookOpen} />
         <KpiCard label="Completed" value={String(completed.length)} icon={Award} />
         <KpiCard label="Unread notifications" value={String(unreadCount)} icon={Bell} />
       </div>
 
-      <h2 className="mb-4 font-display text-[20px] font-semibold text-ink">Continue learning</h2>
+      <h2 data-onboard="continue-learning" className="mb-4 font-display text-[20px] font-semibold text-ink">Continue learning</h2>
       {inProgress.length === 0 ? (
         <EmptyState
           title="No courses in progress"
@@ -69,3 +77,4 @@ export default function LearnerDashboardPage() {
     </div>
   );
 }
+

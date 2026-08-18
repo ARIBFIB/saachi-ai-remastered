@@ -30,7 +30,14 @@ export default function RegisterPage() {
     if (password !== confirmPassword || !agreedToTerms) return;
     register.mutate(
       { fullName, email, password, confirmPassword, role: role as "learner" | "instructor" },
-      { onSuccess: () => router.push(role === "instructor" ? "/instructor/dashboard" : "/dashboard") }
+      {
+        onSuccess: () => {
+          if (role === "learner") {
+            window.localStorage.setItem("saachi-just-signed-up", "true");
+          }
+          router.push(role === "instructor" ? "/instructor/dashboard" : "/dashboard");
+        }
+      }
     );
   }
 

@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -35,11 +35,13 @@ export default function LearnerLayout({ children }: { children: ReactNode }) {
         <nav className="flex flex-row gap-1 overflow-x-auto md:flex-col md:overflow-visible">
           {NAV_ITEMS.map((item) => {
             const active = pathname === item.href;
+            const onboardAttr = item.href === "/my-courses" ? { "data-onboard": "nav-my-courses" } : {};
             const Icon = item.icon;
             return (
               <Link
                 key={item.href}
                 href={item.href}
+                {...onboardAttr}
                 className={cn(
                   "flex shrink-0 items-center gap-2.5 rounded-control px-3 py-2.5 text-[14px] font-medium transition-colors",
                   active ? "bg-gold text-ink" : "text-ink-soft hover:bg-paper-dim"
