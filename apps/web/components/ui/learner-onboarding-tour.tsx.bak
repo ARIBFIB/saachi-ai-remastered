@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import * as Dialog from "@radix-ui/react-dialog";
-import { X, Check, ChevronLeft, ChevronRight, CheckCircle2, Circle } from "lucide-react";
+import { X, ChevronLeft, ChevronRight, CheckCircle2, Circle } from "lucide-react";
 import { Button, cn } from "@saachi/ui";
 
 const SEEN_KEY = "saachi-learner-tour-seen";
@@ -12,10 +12,20 @@ export type TourStep = {
   id: string;
   title: string;
   description?: string;
-  targetSelector: string;
+  /**
+   * CSS selector for the element to spotlight. If the element isn't found
+   * on the page (e.g. a nav item without a data-onboard tag), the step
+   * still renders as a centered info card instead of being skipped.
+   */
+  targetSelector?: string;
 };
 
 const STEPS: TourStep[] = [
+  {
+    id: "welcome",
+    title: "Welcome to Saachi AI",
+    description: "Quick tour of your dashboard - takes about a minute. You can skip anytime."
+  },
   {
     id: "kpis",
     title: "Track your progress",
@@ -29,25 +39,101 @@ const STEPS: TourStep[] = [
     targetSelector: "[data-onboard='continue-learning']"
   },
   {
-    id: "nav",
-    title: "Explore your courses",
-    description: "Certificates, wishlist, orders, and settings are all in the sidebar.",
+    id: "nav-dashboard",
+    title: "Dashboard",
+    description: "Your home base - progress overview, continue-learning list, and the onboarding checklist all live here.",
+    targetSelector: "[data-onboard='nav-dashboard']"
+  },
+  {
+    id: "nav-my-courses",
+    title: "My Courses",
+    description: "Every course you're enrolled in, with filters for in-progress, completed, and not-started.",
     targetSelector: "[data-onboard='nav-my-courses']"
+  },
+  {
+    id: "nav-certificates",
+    title: "Certificates",
+    description: "Download and share certificates for the courses you've completed.",
+    targetSelector: "[data-onboard='nav-certificates']"
+  },
+  {
+    id: "nav-wishlist",
+    title: "Wishlist",
+    description: "Save courses you're interested in and move them to your cart whenever you're ready.",
+    targetSelector: "[data-onboard='nav-wishlist']"
+  },
+  {
+    id: "nav-cart",
+    title: "Cart",
+    description: "Review items you're about to buy, apply coupon codes, and check out.",
+    targetSelector: "[data-onboard='nav-cart']"
+  },
+  {
+    id: "nav-orders",
+    title: "Orders",
+    description: "Your full purchase history, including totals and order status.",
+    targetSelector: "[data-onboard='nav-orders']"
+  },
+  {
+    id: "nav-notifications",
+    title: "Notifications",
+    description: "Course updates, instructor replies, and account alerts all land here.",
+    targetSelector: "[data-onboard='nav-notifications']"
+  },
+  {
+    id: "nav-settings",
+    title: "Settings",
+    description: "Update your profile, billing details, privacy preferences, and account security.",
+    targetSelector: "[data-onboard='nav-settings']"
   }
 ];
 
-function getElementPosition(selector: string) {
+function getElementPosition(selector?: string) {
+  if (!selector) return null;
   const element = document.querySelector(selector) as HTMLElement | null;
   if (!element) return null;
   const rect = element.getBoundingClientRect();
   return { top: rect.top + window.scrollY, left: rect.left + window.scrollX, width: rect.width, height: rect.height };
 }
 
-function Coachmark({
-  step, stepIndex, totalSteps, isFirst, isLast, onNext, onPrev, onClose
+function StepCard({
+  step, stepIndex, totalSteps, isFirst, isLast, onNext, onPrev, onSkip
 }: {
   step: TourStep; stepIndex: number; totalSteps: number; isFirst: boolean; isLast: boolean;
-  onNext: () => void; onPrev: () => void; onClose: () => void;
+  onNext: () => void; onPrev: () => void; onSkip: () => void;
+}) {
+  return (
+    <>
+      <p className="mb-1 text-[12px] font-semibold text-ink-soft">Step {stepIndex + 1} of {totalSteps}</p>
+      <h3 className="mb-1 text-[15px] font-semibold text-ink">{step.title}</h3>
+      {step.description && <p className="mb-4 text-[13px] text-ink-soft">{step.description}</p>}
+      <div className="flex items-center justify-between gap-2">
+        <button
+          type="button"
+          onClick={onSkip}
+          className="text-[12.5px] font-medium text-ink-soft underline-offset-2 hover:text-ink hover:underline"
+        >
+          Skip tour
+        </button>
+        <div className="flex items-center gap-2">
+          <Button variant="secondary" size="sm" onClick={onPrev} disabled={isFirst}>
+            <ChevronLeft className="mr-1 h-4 w-4" /> Prev
+          </Button>
+          <Button size="sm" onClick={onNext}>
+            {isLast ? "Finish" : "Next"}
+            {!isLast && <ChevronRight className="ml-1 h-4 w-4" />}
+          </Button>
+        </div>
+      </div>
+    </>
+  );
+}
+
+function Coachmark({
+  step, stepIndex, totalSteps, isFirst, isLast, onNext, onPrev, onSkip
+}: {
+  step: TourStep; stepIndex: number; totalSteps: number; isFirst: boolean; isLast: boolean;
+  onNext: () => void; onPrev: () => void; onSkip: () => void;
 }) {
   const [pos, setPos] = useState(getElementPosition(step.targetSelector));
 
@@ -57,7 +143,7 @@ function Coachmark({
     update();
     window.addEventListener("resize", update);
     window.addEventListener("scroll", update);
-    const target = document.querySelector(step.targetSelector);
+    const target = step.targetSelector ? document.querySelector(step.targetSelector) : null;
     const ro = target ? new ResizeObserver(update) : null;
     if (target && ro) ro.observe(target);
     return () => {
@@ -69,15 +155,45 @@ function Coachmark({
 
   useEffect(() => {
     function onKey(e: KeyboardEvent) {
-      if (e.key === "Escape") onClose();
+      if (e.key === "Escape") onSkip();
       else if (e.key === "ArrowRight" && !isLast) onNext();
       else if (e.key === "ArrowLeft" && !isFirst) onPrev();
     }
     document.addEventListener("keydown", onKey);
     return () => document.removeEventListener("keydown", onKey);
-  }, [onClose, onNext, onPrev, isFirst, isLast]);
+  }, [onSkip, onNext, onPrev, isFirst, isLast]);
 
-  if (!pos) return null;
+  // No target found (or step has no target on purpose) -> centered info card, no spotlight.
+  if (!pos) {
+    return (
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 pointer-events-auto"
+      >
+        <motion.div
+          initial={{ scale: 0.9, opacity: 0, y: 8 }}
+          animate={{ scale: 1, opacity: 1, y: 0 }}
+          exit={{ scale: 0.9, opacity: 0, y: 8 }}
+          transition={{ type: "spring", damping: 25, stiffness: 400 }}
+          className="w-80 max-w-[90vw] rounded-card border border-line bg-card p-4 shadow-xl"
+        >
+          <StepCard
+            step={step}
+            stepIndex={stepIndex}
+            totalSteps={totalSteps}
+            isFirst={isFirst}
+            isLast={isLast}
+            onNext={onNext}
+            onPrev={onPrev}
+            onSkip={onSkip}
+          />
+        </motion.div>
+      </motion.div>
+    );
+  }
+
   const { top, left, width, height } = pos;
   const padding = 8;
 
@@ -102,22 +218,20 @@ function Coachmark({
         transition={{ type: "spring", damping: 25, stiffness: 400 }}
         className="absolute w-80 max-w-[90vw] rounded-card border border-line bg-card p-4 shadow-xl pointer-events-auto"
         style={{
-          top: Math.min(Math.max(16, top + height + 16), window.innerHeight - 200),
+          top: Math.min(Math.max(16, top + height + 16), window.innerHeight - 220),
           left: Math.min(Math.max(16, left + width / 2 - 160), window.innerWidth - 336)
         }}
       >
-        <p className="mb-1 text-[12px] font-semibold text-ink-soft">Step {stepIndex + 1} of {totalSteps}</p>
-        <h3 className="mb-1 text-[15px] font-semibold text-ink">{step.title}</h3>
-        {step.description && <p className="mb-4 text-[13px] text-ink-soft">{step.description}</p>}
-        <div className="flex items-center justify-between gap-2">
-          <Button variant="secondary" size="sm" onClick={onPrev} disabled={isFirst}>
-            <ChevronLeft className="mr-1 h-4 w-4" /> Prev
-          </Button>
-          <Button size="sm" onClick={onNext}>
-            {isLast ? "Finish" : "Next"}
-            {!isLast && <ChevronRight className="ml-1 h-4 w-4" />}
-          </Button>
-        </div>
+        <StepCard
+          step={step}
+          stepIndex={stepIndex}
+          totalSteps={totalSteps}
+          isFirst={isFirst}
+          isLast={isLast}
+          onNext={onNext}
+          onPrev={onPrev}
+          onSkip={onSkip}
+        />
       </motion.div>
     </motion.div>
   );
@@ -163,17 +277,26 @@ export function LearnerOnboardingTour() {
           >
             <div className="flex items-center justify-between border-b border-line p-4">
               <Dialog.Title className="text-[14px] font-semibold text-ink">Quick tour</Dialog.Title>
-              <button
-                type="button"
-                onClick={markSeen}
-                aria-label="Close tour"
-                className="flex h-7 w-7 items-center justify-center rounded-control text-ink-soft hover:bg-paper-dim hover:text-ink"
-              >
-                <X size={15} />
-              </button>
+              <div className="flex items-center gap-3">
+                <button
+                  type="button"
+                  onClick={markSeen}
+                  className="text-[12px] font-medium text-ink-soft underline-offset-2 hover:text-ink hover:underline"
+                >
+                  Skip
+                </button>
+                <button
+                  type="button"
+                  onClick={markSeen}
+                  aria-label="Close tour"
+                  className="flex h-7 w-7 items-center justify-center rounded-control text-ink-soft hover:bg-paper-dim hover:text-ink"
+                >
+                  <X size={15} />
+                </button>
+              </div>
             </div>
 
-            <ul className="space-y-1 p-3">
+            <ul className="max-h-72 space-y-1 overflow-y-auto p-3">
               {STEPS.map((s, i) => (
                 <li key={s.id}>
                   <button
@@ -208,7 +331,7 @@ export function LearnerOnboardingTour() {
             isLast={isLast}
             onNext={() => (isLast ? markSeen() : setActiveIndex((i) => i + 1))}
             onPrev={() => setActiveIndex((i) => Math.max(0, i - 1))}
-            onClose={markSeen}
+            onSkip={markSeen}
           />
         )}
       </AnimatePresence>

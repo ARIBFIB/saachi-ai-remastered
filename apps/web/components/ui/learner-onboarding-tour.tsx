@@ -24,67 +24,84 @@ const STEPS: TourStep[] = [
   {
     id: "welcome",
     title: "Welcome to Saachi AI",
-    description: "Quick tour of your dashboard - takes about a minute. You can skip anytime."
+    description:
+      "This is your learner dashboard - the home base for everything you do on Saachi AI. In the next few steps we'll walk through where to track progress, manage your courses, and find your certificates, cart, and settings. Takes under a minute, and you can skip anytime."
   },
   {
     id: "kpis",
     title: "Track your progress",
-    description: "See your enrolled, completed, and unread notification counts at a glance.",
+    description:
+      "These three numbers are your learning snapshot: how many courses you're enrolled in, how many you've finished, and how many notifications are still unread. Check this first whenever you open the dashboard to see where you stand.",
     targetSelector: "[data-onboard='kpi-row']"
   },
   {
     id: "continue",
     title: "Pick up where you left off",
-    description: "Courses in progress show up here so you can jump straight back in.",
+    description:
+      "Any course you've started but not finished shows up here with a live progress bar. Click a card to jump straight back into the next unfinished lesson - no need to hunt through My Courses first.",
     targetSelector: "[data-onboard='continue-learning']"
   },
   {
     id: "nav-dashboard",
     title: "Dashboard",
-    description: "Your home base - progress overview, continue-learning list, and the onboarding checklist all live here.",
+    description:
+      "Your home base. The progress overview, continue-learning list, and the 'Get started' checklist all live here - it's the fastest way to see what needs your attention.",
     targetSelector: "[data-onboard='nav-dashboard']"
   },
   {
     id: "nav-my-courses",
     title: "My Courses",
-    description: "Every course you're enrolled in, with filters for in-progress, completed, and not-started.",
+    description:
+      "Every course you're enrolled in lives here, with filters for in progress, completed, and not started. Use this when you want to browse your full library instead of just what's in progress.",
     targetSelector: "[data-onboard='nav-my-courses']"
   },
   {
     id: "nav-certificates",
     title: "Certificates",
-    description: "Download and share certificates for the courses you've completed.",
+    description:
+      "Once a course hits 100% completion, its verified certificate is auto-generated here as a downloadable PDF. Each one has a unique verification ID so anyone - an employer, a client - can confirm it's real.",
     targetSelector: "[data-onboard='nav-certificates']"
   },
   {
     id: "nav-wishlist",
     title: "Wishlist",
-    description: "Save courses you're interested in and move them to your cart whenever you're ready.",
+    description:
+      "Not ready to buy yet? Save a course here instead of losing track of it. When you're ready, move it to your cart in one click without searching for it again.",
     targetSelector: "[data-onboard='nav-wishlist']"
   },
   {
     id: "nav-cart",
     title: "Cart",
-    description: "Review items you're about to buy, apply coupon codes, and check out.",
+    description:
+      "Everything you're about to purchase collects here. You can apply a coupon code before checkout, review the total, and proceed to payment whenever you're ready.",
     targetSelector: "[data-onboard='nav-cart']"
   },
   {
     id: "nav-orders",
     title: "Orders",
-    description: "Your full purchase history, including totals and order status.",
+    description:
+      "Your complete purchase history - every order, its items, total, status, and date. Useful for tracking a recent payment or revisiting what you've bought in the past.",
     targetSelector: "[data-onboard='nav-orders']"
   },
   {
     id: "nav-notifications",
     title: "Notifications",
-    description: "Course updates, instructor replies, and account alerts all land here.",
+    description:
+      "Course updates, instructor replies, and account alerts all land here. Unread items are highlighted so you never miss something that needs a response.",
     targetSelector: "[data-onboard='nav-notifications']"
   },
   {
     id: "nav-settings",
     title: "Settings",
-    description: "Update your profile, billing details, privacy preferences, and account security.",
+    description:
+      "Manage your profile, billing details, privacy preferences, and account security - including password changes and two-factor authentication - all in one place.",
     targetSelector: "[data-onboard='nav-settings']"
+  },
+  {
+    id: "wrap-up",
+    title: "You're all set",
+    description:
+      "That's the full tour. The 'Get started' checklist on your dashboard will keep tracking your progress through these same steps - come back to it anytime, or restart this tour from Settings if you need a refresher."
   }
 ];
 
@@ -106,7 +123,7 @@ function StepCard({
     <>
       <p className="mb-1 text-[12px] font-semibold text-ink-soft">Step {stepIndex + 1} of {totalSteps}</p>
       <h3 className="mb-1 text-[15px] font-semibold text-ink">{step.title}</h3>
-      {step.description && <p className="mb-4 text-[13px] text-ink-soft">{step.description}</p>}
+      {step.description && <p className="mb-4 text-[13px] leading-relaxed text-ink-soft">{step.description}</p>}
       <div className="flex items-center justify-between gap-2">
         <button
           type="button"

@@ -1,6 +1,6 @@
 =================================================================
  SAI2 - Full Learner Module + Full Auth Module Code Export
- Generated: 2026-08-18 20:14:58
+ Generated: 2026-08-18 21:03:45
  Total files: 23
 =================================================================
 
@@ -244,7 +244,14 @@ export default function RegisterPage() {
     if (password !== confirmPassword || !agreedToTerms) return;
     register.mutate(
       { fullName, email, password, confirmPassword, role: role as "learner" | "instructor" },
-      { onSuccess: () => router.push(role === "instructor" ? "/instructor/dashboard" : "/dashboard") }
+      {
+        onSuccess: () => {
+          if (role === "learner") {
+            window.localStorage.setItem("saachi-just-signed-up", "true");
+          }
+          router.push(role === "instructor" ? "/instructor/dashboard" : "/dashboard");
+        }
+      }
     );
   }
 
@@ -1022,6 +1029,8 @@ FILE: apps\web\app\(learner)\dashboard\page.tsx
 -----------------------------------------------------------------
 "use client";
 
+
+import { useEffect } from "react";
 import Link from "next/link";
 import { BookOpen, Award, Bell } from "lucide-react";
 import { useSession } from "@saachi/api-client";
@@ -1038,6 +1047,10 @@ export default function LearnerDashboardPage() {
   const inProgress = enrollments.filter((e) => e.progressPercent > 0 && e.progressPercent < 100);
   const completed = enrollments.filter((e) => e.progressPercent === 100);
   const unreadCount = notifications.filter((n) => !n.read).length;
+
+  useEffect(() => {
+    window.localStorage.removeItem("saachi-just-signed-up");
+  }, []);
 
   return (
     <div>
@@ -1137,7 +1150,17 @@ export default function LearnerLayout({ children }: { children: ReactNode }) {
         <nav className="flex flex-row gap-1 overflow-x-auto md:flex-col md:overflow-visible">
           {NAV_ITEMS.map((item) => {
             const active = pathname === item.href;
-            const onboardAttr = item.href === "/my-courses" ? { "data-onboard": "nav-my-courses" } : {};
+            const ONBOARD_MAP: Record<string, string> = {
+              "/dashboard": "nav-dashboard",
+              "/my-courses": "nav-my-courses",
+              "/certificates": "nav-certificates",
+              "/wishlist": "nav-wishlist",
+              "/cart": "nav-cart",
+              "/orders": "nav-orders",
+              "/notifications": "nav-notifications",
+              "/settings": "nav-settings"
+            };
+            const onboardAttr = ONBOARD_MAP[item.href] ? { "data-onboard": ONBOARD_MAP[item.href] } : {};
             const Icon = item.icon;
             return (
               <Link
