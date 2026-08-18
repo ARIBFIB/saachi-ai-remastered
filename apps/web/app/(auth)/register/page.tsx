@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useState, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
@@ -35,7 +35,7 @@ export default function RegisterPage() {
           if (role === "learner") {
             window.localStorage.setItem("saachi-just-signed-up", "true");
           }
-          router.push(role === "instructor" ? "/instructor/dashboard" : "/dashboard");
+          router.push(role === "instructor" ? "/instructor/dashboard" : "/onboarding");
         }
       }
     );
