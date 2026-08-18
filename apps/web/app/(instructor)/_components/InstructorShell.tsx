@@ -5,6 +5,7 @@ import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useRef, useState, type ReactNode } from "react";
 import { Menu, X, LogOut, Bell, ChevronDown, Settings, User } from "lucide-react";
 import { AnimatedThemeToggler } from "@/components/ui/animated-theme-toggler";
+import { InstructorSearchBar } from "@/components/ui/instructor-search-bar";
 import { useSession, useLogout } from "@saachi/api-client";
 import {
   INSTRUCTOR_SIDEBAR,
@@ -96,6 +97,7 @@ export function InstructorShell({ children }: { children: ReactNode }) {
         </div>
 
         <div className="flex items-center gap-2 sm:gap-3">
+          <InstructorSearchBar />
           <div className="relative" ref={notifRef}>
             <button
               type="button"
