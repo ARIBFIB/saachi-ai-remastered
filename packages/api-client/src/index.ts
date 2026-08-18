@@ -27,3 +27,4 @@ export * from "./dummy-data-community";
 export * from "./dummy-data-certificates";
 export * from "./hooks/useContentHubs";
 export * from "./hooks/useInstructorPayouts";
+export * from "./hooks/useInstructorAnalytics";
