@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -35,7 +35,17 @@ export default function LearnerLayout({ children }: { children: ReactNode }) {
         <nav className="flex flex-row gap-1 overflow-x-auto md:flex-col md:overflow-visible">
           {NAV_ITEMS.map((item) => {
             const active = pathname === item.href;
-            const onboardAttr = item.href === "/my-courses" ? { "data-onboard": "nav-my-courses" } : {};
+            const ONBOARD_MAP: Record<string, string> = {
+              "/dashboard": "nav-dashboard",
+              "/my-courses": "nav-my-courses",
+              "/certificates": "nav-certificates",
+              "/wishlist": "nav-wishlist",
+              "/cart": "nav-cart",
+              "/orders": "nav-orders",
+              "/notifications": "nav-notifications",
+              "/settings": "nav-settings"
+            };
+            const onboardAttr = ONBOARD_MAP[item.href] ? { "data-onboard": ONBOARD_MAP[item.href] } : {};
             const Icon = item.icon;
             return (
               <Link

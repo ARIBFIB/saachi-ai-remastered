@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
@@ -130,8 +130,10 @@ export function LearnerOnboardingTour() {
 
   useEffect(() => {
     setHydrated(true);
+    const justSignedUp = window.localStorage.getItem("saachi-just-signed-up") === "true";
     const seen = window.localStorage.getItem(SEEN_KEY) === "true";
-    if (!seen) {
+
+    if (justSignedUp || !seen) {
       const t = setTimeout(() => setOpen(true), 500); // let dashboard finish rendering first
       return () => clearTimeout(t);
     }
