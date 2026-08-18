@@ -11,3 +11,4 @@ export * from "./useCorporateStore";
 export * from "./useLocaleStore";
 export * from "./useThemeStore";
 export * from "./useQuizStore";
+export * from "./useNotifPrefsStore";
