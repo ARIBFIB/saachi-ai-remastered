@@ -7,6 +7,7 @@ export type CommunityAnswer = {
   isInstructor: boolean;
   body: string;
   createdAt: string;
+  upvotes: number;
 };
 
 export type CommunityQuestion = {
