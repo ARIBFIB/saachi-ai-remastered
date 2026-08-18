@@ -275,15 +275,26 @@ export function InstructorIconRail({
 export function InstructorDetailPanel({
   activeGroupId,
   onNavigate,
-  showBrand = false
+  showBrand = false,
+  collapsed: collapsedProp,
+  onCollapsedChange
 }: {
   activeGroupId: string;
   onNavigate?: () => void;
   showBrand?: boolean;
+  /** Optional controlled collapse state. If omitted, the panel manages its own state. */
+  collapsed?: boolean;
+  onCollapsedChange?: (collapsed: boolean) => void;
 }) {
   const pathname = usePathname();
   const [expanded, setExpanded] = useState<Set<string>>(new Set());
-  const [collapsed, setCollapsed] = useState(false);
+  const [internalCollapsed, setInternalCollapsed] = useState(false);
+  const collapsed = collapsedProp ?? internalCollapsed;
+  const setCollapsed = (value: boolean | ((prev: boolean) => boolean)) => {
+    const next = typeof value === "function" ? (value as (prev: boolean) => boolean)(collapsed) : value;
+    if (onCollapsedChange) onCollapsedChange(next);
+    else setInternalCollapsed(next);
+  };
   const [search, setSearch] = useState("");
 
   const group = INSTRUCTOR_SIDEBAR.find((g) => g.id === activeGroupId) ?? INSTRUCTOR_SIDEBAR[0];

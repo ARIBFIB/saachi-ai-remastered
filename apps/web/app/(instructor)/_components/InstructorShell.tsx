@@ -45,6 +45,7 @@ export function InstructorShell({ children }: { children: ReactNode }) {
   const [notifOpen, setNotifOpen] = useState(false);
   const [userMenuOpen, setUserMenuOpen] = useState(false);
   const [activeGroupId, setActiveGroupId] = useState(() => activeGroupIdFromPathname(pathname));
+  const [panelCollapsed, setPanelCollapsed] = useState(false);
 
   const notifRef = useRef<HTMLDivElement>(null);
   const userMenuRef = useRef<HTMLDivElement>(null);
@@ -66,16 +67,23 @@ export function InstructorShell({ children }: { children: ReactNode }) {
     logout.mutate(undefined, { onSuccess: () => router.push("/login") });
   }
 
+  const sidebarOffsetClass = panelCollapsed ? "md:ml-[128px]" : "md:ml-[352px]";
+
   return (
     <div className="min-h-screen bg-paper">
       {/* Desktop two-level sidebar (icon rail + detail panel) */}
       <div className="hidden md:fixed md:inset-y-0 md:flex">
         <InstructorIconRail activeGroupId={activeGroupId} onSelect={setActiveGroupId} />
-        <InstructorDetailPanel activeGroupId={activeGroupId} showBrand />
+        <InstructorDetailPanel
+          activeGroupId={activeGroupId}
+          showBrand
+          collapsed={panelCollapsed}
+          onCollapsedChange={setPanelCollapsed}
+        />
       </div>
 
       {/* Top bar */}
-      <div className="sticky top-0 z-40 flex items-center justify-between gap-3 border-b border-line bg-card/95 px-4 py-3 backdrop-blur-sm md:ml-[352px] md:px-6">
+      <div className={`sticky top-0 z-40 flex items-center justify-between gap-3 border-b border-line bg-card/95 px-4 py-3 backdrop-blur-sm transition-[margin] duration-300 ease-out ${sidebarOffsetClass} md:px-6`}>
         <div className="flex min-w-0 items-center gap-3">
           <button
             type="button"
@@ -216,7 +224,7 @@ export function InstructorShell({ children }: { children: ReactNode }) {
         </div>
       )}
 
-      <div className="md:ml-[352px]">
+      <div className={`transition-[margin] duration-300 ease-out ${sidebarOffsetClass}`}>
         <main className="mx-auto max-w-[1200px] px-4 py-8 md:px-8 md:py-10">{children}</main>
       </div>
     </div>
